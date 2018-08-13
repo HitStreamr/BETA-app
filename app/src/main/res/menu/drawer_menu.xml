@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/dashboard"
+            android:icon="@drawable/ic_dashbord"
+            android:title="@string/dashboard" />
+
+
+        <item
+            android:id="@+id/general_setting"
+            android:icon="@drawable/ic_settings_general"
+            android:title="@string/general_settings" />
+
+
+        <item
+            android:id="@+id/notification_settings"
+            android:icon="@drawable/ic_settings_notification"
+            android:title="@string/notification_settings" />
+
+
+        <item
+            android:id="@+id/payment_pref"
+            android:icon="@drawable/ic_payment_pref"
+            android:title="@string/payment_preferences" />
+
+
+        <item
+            android:id="@+id/invite_a_friend"
+            android:icon="@drawable/ic_invite_a_friend"
+            android:title="@string/invite_a_friend" />
+
+
+        <item
+            android:id="@+id/help_center"
+            android:icon="@drawable/ic_help_outline_black_24dp"
+            android:title="@string/help_center" />
+
+
+        <item
+            android:id="@+id/legal_agreements"
+            android:icon="@drawable/ic_legal_agreements"
+            android:title="@string/legal_agreements" />
+
+
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_logout"
+            android:title="@string/logout" />
+
+    </group>
+
+</menu>

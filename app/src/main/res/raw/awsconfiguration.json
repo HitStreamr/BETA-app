@@ -1,0 +1,50 @@
+{
+  "UserAgent": "MobileHub/1.0",
+  "Version": "1.0",
+  "CredentialsProvider": {
+    "CognitoIdentity": {
+      "Default": {
+        "PoolId": "us-east-2:793c6a0f-c808-4d2b-8056-b450f4a2e241",
+        "Region": "us-east-2"
+      }
+    }
+  },
+  "IdentityManager": {
+    "Default": {}
+  },
+  "CognitoUserPool": {
+    "Default": {
+      "PoolId": "us-east-2_n17dsdcxh",
+      "AppClientId": "ds0birj4abjia79jfhiep9h4c",
+      "AppClientSecret": "ncetn0d2esgeb89qu02bi100g9k3j360g219cj3qgckk5trdc2u",
+      "Region": "us-east-2"
+    }
+  },
+  "S3TransferUtility": {
+    "Default": {
+      "Bucket": "hitstreamrbeta-userfiles-mobilehub-1662208755",
+      "Region": "us-east-2"
+    }
+  },
+  "PinpointAnalytics": {
+    "Default": {
+      "AppId": "3231e7a6958c48f4a368735b3fd7652a",
+      "Region": "us-east-1"
+    }
+  },
+  "PinpointTargeting": {
+    "Default": {
+      "Region": "us-east-1"
+    }
+  },
+  "UserFileManager": {
+    "Default": {
+      "Bucket": "hitstreamrbeta-userfiles-mobilehub-1662208755",
+      "Region": "us-east-2"
+    }
+  },
+  "FacebookSignIn": {
+    "AppId": "255531158547053",
+    "Permissions": "public_profile"
+  }
+}

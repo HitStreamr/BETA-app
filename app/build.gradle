@@ -1,0 +1,61 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.hitstreamr.hitstreamrbeta"
+        minSdkVersion 23
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.google.firebase:firebase-auth:16.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // Mobile Client for initializing the SDK
+    implementation('com.amazonaws:aws-android-sdk-mobile-client:2.6.+@aar') { transitive = true }
+
+    // Cognito UserPools for SignIn
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.6.+@aar') { transitive = true }
+
+    // Sign in UI Library
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation('com.amazonaws:aws-android-sdk-auth-ui:2.6.+@aar') { transitive = true }
+
+    // Facebook SignIn
+    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.facebook.android:facebook-login:4.35.0'
+
+
+    //File Storage
+    implementation 'com.amazonaws:aws-android-sdk-s3:2.6.26'
+    implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.26'
+
+    implementation 'com.google.firebase:firebase-core:16.0.1'
+    apply plugin: 'com.google.gms.google-services'
+    implementation 'com.google.firebase:firebase-invites:16.0.1'
+    implementation 'com.firebase:firebase-client-android:2.5.0'
+    implementation 'com.google.firebase:firebase-database:16.0.1'
+    implementation 'com.google.firebase:firebase-storage:16.0.1'
+
+}
+
+apply plugin: 'com.google.gms.google-services'

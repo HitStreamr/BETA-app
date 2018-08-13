@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AccountType"
+    android:background="@drawable/background_splash">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
+
+            <Button
+                android:id="@+id/backBtn"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@drawable/back_icon_wht"
+                android:layout_marginStart="10dp"
+                android:layout_gravity="center_vertical" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:paddingEnd="5dp"
+                android:paddingStart="145dp"
+                android:text="Choose account type"
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText,RtlCompat" />
+            <ImageView
+                android:layout_width="8dp"
+                android:layout_height="24dp"
+                android:src="@drawable/sidebar_page_type"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/sidebar" />
+
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="220dp"
+            android:layout_height="80dp"
+            android:src="@drawable/hitstreamr_logo_wht"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp"
+            android:contentDescription="@string/text_logo_wht" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="60dp"
+            android:gravity="center_horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/basicAcct"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:background="@drawable/fan"
+                    android:layout_gravity="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/basic_account"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="20dp">
+
+                <Button
+                    android:id="@+id/artistAcct"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:background="@drawable/artist"
+                    android:layout_gravity="center"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/artist_account"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/labelAcct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/are_you_a_label_click_here"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="120dp"/>
+
+
+
+    </LinearLayout>
+
+</RelativeLayout>
