@@ -153,6 +153,8 @@
                 android:layout_gravity="center_horizontal"
                 />
 
+            <!--this is a comment. -->
+
 
         </LinearLayout>
 
