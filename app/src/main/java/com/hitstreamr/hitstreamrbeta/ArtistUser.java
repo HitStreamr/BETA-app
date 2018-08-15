@@ -14,5 +14,6 @@ public class ArtistUser {
         this.phone = phone;
         this.city = city;
         this.state = state;
+        this.zip = zip;
     }
 }
