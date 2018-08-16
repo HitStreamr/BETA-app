@@ -59,5 +59,6 @@
     <string name="email_notificaions_descript">Turn on all email notifications or select which to receive individually.</string>
     <string name="invitation_title"><![CDATA[Invite & Earn]]></string>
     <string name="invite_text">Invite a friend and receive FREE credits \n when they join!</string>
+    <string name="phone_number_text">+1&#8211;000&#8211;000&#8211;0000</string>
 
 </resources>
