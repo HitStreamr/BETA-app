@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="stateAbbrev" >
-        <item>Alabama	AL</item>
-        <item>AK	Alaska</item>
+        <item>ALABAMA	AL</item>
+        <item>ALASKA	AK</item>
         <item> ARIZONA	AZ</item>
         <item>ARKANSAS	AR</item>
         <item>CALIFORNIA	CA</item>
