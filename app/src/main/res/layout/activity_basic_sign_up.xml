@@ -73,11 +73,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="300dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp">
+            android:layout_marginTop="15dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp">
 
             <EditText
             android:id="@+id/Username"
@@ -154,6 +156,8 @@
                 android:textColor="@color/colorAccent"
                 android:layout_gravity="center_horizontal"
                 />
+
+            <!--this is a comment. again -->
 
 
         </LinearLayout>
