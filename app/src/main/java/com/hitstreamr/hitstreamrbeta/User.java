@@ -1,7 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 public class User {
-    public String username, email;
+    public String username, email, name;
 
     public User(){
 
