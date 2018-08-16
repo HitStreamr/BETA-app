@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ArtistSignUp"
-    android:background="@drawable/background_splash">
+    android:background="@drawable/gradient1">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,7 +54,8 @@
             android:layout_height="120dp"
             android:layout_gravity="center_horizontal"
             android:src="@drawable/artist"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+             />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -83,7 +84,7 @@
                     android:layout_marginBottom="10dp">
 
                     <EditText
-                        android:id="@+id/FirstName"
+                        android:id="@+id/firstName"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
@@ -97,7 +98,7 @@
                         android:maxLength="26"/>
 
                     <EditText
-                        android:id="@+id/LastName"
+                        android:id="@+id/lastName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
@@ -112,7 +113,7 @@
                 </LinearLayout>
 
                 <EditText
-                    android:id="@+id/Email"
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -125,12 +126,12 @@
                     android:layout_marginBottom="10dp"/>
 
                 <EditText
-                    android:id="@+id/editText"
+                    android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="phone"
-                    android:hint="@string/phone_number_text"
+                    android:hint="000-000-0000"
                     android:background="@drawable/button2"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
@@ -140,7 +141,7 @@
                     />
 
                 <EditText
-                    android:id="@+id/AddressLine1"
+                    android:id="@+id/addressLine1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -172,7 +173,7 @@
 
 
                     <EditText
-                        android:id="@+id/editText2"
+                        android:id="@+id/zip"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
@@ -215,6 +216,43 @@
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
                     android:layout_marginBottom="15dp"/>
+
+                <RadioButton
+                    android:id="@+id/tos_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I agree to the Terms and Conditions."
+                    android:textColor="@android:color/white"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_gravity="center_horizontal"/>
+
+                <Button
+                    android:id="@+id/signup_button"
+                    android:layout_width="180dp"
+                    android:layout_height="40dp"
+                    android:text="Sign Up"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/button1"
+                    android:layout_gravity="center_horizontal"/>
+
+                <com.facebook.login.widget.LoginButton
+                    android:id="@+id/fblogin_button"
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginBottom="20dp" />
+
+                <TextView
+                    android:id="@+id/textviewsignin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alreay have an account? SignIn here!"
+                    android:textColor="@color/colorAccent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="60dp"
+                    />
 
 
             </LinearLayout>
