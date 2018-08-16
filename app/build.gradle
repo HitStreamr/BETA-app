@@ -49,6 +49,7 @@ dependencies {
     //implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.26'
 
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'com.google.firebase:firebase-firestore:17.0.4'
     apply plugin: 'com.google.gms.google-services'
     implementation 'com.google.firebase:firebase-invites:16.0.1'
     implementation 'com.firebase:firebase-client-android:2.5.0'
