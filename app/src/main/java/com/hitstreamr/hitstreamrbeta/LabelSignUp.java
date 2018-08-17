@@ -54,6 +54,7 @@ public class LabelSignUp extends AppCompatActivity {
         final String zipcode = mZipcode.getText().toString();
         final String phone = mPhone.getText().toString();
 
+        // Create a new label with all the information
         Map<String, Object> labelSignUp = new HashMap<>();
         labelSignUp.put(KEY_FIRSTNAME, firstname);
         labelSignUp.put(KEY_LASTNAME, lastname);
@@ -65,6 +66,7 @@ public class LabelSignUp extends AppCompatActivity {
         labelSignUp.put(KEY_ZIPCODE, zipcode);
         labelSignUp.put(KEY_PHONE, phone);
 
+        // Add a new document with a generated ID
         db.collection("Label Accounts")
                 .add(labelSignUp);
     }
