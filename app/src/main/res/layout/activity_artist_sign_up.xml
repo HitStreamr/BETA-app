@@ -180,7 +180,7 @@
                         android:layout_marginEnd="10dp"
                         android:background="@drawable/button2"
                         android:ems="10"
-                        android:hint="Zip"
+                        android:hint="Zip Code"
                         android:inputType="textPostalAddress"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
