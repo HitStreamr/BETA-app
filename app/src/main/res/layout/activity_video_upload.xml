@@ -4,25 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoUploadActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".VideoUploadActivity">
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select Video to Upload"
-        android:onClick="btnBrowse_Click"/>
+        android:onClick="btnBrowse_Click"
+        android:text="Select Video to Upload" />
+
     <VideoView
+        android:id="@+id/videoView"
         android:layout_width="350dp"
         android:layout_height="220dp"
-        android:layout_gravity="center"
-        android:id="@+id/videoView"/>
+        android:layout_gravity="center" />
+
     <EditText
         android:layout_width="280dp"
         android:layout_height="30dp"
-        android:background="@drawable/button2"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="15dp"
+        android:background="@drawable/button2"
         android:hint="Video Name"
         android:textAlignment="center" />
 
@@ -30,9 +32,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Video"
-        />
-
+        android:text="Upload Video" />
 
 
 </LinearLayout>
