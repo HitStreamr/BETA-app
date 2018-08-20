@@ -55,7 +55,7 @@
             android:layout_gravity="center_horizontal"
             android:src="@drawable/artist"
             android:layout_marginTop="10dp"
-             />
+            />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -171,39 +171,48 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <EditText
-                        android:id="@+id/state"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:inputType="textPostalAddress"
-                        android:hint="State"
-                        android:background="@drawable/button2"
-                        android:paddingTop="3dp"
-                        android:paddingBottom="3dp"
-                        android:paddingLeft="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:layout_marginEnd="10dp"/>
-
 
                     <EditText
                         android:id="@+id/zip"
-                        android:layout_width="match_parent"
+                        android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:inputType="textPostalAddress"
-                        android:hint="Zip Code"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginEnd="10dp"
                         android:background="@drawable/button2"
-                        android:paddingTop="3dp"
+                        android:ems="10"
+                        android:hint="Zip Code"
+                        android:inputType="textPostalAddress"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:layout_marginBottom="10dp"/>
+                        android:paddingTop="3dp" />
 
-
-
-
+                    <Spinner
+                        android:id="@+id/state"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/button2"
+                        android:ems="10"
+                        android:entries="@array/stateAbbrev"
+                        android:paddingBottom="3dp"
+                        android:paddingLeft="10dp"
+                        android:paddingTop="3dp" />
 
                 </LinearLayout>
+
+                <Spinner
+                    android:id="@+id/country"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button2"
+                    android:ems="10"
+                    android:entries="@array/country"
+                    android:paddingBottom="3dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="3dp" />
+
+
 
                 <EditText
                     android:id="@+id/Username"
