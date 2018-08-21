@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -271,50 +272,56 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
 
-        if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePhone() | !validateUsername() | !validateAddressLine() | !validateCity() | !validateUsername() | !validatePassword() | !validateToc()) {
-            return;
+        if(view == signupBtn){
+
+
+            if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePhone() | !validateUsername() | !validateAddressLine() | !validateCity() | !validateUsername() | !validatePassword() | !validateToc()) {
+                return;
+            }
+
+            String firstname = editTextFirstname.getText().toString();
+            String lastname = editTextLastname.getText().toString();
+            String email = editTextEmail.getText().toString();
+            String phone = editTextPhone.getText().toString();
+            String address = editTextAddress.getText().toString();
+            String city = editTextCity.getText().toString();
+            String state = spinnerState.toString();
+            String zip = editTextZip.getText().toString();
+            String country = spinnerCountry.toString();
+            String username = editTextUsername.getText().toString();
+            String password = editTextPasssword.getText().toString();
+
+            Map<String, Object> ArtistSignUp = new HashMap<>();
+            ArtistSignUp.put(KEY_fIRSTNAME, firstname);
+            ArtistSignUp.put(KEY_LASTNAME, lastname);
+            ArtistSignUp.put(KEY_EMAIL, email);
+            ArtistSignUp.put(KEY_PHONE, phone);
+            ArtistSignUp.put(KEY_ADDRESS, address);
+            ArtistSignUp.put(KEY_CITY, city);
+            ArtistSignUp.put(KEY_STATE, state);
+            ArtistSignUp.put(KEY_ZIP, zip);
+            ArtistSignUp.put(KEY_Country, country);
+            ArtistSignUp.put(KEY_USERNAME, username);
+            ArtistSignUp.put(KEY_PASSWORD, password);
+
+            db.collection("Accounts").document("ArtistAccount").set(ArtistSignUp)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(ArtistSignUp.this, "Artist sign up saved", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ArtistSignUp.this, "Error saving Artist sign up", Toast.LENGTH_SHORT).show();
+                            Log.d(TAG, e.toString());
+                        }
+                    });
+            finish();
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+
         }
-
-        String firstname = editTextFirstname.getText().toString();
-        String lastname = editTextLastname.getText().toString();
-        String email = editTextEmail.getText().toString();
-        String phone = editTextPhone.getText().toString();
-        String address = editTextAddress.getText().toString();
-        String city = editTextCity.getText().toString();
-        String state = spinnerState.toString();
-        String zip = editTextZip.getText().toString();
-        String country = spinnerCountry.toString();
-        String username = editTextUsername.getText().toString();
-        String password = editTextPasssword.getText().toString();
-
-        Map<String, Object> ArtistSignUp = new HashMap<>();
-        ArtistSignUp.put(KEY_fIRSTNAME, firstname);
-        ArtistSignUp.put(KEY_LASTNAME, lastname);
-        ArtistSignUp.put(KEY_EMAIL, email);
-        ArtistSignUp.put(KEY_PHONE, phone);
-        ArtistSignUp.put(KEY_ADDRESS, address);
-        ArtistSignUp.put(KEY_CITY, city);
-        ArtistSignUp.put(KEY_STATE, state);
-        ArtistSignUp.put(KEY_ZIP, zip);
-        ArtistSignUp.put(KEY_Country, country);
-        ArtistSignUp.put(KEY_USERNAME, username);
-        ArtistSignUp.put(KEY_PASSWORD, password);
-
-        db.collection("Accounts").document("ArtistAccount").set(ArtistSignUp)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(ArtistSignUp.this, "Artist sign up saved", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(ArtistSignUp.this, "Error saving Artist sign up", Toast.LENGTH_SHORT).show();
-                        Log.d(TAG, e.toString());
-                    }
-                });
-
     }
 }
 
