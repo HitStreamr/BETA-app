@@ -1,3 +1,4 @@
+/*
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 
 
+*/
+/*
 import com.amazonaws.mobile.auth.ui.AuthUIConfiguration;
 import com.amazonaws.mobile.client.AWSMobileClient;
 import com.amazonaws.mobile.client.AWSStartupHandler;
@@ -16,6 +19,8 @@ import com.amazonaws.mobile.auth.core.IdentityManager;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.mobile.auth.core.IdentityHandler;
 import com.amazonaws.mobile.config.AWSConfiguration;
+*//*
+
 
 
 
@@ -62,3 +67,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
+*/

@@ -115,6 +115,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         progressDialog.show();
 
 
+        //Address if statements and toast messages.
+        //Address if statements and toast messages.
         mAuth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
