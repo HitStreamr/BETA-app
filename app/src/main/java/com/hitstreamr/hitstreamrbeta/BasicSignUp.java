@@ -129,9 +129,10 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                    email
                            );
 
-                            FirebaseDatabase.getInstance().getReference("Users")
+                            FirebaseDatabase.getInstance().getReference("BasicUsers")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener (new OnCompleteListener<Void>() {
+                                    .setValue(user).addOnCompleteListener (new OnCompleteListener<Void>()
+                            {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
@@ -159,7 +160,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             if (radiobtn.isChecked()){
                 registerUser();
             }else{
-                Toast.makeText(BasicSignUp.this, "Please agree to the Terns and Conditions.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(BasicSignUp.this, "Please agree to the Terms and Conditions.",Toast.LENGTH_SHORT).show();
             }
         }
         if (view == signintext){
