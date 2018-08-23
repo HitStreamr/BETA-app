@@ -65,13 +65,18 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     //Regex pattern for email.
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\."+
+                    "[a-zA-Z0-9_+&*-]+)*@" +
+                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                    "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
+            //Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern VALID_PHONE_NUMBER_REGEX =
-            Pattern.compile(("\\d{3}-\\d{3}-\\d{4}"));
+            Pattern.compile(("[0-9]{10}"));
+            //Pattern.compile(("\\d{3}-\\d{3}-\\d{4}"));
 
     private static final Pattern VALID_ZIP_REGEX =
-            Pattern.compile(("\\d{5}"));
+            Pattern.compile(("[0-9]{5}"));
 
     /*
      * Method to validate whether the input string entered contains only
