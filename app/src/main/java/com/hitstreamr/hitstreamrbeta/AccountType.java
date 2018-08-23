@@ -36,8 +36,8 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
                 break;
 
             case R.id.artistAcct:
-               // Intent openCreateAcct = new Intent(this, ArtistSignUp.class);
-              //  startActivity(openCreateAcct);
+                Intent openCreateAcct = new Intent(this, ArtistSignUp.class);
+                startActivity(openCreateAcct);
                 break;
 
             case R.id.backBtn:
