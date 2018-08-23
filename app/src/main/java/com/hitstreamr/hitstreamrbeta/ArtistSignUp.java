@@ -1,6 +1,5 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -70,6 +68,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private static final Pattern VALID_PHONE_NUMBER_REGEX =
             Pattern.compile(("\\d{3}-\\d{3}-\\d{4}"));
 
+    private static final Pattern VALID_ZIP_REGEX =
+            Pattern.compile(("\\d{5}"));
+
     /*
      * Method to validate whether the input string entered contains only
      * Alphabetical characters.
@@ -110,6 +111,27 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             }
         }
         return flag;
+    }
+
+    /*
+     * Method to validate the Street Address of any unwanted characters
+     */
+    public boolean checkAlphaNumeric(String s){
+
+        String AlphaNumeric ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for(int i=0; i<s.length(); i++){
+            for(int count = 0; count<AlphaNumeric.length(); count++){
+                if(s.charAt(i) == AlphaNumeric.charAt(count)){
+                    value_for_each_comparison[i] = true;
+                    break;
+                }else{
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
     }
 
 
@@ -224,6 +246,21 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             editTextCity.setError("Field can't be empty");
             return false;
         } else {
+            editTextCity.setError(null);
+            return true;
+        }
+    }
+
+    private boolean validateZip() {
+        String ZipInput = editTextZip.getText().toString().trim();
+
+        if (ZipInput.isEmpty()) {
+            editTextCity.setError("Field can't be empty");
+            return false;
+        }  else if (!VALID_ZIP_REGEX.matcher(ZipInput).matches()) {
+            editTextZip.setError("Zip is invalid");
+            return false;
+        }  else {
             editTextCity.setError(null);
             return true;
         }
