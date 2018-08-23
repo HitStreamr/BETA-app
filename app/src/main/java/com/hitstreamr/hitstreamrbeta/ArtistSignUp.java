@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,13 +19,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.regex.Pattern;
 
 public class ArtistSignUp extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "ArtistSignUp";
+    private static final String ARTIST_TAG = "ArtistSignUp";
 
     //private static final String KEY_fIRSTNAME = "firstname";
     //private static final String KEY_LASTNAME = "lastname";
@@ -142,43 +142,41 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
 
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_sign_up);
 
 
-        editTextFirstname = findViewById(R.id.firstName);
-        editTextLastname = findViewById(R.id.lastName);
-        editTextEmail = findViewById(R.id.Email);
-        editTextPhone = findViewById(R.id.phone);
-        editTextAddress = findViewById(R.id.addressLine1);
-        editTextCity = findViewById(R.id.city);
-        spinnerState = findViewById(R.id.state);
-        spinnerCountry = findViewById(R.id.country);
-        editTextZip = findViewById(R.id.zip);
-        editTextUsername = findViewById(R.id.Username);
-        editTextPasssword = findViewById(R.id.Password);
-        signintext = findViewById(R.id.textviewsignin);
+        editTextFirstname = (EditText)findViewById(R.id.firstName);
+        editTextLastname = (EditText)findViewById(R.id.lastName);
+        editTextEmail = (EditText)findViewById(R.id.Email);
+        editTextPhone = (EditText)findViewById(R.id.phone);
+        editTextAddress = (EditText)findViewById(R.id.addressLine1);
+        editTextCity = (EditText)findViewById(R.id.city);
+        spinnerState = (Spinner)findViewById(R.id.state);
+        spinnerCountry = (Spinner)findViewById(R.id.country);
+        editTextZip = (EditText)findViewById(R.id.zip);
+        editTextUsername = (EditText)findViewById(R.id.Username);
+        editTextPasssword = (EditText)findViewById(R.id.Password);
+        signintext = (TextView)findViewById(R.id.textviewsignin);
 
         tocRadioButton = (RadioButton) findViewById(R.id.tos_button);
         backbtn = (Button) findViewById(R.id.backBtn);
         signupBtn = (Button) findViewById(R.id.signup_button);
 
         //Listeners
-        editTextFirstname.setOnClickListener(this);
-        editTextLastname.setOnClickListener(this);
-        editTextEmail.setOnClickListener(this);
-        editTextPhone.setOnClickListener(this);
-        editTextAddress.setOnClickListener(this);
-        editTextCity.setOnClickListener(this);
-        spinnerState.setOnClickListener(this);
-        spinnerCountry.setOnClickListener(this);
-        editTextZip.setOnClickListener(this);
-        editTextUsername.setOnClickListener(this);
-        editTextPasssword.setOnClickListener(this);
+        //editTextFirstname.setOnClickListener(this);
+        //editTextLastname.setOnClickListener(this);
+        //editTextEmail.setOnClickListener(this);
+       // editTextPhone.setOnClickListener(this);
+        //editTextAddress.setOnClickListener(this);
+       // editTextCity.setOnClickListener(this);
+        //spinnerState.setOnClickListener(this);
+       // spinnerCountry.setOnClickListener(this);
+       // editTextZip.setOnClickListener(this);
+       // editTextUsername.setOnClickListener(this);
+       // editTextPasssword.setOnClickListener(this);
         signintext.setOnClickListener(this);
 
         tocRadioButton.setOnClickListener(this);
@@ -198,6 +196,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     private void registerUser() {
+        Log.e(ARTIST_TAG,"i AM TRYING TO PRINT  ARTIST");
         final String firstname = editTextFirstname.getText().toString().trim();
         final String lastname = editTextLastname.getText().toString().trim();
         final String email = editTextEmail.getText().toString().trim();
@@ -209,6 +208,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         final String country = spinnerCountry.toString().trim();
         final String username = editTextUsername.getText().toString().trim();
         final String password = editTextPasssword.getText().toString().trim();
+        Log.e(ARTIST_TAG,"i AM TRYING TO PRINT  ARTIST");
 
         if (TextUtils.isEmpty(firstname)) {
             //firstname is empty
