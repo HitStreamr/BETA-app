@@ -184,7 +184,8 @@
                         android:inputType="textPostalAddress"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp" />
+                        android:paddingTop="3dp"
+                        android:maxLength="5" />
 
                     <Spinner
                         android:id="@+id/state"

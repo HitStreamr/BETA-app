@@ -19,6 +19,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.regex.Pattern;
+
 public class LabelSignUp extends AppCompatActivity implements View.OnClickListener {
 
     // Inputs
@@ -28,12 +30,40 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
 
     // Buttons
     private Button signup, goBack;
-    private RadioButton termsCond; // take this out
+    private RadioButton termsCond;
 
     private ProgressDialog progressDialog;
 
     // Access a Cloud Firebase instance from your Activity
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+
+    //Regex pattern for password.
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile("^" +
+                    "(?=.*[0-9])" +         //at least 1 digit
+                    "(?=.*[a-z])" +         //at least 1 lower case letter
+                    "(?=.*[A-Z])" +         //at least 1 upper case letter
+                    //"(?=.*[a-zA-Z])" +      //any letter
+                    "(?=.*[@#$%^&+=])" +    //at least 1 special character
+                    "(?=\\S+$)" +           //no white spaces
+                    ".{8,}" +               //at least 8 characters
+                    "$");
+
+    //Regex pattern for email.
+    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\."+
+                    "[a-zA-Z0-9_+&*-]+)*@" +
+                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                    "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
+    //Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    private static final Pattern VALID_PHONE_NUMBER_REGEX =
+            Pattern.compile(("[0-9]{10}"));
+    //Pattern.compile(("\\d{3}-\\d{3}-\\d{4}"));
+
+    private static final Pattern VALID_ZIP_REGEX =
+            Pattern.compile(("[0-9]{5}"));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +87,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
         // Buttons
         signup = findViewById(R.id.signup_button);
         goBack = findViewById(R.id.backBtn);
-        termsCond = findViewById(R.id.tos_button); // take this out
+        termsCond = findViewById(R.id.tos_button);
 
         // Listeners
         signup.setOnClickListener(this);
@@ -73,87 +103,318 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
         final String lastname = mLastName.getText().toString().trim();
         final String email = mEmail.getText().toString().trim();
         final String password = mPassword.getText().toString().trim();
-        final String label = mLabel.getText().toString();
-        final String address = mAddress.getText().toString();
+        final String label = mLabel.getText().toString().trim();
+        final String address = mAddress.getText().toString().trim();
         final String city = mCity.getText().toString().trim();
         final String state = mState.getSelectedItem().toString();
         final String zipcode = mZipcode.getText().toString().trim();
         final String country = mCountry.getSelectedItem().toString();
         final String phone = mPhone.getText().toString().trim();
 
-        if (checkCredentials(firstname, lastname, email, password, label, address, city, state, zipcode,
-                country, phone)) {
 
-            //If validations is ok we will first show progressbar
-            progressDialog.setMessage("Registering new Label...");
-            progressDialog.show();
+        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) |!validatePassword(password)
+                | !validateAddressLine(address) | !validateCity(city) | !validateLabel(label) | !validatePhone(phone)
+                | !validateZip(zipcode) | !validateToc()) {
+            return;
+        }
+//        if (checkCredentials(firstname, lastname, email, password, label, address, city, state, zipcode,
+//                country, phone)) {
 
-            // Add label to the database
-            mAuth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                // Store the additional fields in the Firebase Database
-                                Label label_object = new Label(firstname, lastname, email, password,
-                                        label, address, city, state, zipcode, country, phone);
+        //If validations is ok we will first show progressbar
+        progressDialog.setMessage("Registering new Label...");
+        progressDialog.show();
 
-                                FirebaseDatabase.getInstance().getReference("Label Accounts")
-                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        // Method invocation 'getUid' may produce 'java.lang.NullPointerException'
-                                        // Should catch? Throw an exception?
-                                        .setValue(label_object).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Toast.makeText(LabelSignUp.this, "Registered Successfully",
-                                                    Toast.LENGTH_SHORT).show();
-                                            //we will start the home activity here
-                                            finish();
-                                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                                        } else {
-                                            //Display a failure message
-                                            Toast.makeText(LabelSignUp.this, "Registration Failed",
-                                                    Toast.LENGTH_SHORT).show();
-                                        }
+        // Add label to the database
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Store the additional fields in the Firebase Database
+                            Label label_object = new Label(firstname, lastname, email, password,
+                                    label, address, city, state, zipcode, country, phone);
+
+                            FirebaseDatabase.getInstance().getReference("LabelAccounts")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    // Method invocation 'getUid' may produce 'java.lang.NullPointerException'
+                                    // Should catch? Throw an exception?
+                                    .setValue(label_object).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(LabelSignUp.this, "Registered Successfully",
+                                                Toast.LENGTH_SHORT).show();
+                                        //we will start the home activity here
+                                        finish();
+                                        startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                    } else {
+                                        //Display a failure message
+                                        Toast.makeText(LabelSignUp.this, "Registration Failed",
+                                                Toast.LENGTH_SHORT).show();
                                     }
-                                });
+                                }
+                            });
 
-                            } else {
-                                Toast.makeText(LabelSignUp.this, "Could not register. Please try again",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                        } else {
+                            Toast.makeText(LabelSignUp.this, "Could not register. Please try again",
+                                    Toast.LENGTH_SHORT).show();
                         }
-                    });
+                    }
+                });
+
+    }
+
+    /**
+     *
+     * @param firstname
+     * @return
+     */
+    private boolean validateFirstName(String firstname) {
+
+        if (firstname.isEmpty()) {
+            mFirstName.setError("Field can't be empty");
+            return false;
+        } else if (firstname.length() <= 26) {
+            if (!(checkAlphabet(firstname))) {
+                mFirstName.setError("First name must only have letters");
+                return false;
+            }
+            return true;
+        } else {
+            mFirstName.setError(null);
+            return true;
         }
     }
 
     /**
-     * Check for inputs validations.
-     * @return true if ALL pass, otherwise false
+     *
+     * @param lastname
+     * @return
      */
-    private Boolean checkCredentials(String firstname, String lastname, String email, String password,
-                                     String label, String address, String city, String state, String zipcode,
-                                     String country, String phone) {
+    private boolean validateLastName(String lastname) {
 
-        if(TextUtils.isEmpty(firstname)) {
-            // First name is empty
-            Toast.makeText(this, "Please enter your first name.", Toast.LENGTH_SHORT).show();
-            // Stop the function execution further
+        if (lastname.isEmpty()) {
+            mLastName.setError("Field can't be empty");
             return false;
+        } else if (lastname.length() <= 26) {
+            if (!(checkAlphabet(lastname))) {
+                mLastName.setError("Last name must only have letters");
+                return false;
+            }
+            return true;
+        } else {
+            mLastName.setError(null);
+            return true;
         }
-
-        if(TextUtils.isEmpty(lastname)) {
-            // Last name is empty
-            Toast.makeText(this, "Please enter your last name.", Toast.LENGTH_SHORT).show();
-            // Stop the function execution further
-            return false;
-        }
-
-        // If ALL is well
-        return true;
     }
 
+    /**
+     *
+     * @param address
+     * @return
+     */
+    private boolean validateAddressLine(String address) {
+
+        if (address.isEmpty()) {
+            mAddress.setError("Field can't be empty");
+            return false;
+        } else if (!checkAlphaNumeric(address)){
+            mAddress.setError("Address is not valid.");
+            return false;
+        } else {
+            mAddress.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param email
+     * @return
+     */
+    private boolean validateEmail(String email) {
+
+        if (email.isEmpty()) {
+            mEmail.setError("Field can't be empty");
+            return false;
+        } else if (!VALID_EMAIL_ADDRESS_REGEX.matcher(email).matches()) {
+            mEmail.setError("Email is not valid!");
+            return false;
+        } else {
+            mEmail.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param phone
+     * @return
+     */
+    private boolean validatePhone(String phone) {
+
+        if (phone.isEmpty()) {
+            mPhone.setError("Field can't be empty");
+            return false;
+        } else if (!VALID_PHONE_NUMBER_REGEX.matcher(phone).matches()) {
+            mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
+            return false;
+        }else {
+            mPhone.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param city
+     * @return
+     */
+    private boolean validateCity(String city) {
+
+        if (city.isEmpty()) {
+            mCity.setError("Field can't be empty");
+            return false;
+        } else {
+            mCity.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param zipcode
+     * @return
+     */
+    private boolean validateZip(String zipcode) {
+
+        if (zipcode.isEmpty()) {
+            mZipcode.setError("Field can't be empty");
+            return false;
+        }  else if (!VALID_ZIP_REGEX.matcher(zipcode).matches()) {
+            mZipcode.setError("Zip is invalid");
+            return false;
+        }  else {
+            mZipcode.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param password
+     * @return
+     */
+    private boolean validatePassword(String password) {
+
+        if (password.isEmpty()) {
+            mPassword.setError("Field can't be empty");
+            return false;
+        } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            mPassword.setError("Password too weak");
+            return false;
+        } else {
+            mPassword.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @param label
+     * @return
+     */
+    private boolean validateLabel(String label) {
+
+        if (label.isEmpty()) {
+            mLabel.setError("Field can't be empty");
+            return false;
+        } else {
+            mLabel.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean validateToc() {
+        if (!termsCond.isChecked()) {
+            Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();            return false;
+        } else {
+            termsCond.setError(null);
+            return true;
+        }
+    }
+
+    /**
+     * Method to validate whether the input string entered contains only
+     * Alphabetical characters.
+     *
+     * 1. This method also helps in making sure to handle the edge case i.e space.
+     */
+    private boolean checkAlphabet(String s) {
+
+        String Alphabets = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < Alphabets.length(); count++) {
+                if (s.charAt(i) == Alphabets.charAt(count)) {
+                    value_for_each_comparison[i] = true;
+                    break;
+                } else {
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
+    /**
+     * Method to support the above Method named checkAlphabet in accomplishing the task
+     * to validate the input String for Alphabetical characters only.
+     */
+    private boolean checkStringCmpvalues(boolean[] boolarray) {
+        boolean flag = false;
+        for (int i = 0; i < boolarray.length; i++) {
+            if (boolarray[i])
+                flag = true;
+            else {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    /**
+     * Method to validate the Street Address of any unwanted characters
+     */
+    public boolean checkAlphaNumeric(String s){
+
+        String AlphaNumeric ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for(int i=0; i<s.length(); i++){
+            for(int count = 0; count<AlphaNumeric.length(); count++){
+                if(s.charAt(i) == AlphaNumeric.charAt(count)){
+                    value_for_each_comparison[i] = true;
+                    break;
+                }else{
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
+    /**
+     *
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         if (view == signup) {
