@@ -79,6 +79,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private static final Pattern VALID_PHONE_NUMBER_REGEX =
             Pattern.compile(("\\d{3}-\\d{3}-\\d{4}"));
 
+
     /*
      * Method to validate whether the input string entered contains only
      * Alphabetical characters.
@@ -121,12 +122,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         return flag;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_artist_sign_up);
-
         editTextFirstname = findViewById(R.id.firstName);
         editTextLastname = findViewById(R.id.lastName);
         editTextEmail = findViewById(R.id.email);
@@ -137,6 +136,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         spinnerCountry = findViewById(R.id.country);
         editTextZip = findViewById(R.id.zip);
         editTextUsername = findViewById(R.id.Username);
+      
         editTextPasssword = findViewById(R.id.Password);
         tocRadioButton = (RadioButton) findViewById(R.id.tos_button);
 
@@ -285,11 +285,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             tocRadioButton.setError(null);
             return true;
         }
+
     }
 
     @Override
     public void onClick(View view) {
-
         if(view == signupBtn){
 
 
