@@ -1,10 +1,13 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +23,8 @@ import java.util.regex.Pattern;
 
 public class ArtistSignUp extends AppCompatActivity implements View.OnClickListener {
     // Inputs
-    private EditText editTextFirstname, editTextLastname, editTextEmail, editTextPhone, editTextAddress,editTextCity, editTextZip, editTextUsername, editTextPasssword;
+    private EditText editTextFirstname, editTextLastname, editTextEmail, editTextPhone, editTextAddress,
+            editTextCity, editTextZip, editTextUsername, editTextPasssword;
     private Spinner spinnerCountry, spinnerState;
 
     // Buttons
@@ -63,13 +67,14 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_label_sign_up);
+        setContentView(R.layout.activity_artist_sign_up);
         progressDialog = new ProgressDialog(this);
+
 
         // Views
         editTextFirstname = findViewById(R.id.firstName);
         editTextLastname = findViewById(R.id.lastName);
-        editTextEmail = findViewById(R.id.Email);
+        editTextEmail = findViewById(R.id.email);
         editTextPhone = findViewById(R.id.phone);
         editTextAddress = findViewById(R.id.addressLine1);
         editTextCity = findViewById(R.id.city);
@@ -80,9 +85,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         editTextPasssword = findViewById(R.id.Password);
 
         // Buttons
-        signup = (Button) findViewById(R.id.signup_button);
-        goBack = (Button) findViewById(R.id.backBtn);
-        tocRadioButton = (RadioButton) findViewById(R.id.tos_button);
+        signup = findViewById(R.id.signup_button);
+        goBack = findViewById(R.id.backBtn);
+        tocRadioButton = findViewById(R.id.tos_button);
 
         // Listeners
         signup.setOnClickListener(this);
@@ -93,7 +98,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     /**
      * Read the inputs from the user, check if inputs are valid, then add to the database.
      */
-    private void registerLabel() {
+    private void registerArtist() {
         final String firstname = editTextFirstname.getText().toString().trim();
         final String lastname = editTextLastname.getText().toString().trim();
         final String email = editTextEmail.getText().toString().trim();
@@ -108,16 +113,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePhone(phone)
-                | !validateAddressLine(address) | !validateCity(city) |
-                !validateUsername(username) | !validatePassword(password) | !validateToc()) {
+                | !validateAddressLine(address) | !validateZip(zipcode) | !validateCity(city) | !validateUsername(username) | !validatePassword(password) | !validateToc()) {
             return;
         }
 
         //If validations is ok we will first show progressbar
-        progressDialog.setMessage("Registering new Label...");
+        progressDialog.setMessage("Registering new Artist...");
         progressDialog.show();
 
-        // Add label to the database
+        // Add Artist to the database
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -127,7 +131,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             Artist Artist_object = new Artist(firstname, lastname, email, phone, address,
                                     city, state, zipcode, country, username);
 
-                            FirebaseDatabase.getInstance().getReference("LabelAccounts")
+                            FirebaseDatabase.getInstance().getReference("ArtistAccounts")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     // Method invocation 'getUid' may produce 'java.lang.NullPointerException'
                                     // Should catch? Throw an exception?
@@ -157,11 +161,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    /**
-     *
-     * @param firstname
-     * @return
-     */
+
     private boolean validateFirstName(String firstname) {
 
         if (firstname.isEmpty()) {
@@ -179,11 +179,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @param lastname
-     * @return
-     */
+
     private boolean validateLastName(String lastname) {
 
         if (lastname.isEmpty()) {
@@ -201,11 +197,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @param address
-     * @return
-     */
     private boolean validateAddressLine(String address) {
 
         if (address.isEmpty()) {
@@ -220,11 +211,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @param email
-     * @return
-     */
     private boolean validateEmail(String email) {
 
         if (email.isEmpty()) {
@@ -239,11 +225,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @param phone
-     * @return
-     */
+
     private boolean validatePhone(String phone) {
 
         if (phone.isEmpty()) {
@@ -258,11 +240,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @param city
-     * @return
-     */
     private boolean validateCity(String city) {
 
         if (city.isEmpty()) {
@@ -274,11 +251,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @param zipcode
-     * @return
-     */
+
     private boolean validateZip(String zipcode) {
 
         if (zipcode.isEmpty()) {
@@ -306,11 +279,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return true;
         }
     }
-    /**
-     *
-     * @param password
-     * @return
-     */
+
     private boolean validatePassword(String password) {
 
         if (password.isEmpty()) {
@@ -325,13 +294,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    /**
-     *
-     * @return
-     */
+
     private boolean validateToc() {
         if (!tocRadioButton.isChecked()) {
-            Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();            return false;
+            Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
+            return false;
         } else {
             tocRadioButton.setError(null);
             return true;
@@ -369,8 +336,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
      */
     private boolean checkStringCmpvalues(boolean[] boolarray) {
         boolean flag = false;
-        for (int i = 0; i < boolarray.length; i++) {
-            if (boolarray[i])
+        for (boolean aBoolarray : boolarray) {
+            if (aBoolarray)
                 flag = true;
             else {
                 flag = false;
@@ -401,14 +368,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         return checkStringCmpvalues(value_for_each_comparison);
     }
 
-    /**
-     *
-     * @param view
-     */
+
     @Override
     public void onClick(View view) {
         if (view == signup) {
-            registerLabel();
+            registerArtist();
         }
         if (view == goBack) {
             //will open account type activity
