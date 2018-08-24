@@ -8,7 +8,7 @@ public class Label {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.password = password;
+//        this.password = password;
         this.label = label;
         this.address = address;
         this.city = city;
