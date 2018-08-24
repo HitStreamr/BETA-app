@@ -3,14 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/search"
         android:icon="@drawable/ic_search_black_24dp"
-        android:title="Profile"
+        android:title="Search"
         app:showAsAction="always"
         />
 
     <item android:id="@+id/notifications"
-        android:icon="@drawable/ic_settings_general"
-        android:title="Profile"
-        app:showAsAction="always"/>
+        android:icon="@drawable/ic_notifications_none"
+        android:title="Notifications"
+        app:showAsAction="always"
+        />
 
     <item android:id="@+id/profile"
         android:icon="@mipmap/ic_launcher_round"

@@ -20,10 +20,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.regex.Pattern;
 
-public class ArtistSignUp extends AppCompatActivity implements View.OnClickListener {
+public class LabelSignUp extends AppCompatActivity implements View.OnClickListener {
 
     // Inputs
-    private EditText mFirstName, mLastName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
+    private EditText mFirstName, mLastName, mEmail, mPassword, mLabel, mAddress, mCity, mZipcode, mPhone;
     private Spinner mState, mCountry;
     // Add address line 1 and 2?
 
@@ -67,7 +67,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artist_sign_up);
+        setContentView(R.layout.activity_label_sign_up);
         progressDialog = new ProgressDialog(this);
 
         // Views
@@ -75,7 +75,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mLastName = findViewById(R.id.lastName);
         mEmail = findViewById(R.id.email);
         mPassword = findViewById(R.id.Password);
-        mUsername = findViewById(R.id.Username);
+        mLabel = findViewById(R.id.labelName);
         mAddress = findViewById(R.id.addressLine1);
         mCity = findViewById(R.id.city);
         mState = findViewById(R.id.state);
@@ -97,62 +97,63 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     /**
      * Read the inputs from the user, check if inputs are valid, then add to the database.
      */
-    private void registerArtist() {
+    private void registerLabel() {
         final String firstname = mFirstName.getText().toString().trim();
         final String lastname = mLastName.getText().toString().trim();
         final String email = mEmail.getText().toString().trim();
         final String password = mPassword.getText().toString().trim();
-        final String username = mUsername.getText().toString().trim();
+        final String label = mLabel.getText().toString().trim();
         final String address = mAddress.getText().toString().trim();
         final String city = mCity.getText().toString().trim();
         final String state = mState.getSelectedItem().toString();
-        final String zip = mZipcode.getText().toString().trim();
+        final String zipcode = mZipcode.getText().toString().trim();
         final String country = mCountry.getSelectedItem().toString();
         final String phone = mPhone.getText().toString().trim();
 
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) |!validatePassword(password)
-                | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip) | !validateToc()) {
+                | !validateAddressLine(address) | !validateCity(city) | !validateLabel(label) | !validatePhone(phone)
+                | !validateZip(zipcode) | !validateToc() | !validateState(state)) {
             return;
         }
 
         //If validations are ok we will first show progressbar
-        progressDialog.setMessage("Registering new Artist...");
+        progressDialog.setMessage("Registering new Label...");
         progressDialog.show();
 
-        // Add artist to the database
+        // Add label to the database
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Store the additional fields in the Firebase Database
-                            ArtistUser artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
+                            Label label_object = new Label(firstname, lastname, email, password,
+                                    label, address, city, state, zipcode, country, phone);
 
-                            FirebaseDatabase.getInstance().getReference("ArtistAccounts")
+                            FirebaseDatabase.getInstance().getReference("LabelAccounts")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     // Method invocation 'getUid' may produce 'java.lang.NullPointerException'
                                     // Should catch? Throw an exception?
-                                    .setValue(artist_object).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .setValue(label_object).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(ArtistSignUp.this, "Registered Successfully",
+                                        Toast.makeText(LabelSignUp.this, "Registered Successfully",
                                                 Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                         finish();
                                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                                     } else {
                                         //Display a failure message
-                                        Toast.makeText(ArtistSignUp.this, "Registration Failed",
+                                        Toast.makeText(LabelSignUp.this, "Registration Failed",
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
 
                         } else {
-                            Toast.makeText(ArtistSignUp.this, "Could not register. Please try again",
+                            Toast.makeText(LabelSignUp.this, "Could not register. Please try again",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -271,15 +272,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Check if zip input is valid.
-     * @param zip zip
+     * Check if zipcode input is valid.
+     * @param zipcode zipcode
      * @return true if valid, otherwise false and display an error message
      */
-    private boolean validateZip(String zip) {
-        if (zip.isEmpty()) {
+    private boolean validateZip(String zipcode) {
+        if (zipcode.isEmpty()) {
             mZipcode.setError("Field can't be empty");
             return false;
-        }  else if (!VALID_ZIP_REGEX.matcher(zip).matches()) {
+        }  else if (!VALID_ZIP_REGEX.matcher(zipcode).matches()) {
             mZipcode.setError("Zip is invalid");
             return false;
         }  else {
@@ -307,29 +308,29 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Check if artist name input is valid.
-     * @param artist artist name
+     * Check if label name input is valid.
+     * @param label label name
      * @return true if valid, otherwise false and display an error message
      */
-    private boolean validateUsername(String artist) {
-        if (artist.isEmpty()) {
-            mUsername.setError("Field can't be empty");
+    private boolean validateLabel(String label) {
+        if (label.isEmpty()) {
+            mLabel.setError("Field can't be empty");
             return false;
         } else {
-            mUsername.setError(null);
+            mLabel.setError(null);
             return true;
         }
     }
 
     // not working yet
-   // private boolean validateState(String state) {
-   //     if (!state.equals("Select a State")) {
-   //         Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
-   //         return false;
-   //     } else {
-   //         return true;
-   //     }
-   // }
+    private boolean validateState(String state) {
+        if (!state.equals("Select State")) {
+            Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
 
     /**
      * Check if the user agrees to Terms and Conditions
@@ -414,7 +415,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == signup) {
-            registerArtist();
+            registerLabel();
         }
         if (view == goBack) {
             //will open account type activity

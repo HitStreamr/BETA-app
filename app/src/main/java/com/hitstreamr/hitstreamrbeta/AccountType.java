@@ -1,14 +1,16 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class AccountType extends AppCompatActivity implements View.OnClickListener {
 
     private Button basicAcctBtn, artistAcctBtn, backbtn;
+    private TextView labelAcct;
 
 
     @Override
@@ -19,10 +21,12 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
         basicAcctBtn = (Button) findViewById(R.id.basicAcct);
         artistAcctBtn = (Button) findViewById(R.id.artistAcct);
         backbtn = (Button) findViewById(R.id.backBtn);
+        labelAcct = (TextView) findViewById(R.id.labelAcct);
 
         basicAcctBtn.setOnClickListener(this);
         artistAcctBtn.setOnClickListener(this);
         backbtn.setOnClickListener(this);
+        labelAcct.setOnClickListener(this);
 
 
     }
@@ -43,6 +47,11 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
             case R.id.backBtn:
                 Intent back = new Intent(this, Welcome.class);
                 startActivity(back);
+                break;
+
+            case R.id.labelAcct:
+                Intent labelsignup = new Intent(this, LabelSignUp.class);
+                startActivity(labelsignup);
                 break;
         }
     }

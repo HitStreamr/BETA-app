@@ -51,9 +51,9 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-
         <activity android:name=".SignInActivity" />
-        <activity android:name=".ArtistSignUp"></activity>
+        <activity android:name=".ArtistSignUp" />
+        <activity android:name=".LabelSignUp"></activity>
     </application>
 
 </manifest>

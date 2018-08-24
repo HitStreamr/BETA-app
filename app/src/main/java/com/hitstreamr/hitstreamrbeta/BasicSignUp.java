@@ -20,6 +20,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public class BasicSignUp extends AppCompatActivity implements View.OnClickListener{
 
     String st;
@@ -68,7 +70,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-// [END initialize_auth]
+        // [END initialize_auth]
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
@@ -130,13 +132,13 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                            );
 
                             FirebaseDatabase.getInstance().getReference("BasicUsers")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                                     .setValue(user).addOnCompleteListener (new OnCompleteListener<Void>()
                             {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(BasicSignUp.this, "Registred Successfully",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(BasicSignUp.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                          finish();
                                          startActivity(new Intent(getApplicationContext(), HomeActivity.class));

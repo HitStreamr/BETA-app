@@ -28,6 +28,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        
+        getSupportActionBar().setIcon(getDrawable(R.drawable.hitstreamr_logo_wht_toolbar));
 
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
