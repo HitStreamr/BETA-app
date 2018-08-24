@@ -22,11 +22,17 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -37,7 +43,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
-// [END declare_auth]
+    // [END declare_auth]
+    private DatabaseReference mDatabase;
     private LoginButton loginButton;
     private CallbackManager mCallbackManager;
     private static final String TAG = "FACELOG";
@@ -64,8 +71,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-// [END initialize_auth]
-        if(mAuth.getCurrentUser() !=null){
+        // [END initialize_auth]
+        if(mAuth.getCurrentUser() != null){
             //home activity here
             finish();
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
@@ -95,6 +102,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             });
 
         }
+
+        //user not logged in
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
 
     }
 
@@ -188,7 +199,26 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             finish();
-                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                            mDatabase.child(getString(R.string.child_basic)).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                            //user exists in basic user table, do something
+                                            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                                            startActivity(homeIntent);
+                                    } else {
+                                            //user does not exist, do something else
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
@@ -204,14 +234,17 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (view == signinbtn){
             UserLogin();
         }
+
         if (view == backbutton){
             //will open previous activity
-    }
+        }
+
         if (view == register){
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
             //will open sign in activity
         }
+
         if (view == backbutton){
             //will open sign in activity
             finish();
