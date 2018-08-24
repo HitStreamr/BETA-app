@@ -32,7 +32,9 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+            startActivity(homeIntent);
         }
     }
 

@@ -12,8 +12,14 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -51,6 +57,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private Button signupBtn;
     private RadioButton tocRadioButton;
 
+    private FirebaseAuth mAuth;
+
     //Regex pattern for password.
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile("^" +
@@ -62,6 +70,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
+
 
     //Regex pattern for email.
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -113,8 +122,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,7 +129,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         editTextFirstname = findViewById(R.id.firstName);
         editTextLastname = findViewById(R.id.lastName);
-        editTextEmail = findViewById(R.id.Email);
+        editTextEmail = findViewById(R.id.email);
         editTextPhone = findViewById(R.id.phone);
         editTextAddress = findViewById(R.id.addressLine1);
         editTextCity = findViewById(R.id.city);
@@ -135,6 +142,17 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         signupBtn = (Button) findViewById(R.id.signup_button);
         signupBtn.setOnClickListener(ArtistSignUp.this);
+
+        // [START initialize_auth]
+        mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+        if(mAuth.getCurrentUser() !=null){
+            //home activity here
+            finish();
+            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+        }
+
+        Log.d(TAG, PASSWORD_PATTERN.toString());
     }
 
     private boolean validateFirstName() {
@@ -275,21 +293,21 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if(view == signupBtn){
 
 
-            if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePhone() | !validateUsername() | !validateAddressLine() | !validateCity() | !validateUsername() | !validatePassword() | !validateToc()) {
-                return;
-            }
+           // if (!validateFirstName() | !validateLastName() | !validateEmail() | !validatePhone() | !validateUsername() | !validateAddressLine() | !validateCity() | !validateUsername() | !validatePassword() | !validateToc()) {
+             //   return;
+           // }
 
-            String firstname = editTextFirstname.getText().toString();
-            String lastname = editTextLastname.getText().toString();
-            String email = editTextEmail.getText().toString();
-            String phone = editTextPhone.getText().toString();
-            String address = editTextAddress.getText().toString();
-            String city = editTextCity.getText().toString();
-            String state = spinnerState.toString();
-            String zip = editTextZip.getText().toString();
-            String country = spinnerCountry.toString();
-            String username = editTextUsername.getText().toString();
-            String password = editTextPasssword.getText().toString();
+            final String firstname = editTextFirstname.getText().toString();
+            final String lastname = editTextLastname.getText().toString();
+            final String email = editTextEmail.getText().toString();
+            final String phone = editTextPhone.getText().toString();
+            final String address = editTextAddress.getText().toString();
+            final String city = editTextCity.getText().toString();
+            final String state = spinnerState.toString();
+            final String zip = editTextZip.getText().toString();
+            final String country = spinnerCountry.toString();
+            final String username = editTextUsername.getText().toString();
+            final String password = editTextPasssword.getText().toString();
 
             Map<String, Object> ArtistSignUp = new HashMap<>();
             ArtistSignUp.put(KEY_fIRSTNAME, firstname);
@@ -304,22 +322,36 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             ArtistSignUp.put(KEY_USERNAME, username);
             ArtistSignUp.put(KEY_PASSWORD, password);
 
-            db.collection("Accounts").document("ArtistAccount").set(ArtistSignUp)
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+            mAuth.createUserWithEmailAndPassword(email,password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(ArtistSignUp.this, "Artist sign up saved", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(ArtistSignUp.this, "Error saving Artist sign up", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, e.toString());
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // We will store the additional fields in the Firebase Database
+                                ArtistUser artist = new ArtistUser(firstname,lastname,email,username,password,address,city,state, phone, zip);
+
+                                FirebaseDatabase.getInstance().getReference("Artist")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .setValue(artist).addOnCompleteListener (new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(ArtistSignUp.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
+                                            //we will start the home activity here
+                                            finish();
+                                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                        }else {
+                                            //Display a failure message
+                                        }
+                                    }
+                                });
+
+
+                            }else{
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again",Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
-            finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
 
         }
     }
