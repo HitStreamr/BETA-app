@@ -114,13 +114,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) |!validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateLabel(label) | !validatePhone(phone)
-                | !validateZip(zipcode) | !validateToc()) {
+                | !validateZip(zipcode) | !validateToc() | !validateState(state)) {
             return;
         }
-//        if (checkCredentials(firstname, lastname, email, password, label, address, city, state, zipcode,
-//                country, phone)) {
 
-        //If validations is ok we will first show progressbar
+        //If validations are ok we will first show progressbar
         progressDialog.setMessage("Registering new Label...");
         progressDialog.show();
 
@@ -161,16 +159,14 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
                         }
                     }
                 });
-
     }
 
     /**
-     *
-     * @param firstname
-     * @return
+     * Check if first name input is valid.
+     * @param firstname first name
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateFirstName(String firstname) {
-
         if (firstname.isEmpty()) {
             mFirstName.setError("Field can't be empty");
             return false;
@@ -187,12 +183,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param lastname
-     * @return
+     * Check if last name input is valid.
+     * @param lastname last name
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateLastName(String lastname) {
-
         if (lastname.isEmpty()) {
             mLastName.setError("Field can't be empty");
             return false;
@@ -209,12 +204,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param address
-     * @return
+     * Check if address input is valid.
+     * @param address address line
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateAddressLine(String address) {
-
         if (address.isEmpty()) {
             mAddress.setError("Field can't be empty");
             return false;
@@ -228,12 +222,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param email
-     * @return
+     * Check if email input is valid.
+     * @param email email
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateEmail(String email) {
-
         if (email.isEmpty()) {
             mEmail.setError("Field can't be empty");
             return false;
@@ -247,12 +240,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param phone
-     * @return
+     * Check if phone number input is valid.
+     * @param phone phone number
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validatePhone(String phone) {
-
         if (phone.isEmpty()) {
             mPhone.setError("Field can't be empty");
             return false;
@@ -266,12 +258,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param city
-     * @return
+     * Check if city input is valid.
+     * @param city city
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateCity(String city) {
-
         if (city.isEmpty()) {
             mCity.setError("Field can't be empty");
             return false;
@@ -282,12 +273,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param zipcode
-     * @return
+     * Check if zipcode input is valid.
+     * @param zipcode zipcode
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateZip(String zipcode) {
-
         if (zipcode.isEmpty()) {
             mZipcode.setError("Field can't be empty");
             return false;
@@ -301,12 +291,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param password
-     * @return
+     * Check if password input is valid.
+     * @param password password
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validatePassword(String password) {
-
         if (password.isEmpty()) {
             mPassword.setError("Field can't be empty");
             return false;
@@ -320,12 +309,11 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param label
-     * @return
+     * Check if label name input is valid.
+     * @param label label name
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateLabel(String label) {
-
         if (label.isEmpty()) {
             mLabel.setError("Field can't be empty");
             return false;
@@ -335,9 +323,19 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    // not working yet
+    private boolean validateState(String state) {
+        if (!state.equals("Select a State")) {
+            Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     /**
-     * 
-     * @return
+     * Check if the user agrees to Terms and Conditions
+     * @return true if valid, otherwise false and display an error message
      */
     private boolean validateToc() {
         if (!termsCond.isChecked()) {
@@ -412,8 +410,8 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     *
-     * @param view
+     * Override the onClick function
+     * @param view view
      */
     @Override
     public void onClick(View view) {
