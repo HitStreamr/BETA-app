@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="country" >
+        <item>Select Country</item>
         <item>United States of America</item>
     </string-array>
 </resources>
