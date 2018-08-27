@@ -199,7 +199,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             finish();
-                            mDatabase.child(getString(R.string.child_basic)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
                                 @Override
                                 public void onDataChange(DataSnapshot snapshot) {
@@ -208,14 +208,48 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                             Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
                                             homeIntent.putExtra("TYPE", getString(R.string.type_basic));
                                             startActivity(homeIntent);
-                                    } else {
-                                            //user does not exist, do something else
                                     }
                                 }
 
                                 @Override
                                 public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, databaseError.toString());
+                                }
+                            });
 
+                            mDatabase.child(getString(R.string.child_artist) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        //user exists in basic user table, do something
+                                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                                        startActivity(homeIntent);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, databaseError.toString());
+                                }
+                            });
+
+                            mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        //user exists in basic user table, do something
+                                        Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
+                                        labelIntent.putExtra("TYPE", getString(R.string.type_label));
+                                        startActivity(labelIntent);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, databaseError.toString());
                                 }
                             });
 
