@@ -23,6 +23,7 @@ public class GeneralSettingsFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HomeActivity.class);
                 startActivity(intent);
+
             }
         });
 

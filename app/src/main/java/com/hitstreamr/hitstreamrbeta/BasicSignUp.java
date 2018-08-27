@@ -78,6 +78,27 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+//    private static final Pattern PASSWORD_PATTERN =
+//            Pattern.compile("^" +
+//                    "(?=.*[0-9])" +         //at least 1 digit
+//                    "(?=.*[a-z])" +         //at least 1 lower case letter
+//                    "(?=.*[A-Z])" +         //at least 1 upper case letter
+//                    //"(?=.*[a-zA-Z])" +      //any letter
+//                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+//                    "(?=\\S+$)" +           //no white spaces
+//                   ".{8,}" +               //at least 8 characters
+//                    "$");
+
+    //Regex pattern for email.
+//    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+//            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\."+
+//                    "[a-zA-Z0-9_+&*-]+)*@" +
+//                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+//                    "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
+    //Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+
+
     private void registerUser(){
         final String username = mUsername.getText().toString().trim();
         final String email = mEmailField.getText().toString().trim();
@@ -131,7 +152,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                    email
                            );
 
-                            FirebaseDatabase.getInstance().getReference("BasicUsers")
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts")
                                     .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                                     .setValue(user).addOnCompleteListener (new OnCompleteListener<Void>()
                             {
@@ -141,7 +162,9 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                         Toast.makeText(BasicSignUp.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                          finish();
-                                         startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                         Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                         homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                                         startActivity(homeIntent);
                                     }else {
                                         //Display a failure message
                                     }
