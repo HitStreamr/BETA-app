@@ -1,11 +1,11 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,10 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Button logout;
@@ -25,6 +26,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     private Intent launchIntent;
 
+    MaterialSearchView materialSearchView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+         materialSearchView = (MaterialSearchView)findViewById(R.id.search_view);
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -82,8 +87,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_main, menu);
+       getMenuInflater().inflate(R.menu.toolbar_main, menu);
+
+        MenuItem item = menu.findItem(R.id.search);
+        materialSearchView.setMenuItem(item);
+
         return true;
     }
     // @Override
