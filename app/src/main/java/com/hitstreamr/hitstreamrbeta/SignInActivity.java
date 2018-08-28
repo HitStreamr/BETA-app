@@ -173,7 +173,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         if(TextUtils.isEmpty(email)){
             //email is empty
-            Toast.makeText(this, "Plase enter email address",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter email address",Toast.LENGTH_SHORT).show();
             //Stop the function execution further
             return;
         }
