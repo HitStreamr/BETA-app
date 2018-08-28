@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="stateAbbrev" >
-        <item>Select a State</item>
+        <item>Select State</item>
         <item>ALABAMA	AL</item>
         <item>ALASKA	AK</item>
         <item> ARIZONA	AZ</item>

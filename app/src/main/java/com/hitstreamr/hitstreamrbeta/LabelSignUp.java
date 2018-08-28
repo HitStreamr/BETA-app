@@ -6,6 +6,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,7 +48,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
                     "(?=.*[a-z])" +         //at least 1 lower case letter
                     "(?=.*[A-Z])" +         //at least 1 upper case letter
                     //"(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[@#$%^&+=])" +    //at least 1 special character
+                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
@@ -327,7 +330,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
 
     // not working yet
     private boolean validateState(String state) {
-        if (!state.equals("Select a State")) {
+        if (!state.equals("Select State")) {
             Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
             return false;
         } else {

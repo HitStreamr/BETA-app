@@ -20,11 +20,13 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Objects;
+
 public class BasicSignUp extends AppCompatActivity implements View.OnClickListener{
 
     String st;
 
-    private static final String TAG = "EmailPassword";
+    private static final String BASIC_TAG = "EmailPassword";
 
     private Button signup, backbtn;
     private EditText mEmailField, mPasswordField, mUsername;
@@ -75,6 +77,27 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
         }
     }
+
+//    private static final Pattern PASSWORD_PATTERN =
+//            Pattern.compile("^" +
+//                    "(?=.*[0-9])" +         //at least 1 digit
+//                    "(?=.*[a-z])" +         //at least 1 lower case letter
+//                    "(?=.*[A-Z])" +         //at least 1 upper case letter
+//                    //"(?=.*[a-zA-Z])" +      //any letter
+//                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+//                    "(?=\\S+$)" +           //no white spaces
+//                   ".{8,}" +               //at least 8 characters
+//                    "$");
+
+    //Regex pattern for email.
+//    private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+//            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\."+
+//                    "[a-zA-Z0-9_+&*-]+)*@" +
+//                    "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+//                    "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
+    //Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+
 
     private void registerUser(){
         final String username = mUsername.getText().toString().trim();
@@ -129,9 +152,10 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                    email
                            );
 
-                            FirebaseDatabase.getInstance().getReference("Users")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener (new OnCompleteListener<Void>() {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts")
+                                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                                    .setValue(user).addOnCompleteListener (new OnCompleteListener<Void>()
+                            {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
@@ -161,7 +185,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             if (radiobtn.isChecked()){
                 registerUser();
             }else{
-                Toast.makeText(BasicSignUp.this, "Please agree to the Terns and Conditions.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(BasicSignUp.this, "Please agree to the Terms and Conditions.",Toast.LENGTH_SHORT).show();
             }
         }
         if (view == signintext){

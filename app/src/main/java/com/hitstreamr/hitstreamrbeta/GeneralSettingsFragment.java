@@ -25,6 +25,7 @@ public class GeneralSettingsFragment extends Fragment {
                 intent.putExtra("TYPE", getArguments().getString("TYPE"));
 
                 startActivity(intent);
+
             }
         });
 

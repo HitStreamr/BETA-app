@@ -92,7 +92,6 @@
                         android:ems="10"
                         android:hint="First Name"
                         android:inputType="textPersonName"
-                        android:maxLength="26"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
@@ -205,7 +204,7 @@
                         android:entries="@array/stateAbbrev"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp" />
+                        android:layout_marginEnd="10dp"/>
 
                 </LinearLayout>
 

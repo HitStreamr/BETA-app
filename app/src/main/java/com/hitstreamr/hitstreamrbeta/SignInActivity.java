@@ -75,6 +75,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if(mAuth.getCurrentUser() != null){
             //home activity here
             finish();
+            //TODO Handle different users here
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
 
             // Initialize Facebook Login button
@@ -183,7 +184,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
         if(TextUtils.isEmpty(password)){
             //password is empty
-            Toast.makeText(this, "Plase enter password",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter password",Toast.LENGTH_SHORT).show();
             //Stop the function execution further
             return;
         }
