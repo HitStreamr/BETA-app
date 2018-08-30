@@ -54,7 +54,8 @@
         <activity android:name=".SignInActivity" />
         <activity android:name=".ArtistSignUp" />
         <activity android:name=".LabelSignUp" />
-        <activity android:name=".LabelDashboard"></activity>
+        <activity android:name=".LabelDashboard" />
+        <activity android:name=".PickGenre"></activity>
     </application>
 
 </manifest>

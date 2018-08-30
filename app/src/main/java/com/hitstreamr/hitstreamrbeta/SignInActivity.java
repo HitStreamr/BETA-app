@@ -22,7 +22,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -72,12 +71,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-        if(mAuth.getCurrentUser() != null){
+        if(mAuth.getCurrentUser() != null) {
             //home activity here
             finish();
             //TODO Handle different users here
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-
+        }
             // Initialize Facebook Login button
             mCallbackManager = CallbackManager.Factory.create();
             LoginButton loginButton = findViewById(R.id.fblogin_button);
@@ -102,7 +101,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
 
-        }
+
 
         //user not logged in
         mDatabase = FirebaseDatabase.getInstance().getReference();
