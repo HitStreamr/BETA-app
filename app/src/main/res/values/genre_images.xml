@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="genreImageDrawables" >
+        <item>genre_hiphop_rap</item>
+        <item>genre_pop</item>
+        <item>genre_rock</item>
+        <item>genre_rnb_soul</item>
+        <item>genre_country</item>
+        <item>genre_indie</item>
+        <item>genre_latin</item>
+        <item>genre_folk</item>
         <item>genre_alternative</item>
+        <item>genre_inspirational_gospel</item>
         <item>genre_asian_pop</item>
+        <item>genre_reggae</item>
+        <item>genre_jazz</item>
         <item>genre_blues</item>
         <item>genre_classical</item>
-        <item>genre_country</item>
         <item>genre_edm</item>
-        <item>genre_folk</item>
-        <item>genre_hiphop_rap</item>
-        <item>genre_indie</item>
-        <item>genre_inspirational_gospel</item>
-        <item>genre_jazz</item>
-        <item>genre_latin</item>
         <item>genre_new_age</item>
         <item>genre_opera</item>
-        <item>genre_reggae</item>
-        <item>genre_rnb_soul</item>
-        <item>genre_rock</item>
     </string-array>
 </resources>

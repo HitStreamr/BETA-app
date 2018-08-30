@@ -19,8 +19,8 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
-        void onAddItemClick(View view, int position);
-        void onRemoveItemClick(View view, int position);
+        void onAddItemClick(CardView view, ImageView img, int position);
+        void onRemoveItemClick(CardView view,ImageView img, int position);
     }
 
     // provides reference to the views for each data item
@@ -41,12 +41,12 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
                         selItems.delete(getAdapterPosition());
                         boolean test =  itemClickListener != null;
                         if (itemClickListener != null) {
-                            itemClickListener.onRemoveItemClick(card, getAdapterPosition());
+                            itemClickListener.onRemoveItemClick(card, genre, getAdapterPosition());
                         }
                     }else{
                         selItems.put(getAdapterPosition(),true);
                         if (itemClickListener != null) {
-                            itemClickListener.onAddItemClick(card, getAdapterPosition());
+                            itemClickListener.onAddItemClick(card, genre,  getAdapterPosition());
                         }
                     }
 
@@ -84,7 +84,7 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
         if(selItems.get(position)){
             holder.card.setCardBackgroundColor(holder.card.getContext().getColorStateList(R.color.colorPrimary));
         }else{
-            holder.card.setCardBackgroundColor(holder.card.getContext().getColorStateList(R.color.litgryAccent));
+            holder.card.setCardBackgroundColor(holder.card.getContext().getColorStateList(R.color.cardview_light_background));
         }
         //set the content description and image
         holder.genre.setContentDescription(mImageNames[position]);

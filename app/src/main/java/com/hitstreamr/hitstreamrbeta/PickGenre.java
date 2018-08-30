@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -70,17 +71,19 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
 
 
     @Override
-    public void onAddItemClick(View view, int position) {
-        CardView card = (CardView) view;
-        Log.d("ADAPTER", "Pos: " + position);
+    public void onAddItemClick(CardView view, ImageView img, int position) {
+        Log.d("Pick", "Content Added: " + img.getContentDescription());
         selectedItems.add(new Integer(position));
         checkButton();
 
     }
 
     @Override
-    public void onRemoveItemClick(View view, int position) {
+    public void onRemoveItemClick(CardView view, ImageView img, int position) {
+        Log.d("Pick", "Content Removed: " + img.getContentDescription());
+        Log.d("Pick", "Content Added: " + img.getContentDescription());
         selectedItems.remove(Integer.valueOf(position));
+        Log.d("Pick", "Content Added: " + img.getContentDescription());
         checkButton();
     }
 
@@ -104,10 +107,10 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
                 String[] temp = new String[selectedItems.size()];
 
                 for(int i = 0; i < selectedItems.size(); i++ ){
-                    temp[i] = images[i];
+                    temp[i] = images[selectedItems.get(i)];
                 }
 
-                Toast.makeText(getApplicationContext(), Arrays.deepToString(temp), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), Arrays.deepToString(selectedItems.toArray())  + "\n" + Arrays.deepToString(temp) , Toast.LENGTH_LONG).show();
                 Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
                 homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
                 homeIntent.putExtra("NUMBER_SELECTED", selectedItems);
