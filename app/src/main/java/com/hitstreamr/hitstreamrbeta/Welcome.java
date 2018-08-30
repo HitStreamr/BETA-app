@@ -28,11 +28,13 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-// [END initialize_auth]
+       // [END initialize_auth]
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+            startActivity(homeIntent);
         }
     }
 

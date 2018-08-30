@@ -61,6 +61,14 @@
     <string name="invite_text">Invite a friend and receive FREE credits \n when they join!</string>
     <string name="phone_number_text">+1&#8211;000&#8211;000&#8211;0000</string>
     <string name="type_basic">BASIC</string>
-    <string name="child_basic">BasicUsers</string>
+    <string name="type_artist">ARTIST</string>
+    <string name="type_label">LABEL</string>
+    <string name="child_basic">UserAccounts</string>
+    <string name="child_artist">ArtistAccounts</string>
+    <string name="child_label">LabelAccounts</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_disocver">Discover</string>
+    <string name="nav_activity">Activity</string>
+    <string name="nav_library">Library</string>
 
 </resources>

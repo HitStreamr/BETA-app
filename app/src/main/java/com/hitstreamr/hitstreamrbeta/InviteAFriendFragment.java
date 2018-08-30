@@ -11,10 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.android.gms.appinvite.AppInvite;
 import com.google.android.gms.appinvite.AppInviteInvitation;
-import com.google.android.gms.appinvite.AppInviteInvitationResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -44,6 +41,7 @@ public class InviteAFriendFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HomeActivity.class);
+                intent.putExtra("TYPE", getArguments().getString("TYPE"));
                 startActivity(intent);
             }
         });

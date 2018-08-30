@@ -44,6 +44,7 @@ public class LegalAgreementsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), HomeActivity.class);
+                intent.putExtra("TYPE", getArguments().getString("TYPE"));
                 startActivity(intent);
             }
         });
