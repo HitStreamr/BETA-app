@@ -2,7 +2,7 @@
 <resources>
     <string-array name="Privacy">
         <item>Public (everyone can see)</item>
-        <item>Private (onlu you can see)</item>
+        <item>Private (only you can see)</item>
     </string-array>
 
 

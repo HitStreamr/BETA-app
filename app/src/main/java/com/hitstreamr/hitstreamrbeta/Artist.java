@@ -17,4 +17,3 @@ public class Artist {
         this.username = username;
     }
 }
-
