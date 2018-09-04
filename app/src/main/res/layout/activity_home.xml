@@ -15,7 +15,7 @@
 
         <!--<include layout="@layout/toolbar"
             android:id="@+id/toolbar"/>-->
-
+<!--
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
 
 
 
-    </LinearLayout>
+    </LinearLayout>-->
 
 
         <android.support.design.widget.FloatingActionButton
@@ -81,5 +81,27 @@
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"
         />
+
+    <!-- Must be last for right layering display-->
+    <FrameLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/gradient1" />
+
+        <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_view"
+            app:searchBackground="@drawable/button2"
+            app:searchSuggestionBackground="@drawable/gradient1"
+            android:padding="5dp"
+            android:layout_marginTop="8dp" />
+    </FrameLayout>
 
 </android.support.v4.widget.DrawerLayout>
