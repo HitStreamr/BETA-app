@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.facebook.login.LoginManager;
 
 
 public class Pop extends Activity implements View.OnClickListener {
@@ -56,6 +57,7 @@ public class Pop extends Activity implements View.OnClickListener {
 
             case R.id.confirm:
                 mAuth.signOut();
+                LoginManager.getInstance().logOut();
                 finish();
                 startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                 break;
