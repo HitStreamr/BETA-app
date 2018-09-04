@@ -200,6 +200,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             // Sign in success, update UI with the signed-in user's information
                             finish();
 
+                            //DatabaseReference basicRoot= mDatabase.child(getString(R.string.child_basic));
+                            //DatabaseReference artistRoot= mDatabase.child(getString(R.string.child_artist));
+                            //DatabaseReference labelRoot= mDatabase.child(getString(R.string.child_label));
+
                             mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
                                 @Override
