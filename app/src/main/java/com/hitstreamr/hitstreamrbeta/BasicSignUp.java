@@ -162,7 +162,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                         Toast.makeText(BasicSignUp.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                          finish();
-                                         Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                         Intent homeIntent = new Intent(getApplicationContext(), PickGenre.class);
                                          homeIntent.putExtra("TYPE", getString(R.string.type_basic));
                                          startActivity(homeIntent);
                                     }else {

@@ -43,14 +43,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
 
 
-        fab = (FloatingActionButton)findViewById(R.id.fab);
-
+        fab = (FloatingActionButton) findViewById(R.id.fab);
 
         launchIntent = getIntent();
-        if (launchIntent == null)
-            Log.d("***DEBUG****", "Intent was null");
-        else
-            Log.d("**** DEBUG ***", "Intent OK");
 
         //get menu & extras
         Menu nav_Menu = navigationView.getMenu();
