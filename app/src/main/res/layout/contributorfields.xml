@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="10dp">
+        <EditText
+            android:id="@+id/Contributor"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="Contributor username/ email"
+            android:inputType="textPersonName"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            android:weightSum="1">
+            <EditText
+                android:id="@+id/Percentage"
+                android:layout_width="0dp"
+                android:layout_weight=".45"
+                android:layout_height="match_parent"
+                android:hint=" percentage"
+                android:inputType="number"/>
+            <EditText
+                android:id="@+id/ContributorType"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:hint=" Type"
+                android:layout_weight="0.45"
+                android:inputType="textPersonName"
+                />
+            <Button
+                android:id="@+id/deleteContributorBtn"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.10"
+                android:background="@android:drawable/ic_delete"
+                android:onClick="onDelete"
+                />
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>
