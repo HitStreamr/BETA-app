@@ -117,14 +117,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         SpinnerPrivacy = findViewById(R.id.Privacy);
 
         //progressBar
-        progressBar = findViewById(R.id.video_progress_bar);
-        progressBar.setVisibility(View.GONE);
+        //progressBar = findViewById(R.id.video_progress_bar);
+        //progressBar.setVisibility(View.GONE);
 
         // Listeners
         uploadBtn.setOnClickListener(this);
         selectVideoBtn.setOnClickListener(this);
         contributeBtn.setOnClickListener(this);
-        //delContributeBtn.setOnClickListener(this);
+        //xdelContributeBtn.setOnClickListener(this);
     }
 
     public void onAddField() {

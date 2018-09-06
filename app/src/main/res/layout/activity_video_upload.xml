@@ -16,44 +16,44 @@
         />
     <!--android:onClick="selectVideo"-->
 
-    <ProgressBar style="@android:style/Widget.ProgressBar.Large"
+    <!--<ProgressBar style="@android:style/Widget.ProgressBar.Large"
         android:id="@+id/video_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"/>-->
 
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_gravity="center" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="450dp">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <VideoView
-                android:id="@+id/videoView"
-                android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_gravity="center" />
-
 
             <EditText
                 android:id="@+id/Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:ems="10"
-                android:inputType="textPersonName"
                 android:hint="Title"
-                android:layout_marginTop="15dp"/>
+                android:inputType="textPersonName" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:text="0/100"
-                android:textSize="8sp"
-                android:layout_gravity="end"/>
+                android:textSize="8sp" />
 
             <EditText
                 android:id="@+id/Description"
@@ -66,9 +66,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="end"
                 android:text="0/1000"
-                android:textSize="8sp"
-                android:layout_gravity="end"/>
+                android:textSize="8sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,20 +78,20 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="10dp">
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Genre"/>
+                        android:text="Genre" />
+
                     <Spinner
                         android:id="@+id/Genre"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
-                        android:entries="@array/Genre"
-                        />
+                        android:entries="@array/Genre" />
 
                 </LinearLayout>
 
@@ -103,16 +103,15 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sub Genre"/>
+                        android:text="Sub Genre" />
+
                     <Spinner
                         android:id="@+id/SubGenre"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
-                        android:entries="@array/Genre"
-                        />
+                        android:entries="@array/Genre" />
 
                 </LinearLayout>
-
 
 
             </LinearLayout>
@@ -121,44 +120,41 @@
                 android:id="@+id/ContributorBtn"
                 android:layout_width="140dp"
                 android:layout_height="40dp"
-                android:text="+ Contributor(s)"
-                android:background="@drawable/button1"
                 android:layout_marginTop="15dp"
-                android:textColor="@color/colorAccent"/>
+                android:background="@drawable/button1"
+                android:text="+ Contributor(s)"
+                android:textColor="@color/colorAccent" />
 
             <LinearLayout
                 android:id="@+id/parent_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
             </LinearLayout>
-
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Privacy"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="15dp"
+                android:text="Privacy" />
 
             <Spinner
                 android:id="@+id/Privacy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:entries="@array/Privacy"
-                />
+                android:entries="@array/Privacy" />
+
+            <Button
+                android:id="@+id/uploadVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Finish and Upload" />
 
 
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/uploadVideo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Finish and Upload"
-        />
 
 
 </LinearLayout>
