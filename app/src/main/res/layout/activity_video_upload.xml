@@ -9,14 +9,24 @@
     android:padding="10dp">
 
     <Button
+        android:id="@+id/selectVideo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Select a Video"
-        android:onClick="btnBrowse_Click"/>
+        android:hint="Browse your Video"
+        />
+    <!--android:onClick="selectVideo"-->
+
+    <ProgressBar
+        android:id="@+id/video_progress_bar"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="450dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -80,7 +90,9 @@
                         android:id="@+id/Genre"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp"
+                        android:entries="@array/Genre"
+                        />
 
                 </LinearLayout>
 
@@ -97,6 +109,7 @@
                         android:id="@+id/SubGenre"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
+                        android:entries="@array/Genre"
                         />
 
                 </LinearLayout>
@@ -122,19 +135,24 @@
                 android:id="@+id/Privacy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:entries="@array/Privacy"
+                />
+
+            <Button
+                android:id="@+id/uploadVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Finish and Upload"
+                android:gravity="bottom"
                 />
 
 
 
 
         </LinearLayout>
-    </ScrollView>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Finish and Upload"
-        />
+
+    </ScrollView>
 
 
 </LinearLayout>

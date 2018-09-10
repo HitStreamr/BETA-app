@@ -142,9 +142,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                                                 Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                         finish();
-                                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                        startActivity(homeIntent);
+                                        Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
+                                        genreIntent.putExtra("TYPE", getString(R.string.type_artist));
+                                        startActivity(genreIntent);
                                     } else {
                                         //Display a failure message
                                         Toast.makeText(ArtistSignUp.this, "Registration Failed",

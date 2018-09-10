@@ -203,7 +203,7 @@
                         android:ems="10"
                         android:maxLength="5"
                         android:hint="Zip Code"
-                        android:inputType="textPostalAddress"
+                        android:inputType="number"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
