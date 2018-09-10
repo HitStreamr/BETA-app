@@ -7,14 +7,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -29,6 +34,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,11 +44,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     private static final String VIDEO_TITLE = "Title";
     private static final String VIDEO_DESCRIPTION = "Description";
-    private static final String Video_GENRE = "Genre";
-    private static final String Video_SUBGENRE = "SubGenre";
-    private static final String Video_PRIVACY = "Privacy";
+    private static final String VIDEO_GENRE = "Genre";
+    private static final String VIDEO_SUBGENRE = "SubGenre";
+    private static final String VIDEO_PRIVACY = "Privacy";
     private static final String VIDEO_DOWNLOAD_LINK = "URL";
     private static final String USER_ID = "UserId";
+    private static final String VIDEO_CONTRIBUTOR = "Contributors";
 
     //Video View
     private VideoView artistUploadVideo;
@@ -51,19 +58,38 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button uploadBtn;
     private Button selectVideoBtn;
     private Button contributeBtn;
+    private Button addContributorBtn;
     private Button delContributeBtn;
 
     //EditText Inputs
     private EditText EdittextTittle;
     private EditText EditTextDescription;
 
+    private EditText EdittextContributorName;
+    private EditText EdittextContributorPercentage;
+
     //Spinner Inputs
     private Spinner SpinnerGenre;
     private Spinner SpinnerSubGenre;
     private Spinner SpinnerPrivacy;
+    private Spinner SpinnerContributorType;
 
     //progressBar
     private ProgressBar progressBar;
+
+    //Layout
+    private LinearLayout parentLinearLayout;
+    private LinearLayout addContributorLayout;
+
+    //Data Lists
+    ArrayList<String> contributorPercentageList;
+    ArrayList<String> contributorTypeList;
+    ArrayList<String> contributorList;
+    ArrayAdapter<String> contributorAdapter;
+
+    private boolean ContributorSuccess = false;
+
+    private ListView ContributorValuesLV;
 
     private static final int REQUEST_CODE = 1234;
     private Uri selectedVideoPath = null;
@@ -72,16 +98,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     public Boolean successVideoUpload = false;
     public Boolean successFirestoreUpload = false;
 
-    private LinearLayout parentLinearLayout;
+
 
     FirebaseFirestore db;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    // [START declare_ref]
     private StorageReference mStorageRef;
-
     StorageReference videoRef = null;
-    // [END declare_ref]
 
     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -90,19 +113,20 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_upload);
 
-        parentLinearLayout = (LinearLayout) findViewById(R.id.parent_linear_layout);
+        //RelativeLayout layout = (RelativeLayout) findViewById(R.id.rl_Container);
 
         db = FirebaseFirestore.getInstance();
-
-        // [START get_storage_ref]
         mStorageRef = storage.getReference();
-        // [END get_storage_ref]
+
+        //Layout
+        //parentLinearLayout = findViewById(R.id.parent_linear_layout);
+        addContributorLayout = findViewById(R.id.add_contributor_layout);
 
         //Buttons
         uploadBtn = findViewById(R.id.uploadVideo);
         selectVideoBtn = findViewById(R.id.selectVideo);
         contributeBtn = findViewById(R.id.ContributorBtn);
-        delContributeBtn = findViewById(R.id.deleteContributorBtn);
+        addContributorBtn = findViewById(R.id.AddContributorButton);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -110,34 +134,50 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Edittext
         EdittextTittle = findViewById(R.id.Title);
         EditTextDescription = findViewById(R.id.Description);
+        EdittextContributorName = findViewById(R.id.ContributorName);
+        EdittextContributorPercentage = findViewById(R.id.ContributorPercentage);
 
         //Spinner
         SpinnerGenre = findViewById(R.id.Genre);
         SpinnerSubGenre = findViewById(R.id.SubGenre);
         SpinnerPrivacy = findViewById(R.id.Privacy);
+        SpinnerContributorType = findViewById(R.id.ContributorTypeSpinner);
+
+
+        ContributorValuesLV = findViewById(R.id.ContributorListView);
+
+        //Data Lists
+        contributorPercentageList = new ArrayList<>();
+        contributorTypeList = new ArrayList<>();
+        contributorList = new ArrayList<>();
+        contributorAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, contributorList);
 
         //progressBar
-        //progressBar = findViewById(R.id.video_progress_bar);
+        //progressBar = findViewById(R.id.video_progress_bar)
         //progressBar.setVisibility(View.GONE);
+
+        //visibility
+        addContributorLayout.setVisibility(View.GONE);
 
         // Listeners
         uploadBtn.setOnClickListener(this);
         selectVideoBtn.setOnClickListener(this);
         contributeBtn.setOnClickListener(this);
-        //xdelContributeBtn.setOnClickListener(this);
+        addContributorBtn.setOnClickListener(this);
+        //delContributeBtn.setOnClickListener(this);
     }
 
-    public void onAddField() {
+    /*public void onAddField() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         final View rowView = inflater.inflate(R.layout.contributorfields, null);
         // Add the new row before the add field button.
         parentLinearLayout.addView(rowView, parentLinearLayout.getChildCount() - 1);
-    }
+    }*/
 
-    public void onDelete(View v) {
+    /*public void onDelete(View v) {
         parentLinearLayout.removeView((View) v.getParent());
     }
-
+*/
 
     private void selectVideo() {
         /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
@@ -213,7 +253,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     private void uploadFromUri(final Uri fileUri) {
         final String storagetitle = EdittextTittle.getText().toString().trim();
-        progressBar.setVisibility(View.VISIBLE);
+        //progressBar.setVisibility(View.VISIBLE);
 
         Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
         //Toast.makeText(this, "on upload from uri entered", Toast.LENGTH_SHORT).show();Toast.makeText(this, "on upload from uri entered", Toast.LENGTH_SHORT).show();
@@ -262,8 +302,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     }
 
         private void registerVideo() {
-            //Toast.makeText(this, "first"+downloadVideoUri, Toast.LENGTH_SHORT).show();
-
             final String title = EdittextTittle.getText().toString().trim();
             final String description = EditTextDescription.getText().toString().trim();
             final String genre = SpinnerGenre.getSelectedItem().toString().trim();
@@ -271,7 +309,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             final String privacy = SpinnerPrivacy.getSelectedItem().toString().trim();
             //final String download = downloadVideoUri;
 
-            if (!validateTitle(title) | !validateDescription(description) | validateBrowseVideo()) {
+            if (!validateTitle(title) | !validateDescription(description) | validateBrowseVideo() | !validateGenre(genre) |
+                    validateSubGenre(subGenre)) {
                 return;
             } else {
 
@@ -286,9 +325,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 Map<String, Object> artistVideo = new HashMap<>();
                 artistVideo.put(VIDEO_TITLE, title);
                 artistVideo.put(VIDEO_DESCRIPTION, description);
-                artistVideo.put(Video_GENRE, genre);
-                artistVideo.put(Video_SUBGENRE, subGenre);
-                artistVideo.put(Video_PRIVACY, privacy);
+                artistVideo.put(VIDEO_GENRE, genre);
+                artistVideo.put(VIDEO_SUBGENRE, subGenre);
+                artistVideo.put(VIDEO_PRIVACY, privacy);
+                artistVideo.put(VIDEO_CONTRIBUTOR, contributorList);
                 //Toast.makeText(this, "third"+downloadVideoUri, Toast.LENGTH_SHORT).show();
                 //artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
                 artistVideo.put(USER_ID, CurrentUserID);
@@ -310,14 +350,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             Log.w(TAG, "Error writing document", e);
                         }
                     });*/
-                db.collection("Videos").document()
+                db.collection("tVideos").document()
                         .set(artistVideo)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if (task.isSuccessful()) {
                                     successFirestoreUpload = true;
-                                    progressBar.setVisibility(View.GONE);
+                                    //progressBar.setVisibility(View.GONE);
                                     finish();
                                     startActivity(new Intent(getApplicationContext(), Welcome.class));
                                 } else {
@@ -374,6 +414,22 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         }
 
+    private boolean validateGenre(String genre) {
+        if (genre.equals("--Select--")) {
+            return false;
+        }
+        else
+        return true;
+    }
+
+    private boolean validateSubGenre(String subgenre) {
+        if (subgenre.equals("--Select--")) {
+            return false;
+        }
+        else
+        return true;
+    }
+
         /**
          * Method to validate the Street Address of any unwanted characters
          */
@@ -412,43 +468,92 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             return flag;
         }
 
-   /* @Override
-    public void finish() {
-        super.finish();
-        progressBar.setVisibility(View.GONE);
-        startActivity(new Intent(getApplicationContext(), Welcome.class));
+    private boolean validateContributorName (String Cname){
+        if (Cname.isEmpty()) {
+            EdittextContributorName.setError("Field can't be empty");
+            return false;
+        } /*else if (!(checkAlphaNumeric(Cname))) {
+                EdittextContributorName.setError("Title must only have letters and numbers");
+                return false;
+        }*/ else {
+            EdittextContributorName.setError(null);
+            return true;
+        }
+    }
 
-    }*/
+    private boolean validatePercentage(String Cpercentage){
+        if (Cpercentage.isEmpty()) {
+            EdittextContributorPercentage.setError("Field can't be empty");
+            return false;
+        } /*else if (!(checkAlphaNumeric(Cname))) {
+            EdittextContributorName.setError("Title must only have letters and numbers");
+            return false;
+        } */else {
+            EdittextContributorPercentage.setError(null);
+            return true;
+        }
+    }
 
-    /* private void videoFinish() {
-         //Toast.makeText(this, "Video is uploaded"+success, Toast.LENGTH_SHORT).show();
-             finish();
+    private boolean validateContributorType() {
+        if (SpinnerContributorType.getSelectedItem().toString().trim().equals("Select")) {
+            return true;
+        }
+        return true;
+    }
 
-     }
- */
+    private void GetContributor() {
+
+        final String name = EdittextContributorName.getText().toString().trim();
+        final String percantage = EdittextContributorPercentage.getText().toString().trim();
+        final String type = SpinnerContributorType.getSelectedItem().toString().trim();
+
+        if (!validateContributorName(name) | !validatePercentage(percantage) /*| validateContributorType()*/) {
+            {
+                ContributorSuccess = false;
+                return;
+            }
+        } else {
+
+            contributorList.add(name + ", " + percantage + ", " + type);
+            ContributorValuesLV.setAdapter(contributorAdapter);
+            contributorAdapter.notifyDataSetChanged();
+            //tvName.setText(contributorList.toString());
+            ContributorSuccess = true;
+        }
+    }
+
         @Override
         public void onClick (View view){
             if(view == contributeBtn){
-                onAddField();
+                addContributorLayout.setVisibility(View.VISIBLE);
             }
 
-            /*if(view == delContributeBtn){
-                onDelete();
-            }*/
+            if(view == addContributorBtn) {
+                GetContributor();
+                if (ContributorSuccess) {
+                    addContributorLayout.setVisibility(View.GONE);
+                    Toast.makeText(this, "Contributor added", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(this, "Contributor not added", Toast.LENGTH_SHORT).show();
+                }
+            }
 
             if (view == selectVideoBtn) {
                 selectVideo();
             }
             if (view == uploadBtn) {
+
                 registerVideo();
-                if (successFirestoreUpload & successVideoUpload) {
+
+
+               /* if (successFirestoreUpload & successVideoUpload) {
                     Toast.makeText(this, "Video is uploaded", Toast.LENGTH_SHORT).show();
-                }
+                }*/
                 Toast.makeText(this, "Video is uploaded", Toast.LENGTH_SHORT).show();
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
                 finish();
                 startActivity(new Intent(getApplicationContext(), Welcome.class));
-
             }
         }
     }
