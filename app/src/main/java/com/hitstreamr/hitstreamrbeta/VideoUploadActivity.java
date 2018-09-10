@@ -350,7 +350,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             Log.w(TAG, "Error writing document", e);
                         }
                     });*/
-                db.collection("tVideos").document()
+                db.collection("Videos").document()
                         .set(artistVideo)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
