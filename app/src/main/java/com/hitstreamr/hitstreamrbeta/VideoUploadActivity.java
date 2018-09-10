@@ -349,6 +349,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         public void onFailure(@NonNull Exception e) {
                             Log.w(TAG, "Error writing document", e);
                         }
+
+
+                        
                     });*/
                 db.collection("Videos").document()
                         .set(artistVideo)
