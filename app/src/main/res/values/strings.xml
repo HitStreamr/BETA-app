@@ -61,18 +61,15 @@
     <string name="invite_text">Invite a friend and receive FREE credits \n when they join!</string>
     <string name="phone_number_text">+1&#8211;000&#8211;000&#8211;0000</string>
     <string name="type_basic">BASIC</string>
-    <string name="child_basic">BasicUsers</string>
-
-
-    //video upload
-    <string name="progress_downloading">Downloading…</string>
-    <string name="progress_uploading">Uploading…</string>
-    <string name="progress_auth">Signing In…</string>
-
-    <string name="upload_success">Upload finished</string>
-    <string name="upload_failure">Upload failed</string>\
-
-    <string name="download_success">Download finished</string>
-    <string name="download_failure">Download failure</string>
+    <string name="type_artist">ARTIST</string>
+    <string name="type_label">LABEL</string>
+    <string name="child_basic">BasicAccounts</string>
+    <string name="child_artist">ArtistAccounts</string>
+    <string name="child_label">LabelAccounts</string>
+    <string name="skip_button">Skip</string>
+    <string name="next_button">NEXT</string>
+    <string name="select_genres">Select Genres</string>
+    <string name="genre_subheading">Select at least 3 Genres for the best experience</string>
+    <string name="blank_image">blank</string>
 
 </resources>
