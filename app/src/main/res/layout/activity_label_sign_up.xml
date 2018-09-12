@@ -95,7 +95,9 @@
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:maxLength="26"/>
+                        android:maxLength="26"
+                        android:textCursorDrawable="@null"
+                        android:nextFocusRight="@+id/lastName"/>
 
                     <EditText
                         android:id="@+id/lastName"
@@ -108,7 +110,8 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:maxLength="26"/>
+                        android:maxLength="26"
+                        android:textCursorDrawable="@null"/>
 
                 </LinearLayout>
 
@@ -123,7 +126,8 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:textCursorDrawable="@null"/>
 
                 <EditText
                     android:id="@+id/phone"
@@ -137,7 +141,8 @@
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
-                    android:maxLength="10"
+                    android:maxLength="12"
+                    android:textCursorDrawable="@null"
                     />
 
                 <EditText
@@ -151,7 +156,8 @@
                     android:inputType="textPostalAddress"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp" />
+                    android:paddingTop="3dp"
+                    android:textCursorDrawable="@null"/>
 
                 <EditText
                     android:id="@+id/addressLine1"
@@ -164,7 +170,8 @@
                     android:inputType="textPostalAddress"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp" />
+                    android:paddingTop="3dp"
+                    android:textCursorDrawable="@null"/>
 
                 <EditText
                     android:id="@+id/city"
@@ -177,7 +184,8 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:textCursorDrawable="@null"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,11 +201,13 @@
                         android:layout_marginEnd="10dp"
                         android:background="@drawable/button2"
                         android:ems="10"
+                        android:maxLength="5"
                         android:hint="Zip Code"
                         android:inputType="textPostalAddress"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp" />
+                        android:paddingTop="3dp"
+                        android:textCursorDrawable="@null"/>
 
                     <Spinner
                         android:id="@+id/state"
@@ -236,7 +246,8 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="15dp"/>
+                    android:layout_marginBottom="15dp"
+                    android:textCursorDrawable="@null"/>
 
                 <RadioButton
                     android:id="@+id/tos_button"

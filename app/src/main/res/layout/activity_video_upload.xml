@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/rl_Container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">-->
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".VideoUploadActivity">
+
+
+        <LinearLayout
+            android:id="@+id/videoUploadScreenLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp"
-            tools:context=".VideoUploadActivity">
+            android:orientation="vertical">
 
             <Button
                 android:id="@+id/selectVideo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Browse your Video" />
-            <!--android:onClick="selectVideo"-->
 
             <!--<ProgressBar style="@android:style/Widget.ProgressBar.Large"
                 android:id="@+id/video_progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>-->
-
-
 
 
             <ScrollView
@@ -37,14 +37,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-
                     <VideoView
                         android:id="@+id/videoView"
                         android:layout_width="match_parent"
                         android:layout_height="220dp"
                         android:layout_gravity="center" />
 
-                     <android.support.design.widget.TextInputLayout
+                    <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:counterEnabled="true"
@@ -189,19 +188,11 @@
 
                     </LinearLayout>
 
-                    <!--<LinearLayout
-                        android:id="@+id/parent_linear_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                    </LinearLayout>-->
-
-
                     <ListView
                         android:id="@+id/ContributorListView"
                         android:layout_width="match_parent"
                         android:layout_height="200dp" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -219,12 +210,81 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Finish and Upload" />
-
-
                 </LinearLayout>
             </ScrollView>
 
-
         </LinearLayout>
-<!--
-</RelativeLayout>-->
+
+    <LinearLayout
+        android:id="@+id/cancelLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/uploadHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Your File is Uploading"
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/filenameText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:hint="File is uploading"
+            android:text="TextView"
+            android:textSize="18sp"
+            tools:text="Titlename here" />
+
+        <ProgressBar
+            android:id="@+id/uploadProgress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="15dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <TextView
+                android:id="@+id/sizeLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/progressLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/cancelVideoUpload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel Upload" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
+

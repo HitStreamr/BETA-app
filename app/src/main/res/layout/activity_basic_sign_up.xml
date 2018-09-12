@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".BasicSignUp"
-    android:background="@drawable/background_splash">
+    android:background="@drawable/gradient1">
 
     <!-- chaitanya change-->
 
@@ -92,7 +92,8 @@
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
             android:paddingLeft="10dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="10dp"
+            android:textCursorDrawable = "@null"/>
 
             <EditText
                 android:id="@+id/Email"
@@ -105,7 +106,8 @@
                 android:paddingTop="3dp"
                 android:paddingBottom="3dp"
                 android:paddingLeft="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="10dp"
+                android:textCursorDrawable = "@null"/>
 
             <EditText
                 android:id="@+id/Password"
@@ -118,7 +120,8 @@
                 android:paddingTop="3dp"
                 android:paddingBottom="3dp"
                 android:paddingLeft="10dp"
-                android:layout_marginBottom="15dp"/>
+                android:layout_marginBottom="15dp"
+                android:textCursorDrawable = "@null"/>
 
 
             <RadioButton
