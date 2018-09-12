@@ -18,15 +18,22 @@ import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -37,7 +44,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
-// [END declare_auth]
+    // [END declare_auth]
+    private DatabaseReference mDatabase;
     private LoginButton loginButton;
     private CallbackManager mCallbackManager;
     private static final String TAG = "FACELOG";
@@ -64,11 +72,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
 // [END initialize_auth]
-        if(mAuth.getCurrentUser() !=null){
+        if(mAuth.getCurrentUser() !=null) {
             //home activity here
             finish();
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+
+        }
 
             // Initialize Facebook Login button
             mCallbackManager = CallbackManager.Factory.create();
@@ -78,7 +90,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 @Override
                 public void onSuccess(LoginResult loginResult) {
                     Log.d(TAG, "facebook:onSuccess:" + loginResult);
+
                     handleFacebookAccessToken(loginResult.getAccessToken());
+
                 }
 
                 @Override
@@ -94,7 +108,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
 
-        }
+                //user not logged in
 
     }
 
@@ -106,10 +120,15 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+
+
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+
+
+
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -120,7 +139,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             FirebaseUser user = mAuth.getCurrentUser();
 
                             updateUI();
-                        } else {
+
+                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
@@ -161,7 +181,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
         if(TextUtils.isEmpty(email)){
             //email is empty
-            Toast.makeText(this, "Plase enter email address",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter email address",Toast.LENGTH_SHORT).show();
             //Stop the function execution further
             return;
         }
@@ -172,7 +192,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
         if(TextUtils.isEmpty(password)){
             //password is empty
-            Toast.makeText(this, "Plase enter password",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter password",Toast.LENGTH_SHORT).show();
             //Stop the function execution further
             return;
         }
@@ -188,7 +208,60 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             finish();
-                            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                            mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                            //user exists in basic user table, do something
+                                            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                                            startActivity(homeIntent);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, databaseError.toString());
+                                }
+                            });
+
+                            mDatabase.child(getString(R.string.child_artist) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        //user exists in basic user table, do something
+                                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                                        startActivity(homeIntent);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, databaseError.toString());
+                                }
+                            });
+
+                            mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    if (snapshot.getValue() != null) {
+                                        //user exists in basic user table, do something
+                                        Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
+                                        labelIntent.putExtra("TYPE", getString(R.string.type_label));
+                                        startActivity(labelIntent);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    Log.e(TAG, databaseError.toString());
+                                }
+                            });
+
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
@@ -204,19 +277,23 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (view == signinbtn){
             UserLogin();
         }
+
         if (view == backbutton){
             //will open previous activity
-    }
+        }
+
         if (view == register){
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
             //will open sign in activity
         }
+
         if (view == backbutton){
             //will open sign in activity
             finish();
             startActivity(new Intent(getApplicationContext(), Welcome.class));
         }
+
 
     }
 

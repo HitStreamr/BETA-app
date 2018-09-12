@@ -21,7 +21,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_welcome);
 
         sign_in = (Button) findViewById(R.id.signin_button);
-       create_account = (Button) findViewById(R.id.create_account_button);
+        create_account = (Button) findViewById(R.id.create_account_button);
 
        sign_in.setOnClickListener(this);
        create_account.setOnClickListener(this);
@@ -32,7 +32,9 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+            startActivity(homeIntent);
         }
     }
 

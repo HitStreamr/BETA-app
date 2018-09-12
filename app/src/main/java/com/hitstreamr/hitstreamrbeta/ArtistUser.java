@@ -1,19 +1,22 @@
 package com.hitstreamr.hitstreamrbeta;
 
 public class ArtistUser {
-    public String firstname, lastname, email, username, password, address, city, state, phone;
-    public float zip;
+    protected String firstname, lastname, email, username, address, city, state, country, phone, zip;
 
-    public ArtistUser(String firstname, String lastname, String email, String username, String password, String address, String city, String state, String phone, float zip){
+    public ArtistUser(){
+
+    }
+
+    public ArtistUser(String firstname, String lastname, String email, String username, String country, String address, String city, String state, String phone, String zip) {
         this.firstname = firstname;
         this.lastname = lastname;
-        this.email =  email;
+        this.email = email;
         this.username = username;
-        this.password = password;
         this.address = address;
         this.phone = phone;
         this.city = city;
         this.state = state;
         this.zip = zip;
+        this.country = country;
+        }
     }
-}
