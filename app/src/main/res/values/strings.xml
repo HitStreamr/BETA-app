@@ -71,5 +71,7 @@
     <string name="select_genres">Select Genres</string>
     <string name="genre_subheading">Select at least 3 Genres for the best experience</string>
     <string name="blank_image">blank</string>
+    <string name="video_selection">Video Selected</string>
+    <string name="video_not_selection">Video not Selected</string>
 
 </resources>
