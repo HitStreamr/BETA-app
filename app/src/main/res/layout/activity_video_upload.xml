@@ -71,7 +71,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="15dp"
                             android:ems="10"
-                            android:maxLength="100"
+                            android:maxLength="1000"
                             android:hint="Description"
                             android:inputType="textMultiLine" />
                     </android.support.design.widget.TextInputLayout>
