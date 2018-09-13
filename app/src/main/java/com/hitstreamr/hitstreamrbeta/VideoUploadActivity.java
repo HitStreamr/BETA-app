@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -57,6 +58,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button contributeBtn;
     private Button addContributorBtn;
     private Button cancelUploadBtn;
+    private Button deleteContributorBtn;
 
     //EditText Inputs
     private EditText EdittextTittle;
@@ -84,11 +86,15 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private TextView TextViewSizeLabel;
     private TextView TextViewProgressLabel;
 
+    private TextView TextViewContributorName;
+    private TextView TextViewContributorPercentage;
+    private TextView TextViewContributorType;
+
     //Data Lists
     ArrayList<String> contributorPercentageList;
     ArrayList<String> contributorTypeList;
-    ArrayList<String> contributorList;
-    ArrayAdapter<String> contributorAdapter;
+    public ArrayList<Contributor> contributorList;
+    public contributorAdapter contributorAdapter;
 
     //List View
     private ListView ContributorValuesLV;
@@ -132,6 +138,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
+        deleteContributorBtn =findViewById(R.id.deleteContributor);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -153,6 +160,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         TextViewSizeLabel = findViewById(R.id.sizeLabel);
         TextViewProgressLabel = findViewById(R.id.progressLabel);
 
+        TextViewContributorName = findViewById(R.id.firstName);
+        TextViewContributorPercentage = findViewById(R.id.thirdLine);
+        TextViewContributorType = findViewById(R.id.secondLine);
+
         //List View
         ContributorValuesLV = findViewById(R.id.ContributorListView);
 
@@ -160,12 +171,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorPercentageList = new ArrayList<>();
         contributorTypeList = new ArrayList<>();
         contributorList = new ArrayList<>();
-        contributorAdapter = new ArrayAdapter<>(getApplicationContext(), android.R.layout.simple_list_item_1, contributorList);
+        //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
+
+
 
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
-        //visibility
+        //visibility,
         addContributorLayout.setVisibility(View.GONE);
         videoCancelLayout.setVisibility(View.GONE);
 
@@ -175,8 +188,18 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
         cancelUploadBtn.setOnClickListener(this);
-    }
+        //deleteContributorBtn.setOnClickListener(this);
 
+        ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                contributorList.remove(position);
+                contributorAdapter.notifyDataSetChanged();
+            }
+        });
+
+
+    }
 
     private void selectVideo() {
         /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
@@ -333,9 +356,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private void registerVideo() {
         final String title = EdittextTittle.getText().toString().trim();
         final String description = EditTextDescription.getText().toString().trim();
-        //final String genre = SpinnerGenre.getSelectedItem().toString().trim();
-        //final String subGenre = SpinnerSubGenre.getSelectedItem().toString().trim();
-        //final String privacy = SpinnerPrivacy.getSelectedItem().toString().trim();
 
         if (!validateTitle(title) | !validateDescription(description) | !validateBrowseVideo() | !validateSumPercentage()
                 | !validateGenre() | !validateSubGenre()) {
@@ -501,10 +521,17 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 ContributorSuccess = false;
             }
         } else {
-            contributorList.add(name + ", " + percentage + ", " + type);
+            Contributor contributor1 = new Contributor(name, percentage, type);
+            //contributorList.add(name + ", " + percentage + ", " + type);
+            contributorList.add(contributor1);
             contributorPercentageList.add(percentage);
+
+            contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
             ContributorValuesLV.setAdapter(contributorAdapter);
             contributorAdapter.notifyDataSetChanged();
+            //TextViewContributorName.setText(name);
+            //TextViewContributorPercentage.setText(percentage);
+            //TextViewContributorType.setText(type);
             ContributorSuccess = true;
         }
     }
