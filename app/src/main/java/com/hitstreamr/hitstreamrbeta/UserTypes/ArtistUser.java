@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class ArtistUser {
     public String firstname, lastname, email, username, address, city, state, country, phone, zip;

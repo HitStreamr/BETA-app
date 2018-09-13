@@ -17,9 +17,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.LegalAgreementsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -32,7 +39,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -68,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(HomeActivity.this, VideoUploadActivity.class));
+                        startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
 

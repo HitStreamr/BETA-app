@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class User {
     public String username, email, name;

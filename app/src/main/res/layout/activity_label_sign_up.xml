@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LabelSignUp"
+    tools:context=".Authentication.LabelSignUp"
     android:background="@drawable/gradient1">
 
     <LinearLayout
@@ -26,43 +26,35 @@
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical" />
 
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingEnd="5dp"
-                android:paddingStart="151dp"
-                android:text="Label Account Setup"
-                android:textAlignment="textEnd"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText,RtlCompat" />
+                android:orientation="horizontal"
+                android:gravity="end">
 
-            <ImageView
-                android:layout_width="8dp"
-                android:layout_height="24dp"
-                android:src="@drawable/sidebar_page_type"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/sidebar" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="151dp"
+                    android:text="Label Account Setup"
+                    android:textAlignment="textEnd"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText,RtlCompat" />
+
+                <ImageView
+                    android:layout_width="8dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/sidebar_page_type"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/sidebar" />
+
+            </LinearLayout>
 
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-        />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="LABEL ACCOUNT"
-            android:textStyle="bold"
-            android:textColor="@color/colorAccent"
-            android:layout_gravity="center_horizontal" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -75,7 +67,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="30dp">
+
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/artist"/>
+
+                <Button
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:text="Upload Photo"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorAccent"
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="15dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -283,7 +292,6 @@
                     android:text="Alreay have an account? SignIn here!"
                     android:textColor="@color/colorAccent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="60dp"
                     />
 
 

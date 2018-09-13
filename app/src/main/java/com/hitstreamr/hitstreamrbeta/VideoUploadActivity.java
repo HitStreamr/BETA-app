@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.Authentication.Welcome;
 
 import java.util.ArrayList;
 import java.util.HashMap;
