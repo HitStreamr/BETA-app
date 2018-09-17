@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener {
+public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface {
 
     private static final String TAG = "MyVideoUploadService";
 
@@ -48,6 +48,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_DOWNLOAD_LINK = "url";
     private static final String USER_ID = "userId";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
+
+    private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
+    private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
+    private static final String VIDEO_CONTRIBUTOR_TYPE = "type";
 
     //Video View
     private VideoView artistUploadVideo;
@@ -92,7 +96,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     //Data Lists
     ArrayList<String> contributorPercentageList;
-    ArrayList<String> contributorTypeList;
+    ArrayList<String> contributorFirestoreList;
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
 
@@ -138,7 +142,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
-        deleteContributorBtn =findViewById(R.id.deleteContributor);
+        //deleteContributorBtn =findViewById(R.id.deleteContributor);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -169,7 +173,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         //Data Lists
         contributorPercentageList = new ArrayList<>();
-        contributorTypeList = new ArrayList<>();
+        contributorFirestoreList = new ArrayList<>();
         contributorList = new ArrayList<>();
         //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
 
@@ -190,9 +194,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         cancelUploadBtn.setOnClickListener(this);
         //deleteContributorBtn.setOnClickListener(this);
 
+
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
                 contributorList.remove(position);
                 contributorAdapter.notifyDataSetChanged();
             }
@@ -287,6 +294,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
     }
+    public Map<String, Object> contributorVideo = new HashMap<>();
 
     private void registerFirebase() {
         final String title = EdittextTittle.getText().toString().trim();
@@ -294,7 +302,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         final String genre = SpinnerGenre.getSelectedItem().toString().trim();
         final String subGenre = SpinnerSubGenre.getSelectedItem().toString().trim();
         final String privacy = SpinnerPrivacy.getSelectedItem().toString().trim();
-
         final String CurrentUserID = currentFirebaseUser.getUid();
 
         Map<String, Object> artistVideo = new HashMap<>();
@@ -304,10 +311,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
         artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
-        artistVideo.put(VIDEO_CONTRIBUTOR, contributorList);
-
+        artistVideo.put(VIDEO_CONTRIBUTOR, contributorFirestoreList);
         artistVideo.put(USER_ID, CurrentUserID);
+
         db.collection("Videos").document()
+                //.set(contributorList)
                 .set(artistVideo)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -521,12 +529,17 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 ContributorSuccess = false;
             }
         } else {
+
+            contributorVideo.put(VIDEO_CONTRIBUTOR_NAME, name);
+            contributorVideo.put(VIDEO_CONTRIBUTOR_PERCENTAGE, percentage);
+            contributorVideo.put(VIDEO_CONTRIBUTOR_TYPE, type);
+
             Contributor contributor1 = new Contributor(name, percentage, type);
-            //contributorList.add(name + ", " + percentage + ", " + type);
+            contributorFirestoreList.add(name + ", " + percentage + ", " + type);
             contributorList.add(contributor1);
             contributorPercentageList.add(percentage);
 
-            contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
+            contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList, this);
             ContributorValuesLV.setAdapter(contributorAdapter);
             contributorAdapter.notifyDataSetChanged();
             //TextViewContributorName.setText(name);
@@ -569,5 +582,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if (view == cancelUploadBtn) {
             cancelVideo();
         }
+    }
+
+    @Override
+    public void deleteposition(int deletePosition) {
+        contributorList.remove(deletePosition);
+        contributorFirestoreList.remove(deletePosition);
+        contributorAdapter.notifyDataSetChanged();
     }
 }
