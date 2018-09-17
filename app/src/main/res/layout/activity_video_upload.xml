@@ -138,12 +138,18 @@
                         android:layout_marginTop="10dp"
                         android:orientation="vertical">
 
-                        <EditText
+                        <!--<EditText
                             android:id="@+id/ContributorName"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="Contributor username/ email"
-                            android:inputType="textPersonName" />
+                            android:inputType="textPersonName" />-->
+                        <AutoCompleteTextView
+                            android:id="@+id/ContributorName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Contributor username"
+                            android:inputType="textPersonName"/>
 
                         <LinearLayout
                             android:layout_width="match_parent"
