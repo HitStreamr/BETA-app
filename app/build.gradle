@@ -56,6 +56,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
 
+    // Firestore
+    implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
+    implementation 'com.firebaseui:firebase-ui-database:4.1.0'
+    implementation 'android.arch.paging:runtime:1.0.1'
+
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+
     //SearchView
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 

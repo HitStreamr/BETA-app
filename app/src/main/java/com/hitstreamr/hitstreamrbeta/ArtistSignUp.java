@@ -128,7 +128,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Store the additional fields in the Firebase Database
-                            ArtistUser artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
+                            ArtistUser artist_object = new ArtistUser(firstname, lastname, email,
+                                    username, address, city, state, country, phone, zip);
 
                             FirebaseDatabase.getInstance().getReference("ArtistAccounts")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

@@ -132,7 +132,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Store the additional fields in the Firebase Database
-                            Label label_object = new Label(firstname, lastname, email, password,
+                            Label label_object = new Label(firstname, lastname, email,
                                     label, address, city, state, zipcode, country, phone);
 
                             FirebaseDatabase.getInstance().getReference("LabelAccounts")
