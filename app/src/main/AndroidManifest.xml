@@ -56,14 +56,6 @@
         <activity android:name=".LabelSignUp" />
         <activity android:name=".LabelDashboard" />
         <activity android:name=".PickGenre" />
-        <activity android:name=".TestFirestoreActivity" />
-        <activity android:name=".TestSearchActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-            <meta-data android:name="android.app.searchable"
-                       android:resource="@xml/searchable"/>
-        </activity>
     </application>
 
 </manifest>
