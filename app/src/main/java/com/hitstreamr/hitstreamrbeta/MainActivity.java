@@ -34,8 +34,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.LegalAgreementsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -102,7 +111,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(HomeActivity.this, VideoUploadActivity.class));
+                        startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
 
@@ -141,7 +150,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_results_video, parent, false);
-                return new HomeActivity.VideoViewHolder(view);
+                return new MainActivity.VideoViewHolder(view);
             }
 
             @Override
