@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.DrawerMenuFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,22 +10,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-public class GeneralSettingsFragment extends Fragment {
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.R;
+
+public class NotificationSettingsFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_generalsettings, container, false);
+        View view = inflater.inflate(R.layout.fragment_notificationsettings, container, false);
 
         Button close = (Button) view.findViewById(R.id.closeBtn);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), HomeActivity.class);
+                Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.putExtra("TYPE", getArguments().getString("TYPE"));
-
                 startActivity(intent);
-
             }
         });
 

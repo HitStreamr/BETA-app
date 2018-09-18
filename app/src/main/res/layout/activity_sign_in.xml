@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SignInActivity"
+    tools:context=".Authentication.SignInActivity"
     android:background="@drawable/gradient1">
 
     <LinearLayout
@@ -27,25 +27,31 @@
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical" />
 
-
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:paddingEnd="5dp"
-                android:paddingStart="262dp"
-                android:text="Sign In"
-                android:textAlignment="textEnd"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                tools:ignore="HardcodedText,RtlCompat" />
-            <ImageView
-                android:layout_width="8dp"
-                android:layout_height="24dp"
-                android:src="@drawable/sidebar_page_type"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@string/sidebar" />
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingEnd="5dp"
+                    android:text="Sign In"
+                    android:textAlignment="textEnd"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    tools:ignore="HardcodedText,RtlCompat" />
+                <ImageView
+                    android:layout_width="8dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/sidebar_page_type"
+                    android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/sidebar" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -57,8 +63,9 @@
             tools:ignore="UseCompoundDrawables"
             android:layout_marginTop="30dp">
             <ImageView
-                android:layout_width="140dp"
-                android:layout_height="140dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@mipmap/ic_launcher_round"
                 android:layout_gravity="center_horizontal"
                 android:contentDescription="@string/basic_account" />
         </LinearLayout>
@@ -97,6 +104,16 @@
                 android:paddingLeft="10dp"
                 android:layout_marginBottom="15dp"
                 android:textCursorDrawable = "@null"/>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remeber Me"
+                android:textColor="@color/colorAccent"
+                android:checked="false"
+                android:paddingStart="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_gravity="center_horizontal"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -142,7 +159,8 @@
                 android:text="By signing in I agree that I have read and agree to the Terms of Service and Privacy Policy."
                 android:textColor="@color/colorAccent"
                 android:textAlignment="center"
-                android:layout_marginTop="35dp"/>
+                android:layout_marginTop="35dp"
+                android:textSize="10sp"/>
 
 
         </LinearLayout>

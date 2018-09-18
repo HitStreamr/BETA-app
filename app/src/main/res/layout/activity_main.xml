@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
-    tools:context=".HomeActivity">
+    tools:context=".MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -107,6 +107,7 @@
             app:fabSize="normal"  />
 
         <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_alignParentBottom="true"
@@ -115,7 +116,9 @@
             app:menu="@menu/bottom_nav_items"
             ></android.support.design.widget.BottomNavigationView>
 
+
     </RelativeLayout>
+
     <android.support.design.widget.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -126,4 +129,3 @@
         />
 
 </android.support.v4.widget.DrawerLayout>
-

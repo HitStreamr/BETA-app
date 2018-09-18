@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -32,6 +32,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.LabelDashboard;
+import com.hitstreamr.hitstreamrbeta.R;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -75,6 +78,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             //home activity here
             finish();
             //TODO Handle different users here
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
             startActivity(new Intent(getApplicationContext(), HomeActivity.class));
         }
             // Initialize Facebook Login button
@@ -159,7 +164,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private void updateUI() {
 
-        Intent homeIntent = new Intent(this, HomeActivity.class);
+        Intent homeIntent = new Intent(this, MainActivity.class);
         startActivity(homeIntent);
         finish();
     }
@@ -210,7 +215,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 public void onDataChange(DataSnapshot snapshot) {
                                     if (snapshot.getValue() != null) {
                                             //user exists in basic user table, do something
-                                            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                            Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                                             homeIntent.putExtra("TYPE", getString(R.string.type_basic));
                                             startActivity(homeIntent);
                                     }
@@ -228,7 +233,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                                 public void onDataChange(DataSnapshot snapshot) {
                                     if (snapshot.getValue() != null) {
                                         //user exists in basic user table, do something
-                                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                                         homeIntent.putExtra("TYPE", getString(R.string.type_artist));
                                         startActivity(homeIntent);
                                     }

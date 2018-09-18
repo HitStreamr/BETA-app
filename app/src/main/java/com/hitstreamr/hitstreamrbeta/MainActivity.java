@@ -24,6 +24,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.LegalAgreementsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFragment;
+import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -61,7 +68,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_main);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -114,7 +121,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(HomeActivity.this, VideoUploadActivity.class));
+                        startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
 
@@ -213,20 +220,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public FirestoreRecyclerAdapter adapterMaker(FirestoreRecyclerOptions<Video> options ) {
-            return new FirestoreRecyclerAdapter<Video, HomeActivity.VideoSuggestionsHolder>(options) {
+            return new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
                 @NonNull
                 @Override
-                public void onBindViewHolder(HomeActivity.VideoSuggestionsHolder holder, int position, Video model) {
+                public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
                     holder.videoTitle.setText(model.getTitle());
                 }
                 @Override
-                public HomeActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
+                public MainActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
                     // Create a new instance of the ViewHolder, in this case we are using a custom
                     // layout called R.layout.message for each item
                     View view = LayoutInflater.from(group.getContext())
                             .inflate(R.layout.search_suggestion_video, group, false);
 
-                    return new HomeActivity.VideoSuggestionsHolder(view,mListener);
+                    return new MainActivity.VideoSuggestionsHolder(view,mListener);
                 }
             };
 

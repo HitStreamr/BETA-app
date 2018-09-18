@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.R;
 
 public class Welcome extends AppCompatActivity implements View.OnClickListener {
     private Button sign_in, create_account;
@@ -32,7 +34,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
-            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
             homeIntent.putExtra("TYPE", getString(R.string.type_basic));
             startActivity(homeIntent);
         }

@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class ArtistUser {
     protected String firstname, lastname, email, username, address, city, state, country, phone, zip;
@@ -10,7 +10,7 @@ public class ArtistUser {
     public ArtistUser(String firstname, String lastname, String email, String username, String country, String address, String city, String state, String phone, String zip) {
         this.firstname = firstname;
         this.lastname = lastname;
-        this.email = email;
+        this.email =  email;
         this.username = username;
         this.address = address;
         this.phone = phone;

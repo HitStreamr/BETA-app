@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -17,6 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.R;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.util.regex.Pattern;
 
@@ -51,7 +54,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     //Regex pattern for email.
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
-            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\."+
+            Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\." +
                     "[a-zA-Z0-9_+&*-]+)*@" +
                     "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
                     "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
@@ -111,7 +114,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         final String phone = mPhone.getText().toString().trim();
 
 
-        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) |!validatePassword(password)
+        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
                 | !validateZip(zip) | !validateToc()) {
             return;
@@ -142,9 +145,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                                                 Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                         finish();
-                                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                        startActivity(homeIntent);
+                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                     } else {
                                         //Display a failure message
                                         Toast.makeText(ArtistSignUp.this, "Registration Failed",
@@ -163,6 +164,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if first name input is valid.
+     *
      * @param firstname first name
      * @return true if valid, otherwise false and display an error message
      */
@@ -184,6 +186,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if last name input is valid.
+     *
      * @param lastname last name
      * @return true if valid, otherwise false and display an error message
      */
@@ -205,6 +208,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if address input is valid.
+     *
      * @param address address line
      * @return true if valid, otherwise false and display an error message
      */
@@ -212,7 +216,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if (address.isEmpty()) {
             mAddress.setError("Field can't be empty");
             return false;
-        } else if (!checkAlphaNumeric(address)){
+        } else if (!checkAlphaNumeric(address)) {
             mAddress.setError("Address is not valid.");
             return false;
         } else {
@@ -223,6 +227,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if email input is valid.
+     *
      * @param email email
      * @return true if valid, otherwise false and display an error message
      */
@@ -241,6 +246,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if phone number input is valid.
+     *
      * @param phone phone number
      * @return true if valid, otherwise false and display an error message
      */
@@ -251,7 +257,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         } else if (!VALID_PHONE_NUMBER_REGEX.matcher(phone).matches()) {
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
-        }else {
+        } else {
             mPhone.setError(null);
             return true;
         }
@@ -259,6 +265,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if city input is valid.
+     *
      * @param city city
      * @return true if valid, otherwise false and display an error message
      */
@@ -274,6 +281,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if zip input is valid.
+     *
      * @param zip zip
      * @return true if valid, otherwise false and display an error message
      */
@@ -281,10 +289,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if (zip.isEmpty()) {
             mZipcode.setError("Field can't be empty");
             return false;
-        }  else if (!VALID_ZIP_REGEX.matcher(zip).matches()) {
+        } else if (!VALID_ZIP_REGEX.matcher(zip).matches()) {
             mZipcode.setError("Zip is invalid");
             return false;
-        }  else {
+        } else {
             mZipcode.setError(null);
             return true;
         }
@@ -292,6 +300,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if password input is valid.
+     *
      * @param password password
      * @return true if valid, otherwise false and display an error message
      */
@@ -310,12 +319,19 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Check if artist name input is valid.
+     *
      * @param artist artist name
      * @return true if valid, otherwise false and display an error message
      */
     private boolean validateUsername(String artist) {
         if (artist.isEmpty()) {
             mUsername.setError("Field can't be empty");
+            return false;
+        } else if (!checkUsername(artist)) {
+            mAddress.setError("Username cannot contain special characters.");
+            return false;
+        } else if (artist.length() <= 6) {
+            mAddress.setError("Username is too short.");
             return false;
         } else {
             mUsername.setError(null);
@@ -324,22 +340,24 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     // not working yet
-   // private boolean validateState(String state) {
-   //     if (!state.equals("Select a State")) {
-   //         Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
-   //         return false;
-   //     } else {
-   //         return true;
-   //     }
-   // }
+    // private boolean validateState(String state) {
+    //     if (!state.equals("Select a State")) {
+    //         Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
+    //         return false;
+    //     } else {
+    //         return true;
+    //     }
+    // }
 
     /**
      * Check if the user agrees to Terms and Conditions
+     *
      * @return true if valid, otherwise false and display an error message
      */
     private boolean validateToc() {
         if (!termsCond.isChecked()) {
-            Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();            return false;
+            Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
+            return false;
         } else {
             termsCond.setError(null);
             return true;
@@ -349,7 +367,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     /**
      * Method to validate whether the input string entered contains only
      * Alphabetical characters.
-     *
+     * <p>
      * 1. This method also helps in making sure to handle the edge case i.e space.
      */
     private boolean checkAlphabet(String s) {
@@ -391,17 +409,35 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     /**
      * Method to validate the Street Address of any unwanted characters
      */
-    public boolean checkAlphaNumeric(String s){
+    public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric ="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
-        for(int i=0; i<s.length(); i++){
-            for(int count = 0; count<AlphaNumeric.length(); count++){
-                if(s.charAt(i) == AlphaNumeric.charAt(count)){
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < AlphaNumeric.length(); count++) {
+                if (s.charAt(i) == AlphaNumeric.charAt(count)) {
                     value_for_each_comparison[i] = true;
                     break;
-                }else{
+                } else {
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
+    public boolean checkUsername(String s) {
+
+        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < AlphaUsername.length(); count++) {
+                if (s.charAt(i) == AlphaUsername.charAt(count)) {
+                    value_for_each_comparison[i] = true;
+                    break;
+                } else {
                     value_for_each_comparison[i] = false;
                 }
             }
@@ -411,6 +447,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Override the onClick function
+     *
      * @param view view
      */
     @Override

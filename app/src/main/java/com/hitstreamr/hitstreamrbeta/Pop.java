@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 
 
 public class Pop extends Activity implements View.OnClickListener {

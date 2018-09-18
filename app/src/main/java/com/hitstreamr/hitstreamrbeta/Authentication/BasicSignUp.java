@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.R;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
 import java.util.Objects;
 
@@ -74,7 +77,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
     }
 
@@ -97,6 +100,40 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 //                    "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
     //Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+    private boolean checkStringCmpvalues(boolean[] boolarray) {
+        boolean flag = false;
+        for (int i = 0; i < boolarray.length; i++) {
+            if (boolarray[i])
+                flag = true;
+            else {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    /**
+     * Method to validate the Street Address of any unwanted characters
+     */
+    public boolean checkUsername(String s) {
+
+        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < AlphaUsername.length(); count++) {
+                if (s.charAt(i) == AlphaUsername.charAt(count)) {
+                    value_for_each_comparison[i] = true;
+                    break;
+                } else {
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
 
 
     private void registerUser(){
@@ -111,6 +148,17 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             //Stop the function execution further
             return;
         }
+        if (!checkUsername(username)) {
+            Toast.makeText(this, "Username cannot contain special characters.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (username.length() <= 6) {
+            Toast.makeText(this, "Username is too short.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         if(TextUtils.isEmpty(email)){
             //email is empty
             Toast.makeText(this, "Please enter an Email address",Toast.LENGTH_SHORT).show();
@@ -162,9 +210,9 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                         Toast.makeText(BasicSignUp.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                          finish();
-                                         Intent homeIntent = new Intent(getApplicationContext(), PickGenre.class);
-                                         homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                                         startActivity(homeIntent);
+                                         Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
+                                         genreIntent.putExtra("TYPE", getString(R.string.type_basic));
+                                         startActivity(genreIntent);
                                     }else {
                                         //Display a failure message
                                     }
