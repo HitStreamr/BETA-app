@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -26,6 +27,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -70,7 +76,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private EditText EdittextTittle;
     private EditText EditTextDescription;
 
-    private EditText EdittextContributorName;
+    //private EditText EdittextContributorName;
+    private AutoCompleteTextView EdittextContributorName;
     private EditText EdittextContributorPercentage;
 
     //Spinner Inputs
@@ -115,7 +122,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     //Firestore Database
     private FirebaseFirestore db;
-
+    DatabaseReference database;
     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
     //Firebase Storage
@@ -152,7 +159,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Edittext
         EdittextTittle = findViewById(R.id.Title);
         EditTextDescription = findViewById(R.id.Description);
-        EdittextContributorName = findViewById(R.id.ContributorName);
+       // EdittextContributorName = findViewById(R.id.ContributorName);
         EdittextContributorPercentage = findViewById(R.id.ContributorPercentage);
 
         //Spinner
@@ -196,16 +203,38 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         cancelUploadBtn.setOnClickListener(this);
         //deleteContributorBtn.setOnClickListener(this);
 
-
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-
                 contributorList.remove(position);
                 contributorAdapter.notifyDataSetChanged();
             }
         });
+        database = FirebaseDatabase.getInstance().getReference();
+
+        final ArrayAdapter<String> autoComplete = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1);
+        database.child("ArtistAccounts").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                autoComplete.clear();
+                for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
+                    String username = suggestionSnapshot.child("username").getValue(String.class);
+                    Log.e(TAG,"username --"+username);
+                    //Add the retrieved string to the list
+                    autoComplete.add(username);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        EdittextContributorName= (AutoCompleteTextView)findViewById(R.id.ContributorName);
+        EdittextContributorName.setAdapter(autoComplete);
+        autoComplete.notifyDataSetChanged();
+
 
 
     }
