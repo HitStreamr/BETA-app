@@ -73,5 +73,19 @@
     <string name="blank_image">blank</string>
     <string name="video_selection">Video Selected</string>
     <string name="video_not_selection">Video not Selected</string>
+    <string name="type_artist">ARTIST</string>
+    <string name="type_label">LABEL</string>
+    <string name="child_basic">BasicAccounts</string>
+    <string name="child_artist">ArtistAccounts</string>
+    <string name="child_label">LabelAccounts</string>
+    <string name="skip_button">Skip</string>
+    <string name="next_button">NEXT</string>
+    <string name="select_genres">Select Genres</string>
+    <string name="genre_subheading">Select at least 3 Genres for the best experience</string>
+    <string name="blank_image">blank</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_disocver">Discover</string>
+    <string name="nav_activity">Activity</string>
+    <string name="nav_library">Library</string>
 
 </resources>

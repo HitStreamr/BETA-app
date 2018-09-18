@@ -13,18 +13,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Splash">
+        <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Welcome" />
-        <activity android:name=".AccountType" />
-        <activity android:name=".BasicSignUp" />
+        <activity android:name=".Authentication.Welcome" />
+        <activity android:name=".Authentication.AccountType" />
+        <activity android:name=".Authentication.BasicSignUp" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Pop"
@@ -51,9 +51,13 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignInActivity" />
-        <activity android:name=".ArtistSignUp" />
-        <activity android:name=".LabelSignUp"></activity>
+        <activity android:name=".Authentication.SignInActivity" />
+        <activity android:name=".Authentication.ArtistSignUp" />
+        <activity android:name=".Authentication.LabelSignUp" />
+        <activity android:name=".LabelDashboard" />
+        <activity android:name=".Authentication.PickGenre" />
+        <activity android:name=".Account" />
+        <activity android:name=".VideoView"></activity>
     </application>
 
 </manifest>

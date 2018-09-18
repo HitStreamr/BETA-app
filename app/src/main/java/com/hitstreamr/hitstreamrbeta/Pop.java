@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
+
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 
 
 public class Pop extends Activity implements View.OnClickListener {
@@ -38,7 +41,7 @@ public class Pop extends Activity implements View.OnClickListener {
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-// [END initialize_auth]
+       // [END initialize_auth]
         if(mAuth.getCurrentUser() ==null){
             finish();
             startActivity(new Intent(this, SignInActivity.class));
@@ -56,6 +59,7 @@ public class Pop extends Activity implements View.OnClickListener {
 
             case R.id.confirm:
                 mAuth.signOut();
+                LoginManager.getInstance().logOut();
                 finish();
                 startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                 break;

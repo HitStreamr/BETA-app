@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.R;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
 import java.util.Objects;
 
@@ -74,7 +77,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         if(mAuth.getCurrentUser() !=null){
             //home activity here
             finish();
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
     }
 
@@ -207,9 +210,9 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                         Toast.makeText(BasicSignUp.this, "Registered Successfully",Toast.LENGTH_SHORT).show();
                                         //we will start the home activity here
                                          finish();
-                                         Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                                         homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                                         startActivity(homeIntent);
+                                         Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
+                                         genreIntent.putExtra("TYPE", getString(R.string.type_basic));
+                                         startActivity(genreIntent);
                                     }else {
                                         //Display a failure message
                                     }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Welcome"
+    tools:context=".Authentication.Welcome"
     android:background="@drawable/gradient1">
 
     <LinearLayout
@@ -15,9 +15,9 @@
         <ImageView
             android:layout_width="200dp"
             android:layout_height="60dp"
-            android:src="@drawable/hitstreamr_logo_wht"
-            android:paddingStart="15dp"
             android:contentDescription="@string/text_logo_wht"
+            android:paddingStart="15dp"
+            android:src="@drawable/hitstreamr_logo_wht"
             tools:ignore="RtlSymmetry" />
 
         <LinearLayout
