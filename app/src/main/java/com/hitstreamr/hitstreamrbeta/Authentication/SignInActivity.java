@@ -32,8 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.LabelDashboard;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
@@ -80,7 +80,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             //TODO Handle different users here
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
-            startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
             // Initialize Facebook Login button
             mCallbackManager = CallbackManager.Factory.create();

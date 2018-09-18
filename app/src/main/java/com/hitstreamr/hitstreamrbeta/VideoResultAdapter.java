@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.VideoResultsHolder> {
     ArrayList<Video> vids;
-    HomeActivity.ItemClickListener mListener;
-    public VideoResultAdapter(ArrayList<Video> videos, HomeActivity.ItemClickListener mListener) {
+    MainActivity.ItemClickListener mListener;
+    public VideoResultAdapter(ArrayList<Video> videos, MainActivity.ItemClickListener mListener) {
         this.vids = videos;
         this.mListener = mListener;
     }
@@ -58,7 +58,7 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         TextView videoTime;
         ImageView moreMenu;
 
-        public VideoResultsHolder(View itemView, final HomeActivity.ItemClickListener mListener) {
+        public VideoResultsHolder(View itemView, final MainActivity.ItemClickListener mListener) {
             super(itemView);
             videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
             videoTitle = itemView.findViewById(R.id.videoTitle);
