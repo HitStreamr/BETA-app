@@ -53,16 +53,16 @@
 
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginBottom="69dp"
-            android:layout_marginEnd="17dp"
-            android:src="@drawable/ic_upload"
-            app:backgroundTint="@color/colorPrimary"
-            app:fabSize="normal" />
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="69dp"
+        android:layout_marginEnd="17dp"
+        android:src="@drawable/ic_upload"
+        app:backgroundTint="@color/colorPrimary"
+        app:fabSize="normal" /> 
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/bottomNav"
