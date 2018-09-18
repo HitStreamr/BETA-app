@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class Label {
     protected String firstName, lastName, email, label, address, city, state, zipcode, country, phone;

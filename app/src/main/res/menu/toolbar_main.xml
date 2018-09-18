@@ -14,10 +14,22 @@
         app:showAsAction="always"
         />
 
+    <!--<item android:id="@+id/profile"
+        android:icon="@mipmap/ic_launcher_round"
+        android:title="Profile"
+        app:showAsAction="always"/>-->
+
     <item android:id="@+id/profile"
         android:icon="@mipmap/ic_launcher_round"
         android:title="Profile"
-        app:showAsAction="always"/>
+        app:showAsAction="collapseActionView"/>
+
+    <item android:id="@+id/account"
+        android:icon="@mipmap/ic_launcher_round"
+        android:title="Account"
+        app:showAsAction="collapseActionView"/>
+
+
 
 
 </menu>

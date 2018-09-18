@@ -1,4 +1,4 @@
-package com.hitstreamr.hitstreamrbeta;
+package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.hitstreamr.hitstreamrbeta.GenreRecyclerViewAdapter;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,7 +97,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         if(v == skipButton){
             Intent tempIntent = getIntent();
             if (tempIntent.getStringExtra("TYPE") != null){
-                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                 homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
                 homeIntent.putExtra("NUMBER_SELECTED", 0);
                 homeIntent.putExtra("GENRES_SELECTED", (String[]) null);
@@ -111,7 +115,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
                 }
 
                 Toast.makeText(getApplicationContext(), Arrays.deepToString(selectedItems.toArray())  + "\n" + Arrays.deepToString(temp) , Toast.LENGTH_LONG).show();
-                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                 homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
                 homeIntent.putExtra("NUMBER_SELECTED", selectedItems);
                 homeIntent.putExtra("GENRES_SELECTED", temp);

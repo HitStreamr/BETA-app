@@ -84,7 +84,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_home_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_notifications_none_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -94,7 +94,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_home" />
+                            <entry key="outputName" value="ic_notifications_none" />
                             <entry key="sourceFile" value="C:\Users\PRP" />
                           </map>
                         </option>
