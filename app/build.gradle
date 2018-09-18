@@ -48,6 +48,9 @@ dependencies {
     //implementation 'com.amazonaws:aws-android-sdk-s3:2.6.26'
     //implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.26'
 
+    implementation "android.arch.core:runtime:1.1.1"
+    implementation "android.arch.core:common:1.1.1"
+
     implementation 'com.google.firebase:firebase-core:16.0.3'
     implementation 'com.google.firebase:firebase-firestore:17.1.0'
     apply plugin: 'com.google.gms.google-services'
@@ -55,6 +58,7 @@ dependencies {
     implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation 'com.google.firebase:firebase-database:16.0.1'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
+    implementation "com.firebaseui:firebase-ui-firestore:4.1.0"
 
     //SearchView
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
