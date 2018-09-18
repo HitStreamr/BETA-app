@@ -122,7 +122,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         //If validations are ok we will first show progressbar
         progressDialog.setMessage("Registering new Artist...");
-        progressDialog.show();
+        //progressDialog.show();
 
         // Add artist to the database
         mAuth.createUserWithEmailAndPassword(email, password)
