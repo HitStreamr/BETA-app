@@ -373,7 +373,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             @Override
                             public void run() {
                                 finish();
-                                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                                 homeIntent.putExtra("TYPE", getString(R.string.type_artist));
                                 startActivity(homeIntent);
                             }
@@ -398,7 +398,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         mstorageTask.cancel();
         Toast.makeText(this, "Video Upload Canceled", Toast.LENGTH_SHORT).show();
         finish();
-        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
         homeIntent.putExtra("TYPE", getString(R.string.type_artist));
         startActivity(homeIntent);
     }
