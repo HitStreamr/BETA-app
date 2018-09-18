@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +33,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -304,6 +306,22 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         final String privacy = SpinnerPrivacy.getSelectedItem().toString().trim();
         final String CurrentUserID = currentFirebaseUser.getUid();
 
+        ArrayList<Object> sample = new ArrayList<>();
+
+        //Map<String, Object> sample = new HashMap<>();
+        for(i=0; i<contributorFirestoreList.size(); i++) {
+
+            String temp = contributorFirestoreList.get(i);
+
+            String[] tempArray = temp.split(",");
+
+            Map<String, Object> Contributor = new HashMap<>();
+            Contributor.put(VIDEO_CONTRIBUTOR_NAME, tempArray[0]);
+            Contributor.put(VIDEO_CONTRIBUTOR_PERCENTAGE, tempArray[1]);
+            Contributor.put(VIDEO_CONTRIBUTOR_TYPE, tempArray[2]);
+            sample.add(Contributor);
+        }
+
         Map<String, Object> artistVideo = new HashMap<>();
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
@@ -311,7 +329,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
         artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
-        artistVideo.put(VIDEO_CONTRIBUTOR, contributorFirestoreList);
+        artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
 
         db.collection("Videos").document()
@@ -535,7 +553,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             contributorVideo.put(VIDEO_CONTRIBUTOR_TYPE, type);
 
             Contributor contributor1 = new Contributor(name, percentage, type);
-            contributorFirestoreList.add(name + ", " + percentage + ", " + type);
+            contributorFirestoreList.add(name + "," + percentage + "," + type);
             contributorList.add(contributor1);
             contributorPercentageList.add(percentage);
 
