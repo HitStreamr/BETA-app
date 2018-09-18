@@ -77,4 +77,6 @@
     <string name="nav_library">Library</string>
     <string name="no_results">No Results</string>
     <string name="search">Search</string>
+    <string name="video_selection">Video Selected</string>
+    <string name="video_not_selection">Video not Selected</string>
 </resources>
