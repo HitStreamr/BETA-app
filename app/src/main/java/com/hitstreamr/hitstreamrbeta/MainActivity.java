@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_main);
 
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -234,17 +234,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MenuItem mSearch = menu.findItem(R.id.search);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
-
-        // Needs more work
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                search_input = null;
-                stopAdapters();
-                mTabLayout.setVisibility(View.GONE);
-                return true;
-            }
-        });
 
         // Set up the listeners for searching videos, artists, and listeners
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
