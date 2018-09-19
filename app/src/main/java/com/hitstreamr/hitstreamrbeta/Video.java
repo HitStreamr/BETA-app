@@ -57,12 +57,12 @@ public class Video {
         this.privacy = privacy;
     }
 
-    public String getURL() {
+    public String getUrl() {
         return url;
     }
 
-    public void setURL(String URL) {
-        this.url = URL;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getUserId() {
