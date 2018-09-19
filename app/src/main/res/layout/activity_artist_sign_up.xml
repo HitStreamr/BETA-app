@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArtistSignUp"
+    tools:context="Authentication.ArtistSignUp"
     android:background="@drawable/gradient1">
 
     <LinearLayout
@@ -92,26 +91,23 @@
                         android:ems="10"
                         android:hint="First Name"
                         android:inputType="textPersonName"
-                        android:maxLength="26"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:textCursorDrawable="@null"
-                        android:nextFocusRight="@+id/lastName"/>
+                        android:maxLength="26"/>
 
                     <EditText
                         android:id="@+id/lastName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/button2"
                         android:ems="10"
-                        android:hint="Last Name"
                         android:inputType="textPersonName"
-                        android:maxLength="26"
+                        android:hint="Last Name"
+                        android:background="@drawable/button2"
+                        android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp"
-                        android:textCursorDrawable="@null" />
+                        android:maxLength="26"/>
 
                 </LinearLayout>
 
@@ -126,8 +122,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable = "@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <EditText
                     android:id="@+id/phone"
@@ -141,8 +136,7 @@
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
-                    android:maxLength="12"
-                    android:textCursorDrawable = "@null"
+                    android:maxLength="10"
                     />
 
                 <EditText
@@ -156,8 +150,7 @@
                     android:inputType="textPostalAddress"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp"
-                    android:textCursorDrawable = "@null"/>
+                    android:paddingTop="3dp" />
 
                 <EditText
                     android:id="@+id/city"
@@ -170,8 +163,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable = "@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -189,11 +181,10 @@
                         android:ems="10"
                         android:hint="Zip Code"
                         android:maxLength="5"
-                        android:inputType="textPostalAddress"
+                        android:inputType="number"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp"
-                        android:textCursorDrawable = "@null"/>
+                        android:paddingTop="3dp" />
 
                     <Spinner
                         android:id="@+id/state"
@@ -205,7 +196,7 @@
                         android:entries="@array/stateAbbrev"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:layout_marginEnd="10dp"/>
+                        android:paddingTop="3dp" />
 
                 </LinearLayout>
 
@@ -234,8 +225,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable = "@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <EditText
                     android:id="@+id/Password"
@@ -248,8 +238,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="15dp"
-                    android:textCursorDrawable = "@null"/>
+                    android:layout_marginBottom="15dp"/>
 
                 <RadioButton
                     android:id="@+id/tos_button"
@@ -282,11 +271,10 @@
                     android:id="@+id/textviewsignin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Already have an account? Sign in here!"
+                    android:text="Alreay have an account? SignIn here!"
                     android:textColor="@color/colorAccent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="60dp"
-                    android:textCursorDrawable = "@null"
                     />
 
 

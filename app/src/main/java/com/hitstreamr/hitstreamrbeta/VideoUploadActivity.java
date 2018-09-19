@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -133,7 +131,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private StorageReference mStorageRef;
     private StorageTask mstorageTask;
     private StorageReference videoRef = null;
-    private String nameCheck = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -397,7 +394,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             @Override
                             public void run() {
                                 finish();
-                                Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                                 homeIntent.putExtra("TYPE", getString(R.string.type_artist));
                                 startActivity(homeIntent);
                             }
@@ -422,7 +419,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         mstorageTask.cancel();
         Toast.makeText(this, "Video Upload Canceled", Toast.LENGTH_SHORT).show();
         finish();
-        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
         homeIntent.putExtra("TYPE", getString(R.string.type_artist));
         startActivity(homeIntent);
     }
