@@ -16,4 +16,6 @@ public class Artist {
         this.country = country;
         this.username = username;
     }
+
+
 }

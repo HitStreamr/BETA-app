@@ -80,6 +80,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Email" />
+
+            <EditText
+                android:id="@+id/Email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="user@email.com"
+                android:inputType="textEmailAddress" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Private Information"
                 android:textSize="16dp"
                 android:textStyle="bold"
@@ -114,19 +128,6 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email"
-                android:layout_marginTop="10dp"/>
-            <EditText
-                android:id="@+id/Email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="user@email.com"
-                android:inputType="textEmailAddress" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:text="Phone"
                 android:layout_marginTop="10dp"/>
             <EditText
@@ -156,10 +157,12 @@
                 android:ems="10"
                 android:hint="City"
                 android:inputType="textPersonName" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
+
                 <Spinner
                     android:id="@+id/state"
                     android:layout_width="160dp"
@@ -171,6 +174,7 @@
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
                     android:paddingTop="3dp" />
+
                 <EditText
                     android:id="@+id/Zip"
                     android:layout_width="160dp"
