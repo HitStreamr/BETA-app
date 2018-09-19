@@ -9,7 +9,7 @@
     <item
         android:id="@+id/discover"
         android:icon="@drawable/discover_icon"
-        android:title="@string/nav_disocver"
+        android:title="@string/nav_discover"
         />
 
     <item

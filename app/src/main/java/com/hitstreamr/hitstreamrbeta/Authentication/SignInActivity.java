@@ -32,8 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.LabelDashboard;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
@@ -74,12 +74,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-        if(mAuth.getCurrentUser() != null){
+        if(mAuth.getCurrentUser() != null) {
             //home activity here
             finish();
             //TODO Handle different users here
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
             // Initialize Facebook Login button
             mCallbackManager = CallbackManager.Factory.create();
             LoginButton loginButton = findViewById(R.id.fblogin_button);
@@ -104,7 +106,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
 
-        }
+
 
         //user not logged in
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -202,6 +204,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             finish();
+
+                            //DatabaseReference basicRoot= mDatabase.child(getString(R.string.child_basic));
+                            //DatabaseReference artistRoot= mDatabase.child(getString(R.string.child_artist));
+                            //DatabaseReference labelRoot= mDatabase.child(getString(R.string.child_label));
+
                             mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
                                 @Override
