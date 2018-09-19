@@ -9,12 +9,12 @@
     <item
         android:id="@+id/discover"
         android:icon="@drawable/discover_icon"
-        android:title="@string/nav_disocver"
+        android:title="@string/nav_discover"
         />
 
     <item
         android:id="@+id/activity"
-        android:icon="@drawable/ic_camera"
+        android:icon="@drawable/activity"
         android:title="@string/nav_activity"/>
 
     <item

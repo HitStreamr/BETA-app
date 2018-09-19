@@ -101,7 +101,8 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="First"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:layout_marginEnd="10dp"/>
                 <EditText
                     android:id="@+id/LastName"
                     android:layout_width="160dp"
