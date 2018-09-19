@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     private ItemClickListener mListener;
 
+    private MenuItem profileItem;
+
 
     RecyclerView suggestionsRecyclerView;
     RecyclerView resultsRecyclerView;
@@ -73,16 +76,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        db  = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
+
 
         //Recycler View
         resultsRecyclerView = findViewById(R.id.rcv_results);
         suggestionsRecyclerView = findViewById(R.id.rcv_suggestions);
 
-        resultsRecyclerView.setLayoutManager( new LinearLayoutManager(this));
+        resultsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         suggestionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //Listener for RCVs
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //get menu & extras
         Bundle extras = getIntent().getExtras();
 
-        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null){
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //check that type exists and set it.
             type = getIntent().getStringExtra("TYPE");
 
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
 
             }
-    }
+        }
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -137,9 +141,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*case R.id.profile:
+                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
+                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                startActivity(homeIntent);
+                break;*/
+            case R.id.account:
+                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
+                /*accountIntent.putExtra("TYPE", getString(R.string.type_artist));*/
+                startActivity(accountIntent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-       getMenuInflater().inflate(R.menu.toolbar_main, menu);
-       MenuItem search = menu.findItem(R.id.search);
+
+        //Items
+        profileItem = findViewById(R.id.profile);
+
+
+        getMenuInflater().inflate(R.menu.toolbar_main, menu);
+        MenuItem search = menu.findItem(R.id.search);
+
 
         SearchView mSearchView = (SearchView) search.getActionView();
         mSearchView.setQueryHint("Search");
@@ -155,11 +182,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onQueryTextChange(String newText) {
                 //mAdapter.getFilter().filter(newText);
                 //check if the results view is visibile (prior search) and reset
-                if (resultsRecyclerView.getVisibility() == View.VISIBLE){
+                if (resultsRecyclerView.getVisibility() == View.VISIBLE) {
                     resultsRecyclerView.setVisibility(View.GONE);
                     resultAdapter.clear();
                 }
-                if(newText.length() > 0) {
+                if (newText.length() > 0) {
                     //search
                     searchVideoFirestore(autocompleteQuery(newText));
                     // Update suggestionAdapter/Set Adapter/Show/Listen
@@ -167,9 +194,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     suggestionsRecyclerView.setAdapter(suggestionAdapter);
                     suggestionsRecyclerView.setVisibility(View.VISIBLE);
                     suggestionAdapter.startListening();
-                }else {
+                } else {
                     // if all the text is deleted, stop listing on suggestionAdapter so that the view empties
-                    if (suggestionAdapter != null){
+                    if (suggestionAdapter != null) {
                         suggestionAdapter.stopListening();
                     }
                 }
@@ -199,17 +226,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onCreateOptionsMenu(menu);
     }
 
-    public Query autocompleteQuery(String query){
+    public Query autocompleteQuery(String query) {
         int strlength = query.length();
         String strFrontCode = query.substring(0, strlength);
-        String strEndCode = query.substring(strlength-1);
+        String strEndCode = query.substring(strlength - 1);
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
-        return db.collection("videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title",query+"\uf8ff");
+        return db.collection("videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff");
     }
 
-    public void searchVideoFirestore (Query searchRequest){
+    public void searchVideoFirestore(Query searchRequest) {
 
         //New RecyclerOptions and Adapter, based on Query
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
@@ -219,31 +246,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         suggestionAdapter = adapterMaker(options);
     }
 
-    public FirestoreRecyclerAdapter adapterMaker(FirestoreRecyclerOptions<Video> options ) {
-            return new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
-                @NonNull
-                @Override
-                public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
-                    holder.videoTitle.setText(model.getTitle());
-                }
-                @Override
-                public MainActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
-                    // Create a new instance of the ViewHolder, in this case we are using a custom
-                    // layout called R.layout.message for each item
-                    View view = LayoutInflater.from(group.getContext())
-                            .inflate(R.layout.search_suggestion_video, group, false);
+    public FirestoreRecyclerAdapter adapterMaker(FirestoreRecyclerOptions<Video> options) {
+        return new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
+            @NonNull
+            @Override
+            public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
+                holder.videoTitle.setText(model.getTitle());
+            }
 
-                    return new MainActivity.VideoSuggestionsHolder(view,mListener);
-                }
-            };
+            @Override
+            public MainActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
+                // Create a new instance of the ViewHolder, in this case we are using a custom
+                // layout called R.layout.message for each item
+                View view = LayoutInflater.from(group.getContext())
+                        .inflate(R.layout.search_suggestion_video, group, false);
+
+                return new MainActivity.VideoSuggestionsHolder(view, mListener);
+            }
+        };
 
     }
 
-    public void getVideoResults(String query){
+    public void getVideoResults(String query) {
         //These Tasks are Task<QuerySnapShot>
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
-        final Task<QuerySnapshot> exactmatch = db.collection("videos").whereEqualTo("title", query ).get();
+        final Task<QuerySnapshot> exactmatch = db.collection("videos").whereEqualTo("title", query).get();
 
         searching.setVisibility(View.VISIBLE);
         //Stop using the old adapter
@@ -252,19 +280,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // build a dynamic query that has all the words
 
-        Query allWords = db.collection("videos").whereEqualTo("terms."+terms.get(0),true);
-        for (int i = 0; i < terms.size(); i++){
-            allWords = allWords.whereEqualTo("terms."+terms.get(i),true);
+        Query allWords = db.collection("videos").whereEqualTo("terms." + terms.get(0), true);
+        for (int i = 0; i < terms.size(); i++) {
+            allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
         Task<QuerySnapshot> allWordsTask = allWords.get();
 
         //ArrayList<Task<QuerySnapshot>> tasks = new ArrayList<>();
-       // tasks.add(exactmatch);
+        // tasks.add(exactmatch);
         //tasks.add(allWordsTask);
 
         //allResultsRetreived is only successful, when all are succesful
-        Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch,allWordsTask);
+        Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
 
         //When everything is done, then send to adapter
         allResultsRetrieved.addOnSuccessListener(
@@ -273,24 +301,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onSuccess(List<QuerySnapshot> tasks) {
                         ArrayList<Video> videos = new ArrayList();
                         ArrayList<DocumentSnapshot> docs = new ArrayList<>();
-                        for(QuerySnapshot qTasks: tasks) {
-                                if (!qTasks.isEmpty()){
-                                    ArrayList<DocumentSnapshot> tmp = new ArrayList<>(qTasks.getDocuments());
-                                    for (DocumentSnapshot ds : tmp){
-                                        if(!docs.contains(ds)){
-                                            docs.add(ds);
-                                        }
+                        for (QuerySnapshot qTasks : tasks) {
+                            if (!qTasks.isEmpty()) {
+                                ArrayList<DocumentSnapshot> tmp = new ArrayList<>(qTasks.getDocuments());
+                                for (DocumentSnapshot ds : tmp) {
+                                    if (!docs.contains(ds)) {
+                                        docs.add(ds);
                                     }
                                 }
+                            }
                         }
 
-                        for (DocumentSnapshot d : docs){
+                        for (DocumentSnapshot d : docs) {
                             //if doc exists
-                            if (d.exists()){
-                                Log.e(TAG,d.toObject(Video.class).toString());
+                            if (d.exists()) {
+                                Log.e(TAG, d.toObject(Video.class).toString());
                                 videos.add(d.toObject(Video.class));
-                            }else{
-                                Log.e(TAG,"Document " + d.toString() + "does not exist");
+                            } else {
+                                Log.e(TAG, "Document " + d.toString() + "does not exist");
                             }
                         }
                         //set up results
@@ -309,7 +337,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         );
     }
 
-    private ArrayList<String> processQuery(String query){
+    private ArrayList<String> processQuery(String query) {
         // ArrayList of characters to remove
         ArrayList<String> remove = new ArrayList<>();
         remove.add(" ");
@@ -351,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,  notifSettingsFrag);
+                transaction.replace(R.id.fragment_container, notifSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
@@ -361,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,payPrefFrag);
+                transaction.replace(R.id.fragment_container, payPrefFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
@@ -371,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,inviteFrag);
+                transaction.replace(R.id.fragment_container, inviteFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
@@ -391,10 +419,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,legalFrag);
+                transaction.replace(R.id.fragment_container, legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
-            break;
+                break;
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
                 //IdentityManager.getDefaultIdentityManager().signOut();
@@ -417,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (suggestionAdapter != null){
+        if (suggestionAdapter != null) {
             suggestionAdapter.startListening();
         }
     }
@@ -425,11 +453,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (suggestionAdapter != null){
+        if (suggestionAdapter != null) {
             suggestionAdapter.stopListening();
         }
     }
-
 
 
     class VideoSuggestionsHolder extends RecyclerView.ViewHolder {
@@ -450,6 +477,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
+
         void onResultClick(String title);
     }
 
