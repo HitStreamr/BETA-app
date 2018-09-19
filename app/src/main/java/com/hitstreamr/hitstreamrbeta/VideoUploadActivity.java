@@ -15,6 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -22,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,7 +39,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -235,8 +234,28 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         EdittextContributorName.setAdapter(autoComplete);
         autoComplete.notifyDataSetChanged();
 
+        EdittextContributorName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if(!b) {
+                    // on focus off
+                    String str = EdittextContributorName.getText().toString();
+
+                    ListAdapter listAdapter = EdittextContributorName.getAdapter();
+                    for(int i = 0; i < listAdapter.getCount(); i++) {
+                        String temp = listAdapter.getItem(i).toString();
+                        if(str.compareTo(temp) == 0) {
+                            return;
+                        }
+                    }
+
+                    EdittextContributorName.setText("");
+                    Toast.makeText(VideoUploadActivity.this, "Please choose Contributor name from the suggested list", Toast.LENGTH_SHORT).show();
 
 
+                }
+            }
+        });
     }
 
     private void selectVideo() {
