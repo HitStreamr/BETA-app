@@ -23,14 +23,14 @@
             android:background="@drawable/gradient1"/>
 
         <com.miguelcatalan.materialsearchview.MaterialSearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/search_view"
-            app:searchBackground="@drawable/button2"
-            app:searchSuggestionBackground="@drawable/gradient1"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:padding="5dp"
-            android:layout_marginTop="8dp"
-            />
+            app:searchBackground="@drawable/button2"
+            app:searchSuggestionBackground="@drawable/gradient1" />
 
 
         <!--<LinearLayout
