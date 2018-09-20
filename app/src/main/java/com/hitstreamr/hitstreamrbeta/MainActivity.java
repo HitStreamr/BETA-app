@@ -341,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
                 Log.e("HOME", "On Close Intitiated");
                 return true;  // return true to collapse action view
@@ -350,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onMenuItemActionExpand(MenuItem item) {
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
                 return true;  // return true to expand action view
             }
         });
@@ -603,6 +605,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Bundle bundle;
         switch (item.getItemId()) {
             case R.id.dashboard:
+                fab.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -614,6 +617,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.general_setting:
+                fab.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -625,6 +629,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.notification_settings:
+                fab.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -636,6 +641,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.payment_pref:
+                fab.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -647,6 +653,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.invite_a_friend:
+                fab.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -657,6 +664,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.commit();
                 break;
             case R.id.help_center:
+                fab.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);

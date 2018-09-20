@@ -38,7 +38,7 @@ public class Splash extends AppCompatActivity {
                 mAuth = FirebaseAuth.getInstance();
                 // [END initialize_auth]
                 if(mAuth.getCurrentUser() !=null){
-                    //home activity here
+                    //home activity here +-+-+
                     sortUsers();
                 }
             }
