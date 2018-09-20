@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
 public class Account extends AppCompatActivity {
     private static final String TAG = "AccountActivity";
@@ -34,40 +35,19 @@ public class Account extends AppCompatActivity {
 
     //EditText
     private EditText EditTextUsername;
-
-
-    /*@Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser user = mAuth.getCurrentUser();
-        userID = user.getUid();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }*/
+    private EditText EditTextEmail;
+    private EditText EditTextBio;
+    private EditText EditTextFirstName;
+    private EditText EditTextLastName;
+    private EditText EditTextAddress;
+    private EditText EditTextCity;
+    private EditText EditTextZip;
+    private EditText EditTextPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
-
-        ArtistInfoLayout = findViewById(R.id.privateInfo);
-
-        Bundle extras = getIntent().getExtras();
-        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
-            //check that type exists and set it.
-            type = getIntent().getStringExtra("TYPE");
-            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
-                ArtistInfoLayout.setVisibility(View.VISIBLE);
-
-            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
-                ArtistInfoLayout.setVisibility(View.GONE);
-
-            }
-        }
 
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -75,19 +55,49 @@ public class Account extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         userID = user.getUid();
 
-        if (userID != null) {
-            myRef = database.getReference("ArtistAccounts").child(userID);
-            //myRef = database.getReference("ArtistAccounts");
-        }
-        else{
-        }
+        //Layout
+        ArtistInfoLayout = findViewById(R.id.privateInfo);
 
+        //EditText
         EditTextUsername = findViewById(R.id.Username);
+        EditTextEmail = findViewById(R.id.Email);
+        EditTextBio = findViewById(R.id.Bio);
+        EditTextFirstName = findViewById(R.id.FirstName);
+        EditTextLastName = findViewById(R.id.LastName);
+        EditTextAddress = findViewById(R.id.Address);
+        EditTextCity = findViewById(R.id.City);
+        EditTextZip = findViewById(R.id.Zip);
+        EditTextPhone = findViewById(R.id.Phone);
+
+        //Spinners
+
+        type = getIntent().getStringExtra("TYPE");
+        if (type.equals(getString(R.string.type_artist))) {
+
+            ArtistInfoLayout.setVisibility(View.VISIBLE);
+
+            if (userID != null) {
+                myRef = database.getReference("ArtistAccounts").child(userID);
+            }
+        } else if (type.equals(getString(R.string.type_basic))) {
+            ArtistInfoLayout.setVisibility(View.GONE);
+            if (userID != null) {
+                myRef = database.getReference("BasicAccounts").child(userID);
+            }
+        } else {
+
+        }
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                showData(dataSnapshot);
+
+                if (type.equals(getString(R.string.type_artist))) {
+                    showArtistData(dataSnapshot);
+
+                } else if (type.equals(getString(R.string.type_basic))) {
+                    showBasicData(dataSnapshot);
+                }
             }
 
             @Override
@@ -97,35 +107,43 @@ public class Account extends AppCompatActivity {
         });
     }
 
-    public void showData(DataSnapshot dataSnapshot) {
-        /*for (DataSnapshot d : dataSnapshot.getChildren()) {
-            ArtistUser artist = new ArtistUser();
-            artist.setFirstname(d.child(userID).getValue(ArtistUser.class).getFirstname());
-            artist.setLastname(d.child(userID).getValue(ArtistUser.class).getLastname());
-            artist.setEmail(d.child(userID).getValue(ArtistUser.class).getEmail());
-            artist.setAddress(d.child(userID).getValue(ArtistUser.class).getAddress());
-            artist.setCity(d.child(userID).getValue(ArtistUser.class).getCity());
-            artist.setCountry(d.child(userID).getValue(ArtistUser.class).getCountry());
-            artist.setPhone(d.child(userID).getValue(ArtistUser.class).getPhone());
-            artist.setZip(d.child(userID).getValue(ArtistUser.class).getZip());*/
+    public void showArtistData(DataSnapshot dataSnapshot) {
 
-        ArtistUser artist = new ArtistUser();
+        String firstname = dataSnapshot.child("firstname").getValue(String.class);
+        String lastname = dataSnapshot.child("lastname").getValue(String.class);
+        String email = dataSnapshot.child("email").getValue(String.class);
+        String username = dataSnapshot.child("username").getValue(String.class);
+        String address = dataSnapshot.child("address").getValue(String.class);
+        String city = dataSnapshot.child("city").getValue(String.class);
+        String state = dataSnapshot.child("state").getValue(String.class);
+        String zip = dataSnapshot.child("zip").getValue(String.class);
+        String country = dataSnapshot.child("country").getValue(String.class);
+        String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist.setFirstname(dataSnapshot.getValue(ArtistUser.class).getFirstname());
-        artist.setLastname(dataSnapshot.getValue(ArtistUser.class).getLastname());
-        artist.setEmail(dataSnapshot.getValue(ArtistUser.class).getEmail());
-        artist.setAddress(dataSnapshot.getValue(ArtistUser.class).getAddress());
-        artist.setCity(dataSnapshot.getValue(ArtistUser.class).getCity());
-        artist.setCountry(dataSnapshot.getValue(ArtistUser.class).getCountry());
-        artist.setPhone(dataSnapshot.getValue(ArtistUser.class).getPhone());
-        artist.setZip(dataSnapshot.getValue(ArtistUser.class).getZip());
+        ArtistUser artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
+        EditTextFirstName.setText(artist.getFirstname());
+        EditTextLastName.setText(artist.getLastname());
+        EditTextEmail.setText(artist.getEmail());
         EditTextUsername.setText(artist.getUsername());
-        //}
+        EditTextAddress.setText(artist.getAddress());
+        EditTextCity.setText(artist.getCity());
+        EditTextZip.setText(artist.getZip());
+        EditTextPhone.setText(artist.getPhone());
 
-        Log.e("TAG", "Username: " + artist.getUsername());
-        Log.e("TAG", "Uid: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        Log.e("TAG", "Username" + artist.getUsername());
     }
 
+    public void showBasicData(DataSnapshot dataSnapshot) {
 
+        String email = dataSnapshot.child("email").getValue(String.class);
+        String username = dataSnapshot.child("username").getValue(String.class);
+
+        User basic = new User(username, email);
+
+        EditTextEmail.setText(basic.getEmail());
+        EditTextUsername.setText(basic.getUsername());
+
+    }
 }
