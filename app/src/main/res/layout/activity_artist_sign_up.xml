@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="Authentication.ArtistSignUp"
+    tools:context=".Authentication.ArtistSignUp"
     android:background="@drawable/gradient1">
 
     <LinearLayout
@@ -26,36 +26,43 @@
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical" />
 
-            <LinearLayout
-                android:layout_width="fill_parent"
+
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:layout_gravity="center_vertical"
+                android:paddingEnd="5dp"
+                android:paddingStart="151dp"
+                android:text="Artist Account Setup"
+                android:textAlignment="textEnd"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                tools:ignore="HardcodedText,RtlCompat" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:paddingEnd="5dp"
-                    android:paddingStart="151dp"
-                    android:text="Artist Account Setup"
-                    android:textAlignment="textEnd"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    tools:ignore="HardcodedText,RtlCompat" />
-
-                <ImageView
-                    android:layout_width="8dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/sidebar_page_type"
-                    android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/sidebar" />
-
-            </LinearLayout>
+            <ImageView
+                android:layout_width="8dp"
+                android:layout_height="24dp"
+                android:src="@drawable/sidebar_page_type"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@string/sidebar" />
 
         </LinearLayout>
 
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/artist"
+            android:layout_marginTop="10dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ARTIST ACCOUNT"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
+            android:layout_gravity="center_horizontal" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -65,27 +72,10 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp">
 
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-
-                <ImageView
-                    android:layout_width="120dp"
-                    android:layout_height="120dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/artist"/>
-
-                <Button
-                    android:layout_width="120dp"
-                    android:layout_height="20dp"
-                    android:text="Upload Photo"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorAccent"
-                    android:background="@android:color/transparent"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="15dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -105,9 +95,7 @@
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:maxLength="26"
-                        android:textCursorDrawable="@null"
-                        android:nextFocusRight="@+id/lastName"/>
+                        android:maxLength="26"/>
 
                     <EditText
                         android:id="@+id/lastName"
@@ -120,8 +108,7 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:maxLength="26"
-                        android:textCursorDrawable="@null"/>
+                        android:maxLength="26"/>
 
                 </LinearLayout>
 
@@ -136,8 +123,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <EditText
                     android:id="@+id/phone"
@@ -152,7 +138,6 @@
                     android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
                     android:maxLength="10"
-                    android:textCursorDrawable="@null"
                     />
 
                 <EditText
@@ -166,8 +151,7 @@
                     android:inputType="textPostalAddress"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp"
-                    android:textCursorDrawable="@null"/>
+                    android:paddingTop="3dp" />
 
                 <EditText
                     android:id="@+id/city"
@@ -180,8 +164,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -202,8 +185,7 @@
                         android:inputType="number"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp"
-                        android:textCursorDrawable="@null"/>
+                        android:paddingTop="3dp" />
 
                     <Spinner
                         android:id="@+id/state"
@@ -244,8 +226,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <EditText
                     android:id="@+id/Password"

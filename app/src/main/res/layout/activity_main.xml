@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     android:fitsSystemWindows="true"
-    tools:context=".HomeActivity">
+    tools:context=".MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,45 +22,46 @@
             android:id="@+id/toolbar"
             android:background="@drawable/gradient1"/>
 
-        <!--com.miguelcatalan.materialsearchview.MaterialSearchView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/material_search_view"
-            app:searchBackground="@drawable/button2"
-            app:searchSuggestionBackground="@drawable/gradient1"
-            android:padding="5dp"
-            android:layout_marginTop="8dp"
-            /-->
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="416dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="96dp"
-            android:visibility="visible" />
-
-        <!--<android.support.v7.widget.SearchView-->
-            <!--android:id="@+id/searchbox"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--app:actionViewClass="android.support.v7.widget.SearchView"-->
-            <!--&gt;-->
-        <!--</android.support.v7.widget.SearchView>-->
-
-
-        <LinearLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
+        android:orientation="vertical"
+        >
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-        </LinearLayout>
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            >
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="416dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="96dp"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/loadingSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundTint="@color/colorPrimaryDark"
+                android:indeterminate="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/emptyView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_results"
+                android:textSize="20sp"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </LinearLayout>
 
 
         <android.support.design.widget.FloatingActionButton
@@ -76,6 +77,7 @@
             app:fabSize="normal" />
 
         <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottomNav"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_alignParentBottom="true"

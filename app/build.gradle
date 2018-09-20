@@ -44,38 +44,25 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.facebook.android:facebook-login:4.35.0'
 
-    //File Storage
+    // File Storage
     //implementation 'com.amazonaws:aws-android-sdk-s3:2.6.26'
     //implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.26'
 
-    implementation "android.arch.core:runtime:1.1.1"
-    implementation "android.arch.core:common:1.1.1"
-
+    // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-database:16.0.2'
     implementation 'com.google.firebase:firebase-firestore:17.1.0'
-    apply plugin: 'com.google.gms.google-services'
     implementation 'com.google.firebase:firebase-invites:16.0.3'
+    implementation 'com.google.firebase:firebase-storage:16.0.2'
     implementation 'com.firebase:firebase-client-android:2.5.0'
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-    implementation 'com.google.firebase:firebase-storage:16.0.1'
-    implementation "com.firebaseui:firebase-ui-firestore:4.1.0"
 
     // Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
     implementation 'com.firebaseui:firebase-ui-database:4.1.0'
     implementation 'android.arch.paging:runtime:1.0.1'
 
+    // Recycler View
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-
-    // Firestore
-    implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
-    implementation 'com.firebaseui:firebase-ui-database:4.1.0'
-    implementation 'android.arch.paging:runtime:1.0.1'
-
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-
-    //SearchView
-    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 
 }
 

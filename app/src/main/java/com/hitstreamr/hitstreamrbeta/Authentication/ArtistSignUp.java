@@ -131,8 +131,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Store the additional fields in the Firebase Database
-                            ArtistUser artist_object = new ArtistUser(firstname, lastname, email,
-                                    username, address, city, state, country, phone, zip);
+                            //TODO Artist User crashs with firebase error
+                            // com.google.firebase.database.DatabaseException: No properties to serialize found on class com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser
+                            ArtistUser artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
                             FirebaseDatabase.getInstance().getReference("ArtistAccounts")
                                     .child(FirebaseAuth.getInstance().getCurrentUser().getUid())

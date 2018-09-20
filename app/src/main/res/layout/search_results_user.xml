@@ -75,12 +75,13 @@
                     android:gravity="center|end">
 
                     <Button
+                        android:id="@+id/follow_button"
                         android:layout_width="80dp"
                         android:layout_height="36dp"
+                        android:background="@drawable/button1"
                         android:text="Follow"
-                        android:textSize="12sp"
                         android:textColor="@color/colorAccent"
-                        android:background="@drawable/button1"/>
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
