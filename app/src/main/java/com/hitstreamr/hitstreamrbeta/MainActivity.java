@@ -22,20 +22,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ProgressBar;
-
+import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
@@ -45,15 +46,6 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFra
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,9 +59,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     private ItemClickListener mListener;
 
-
-    RecyclerView suggestionsRecyclerView;
-    RecyclerView resultsRecyclerView;
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
     VideoResultAdapter resultAdapter;
@@ -83,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private com.google.firebase.database.Query myRef; // for Firebase Database
     private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder> firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
-    private FirestoreRecyclerAdapter<Video, VideoViewHolder> firestoreRecyclerAdapter_video;
 
     private TabLayout mTabLayout;
     private int tab_position;
@@ -113,13 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
-
-        //Recycler View
-        resultsRecyclerView = findViewById(R.id.rcv_results);
-        suggestionsRecyclerView = findViewById(R.id.rcv_suggestions);
-
-        resultsRecyclerView.setLayoutManager( new LinearLayoutManager(this));
-        suggestionsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         //Listener for RCVs
         mListener = new ItemClickListener() {
@@ -170,42 +151,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-    }
-
-
-    /**
-     * Firestore Cloud - Videos
-     * @param querySearch the input typed by the user
-     */
-    private void searchVideos(String querySearch) {
-        FirebaseFirestore database_video = FirebaseFirestore.getInstance();
-        // still needs to filter results
-        com.google.firebase.firestore.Query myRef = database_video.collection("videos");
-
-        FirestoreRecyclerOptions<Video> mFireStoreRecycler = new FirestoreRecyclerOptions.Builder<Video>()
-                .setQuery(myRef, Video.class)
-                .build();
-
-        firestoreRecyclerAdapter_video = new FirestoreRecyclerAdapter<Video, VideoViewHolder>(mFireStoreRecycler) {
-            @Override
-            protected void onBindViewHolder(@NonNull VideoViewHolder holder, int position, @NonNull Video model) {
-                holder.setVideoName(model.getTitle());
-            }
-
-            @NonNull
-            @Override
-            public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_results_video, parent, false);
-                return new MainActivity.VideoViewHolder(view);
-            }
-
-            @Override
-            public void onError(FirebaseFirestoreException e) {
-                Log.e("error", e.getMessage());
-            }
-        };
-        firestoreRecyclerAdapter_video.notifyDataSetChanged();
-        recyclerView.setAdapter(firestoreRecyclerAdapter_video);
     }
 
     /**
@@ -270,6 +215,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
+     * Firebase Realtime - Artist Accounts
+     * @param querySearch the input typed by the user
+     */
+    private void searchVideoSuggestions(String querySearch) {
+        // Send a query to the database
+        FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
+        myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
+                .endAt(querySearch + "\uf8ff");
+
+        FirebaseRecyclerOptions<ArtistUser> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<ArtistUser>()
+                .setQuery(myRef, ArtistUser.class)
+                .build();
+
+        firebaseRecyclerAdapter_artist = new FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>(firebaseRecyclerOptions) {
+            @Override
+            protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
+                holder.setUserName(model.getUsername());
+            }
+
+            @NonNull
+            @Override
+            public ArtistAccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_results_user, parent, false);
+                return new ArtistAccountViewHolder(view);
+            }
+        };
+        firebaseRecyclerAdapter_artist.notifyDataSetChanged();
+        recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
+    }
+
+
+    /**
      * Handles the search bar and view
      * @param menu menu
      * @return super.onCreateOptionsMenu
@@ -292,8 +269,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     search_input = query;
                     switch (tab_position) {
                         case 0:
-                            //searchVideos(query);
-                            //firestoreRecyclerAdapter_video.startListening();
                             getVideoResults(query);
                             return true;
 
@@ -314,10 +289,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (query.trim().isEmpty()) {
                     stopAdapters();
                     search_input = null;
-                    if (resultsRecyclerView.getVisibility() == View.VISIBLE){
-                        resultsRecyclerView.setVisibility(View.GONE);
-                        resultAdapter.clear();
-                    }
                 }
                 return false;
             }
@@ -334,9 +305,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             //firestoreRecyclerAdapter_video.startListening();
                             searchVideoFirestore(autocompleteQuery(newText));
                             // Update suggestionAdapter/Set Adapter/Show/Listen
-                            suggestionAdapter.notifyDataSetChanged();
-                            suggestionsRecyclerView.setAdapter(suggestionAdapter);
-                            suggestionsRecyclerView.setVisibility(View.VISIBLE);
                             suggestionAdapter.startListening();
                             return true;
 
@@ -375,10 +343,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 recyclerView.setVisibility(View.GONE);
                 // Do something when action item collapses
                 Log.e("HOME", "On Close Intitiated");
-                suggestionAdapter.stopListening();
-                resultAdapter.clear();
-                suggestionsRecyclerView.setVisibility(View.GONE);
-                resultsRecyclerView.setVisibility(View.GONE);
                 return true;  // return true to collapse action view
             }
 
@@ -400,8 +364,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     stopAdapters();
                     switch (tab_position) {
                         case 0:
-                            searchVideos(search_input);
-                            firestoreRecyclerAdapter_video.startListening();
+                            searchVideoFirestore(autocompleteQuery(search_input));
+                            suggestionAdapter.startListening();
                             break;
 
                         case 1:
@@ -441,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
-        return db.collection("videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title",query+"\uf8ff");
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title",query+"\uf8ff");
     }
 
     public void searchVideoFirestore (com.google.firebase.firestore.Query searchRequest){
@@ -451,11 +415,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setQuery(searchRequest, Video.class)
                 .build();
 
-        suggestionAdapter = adapterMaker(options);
-    }
-
-    public FirestoreRecyclerAdapter adapterMaker(FirestoreRecyclerOptions<Video> options ) {
-        return new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
+        suggestionAdapter = new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
             @NonNull
             @Override
             public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
@@ -472,35 +432,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
+        suggestionAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(suggestionAdapter);
+        recyclerView.setVisibility(View.VISIBLE);
     }
+
 
     public void getVideoResults(String query){
         //These Tasks are Task<QuerySnapShot>
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
-        final Task<QuerySnapshot> exactmatch = db.collection("videos").whereEqualTo("title", query ).get();
+        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query ).get();
 
-        searching.setVisibility(View.VISIBLE);
         //Stop using the old adapter
-        suggestionsRecyclerView.setVisibility(View.GONE);
-        suggestionAdapter.stopListening();
+        stopAdapters();
 
         // build a dynamic query that has all the words
 
-        com.google.firebase.firestore.Query allWords = db.collection("videos").whereEqualTo("terms."+terms.get(0),true);
+        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms."+terms.get(0),true);
         for (int i = 0; i < terms.size(); i++){
             allWords = allWords.whereEqualTo("terms."+terms.get(i),true);
         }
 
         Task<QuerySnapshot> allWordsTask = allWords.get();
 
-        //ArrayList<Task<QuerySnapshot>> tasks = new ArrayList<>();
-        // tasks.add(exactmatch);
-        //tasks.add(allWordsTask);
-
         //allResultsRetreived is only successful, when all are succesful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch,allWordsTask);
 
+        searching.setVisibility(View.VISIBLE);
         //When everything is done, then send to adapter
         allResultsRetrieved.addOnSuccessListener(
                 new OnSuccessListener<List<QuerySnapshot>>() {
@@ -519,29 +478,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             }
                         }
 
-                        for (DocumentSnapshot d : docs){
+                        for (DocumentSnapshot d : docs) {
                             //if doc exists
-                            if (d.exists()){
-                                Log.e(TAG,d.toObject(Video.class).toString());
+                            if (d.exists()) {
+                                Log.e(TAG, d.toObject(Video.class).toString());
                                 videos.add(d.toObject(Video.class));
-                            }else{
-                                Log.e(TAG,"Document " + d.toString() + "does not exist");
+                            } else {
+                                Log.e(TAG, "Document " + d.toString() + "does not exist");
                             }
                         }
+                        stopAdapters();
                         //set up results
                         resultAdapter = new VideoResultAdapter(videos, mListener);
                         resultAdapter.notifyDataSetChanged();
-                        resultsRecyclerView.setAdapter(resultAdapter);
-                        resultsRecyclerView.setVisibility(View.VISIBLE);
+                        recyclerView.setAdapter(resultAdapter);
                         searching.setVisibility(View.GONE);
-                        //Stop using the old adapter
-                        suggestionsRecyclerView.setVisibility(View.GONE);
-                        suggestionAdapter.stopListening();
-
                     }
-
                 }
         );
+
+        allResultsRetrieved.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
+                if (!task.isSuccessful()){
+                    Log.e(TAG, "Search failed");
+                }
+            }
+        });
     }
 
     private ArrayList<String> processQuery(String query){
@@ -550,34 +513,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         remove.add(" ");
 
         ArrayList<String> tmp = new ArrayList<>(Arrays.asList(query.trim().toLowerCase().split("\\s+")));
-        //tmp.removeAll(remove);
+        tmp.removeAll(remove);
 
         return tmp;
     }
 
-    /**
-     * Videos Holder - Inner Class
-     */
-    public class VideoViewHolder extends RecyclerView.ViewHolder {
-        private View view;
-
-        VideoViewHolder(View itemView) {
-            super(itemView);
-            view = itemView;
-        }
-
-        void setVideoName(final String videoName) {
-            TextView textView = view.findViewById(R.id.video_title);
-            textView.setText(videoName);
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), videoName, Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
-    }
 
     /**
      * Basic Accounts Holder - Inner Class
@@ -613,6 +553,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    class VideoSuggestionsHolder extends RecyclerView.ViewHolder {
+        TextView videoTitle;
+
+        public VideoSuggestionsHolder(View itemView, final ItemClickListener mListener) {
+            super(itemView);
+            videoTitle = itemView.findViewById(R.id.video_title);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onSuggestionClick(videoTitle.getText().toString());
+                }
+            });
+        }
+    }
+
+    public interface ItemClickListener {
+        void onSuggestionClick(String title);
+        void onResultClick(String title);
+    }
+
     /**
      * Stop any of the working adapters
      */
@@ -620,11 +581,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (firebaseRecyclerAdapter_artist != null) {
             firebaseRecyclerAdapter_artist.stopListening();
         }
-        if (firestoreRecyclerAdapter_video != null) {
-            firestoreRecyclerAdapter_video.stopListening();
+        if (suggestionAdapter != null) {
+            suggestionAdapter.stopListening();
         }
         if (firebaseRecyclerAdapter_basic != null) {
             firebaseRecyclerAdapter_basic.stopListening();
+        }
+        if(resultAdapter != null){
+            resultAdapter.clear();
         }
     }
 
@@ -744,33 +708,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (suggestionAdapter != null){
-            suggestionAdapter.stopListening();
-        }
+        stopAdapters();
     }
-
-
-
-    class VideoSuggestionsHolder extends RecyclerView.ViewHolder {
-        TextView videoTitle;
-
-        public VideoSuggestionsHolder(View itemView, final ItemClickListener mListener) {
-            super(itemView);
-            videoTitle = itemView.findViewById(R.id.video_title);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onSuggestionClick(videoTitle.getText().toString());
-                }
-            });
-        }
-    }
-
-    public interface ItemClickListener {
-        void onSuggestionClick(String title);
-        void onResultClick(String title);
-    }
-
 
 }
