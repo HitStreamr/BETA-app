@@ -109,11 +109,14 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextCountry = findViewById(R.id.accountCountry);
 
         //Spinners
-        SpinnerState = findViewById(R.id.state);
+        SpinnerState = findViewById(R.id.accountState);
 
 
         //Button
         SaveAccountBtn = findViewById(R.id.saveAccount);
+
+        //Listners
+        SaveAccountBtn.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -225,7 +228,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void registerArtist() {
+        Log.e(TAG,"Entered register artist method" + type);
+
         final String firstname = EditTextFirstName.getText().toString().trim();
+        Log.e(TAG,"Entered register artist firstname:::::" + firstname);
         final String lastname = EditTextLastName.getText().toString().trim();
         final String email = EditTextEmail.getText().toString().trim();
         //final String password = Edit.getText().toString().trim();
@@ -241,9 +247,12 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validateAddressLine(address)
                 | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
                 | !validateZip(zip)) {
+
+            Log.e(TAG,"register Artist no validation" + type);
             return;
         }
 
+        Log.e(TAG,"register Artist came out od validation" + type);
         ArtistUser artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
         FirebaseDatabase.getInstance().getReference("ArtistAccounts")
@@ -507,7 +516,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if(view == SaveAccountBtn){
+            Log.e(TAG,"Entered on click:::::::" + type);
+
             if(type.equals(getString(R.string.type_artist))){
+                Log.e(TAG,"Entered on click type artist" + type);
                 registerArtist();
             }
             else if(type.equals(getString(R.string.type_basic))){
