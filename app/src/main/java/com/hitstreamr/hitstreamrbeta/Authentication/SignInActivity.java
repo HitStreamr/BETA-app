@@ -71,20 +71,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         signinbtn.setOnClickListener(this);
         register.setOnClickListener(this);
 
-        //user not logged in
+        //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
-        // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
-        if(mAuth.getCurrentUser() != null) {
-            //home activity here
-            Log.e(TAG, mAuth.getCurrentUser().getUid());
-            //TODO Handle different users here
-            sortUsers();
-            //we will start the home activity here
-            Toast.makeText(SignInActivity.this, "Welcome Back, " + mAuth.getCurrentUser().getUid() ,Toast.LENGTH_SHORT).show();
-        }
+
+
             // Initialize Facebook Login button
             mCallbackManager = CallbackManager.Factory.create();
             LoginButton loginButton = findViewById(R.id.fblogin_button);
