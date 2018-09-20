@@ -30,7 +30,7 @@ public class Account extends AppCompatActivity {
 
     private String type;
 
-    //private Layout
+    private LinearLayout ArtistInfoLayout;
 
     //EditText
     private EditText EditTextUsername;
@@ -54,51 +54,37 @@ public class Account extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
-        //LinearLayout linearlayout=(LinearLayout)findViewById(R.id.linearlayoutid);
+        ArtistInfoLayout = findViewById(R.id.privateInfo);
 
         Bundle extras = getIntent().getExtras();
         if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //check that type exists and set it.
             type = getIntent().getStringExtra("TYPE");
-
             if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                ArtistInfoLayout.setVisibility(View.VISIBLE);
 
-                //linearlayout.setVisibility(View.VISIBLE);
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                ArtistInfoLayout.setVisibility(View.GONE);
 
-                //Hide Dash if Basic User & don't show floating action buttton
-
-
-                Log.d("HIDE_DASH", getIntent().getStringExtra("TYPE"));
-                //nav_Menu.findItem(R.id.dashboard).setVisible(false);
-
-            } /*else {
-                fab.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(Account.this, VideoUploadActivity.class));
-                    }
-                });
-
-            }*/
+            }
         }
-
-        /*FirebaseUser user = mAuth.getCurrentUser();
-        userID = user.getUid();*/
 
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
 
-        /*if (userID != null) {
-            myRef = database.getReference("ArtistAccounts").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        FirebaseUser user = mAuth.getCurrentUser();
+        userID = user.getUid();
+
+        if (userID != null) {
+            myRef = database.getReference("ArtistAccounts").child(userID);
             //myRef = database.getReference("ArtistAccounts");
-
-
-
-        }*/
+        }
+        else{
+        }
 
         EditTextUsername = findViewById(R.id.Username);
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 showData(dataSnapshot);
@@ -134,7 +120,7 @@ public class Account extends AppCompatActivity {
         artist.setPhone(dataSnapshot.getValue(ArtistUser.class).getPhone());
         artist.setZip(dataSnapshot.getValue(ArtistUser.class).getZip());
 
-            EditTextUsername.setText(artist.getUsername());
+        EditTextUsername.setText(artist.getUsername());
         //}
 
         Log.e("TAG", "Username: " + artist.getUsername());
