@@ -31,6 +31,22 @@
           }
         },
         {
+          "client_id": "160384263988-s3kh7vitoib74fnp9vq3pv58rukv7k67.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hitstreamr.hitstreamrbeta",
+            "certificate_hash": "195900a29b78fdd0c7ac5dd905c3eca30355b727"
+          }
+        },
+        {
+          "client_id": "160384263988-6mn74apkr2dogpr8f7efk41487c6690i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hitstreamr.hitstreamrbeta",
+            "certificate_hash": "f77a3e6c8695d418e5935d786740bd71112e182f"
+          }
+        },
+        {
           "client_id": "160384263988-7fr417ka4ngjij4oi2rrdh0q4c5jdppp.apps.googleusercontent.com",
           "client_type": 3
         }

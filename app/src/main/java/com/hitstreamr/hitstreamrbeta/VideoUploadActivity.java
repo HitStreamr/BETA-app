@@ -40,6 +40,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,6 +60,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
     private static final String VIDEO_CONTRIBUTOR_TYPE = "type";
+
+    private static final String VIDEO_TITLE_TERMS = "terms";
+
+
 
     //Video View
     private VideoView artistUploadVideo;
@@ -185,8 +190,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorList = new ArrayList<>();
         //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
 
-
-
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
@@ -219,7 +222,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 autoComplete.clear();
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
                     String username = suggestionSnapshot.child("username").getValue(String.class);
-                    Log.e(TAG,"username --"+username);
+                    //Log.e(TAG,"username --"+username);
                     //Add the retrieved string to the list
                     autoComplete.add(username);
                 }
@@ -370,6 +373,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             sample.add(Contributor);
         }
 
+
         Map<String, Object> artistVideo = new HashMap<>();
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
@@ -379,6 +383,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
+
+        Map<String, Boolean> terms = new HashMap<>();
+        ArrayList<String> res = processTitle(title);
+        for(int i = 0; i < res.size(); i++){
+            terms.put(res.get(i), true);
+        }
+        artistVideo.put(VIDEO_TITLE_TERMS,terms);
+
 
         db.collection("Videos").document()
                 //.set(contributorList)
@@ -411,6 +423,17 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private ArrayList<String> processTitle(String title){
+        // ArrayList of characters to remove
+        ArrayList<String> remove = new ArrayList<>();
+        remove.add(" ");
+
+        ArrayList<String> tmp = new ArrayList<>(Arrays.asList(title.trim().toLowerCase().split("\\s+")));
+        tmp.removeAll(remove);
+
+        return tmp;
     }
 
     private void cancelVideo() {

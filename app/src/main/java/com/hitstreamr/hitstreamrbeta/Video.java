@@ -1,13 +1,17 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import java.util.ArrayList;
+
 public class Video {
     private String title, description, genre, subGenre, privacy, url, userId;
+    private ArrayList<Contributor> contributors;
+
 
     public Video(){
         //needed for the Firestore
     }
 
-    public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId) {
+    public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, ArrayList<Contributor> contributors) {
         this.title = title;
         this.description = description;
         this.genre = genre;
@@ -15,6 +19,7 @@ public class Video {
         this.privacy = privacy;
         this.url = url;
         this.userId = userId;
+        this.contributors = contributors;
     }
 
     public String getTitle() {
@@ -57,12 +62,12 @@ public class Video {
         this.privacy = privacy;
     }
 
-    public String getURL() {
+    public String getUrl() {
         return url;
     }
 
-    public void setURL(String URL) {
-        this.url = URL;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getUserId() {
@@ -73,7 +78,16 @@ public class Video {
         this.userId = userId;
     }
 
+    public ArrayList<Contributor> getContributors() {
+        return contributors;
+    }
+
+    public void setContributors(ArrayList<Contributor>contributors) {
+        this.contributors = contributors;
+    }
+
     @Override
+
     public String toString() {
         return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId;
 
