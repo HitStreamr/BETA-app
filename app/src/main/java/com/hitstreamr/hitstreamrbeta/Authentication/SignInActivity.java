@@ -71,15 +71,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         signinbtn.setOnClickListener(this);
         register.setOnClickListener(this);
 
+        //user not logged in
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-        if(mAuth.getCurrentUser() != null){
+        if(mAuth.getCurrentUser() != null) {
             //home activity here
-            finish();
+            Log.e(TAG, mAuth.getCurrentUser().getUid());
             //TODO Handle different users here
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-
+            sortUsers();
+            //we will start the home activity here
+            Toast.makeText(SignInActivity.this, "Welcome Back, " + mAuth.getCurrentUser().getUid() ,Toast.LENGTH_SHORT).show();
+        }
             // Initialize Facebook Login button
             mCallbackManager = CallbackManager.Factory.create();
             LoginButton loginButton = findViewById(R.id.fblogin_button);
@@ -104,10 +109,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 }
             });
 
-        }
 
-        //user not logged in
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
 
 
     }
@@ -200,62 +204,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            finish();
-                            mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                            //user exists in basic user table, do something
-                                            Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                                            startActivity(homeIntent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e(TAG, databaseError.toString());
-                                }
-                            });
-
-                            mDatabase.child(getString(R.string.child_artist) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                        //user exists in basic user table, do something
-                                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                        startActivity(homeIntent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e(TAG, databaseError.toString());
-                                }
-                            });
-
-                            mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                        //user exists in basic user table, do something
-                                        Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
-                                        labelIntent.putExtra("TYPE", getString(R.string.type_label));
-                                        startActivity(labelIntent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e(TAG, databaseError.toString());
-                                }
-                            });
-
+                            sortUsers();
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
@@ -266,6 +215,72 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 });
     }
 
+    private void sortUsers(){
+        //DatabaseReference basicRoot= mDatabase.child(getString(R.string.child_basic));
+        //DatabaseReference artistRoot= mDatabase.child(getString(R.string.child_artist));
+        //DatabaseReference labelRoot= mDatabase.child(getString(R.string.child_label));
+
+        mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    //user exists in basic user table, do something
+                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                    startActivity(homeIntent);
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+
+        mDatabase.child(getString(R.string.child_artist) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    //user exists in basic user table, do something
+                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                    startActivity(homeIntent);
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+
+        mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    //user exists in basic user table, do something
+                    Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
+                    labelIntent.putExtra("TYPE", getString(R.string.type_label));
+                    startActivity(labelIntent);
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+
+    }
     @Override
     public void onClick(View view) {
         if (view == signinbtn){
