@@ -6,7 +6,7 @@ public class ArtistUser {
     public ArtistUser(){
     }
 
-    public ArtistUser(String firstname, String lastname, String email, String username, String country, String address, String city, String state, String phone, String zip) {
+    public ArtistUser(String firstname, String lastname, String email, String username, String address, String city, String state, String country, String phone, String zip) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email =  email;

@@ -20,7 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hitstreamr.hitstreamrbeta.Authentication.PickGenre;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 import java.util.Objects;
@@ -211,18 +210,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(Account.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                        //we will start the home activity here
-                        finish();
-                        Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
-                        genreIntent.putExtra("TYPE", getString(R.string.type_basic));
-                        startActivity(genreIntent);
+                        Toast.makeText(Account.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Account.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Account.this, "Could not update. Please try again", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -258,15 +252,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(Account.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        Toast.makeText(Account.this, "Update Successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(Account.this, "Registration Failed, Please try again", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Account.this, "Update Failed, Please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -514,7 +506,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view == SaveAccountBtn ){
+        if(view == SaveAccountBtn){
             if(type.equals(getString(R.string.type_artist))){
                 registerArtist();
             }
