@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +38,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     //Account Type
     private String type;
 
+    private LinearLayout ArtistInfoLayout;
+
     //EditText
     private EditText EditTextUsername;
     private EditText EditTextEmail;
@@ -48,6 +51,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextZip;
     private EditText EditTextPhone;
     private EditText EditTextCountry;
+    private TextView UserNameText;
+    private TextView LabelNameText;
 
     //Spinner
     private Spinner SpinnerState;
@@ -108,7 +113,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextZip = findViewById(R.id.accountZip);
         EditTextPhone = findViewById(R.id.accountPhone);
         EditTextCountry = findViewById(R.id.accountCountry);
-
+        UserNameText = findViewById(R.id.UserNametext);
+        LabelNameText = findViewById(R.id.Labeltext);
         //Spinners
         SpinnerState = findViewById(R.id.accountState);
 
@@ -131,9 +137,24 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         } else if (type.equals(getString(R.string.type_basic))) {
             artistInfoLayout.setVisibility(View.GONE);
-            if (userID != null) {
+             if (userID != null) {
                 myRef = database.getReference("BasicAccounts").child(userID);
+             }
+        } else if (type.equals(getString(R.string.type_label))) {
+
+
+            UserNameText.setVisibility(View.GONE);
+            LabelNameText.setVisibility(View.VISIBLE);
+            ArtistInfoLayout.setVisibility(View.VISIBLE);
+            EditTextUsername.setEnabled(false);
+            EditTextUsername.setFocusable(false);
+            EditTextEmail.setEnabled(false);
+            EditTextEmail.setFocusable(false);
+
+            if (userID != null) {
+                myRef = database.getReference("LabelAccounts").child(userID);
             }
+
         }
 
         myRef.addValueEventListener(new ValueEventListener() {
@@ -179,11 +200,17 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextZip.setText(artist.getZip());
         EditTextPhone.setText(artist.getPhone());
         EditTextCountry.setText(artist.getCountry());
+        SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
-        //SpinnerState.setSelection(10);
+    }
+    private int getIndex(Spinner spinner, String myString){
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                return i;
+            }
+        }
 
-
-        Log.e("TAG", "Username" + artist);
+        return 0;
     }
 
     public void showBasicData(DataSnapshot dataSnapshot) {
