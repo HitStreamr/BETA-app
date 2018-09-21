@@ -54,6 +54,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     //Buttons
     private Button SaveAccountBtn;
+    private Button ChangePasswordBtn;
 
     //Regex pattern for password.
     /*private static final Pattern PASSWORD_PATTERN =
@@ -114,9 +115,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         //Button
         SaveAccountBtn = findViewById(R.id.saveAccount);
+        ChangePasswordBtn = findViewById(R.id.accountChangePassword);
 
         //Listners
         SaveAccountBtn.setOnClickListener(this);
+        ChangePasswordBtn.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -176,6 +179,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextZip.setText(artist.getZip());
         EditTextPhone.setText(artist.getPhone());
         EditTextCountry.setText(artist.getCountry());
+
+        //SpinnerState.setSelection(10);
 
 
         Log.e("TAG", "Username" + artist);
@@ -524,6 +529,19 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
             else if(type.equals(getString(R.string.type_basic))){
                 registerUser();
+            }
+        }
+
+        if(view == ChangePasswordBtn){
+            if(type.equals(getString(R.string.type_artist))){
+                Intent changePasswordIntent = new Intent(getApplicationContext(), ChangePassword.class);
+                changePasswordIntent.putExtra("TYPE", getString(R.string.type_artist));
+                startActivity(changePasswordIntent);
+            }
+            else if(type.equals(getString(R.string.type_basic))){
+                Intent changePasswordIntent = new Intent(getApplicationContext(), ChangePassword.class);
+                changePasswordIntent.putExtra("TYPE", getString(R.string.type_basic));
+                startActivity(changePasswordIntent);
             }
         }
     }
