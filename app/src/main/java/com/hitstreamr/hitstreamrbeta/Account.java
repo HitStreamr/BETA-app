@@ -195,8 +195,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextCountry.setText(artist.getCountry());
         SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
-
-        Log.e("TAG", "SpinnerState  " + SpinnerState);
     }
     private int getIndex(Spinner spinner, String myString){
         for (int i=0;i<spinner.getCount();i++){
