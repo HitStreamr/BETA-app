@@ -74,17 +74,17 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         progressDialog = new ProgressDialog(this);
 
         // Views
-        mFirstName = findViewById(R.id.firstName);
-        mLastName = findViewById(R.id.lastName);
-        mEmail = findViewById(R.id.email);
-        mPassword = findViewById(R.id.Password);
-        mUsername = findViewById(R.id.Username);
-        mAddress = findViewById(R.id.addressLine1);
-        mCity = findViewById(R.id.city);
-        mState = findViewById(R.id.state);
-        mZipcode = findViewById(R.id.zip);
-        mCountry = findViewById(R.id.country);
-        mPhone = findViewById(R.id.phone);
+        mFirstName = findViewById(R.id.artistFirstName);
+        mLastName = findViewById(R.id.artistLastName);
+        mEmail = findViewById(R.id.artistEmail);
+        mPassword = findViewById(R.id.artistPassword);
+        mUsername = findViewById(R.id.artistUsername);
+        mAddress = findViewById(R.id.artistAddressLine1);
+        mCity = findViewById(R.id.artistCity);
+        mState = findViewById(R.id.artistState);
+        mZipcode = findViewById(R.id.artistZip);
+        mCountry = findViewById(R.id.artistCountry);
+        mPhone = findViewById(R.id.artistPhone);
 
         // Buttons
         signup = findViewById(R.id.signup_button);

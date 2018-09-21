@@ -18,8 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:paddingBottom="30dp"
-            >
+            android:paddingBottom="30dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -51,29 +50,39 @@
                     android:layout_gravity="center_horizontal"/>
 
                 <TextView
+                    android:id="@+id/UserNametext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Username"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    android:visibility="visible"/>
+                <TextView
+                    android:id="@+id/Labeltext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Labelname"
+                    android:layout_marginTop="10dp"
+                    android:visibility="gone"/>
                 <EditText
-                    android:id="@+id/Username"
+                    android:id="@+id/accountUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Username"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Email"
                     android:layout_marginTop="10dp"/>
                 <EditText
-                    android:id="@+id/Email"
+                    android:id="@+id/accountEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="user@email.com"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:enabled="true"/>
 
                 <Button
                     android:layout_width="wrap_content"
@@ -124,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <EditText
-                        android:id="@+id/FirstName"
+                        android:id="@+id/accountFirstName"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:ems="10"
@@ -132,7 +141,7 @@
                         android:inputType="textPersonName"
                         android:layout_marginEnd="10dp"/>
                     <EditText
-                        android:id="@+id/LastName"
+                        android:id="@+id/accountLastName"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:ems="10"
@@ -146,12 +155,12 @@
                     android:text="Phone"
                     android:layout_marginTop="10dp"/>
                 <EditText
-                    android:id="@+id/Phone"
+                    android:id="@+id/accountPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Title"
-                    android:inputType="number" />
+                    android:hint="123456789"
+                    android:inputType="phone" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -159,14 +168,14 @@
                     android:text="Address"
                     android:layout_marginTop="10dp"/>
                 <EditText
-                    android:id="@+id/Address"
+                    android:id="@+id/accountAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Address line 1"
                     android:inputType="textPersonName" />
                 <EditText
-                    android:id="@+id/City"
+                    android:id="@+id/accountCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -177,7 +186,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <Spinner
-                        android:id="@+id/state"
+                        android:id="@+id/accountState"
                         android:layout_width="160dp"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="10dp"
@@ -188,19 +197,27 @@
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp" />
                     <EditText
-                        android:id="@+id/Zip"
+                        android:id="@+id/accountZip"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:ems="10"
-                        android:hint="ZIp"
+                        android:hint="Zip"
                         android:inputType="number" />
                 </LinearLayout>
+                <EditText
+                    android:id="@+id/accountCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Country"
+                    android:inputType="textPersonName"/>
 
 
             </LinearLayout>
 
 
             <Button
+                android:id="@+id/saveAccount"
                 android:layout_width="130dp"
                 android:layout_height="40dp"
                 android:background="@drawable/button1"

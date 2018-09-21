@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;*/
             case R.id.account:
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
-                /*accountIntent.putExtra("TYPE", getString(R.string.type_artist));*/
+                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);
                 break;
         }
