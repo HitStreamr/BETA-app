@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -252,9 +253,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @return super.onCreateOptionsMenu
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
-        MenuItem mSearch = menu.findItem(R.id.search);
+        final MenuItem mSearch = menu.findItem(R.id.search);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
 
@@ -335,6 +336,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             // Stop adapters from listening so recent searches are removed
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                MainActivity.this.setItemsVisibility(menu, mSearch, true);
                 search_input = null;
                 stopAdapters();
                 mSearchView.setQuery("", false);
@@ -343,12 +345,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 recyclerView.setVisibility(View.GONE);
                 fab.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
-                Log.e("HOME", "On Close Intitiated");
+                Log.e("HOME", "On Close Initiated");
                 return true;  // return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                MainActivity.this.setItemsVisibility(menu, mSearch, false);
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 fab.setVisibility(View.GONE);
@@ -467,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new OnSuccessListener<List<QuerySnapshot>>() {
                     @Override
                     public void onSuccess(List<QuerySnapshot> tasks) {
-                        ArrayList<Video> videos = new ArrayList();
+                        ArrayList<Video> videos = new ArrayList<>();
                         ArrayList<DocumentSnapshot> docs = new ArrayList<>();
                         for(QuerySnapshot qTasks: tasks) {
                             if (!qTasks.isEmpty()){
@@ -532,9 +535,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(String userName) {
+        void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -549,9 +559,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(String userName) {
+        void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Button follow = view.findViewById(R.id.follow_button);
+            follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -603,6 +628,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FragmentTransaction transaction;
         Bundle bundle;
+        getSupportActionBar().hide();
         switch (item.getItemId()) {
             case R.id.dashboard:
                 fab.setVisibility(View.GONE);
@@ -708,15 +734,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (suggestionAdapter != null){
-            suggestionAdapter.startListening();
-        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopAdapters();
+
+//        stopAdapters();
     }
 
+    /**
+     * Decide to show/hide the items in the toolbar
+     * @param menu menu
+     * @param exception menu item
+     * @param visible visibility
+     */
+    private void setItemsVisibility(final Menu menu, final MenuItem exception,
+                                    final boolean visible) {
+        for (int i = 0; i < menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item != exception)
+                item.setVisible(visible);
+        }
+    }
 }
