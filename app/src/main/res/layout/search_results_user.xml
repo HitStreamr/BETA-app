@@ -28,7 +28,7 @@
                     android:orientation="vertical"
                     android:layout_marginStart="5dp"
                     android:gravity="center_vertical"
-                    android:paddingEnd="110dp">
+                    android:paddingEnd="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
