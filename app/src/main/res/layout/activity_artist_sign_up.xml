@@ -93,7 +93,7 @@
                     android:layout_marginBottom="10dp">
 
                     <EditText
-                        android:id="@+id/firstName"
+                        android:id="@+id/artistFirstName"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
@@ -109,7 +109,7 @@
                         android:nextFocusRight="@+id/lastName"/>
 
                     <EditText
-                        android:id="@+id/lastName"
+                        android:id="@+id/artistLastName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"
@@ -125,7 +125,7 @@
                 </LinearLayout>
 
                 <EditText
-                    android:id="@+id/email"
+                    android:id="@+id/artistEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -139,7 +139,7 @@
                     android:textCursorDrawable="@null"/>
 
                 <EditText
-                    android:id="@+id/phone"
+                    android:id="@+id/artistPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -155,7 +155,7 @@
                     />
 
                 <EditText
-                    android:id="@+id/addressLine1"
+                    android:id="@+id/artistAddressLine1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -169,7 +169,7 @@
                     android:textCursorDrawable="@null"/>
 
                 <EditText
-                    android:id="@+id/city"
+                    android:id="@+id/artistCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -189,7 +189,7 @@
 
 
                     <EditText
-                        android:id="@+id/zip"
+                        android:id="@+id/artistZip"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
@@ -205,7 +205,7 @@
                         android:textCursorDrawable="@null"/>
 
                     <Spinner
-                        android:id="@+id/state"
+                        android:id="@+id/artistState"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="10dp"
@@ -219,7 +219,7 @@
                 </LinearLayout>
 
                 <Spinner
-                    android:id="@+id/country"
+                    android:id="@+id/artistCountry"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="10dp"
@@ -233,7 +233,7 @@
 
 
                 <EditText
-                    android:id="@+id/Username"
+                    android:id="@+id/artistUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
@@ -247,7 +247,7 @@
                     android:textCursorDrawable="@null"/>
 
                 <EditText
-                    android:id="@+id/Password"
+                    android:id="@+id/artistPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"

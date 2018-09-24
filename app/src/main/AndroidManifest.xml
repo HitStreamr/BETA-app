@@ -59,6 +59,7 @@
         <activity android:name=".Account" />
         <activity android:name=".VideoView" />
         <activity android:name=".Profile"></activity>
+        <activity android:name=".ChangePassword" />
     </application>
 
 </manifest>
