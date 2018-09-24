@@ -85,6 +85,7 @@
                     android:enabled="true"/>
 
                 <Button
+                    android:id="@+id/ChangePassword"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="Change Password"

@@ -57,6 +57,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     //Buttons
     private Button SaveAccountBtn;
+    private Button ChangePwdBtn;
+
 
     //Regex pattern for password.
     /*private static final Pattern PASSWORD_PATTERN =
@@ -119,6 +121,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         //Button
         SaveAccountBtn = findViewById(R.id.saveAccount);
         SaveAccountBtn.setOnClickListener(this);
+
+        ChangePwdBtn = findViewById(R.id.ChangePassword);
+        ChangePwdBtn.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -289,6 +294,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                         Toast.makeText(Account.this, "Update Failed, Please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    //On click change password option
+    private void selectChangePassword() {
+
+        Intent newPasswordIntent = new Intent(getApplicationContext(), ChangePassword.class);
+        newPasswordIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(newPasswordIntent);
+
     }
 
     /**
@@ -542,5 +556,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 registerUser();
             }
         }
-}
+        else if(view == ChangePwdBtn){
+                selectChangePassword();
+        }
+    }
 }
