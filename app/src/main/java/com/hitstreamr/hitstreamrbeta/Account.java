@@ -59,7 +59,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     //Buttons
     private Button SaveAccountBtn;
-    private Button ChangePasswordBtn;
+    private Button ChangePwdBtn;
+
 
     //Regex pattern for password.
     /*private static final Pattern PASSWORD_PATTERN =
@@ -121,11 +122,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         //Button
         SaveAccountBtn = findViewById(R.id.saveAccount);
-        ChangePasswordBtn = findViewById(R.id.accountChangePassword);
-
-        //Listners
         SaveAccountBtn.setOnClickListener(this);
-        ChangePasswordBtn.setOnClickListener(this);
+
+        ChangePwdBtn = findViewById(R.id.ChangePassword);
+        ChangePwdBtn.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -302,6 +302,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                         Toast.makeText(Account.this, "Update Failed, Please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    //On click change password option
+    private void selectChangePassword() {
+
+        Intent newPasswordIntent = new Intent(getApplicationContext(), ChangePassword.class);
+        newPasswordIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(newPasswordIntent);
+
     }
 
     /**
@@ -547,29 +556,16 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View view) {
-        if(view == SaveAccountBtn){
-            Log.e(TAG,"Entered on click:::::::" + type);
-
+        if(view == SaveAccountBtn ){
             if(type.equals(getString(R.string.type_artist))){
-                Log.e(TAG,"Entered on click type artist" + type);
                 registerArtist();
             }
             else if(type.equals(getString(R.string.type_basic))){
                 registerUser();
             }
         }
-
-        if(view == ChangePasswordBtn){
-            if(type.equals(getString(R.string.type_artist))){
-                Intent changePasswordIntent = new Intent(getApplicationContext(), ChangePassword.class);
-                changePasswordIntent.putExtra("TYPE", getString(R.string.type_artist));
-                startActivity(changePasswordIntent);
-            }
-            else if(type.equals(getString(R.string.type_basic))){
-                Intent changePasswordIntent = new Intent(getApplicationContext(), ChangePassword.class);
-                changePasswordIntent.putExtra("TYPE", getString(R.string.type_basic));
-                startActivity(changePasswordIntent);
-            }
+        else if(view == ChangePwdBtn){
+                selectChangePassword();
         }
     }
 }

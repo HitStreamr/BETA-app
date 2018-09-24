@@ -2,12 +2,19 @@ package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -31,8 +38,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup, goBack;
+    private Button signup, goBack, profilePictureBtn;
     private RadioButton termsCond;
+
+    //ImageView
+    private ImageView imageViewProfile;
+
+    private static final int REQUEST_CODE = 123;
+
+    private Uri selectedImagePath = null;
 
     private ProgressDialog progressDialog;
 
@@ -90,11 +104,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         signup = findViewById(R.id.signup_button);
         goBack = findViewById(R.id.backBtn);
         termsCond = findViewById(R.id.tos_button);
+        profilePictureBtn = findViewById(R.id.artistPicture);
+
+        //Image View
+        imageViewProfile = findViewById(R.id.profileImage);
 
         // Listeners
         signup.setOnClickListener(this);
         goBack.setOnClickListener(this);
-
+        profilePictureBtn.setOnClickListener(this);
     }
 
     /**
@@ -446,6 +464,41 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
         return checkStringCmpvalues(value_for_each_comparison);
     }
+    private void chooseImage(){
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select your profile picture"), REQUEST_CODE);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE) {
+                if (data != null) {
+                    if (data.getData() != null) {
+                        selectedImagePath = data.getData();
+                        try {
+
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImagePath);
+                            RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
+                            roundedBitmapDrawable.setCircular(true);
+                            imageViewProfile.setImageDrawable(roundedBitmapDrawable);
+                            /*profilePictureBtn.setBackgroundColor(Color.GREEN);*/
+                            profilePictureBtn.setText(R.string.image_selection);
+                        } catch (Exception e) {
+                            //#debug
+                            e.printStackTrace();
+                        }
+                    } else {
+                        //profilePictureBtn.setBackgroundColor(Color.RED);
+                        profilePictureBtn.setText(R.string.image_not_selection);
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Override the onClick function
@@ -461,6 +514,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             //will open account type activity
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
+        }
+        if( view == profilePictureBtn){
+            chooseImage();
         }
     }
 }

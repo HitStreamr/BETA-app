@@ -315,13 +315,15 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot takeSnapshot) {
-                        registerFirebase();
+                        //registerFirebase();
                         videoRef.getDownloadUrl()
                                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         successVideoUpload = true;
                                         downloadVideoUri = uri.toString();
+                                        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
+                                        registerFirebase();
                                     }
                                 });
                     }
@@ -342,10 +344,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         progressBar.setProgress((int) progress);
                         TextViewSizeLabel.setText(ProgressText);
                         TextViewProgressLabel.setText(p);
-
                     }
                 });
     }
+
+    Map<String, Object> artistVideo = new HashMap<>();
     public Map<String, Object> contributorVideo = new HashMap<>();
 
     private void registerFirebase() {
@@ -372,13 +375,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             sample.add(Contributor);
         }
 
-        Map<String, Object> artistVideo = new HashMap<>();
+
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
         artistVideo.put(VIDEO_GENRE, genre);
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
-        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
+        //artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
 
@@ -400,10 +403,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
-                        /*finish();
-                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                        startActivity(homeIntent);*/
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

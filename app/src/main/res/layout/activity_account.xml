@@ -85,7 +85,7 @@
                     android:enabled="true"/>
 
                 <Button
-                    android:id="@+id/accountChangePassword"
+                    android:id="@+id/ChangePassword"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="Change Password"
@@ -182,7 +182,6 @@
                     android:ems="10"
                     android:hint="City"
                     android:inputType="textPersonName" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -198,7 +197,6 @@
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp" />
-
                     <EditText
                         android:id="@+id/accountZip"
                         android:layout_width="160dp"
