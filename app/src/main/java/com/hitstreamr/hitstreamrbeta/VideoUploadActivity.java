@@ -503,11 +503,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     }
 
     /**
-     * Method to validate the Street Address of any unwanted characters
+     * Method to validate
      */
     public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
