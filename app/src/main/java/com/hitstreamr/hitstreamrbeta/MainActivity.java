@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -51,13 +52,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private String type;
     FloatingActionButton fab;
     private ItemClickListener mListener;
+    //private ImageButton userbtn;
+
+
 
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
@@ -86,9 +90,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //userbtn = findViewById(R.id.userButton);
+        //userbtn.setOnClickListener(this);
+
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+        toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
+        getSupportActionBar().setTitle("BETA");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
@@ -146,11 +157,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         navigationView.setNavigationItemSelectedListener(this);
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
     }
 
     /**
@@ -533,6 +544,53 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return tmp;
     }
+
+    public void showPopup(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.acct_profile);
+        popupMenu.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.account:
+                Intent acct = new Intent(getApplicationContext(), Account.class);
+                startActivity(acct);
+                break;
+            case R.id.profile:
+                Intent prof = new Intent(getApplicationContext(), Profile.class);
+                startActivity(prof);
+                break;
+
+        }return true;
+    }
+
+    /*@Override
+    public void onClick(View v) {
+
+        PopupMenu popupMenu = new PopupMenu(MainActivity.this, userbtn);
+        popupMenu.getMenuInflater().inflate(R.menu.acct_profile, popupMenu.getMenu());
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.account:
+                        Intent acct = new Intent(getApplicationContext(), Account.class);
+                        startActivity(acct);
+                        break;
+                    case R.id.profile:
+                        Intent prof = new Intent(getApplicationContext(), Profile.class);
+                        startActivity(prof);
+                        break;
+                }
+                return true;
+            }
+        });
+
+    }*/
 
 
     /**

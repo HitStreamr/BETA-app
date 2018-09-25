@@ -20,6 +20,11 @@
 
     </style>
 
+    <style name="MyTitleTextApperance" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">10sp</item>
+    </style>
+
 
 
 </resources>

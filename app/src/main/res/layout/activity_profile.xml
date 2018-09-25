@@ -77,7 +77,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="18dp"
+                        android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
                         android:layout_gravity="center_horizontal"
@@ -98,7 +98,6 @@
                     android:id="@+id/followDivider"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
                     android:background="@color/drkgryAccent"
                     android:layout_marginEnd="30dp"/>
 
@@ -111,7 +110,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
-                        android:textSize="18dp"
+                        android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
                         android:layout_gravity="center_horizontal"

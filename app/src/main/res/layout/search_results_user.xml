@@ -21,10 +21,6 @@
         <!--android:background="@color/colorAccent"-->
         <!--android:layout_marginBottom="5dp"/>-->
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -49,7 +45,7 @@
                     android:orientation="vertical"
                     android:layout_marginStart="5dp"
                     android:gravity="center_vertical"
-                    android:paddingEnd="110dp">
+                    android:paddingEnd="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -87,7 +83,5 @@
             </LinearLayout>
 
         </LinearLayout>
-
-    </ScrollView>
 
 </LinearLayout>
