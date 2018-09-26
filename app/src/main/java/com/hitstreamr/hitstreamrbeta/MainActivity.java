@@ -2,6 +2,9 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.ClipData;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -22,9 +25,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
@@ -42,6 +49,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private MenuItem profileItem;
 
+    private TextView TextViewUsername;
+
+    private ImageView ImageViewProfilePicture;
 
     RecyclerView suggestionsRecyclerView;
     RecyclerView resultsRecyclerView;
@@ -65,13 +79,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView noRes;
     ProgressBar searching;
 
+    String name;
+    Uri photoUrl;
 
+    FirebaseUser user;
     public final String TAG = "HomeActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -103,9 +123,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
 
 
+        name = user.getDisplayName();
+        photoUrl = user.getPhotoUrl();
+        Log.e(TAG, "Your profile" + name + photoUrl + user);
+
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         fab = findViewById(R.id.fab);
+
+        TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
+        ImageViewProfilePicture = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
+
+        TextViewUsername.setVisibility(View.VISIBLE);
+        ImageViewProfilePicture.setVisibility(View.VISIBLE);
+
+        TextViewUsername.setText(name);
+
+        String pho = photoUrl.toString();
+
+
+        /*Bitmap bmp = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());
+        ImageViewProfilePicture.setImageBitmap(bmp);*/
+        /*try{
+        //ImageView i = (ImageView) findViewById(R.id.image);
+        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(pho).getContent());
+        ImageViewProfilePicture.setImageBitmap(bitmap);
+    } catch (MalformedURLException e) {
+        e.printStackTrace();
+    } catch (IOException e) {
+        e.printStackTrace();
+    }*/
+
+        //ImageViewProfilePicture.setImageURI(photoUrl);
+
+        Glide.with(getApplicationContext()).load(photoUrl).into(ImageViewProfilePicture);
+
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
@@ -300,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new OnSuccessListener<List<QuerySnapshot>>() {
                     @Override
                     public void onSuccess(List<QuerySnapshot> tasks) {
-                        ArrayList<Video> videos = new ArrayList();
+                        ArrayList<Video> videos = new ArrayList<>();
                         ArrayList<DocumentSnapshot> docs = new ArrayList<>();
                         for (QuerySnapshot qTasks : tasks) {
                             if (!qTasks.isEmpty()) {
