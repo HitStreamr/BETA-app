@@ -79,4 +79,11 @@
     <string name="nav_library">Library</string>
     <string name="no_results">No Results</string>
     <string name="search">Search</string>
+    <string name="agree_tos_privacy">By signing in, I agree that I have read and agree to the Terms of Service and Privacy Policy.</string>
+    <string name="create_account">Don\'t have an account? Sign Up here!</string>
+    <string name="sign_in_button">Sign In</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="password_hint">Password</string>
+    <string name="email_request_rest_password">Enter email associated with account.</string>
+    <string name="confirm">Confirm</string>
 </resources>

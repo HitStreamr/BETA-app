@@ -37,9 +37,11 @@ public class Splash extends AppCompatActivity {
                 // [START initialize_auth]
                 mAuth = FirebaseAuth.getInstance();
                 // [END initialize_auth]
-                if(mAuth.getCurrentUser() !=null){
+                if(mAuth.getCurrentUser() != null){
                     //home activity here
                     sortUsers();
+                }else{
+                    startActivity(new Intent(getApplicationContext(),Welcome.class));
                 }
             }
         },SPLASH_TIME_OUT);

@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.ClipData;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -62,6 +63,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     FloatingActionButton fab;
     private ItemClickListener mListener;
 
+    private MenuItem profileItem;
+
+
+    RecyclerView suggestionsRecyclerView;
+    RecyclerView resultsRecyclerView;
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
     VideoResultAdapter resultAdapter;
@@ -127,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //get menu & extras
         Bundle extras = getIntent().getExtras();
 
-        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null){
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //check that type exists and set it.
             type = getIntent().getStringExtra("TYPE");
 
@@ -256,9 +262,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @return super.onCreateOptionsMenu
      */
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            /*case R.id.profile:
+                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
+                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                startActivity(homeIntent);
+                break;*/
+            case R.id.account:
+                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
+                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(accountIntent);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
         final MenuItem mSearch = menu.findItem(R.id.search);
+        //Items
+        profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
 
@@ -331,7 +356,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     search_input = null;
                 }
-                return false;
+                //edited from false/what is this for?
+                return true;
             }
         });
 
@@ -411,7 +437,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public com.google.firebase.firestore.Query autocompleteQuery(String query){
         int strlength = query.length();
         String strFrontCode = query.substring(0, strlength);
-        String strEndCode = query.substring(strlength-1);
+        String strEndCode = query.substring(strlength - 1);
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
@@ -669,7 +695,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,  notifSettingsFrag);
+                transaction.replace(R.id.fragment_container, notifSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
@@ -682,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,payPrefFrag);
+                transaction.replace(R.id.fragment_container, payPrefFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
@@ -695,7 +721,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,inviteFrag);
+                transaction.replace(R.id.fragment_container, inviteFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
@@ -720,7 +746,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,legalFrag);
+                transaction.replace(R.id.fragment_container, legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
             break;

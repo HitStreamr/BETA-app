@@ -40,7 +40,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private Button backbutton, signinbtn;
     private EditText ETemail, ETpassword;
-    private TextView register;
+    private TextView register,forgetPassword;
     private ProgressDialog progressDialog;
 
     // [START declare_auth]
@@ -50,6 +50,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private LoginButton loginButton;
     private CallbackManager mCallbackManager;
     private static final String TAG = "FACELOG";
+
+    private int loginAttempts;
+    final int MAX_LOGIN = 5;
+
+    static final int RESET_PASSWORD = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +67,19 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         backbutton = (Button)findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
 
+
         //Views
         ETemail = (EditText) findViewById(R.id.Email);
         ETpassword = (EditText)findViewById(R.id.Password);
         register = (TextView) findViewById(R.id.textviewsignin);
+        forgetPassword = findViewById(R.id.forgot_password);
 
         backbutton.setOnClickListener(this);
         signinbtn.setOnClickListener(this);
         register.setOnClickListener(this);
+        forgetPassword.setOnClickListener(this);
+
+        loginAttempts = 0;
 
         //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -77,33 +87,29 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         mAuth = FirebaseAuth.getInstance();
 
 
-            // Initialize Facebook Login button
-            mCallbackManager = CallbackManager.Factory.create();
-            LoginButton loginButton = findViewById(R.id.fblogin_button);
-            loginButton.setReadPermissions("email", "public_profile");
-            loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                    handleFacebookAccessToken(loginResult.getAccessToken());
-                }
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = findViewById(R.id.fblogin_button);
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
 
-                @Override
-                public void onCancel() {
-                    Log.d(TAG, "facebook:onCancel");
-                    // ...
-                }
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+                // ...
+            }
 
-                @Override
-                public void onError(FacebookException error) {
-                    Log.d(TAG, "facebook:onError", error);
-                    // ...
-                }
-            });
-
-
-
-
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+                // ...
+            }
+        });
 
 
     }
@@ -112,8 +118,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Pass the activity result back to the Facebook SDK
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESET_PASSWORD) {
+            if (resultCode == RESULT_OK) {
+                loginAttempts = 0;
+                Toast.makeText(SignInActivity.this, "Password Rest Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(SignInActivity.this, "Email failed to send. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            // Pass the activity result back to the Facebook SDK
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -200,7 +216,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                            if (loginAttempts >= MAX_LOGIN){
+                                Toast.makeText(SignInActivity.this, "Do you want to reset password?",Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                                loginAttempts++;
+                            }
                         }
 
                     }
@@ -273,6 +294,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         });
 
     }
+
     @Override
     public void onClick(View view) {
         if (view == signinbtn){
@@ -293,6 +315,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             //will open sign in activity
             finish();
             startActivity(new Intent(getApplicationContext(), Welcome.class));
+        }
+
+        if (view == forgetPassword){
+            startActivityForResult(new Intent(getApplicationContext(), ResetPassword.class),RESET_PASSWORD);
         }
 
     }
