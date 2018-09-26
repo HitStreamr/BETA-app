@@ -57,6 +57,8 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
+        <activity android:name=".VideoView" />
+        <activity android:name=".Profile"></activity>
         <activity android:name=".ChangePassword" />
         <activity android:name=".VideoView"></activity>
     </application>
