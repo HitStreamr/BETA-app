@@ -139,23 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         TextViewUsername.setText(name);
 
-        String pho = photoUrl.toString();
-
-
-        /*Bitmap bmp = BitmapFactory.decodeStream(photoUrl.openConnection().getInputStream());
-        ImageViewProfilePicture.setImageBitmap(bmp);*/
-        /*try{
-        //ImageView i = (ImageView) findViewById(R.id.image);
-        Bitmap bitmap = BitmapFactory.decodeStream((InputStream) new URL(pho).getContent());
-        ImageViewProfilePicture.setImageBitmap(bitmap);
-    } catch (MalformedURLException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    }*/
-
-        //ImageViewProfilePicture.setImageURI(photoUrl);
-
         Glide.with(getApplicationContext()).load(photoUrl).into(ImageViewProfilePicture);
 
 
@@ -190,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
     }
 
     @Override
