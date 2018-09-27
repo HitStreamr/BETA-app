@@ -1,8 +1,11 @@
 package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -40,7 +43,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private Button backbutton, signinbtn;
     private EditText ETemail, ETpassword;
-    private TextView register;
+    private TextView register,forgetPassword;
     private ProgressDialog progressDialog;
 
     // [START declare_auth]
@@ -50,6 +53,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private LoginButton loginButton;
     private CallbackManager mCallbackManager;
     private static final String TAG = "FACELOG";
+
+    private int loginAttempts;
+    final int MAX_LOGIN = 5;
+
+    static final int RESET_PASSWORD = 1;
+
+    SharedPreferences sharedPref;
+    volatile long timeLeft;
+    CountDownTimer timer;
+    final int TIMEOUT_PASSWORD = 900000;
+    volatile Boolean locked_out;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,64 +77,118 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         backbutton = (Button)findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
 
+
         //Views
         ETemail = (EditText) findViewById(R.id.Email);
         ETpassword = (EditText)findViewById(R.id.Password);
         register = (TextView) findViewById(R.id.textviewsignin);
+        forgetPassword = findViewById(R.id.forgot_password);
 
         backbutton.setOnClickListener(this);
         signinbtn.setOnClickListener(this);
         register.setOnClickListener(this);
+        forgetPassword.setOnClickListener(this);
 
-        // [START initialize_auth]
-        mAuth = FirebaseAuth.getInstance();
-        // [END initialize_auth]
-        if(mAuth.getCurrentUser() != null) {
-            //home activity here
-            finish();
-            //TODO Handle different users here
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        //lock out code
+        loginAttempts = 0;
+        //get shared preferences
+        sharedPref = getPreferences(Context.MODE_PRIVATE);
+        checkTimer();
 
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-        }
-            // Initialize Facebook Login button
-            mCallbackManager = CallbackManager.Factory.create();
-            LoginButton loginButton = findViewById(R.id.fblogin_button);
-            loginButton.setReadPermissions("email", "public_profile");
-            loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
-                @Override
-                public void onSuccess(LoginResult loginResult) {
-                    Log.d(TAG, "facebook:onSuccess:" + loginResult);
-                    handleFacebookAccessToken(loginResult.getAccessToken());
-                }
-
-                @Override
-                public void onCancel() {
-                    Log.d(TAG, "facebook:onCancel");
-                    // ...
-                }
-
-                @Override
-                public void onError(FacebookException error) {
-                    Log.d(TAG, "facebook:onError", error);
-                    // ...
-                }
-            });
-
-
-
-        //user not logged in
+        //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        mAuth = FirebaseAuth.getInstance();
 
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = findViewById(R.id.fblogin_button);
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+                // ...
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+                // ...
+            }
+        });
+    }
+
+    /* Timer Code */
+    private void checkTimer() {
+        if (sharedPref.contains("time"))
+            setTimer();
+        else {
+            locked_out = false;
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putLong("time", -1L);
+            editor.apply();
+        }
+    }
+
+    private void setTimer() {
+        timeLeft = sharedPref.getLong("time", -1L);
+        //Log.e(TAG,"Time: " + timeLeft);
+        if (timeLeft != -1L)
+            startTimer(timeLeft);
+        else
+            locked_out = false;
+            loginAttempts = 0;
+
+    }
+
+    private void startTimer(long time) {
+        locked_out = true;
+        timer = new CountDownTimer(time, 1000) {
+
+            @Override
+            public void onFinish() {
+                locked_out = false;
+                loginAttempts = 0;
+                saveToPref(-1L);
+            }
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeft = millisUntilFinished;
+                saveToPref(timeLeft);
+            }
+        }.start();
+    }
+
+    private void saveToPref(long timeLeft){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putLong("time", timeLeft);
+        editor.apply();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Pass the activity result back to the Facebook SDK
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RESET_PASSWORD) {
+            if (resultCode == RESULT_OK) {
+                loginAttempts = 0;
+                Toast.makeText(SignInActivity.this, "Password Rest Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(SignInActivity.this, "Email failed to send. Please try again.", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            // Pass the activity result back to the Facebook SDK
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -202,81 +271,102 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            finish();
-
-                            //DatabaseReference basicRoot= mDatabase.child(getString(R.string.child_basic));
-                            //DatabaseReference artistRoot= mDatabase.child(getString(R.string.child_artist));
-                            //DatabaseReference labelRoot= mDatabase.child(getString(R.string.child_label));
-
-                            mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                            //user exists in basic user table, do something
-                                            Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                                            startActivity(homeIntent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e(TAG, databaseError.toString());
-                                }
-                            });
-
-                            mDatabase.child(getString(R.string.child_artist) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                        //user exists in basic user table, do something
-                                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                        startActivity(homeIntent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e(TAG, databaseError.toString());
-                                }
-                            });
-
-                            mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    if (snapshot.getValue() != null) {
-                                        //user exists in basic user table, do something
-                                        Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
-                                        labelIntent.putExtra("TYPE", getString(R.string.type_label));
-                                        startActivity(labelIntent);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    Log.e(TAG, databaseError.toString());
-                                }
-                            });
-
+                            sortUsers();
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
-                        }
 
-                    }
+                                loginAttempts++;
+                                int temp = MAX_LOGIN - loginAttempts;
+                                if (temp <= 0){
+                                    //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
+                                    Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
+                                    startTimer(TIMEOUT_PASSWORD);
+                                }else{
+                                    Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        }
                 });
+    }
+
+    private void sortUsers(){
+        //DatabaseReference basicRoot= mDatabase.child(getString(R.string.child_basic));
+        //DatabaseReference artistRoot= mDatabase.child(getString(R.string.child_artist));
+        //DatabaseReference labelRoot= mDatabase.child(getString(R.string.child_label));
+
+        mDatabase.child(getString(R.string.child_basic) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    //user exists in basic user table, do something
+                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                    startActivity(homeIntent);
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+
+        mDatabase.child(getString(R.string.child_artist) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    //user exists in basic user table, do something
+                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                    startActivity(homeIntent);
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+
+        mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.getValue() != null) {
+                    //user exists in basic user table, do something
+                    Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
+                    labelIntent.putExtra("TYPE", getString(R.string.type_label));
+                    startActivity(labelIntent);
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, databaseError.toString());
+            }
+        });
+
     }
 
     @Override
     public void onClick(View view) {
         if (view == signinbtn){
-            UserLogin();
+            if (!locked_out){
+                UserLogin();
+            }else{
+                Toast.makeText(getApplicationContext(),"Please wait to attempt to login again.",Toast.LENGTH_LONG).show();
+            }
         }
 
         if (view == backbutton){
@@ -295,6 +385,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             startActivity(new Intent(getApplicationContext(), Welcome.class));
         }
 
+        if (view == forgetPassword){
+            startActivityForResult(new Intent(getApplicationContext(), ResetPassword.class),RESET_PASSWORD);
+        }
     }
 
 }
