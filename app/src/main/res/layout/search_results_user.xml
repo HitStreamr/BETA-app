@@ -4,6 +4,23 @@
     android:background="@color/litgryAccent"
     android:orientation="vertical">
 
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/toolbar"-->
+        <!--android:background="@drawable/gradient1"/>-->
+
+    <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Search Results"-->
+        <!--android:gravity="center"-->
+        <!--android:textColor="@android:color/black"-->
+        <!--android:textStyle="bold"-->
+        <!--android:padding="15dp"-->
+        <!--android:background="@color/colorAccent"-->
+        <!--android:layout_marginBottom="5dp"/>-->
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,8 +76,9 @@
                         android:layout_height="36dp"
                         android:background="@drawable/button1"
                         android:text="Follow"
+                        android:textSize="12sp"
                         android:textColor="@color/colorAccent"
-                        android:textSize="12sp" />
+                        android:background="@drawable/button1"/>
 
                 </LinearLayout>
 
