@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -48,8 +49,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup, goBack, profilePictureBtn;
+    private Button signup, profilePictureBtn;
     private RadioButton termsCond;
+
+    private ImageButton goBack;
 
     //ImageView
     private ImageView imageViewProfile;
@@ -114,10 +117,12 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mUsername = findViewById(R.id.artistUsername);
         mAddress = findViewById(R.id.artistAddressLine1);
         mCity = findViewById(R.id.artistCity);
-        mState = findViewById(R.id.artistState);
         mZipcode = findViewById(R.id.artistZip);
-        mCountry = findViewById(R.id.artistCountry);
         mPhone = findViewById(R.id.artistPhone);
+
+        //Spinnner
+        mState = findViewById(R.id.artistState);
+        mCountry = findViewById(R.id.artistCountry);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -182,7 +187,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip) | !validateToc()) {
+                | !validateZip(zip) | !validateToc() | validateBrowseVideo() | !validateState() | !validateCountry())  {
             return;
         }
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
@@ -202,8 +207,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                         if (task.isSuccessful()) {
                             uploadFromUri(selectedImagePath);
                         } else {
-                            Toast.makeText(ArtistSignUp.this, "Could not register. Please try again",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ArtistSignUp.this, "Could not register. Please try again",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -248,7 +252,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 Toast.makeText(ArtistSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                                 finish();
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                //startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                                startActivity(homeIntent);
                             } else {
                                 //Display a failure message
                                 Toast.makeText(ArtistSignUp.this, "Registration Failed", Toast.LENGTH_SHORT).show();
@@ -323,6 +330,22 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mAddress.setError(null);
             return true;
         }
+    }
+
+    private boolean validateState() {
+        if (mState.getSelectedItem().toString().trim().equals("Select State")) {
+            Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateCountry() {
+        if (mCountry.getSelectedItem().toString().trim().equals("Select Country")) {
+            Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -437,6 +460,14 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mUsername.setError(null);
             return true;
         }
+    }
+
+    private boolean validateBrowseVideo() {
+        if (selectedImagePath != null) {
+            return true;
+        }
+        profilePictureBtn.setText(R.string.video_not_selection);
+        return false;
     }
 
     // not working yet

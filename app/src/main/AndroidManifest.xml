@@ -57,13 +57,10 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
-<<<<<<<<< Temporary merge branch 1
         <activity android:name=".VideoView" />
-        <activity android:name=".Profile"></activity>
-=========
+        <activity android:name=".Profile" />
         <activity android:name=".ChangePassword" />
         <activity android:name=".Authentication.ResetPassword"></activity>
-        <activity android:name=".VideoView"></activity>
     </application>
 
 </manifest>

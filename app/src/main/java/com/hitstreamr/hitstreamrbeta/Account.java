@@ -59,6 +59,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     private boolean photoChanged = false;
 
+    private String email;
+
     //Account Type
     private String type;
 
@@ -92,6 +94,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     //Object
     ArtistUser artist;
     ArtistUser artist_object;
+    User basicUser;
 
     private Uri selectedImagePath;
 
@@ -103,11 +106,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                     "[a-zA-Z0-9_+&*-]+)*@" +
                     "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
                     "A-Z]{2,7}$", Pattern.CASE_INSENSITIVE);
-    //Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private static final Pattern VALID_PHONE_NUMBER_REGEX =
             Pattern.compile(("[0-9]{10}"));
-    //Pattern.compile(("\\d{3}-\\d{3}-\\d{4}"));
 
     private static final Pattern VALID_ZIP_REGEX =
             Pattern.compile(("[0-9]{5}"));
@@ -147,7 +148,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         //ImageView
         ImageViewPhoto = findViewById(R.id.accountPhoto);
 
-
         //Button
         SaveAccountBtn = findViewById(R.id.saveAccount);
         SaveAccountBtn.setOnClickListener(this);
@@ -171,8 +171,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 myRef = database.getReference("BasicAccounts").child(userID);
             }
         } else if (type.equals(getString(R.string.type_label))) {
-
-
             UserNameText.setVisibility(View.GONE);
             LabelNameText.setVisibility(View.VISIBLE);
             ArtistInfoLayout.setVisibility(View.VISIBLE);
@@ -184,7 +182,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             if (userID != null) {
                 myRef = database.getReference("LabelAccounts").child(userID);
             }
-
         }
 
         myRef.addValueEventListener(new ValueEventListener() {
@@ -233,7 +230,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
         Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
-
     }
 
     private int getIndex(Spinner spinner, String myString) {
@@ -265,14 +261,24 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return;
         }
         /*//If validations is ok we will first show progressbar
-        progressDialog.setMessage("Registering New User...");
-        progressDialog.show();*/
+        progressDialog.show();
+        progressDialog.setMessage("Registering New User...");*/
 
+        basicUser = new User(username, email);
 
-        User user = new User(username, email);
+        if (selectedImagePath != null) {
+            uploadFromUri(selectedImagePath);
+        }
+        else {
+            downloadimageUri = user.getPhotoUrl().toString();
+            updateAuthentication();
+        }
+    }
+
+    private void registerBasicFirebase(){
         FirebaseDatabase.getInstance().getReference("BasicAccounts")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
-                .setValue(user)
+                .setValue(basicUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -283,13 +289,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(Account.this, "Could not update. Please try again", Toast.LENGTH_SHORT).show();
-
                     }
                 });
-
-
     }
-     private String email;
+
 
     private void registerArtist() {
         Log.e(TAG, "Entered register artist method" + type);
@@ -298,7 +301,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         Log.e(TAG, "Entered register artist firstname:::::" + firstname);
         final String lastname = EditTextLastName.getText().toString().trim();
         email = EditTextEmail.getText().toString().trim();
-        //final String password = Edit.getText().toString().trim();
         final String username = EditTextUsername.getText().toString().trim();
         final String address = EditTextAddress.getText().toString().trim();
         final String city = EditTextCity.getText().toString().trim();
@@ -306,8 +308,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String zip = EditTextZip.getText().toString().trim();
         final String country = EditTextCountry.getText().toString().trim();
         final String phone = EditTextPhone.getText().toString().trim();
-
-        //EditTextEmail.setFocusable(false);
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validateAddressLine(address)
                 | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
@@ -318,21 +318,23 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         }
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
-        Log.e(TAG, "email details" + artist.getEmail() + "new email" + email);
+        videoSelection();
 
+        Log.e(TAG, "email details" + artist.getEmail() + "new email" + email);
         Log.e(TAG, "email details" + user.getEmail() + "profile photo: " + user.getEmail());
 
-        /*if(selectedImagePath == null){
-            selectedImagePath = user.getPhotoUrl();
-        }*/
+        //updateProfile();
+    }
 
+    private void videoSelection(){
         if (selectedImagePath != null) {
-           uploadFromUri(selectedImagePath);
+            uploadFromUri(selectedImagePath);
         }
         else {
+            downloadimageUri = user.getPhotoUrl().toString();
             updateAuthentication();
         }
-        //updateProfile();
+
     }
 
     private void updateAuthentication() {
@@ -360,7 +362,12 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                registerFireStore();
+                                if (type.equals(getString(R.string.type_artist))) {
+                                    registerArtistFirebase();
+                                }
+                                else if (type.equals(getString(R.string.type_basic))) {
+                                    registerBasicFirebase();
+                                }
                                 Log.d(TAG, "User profile updated.");
                             }
                         }
@@ -370,7 +377,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
-    private void registerFireStore() {
+    private void registerArtistFirebase() {
         Log.e(TAG, "register Artist came out of validation" + type);
 
         Log.e(TAG, " new photo details:" + user.getPhotoUrl() + " new profile photo: " + user.getEmail());
@@ -392,8 +399,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 });
 
     }
-
-
 
     private void uploadFromUri(final Uri fileUri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

@@ -23,7 +23,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0000"
+                android:text="0"
+                android:textColor="@color/colorAccent"
                 android:textSize="12sp"
 
                 />
@@ -52,7 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="10dp"
+        >
 
 
         <ImageView
@@ -74,15 +76,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="User Name Here"
+                android:textColor="@color/colorAccent"
                 android:textSize="18sp"
                 />
 
-            <!--<TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Info@UserEmail.com"
-                android:textSize="12sp"
-                />-->
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            >
+
+            <ImageButton
+                android:id="@+id/userButton"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
+                android:background="@android:color/transparent"
+                android:onClick="showPopup"/>
         </LinearLayout>
 
 

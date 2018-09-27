@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -18,11 +17,12 @@
             android:orientation="horizontal"
             android:layout_marginTop="15dp">
 
-            <Button
+            <ImageButton
                 android:id="@+id/backBtn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/back_icon_wht"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/ic_keyboard_arrow_left_black_24dp"
+                android:background="@android:color/transparent"
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical" />
 
@@ -80,7 +80,7 @@
 
                 <Button
                     android:id="@+id/artistPicture"
-                    android:layout_width="120dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="20dp"
                     android:text="Upload Photo"
                     android:textStyle="bold"
@@ -107,7 +107,9 @@
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:maxLength="26"/>
+                        android:maxLength="26"
+                        android:textCursorDrawable="@null"
+                        android:nextFocusRight="@+id/lastName"/>
 
                     <EditText
                         android:id="@+id/artistLastName"
@@ -120,7 +122,8 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:maxLength="26"/>
+                        android:maxLength="26"
+                        android:textCursorDrawable="@null"/>
 
                 </LinearLayout>
 
@@ -135,7 +138,8 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:textCursorDrawable="@null"/>
 
                 <EditText
                     android:id="@+id/artistPhone"
@@ -150,6 +154,7 @@
                     android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
                     android:maxLength="10"
+                    android:textCursorDrawable="@null"
                     />
 
                 <EditText
@@ -163,7 +168,8 @@
                     android:inputType="textPostalAddress"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp" />
+                    android:paddingTop="3dp"
+                    android:textCursorDrawable="@null"/>
 
                 <EditText
                     android:id="@+id/artistCity"
@@ -176,7 +182,8 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:textCursorDrawable="@null"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -197,7 +204,8 @@
                         android:inputType="number"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp" />
+                        android:paddingTop="3dp"
+                        android:textCursorDrawable="@null"/>
 
                     <Spinner
                         android:id="@+id/artistState"
@@ -238,7 +246,8 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"/>
+                    android:layout_marginBottom="10dp"
+                    android:textCursorDrawable="@null"/>
 
                 <EditText
                     android:id="@+id/artistPassword"
