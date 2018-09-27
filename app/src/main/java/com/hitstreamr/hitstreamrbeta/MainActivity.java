@@ -58,15 +58,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
+    private Toolbar toolbar;
     private String type;
     FloatingActionButton fab;
     private ItemClickListener mListener;
 
     private MenuItem profileItem;
 
-
-    RecyclerView suggestionsRecyclerView;
-    RecyclerView resultsRecyclerView;
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
     VideoResultAdapter resultAdapter;
@@ -95,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         // Adding toolbar to the home activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Adding tabs for searching, initially invisible
@@ -766,8 +764,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            //reset fab and bottom bar when going back
+            setSupportActionBar(toolbar);
+            fab.setVisibility(View.VISIBLE);
+            bottomNavView.setVisibility(View.VISIBLE);
             super.onBackPressed();
         }
+
+
     }
 
     @Override
