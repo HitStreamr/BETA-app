@@ -9,8 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp">
+        android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/videoThumbnail"
@@ -70,17 +69,16 @@
             </LinearLayout>
 
         </LinearLayout>
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:gravity="end"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:gravity="end">
 
             <ImageView
                 android:id="@+id/moreMenu"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_more_vert" />
 
 

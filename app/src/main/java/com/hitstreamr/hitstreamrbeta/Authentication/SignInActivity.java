@@ -40,7 +40,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     private Button backbutton, signinbtn;
     private EditText ETemail, ETpassword;
-    private TextView register,forgetPassword;
+    private TextView register;
     private ProgressDialog progressDialog;
 
     // [START declare_auth]
@@ -50,11 +50,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     private LoginButton loginButton;
     private CallbackManager mCallbackManager;
     private static final String TAG = "FACELOG";
-
-    private int loginAttempts;
-    final int MAX_LOGIN = 5;
-
-    static final int RESET_PASSWORD = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,26 +62,26 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         backbutton = (Button)findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
 
-
         //Views
         ETemail = (EditText) findViewById(R.id.Email);
         ETpassword = (EditText)findViewById(R.id.Password);
         register = (TextView) findViewById(R.id.textviewsignin);
-        forgetPassword = findViewById(R.id.forgot_password);
 
         backbutton.setOnClickListener(this);
         signinbtn.setOnClickListener(this);
         register.setOnClickListener(this);
-        forgetPassword.setOnClickListener(this);
 
-        loginAttempts = 0;
-
-        //user not logged in, because splash would have redirected
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-
+        // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
+        // [END initialize_auth]
+        if(mAuth.getCurrentUser() != null) {
+            //home activity here
+            finish();
+            //TODO Handle different users here
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
-
+            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.fblogin_button);
@@ -112,25 +107,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         });
 
 
+
+        //user not logged in
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESET_PASSWORD) {
-            if (resultCode == RESULT_OK) {
-                loginAttempts = 0;
-                Toast.makeText(SignInActivity.this, "Password Rest Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
-            }else{
-                Toast.makeText(SignInActivity.this, "Email failed to send. Please try again.", Toast.LENGTH_SHORT).show();
-            }
-        }else{
             // Pass the activity result back to the Facebook SDK
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
-
-    }
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
@@ -212,23 +202,9 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressDialog.dismiss();
                         if (task.isSuccessful()) {
-                            sortUsers();
-                            //we will start the home activity here
-                            Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
-                        }else{
-                            if (loginAttempts >= MAX_LOGIN){
-                                Toast.makeText(SignInActivity.this, "Do you want to reset password?",Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
-                                loginAttempts++;
-                            }
-                        }
+                            // Sign in success, update UI with the signed-in user's information
+                            finish();
 
-                    }
-                });
-    }
-
-    private void sortUsers(){
         //DatabaseReference basicRoot= mDatabase.child(getString(R.string.child_basic));
         //DatabaseReference artistRoot= mDatabase.child(getString(R.string.child_artist));
         //DatabaseReference labelRoot= mDatabase.child(getString(R.string.child_label));
@@ -242,8 +218,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                     homeIntent.putExtra("TYPE", getString(R.string.type_basic));
                     startActivity(homeIntent);
-                    // Sign in success, update UI with the signed-in user's information
-                    finish();
                 }
             }
 
@@ -262,8 +236,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                     homeIntent.putExtra("TYPE", getString(R.string.type_artist));
                     startActivity(homeIntent);
-                    // Sign in success, update UI with the signed-in user's information
-                    finish();
                 }
             }
 
@@ -282,8 +254,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                     Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
                     labelIntent.putExtra("TYPE", getString(R.string.type_label));
                     startActivity(labelIntent);
-                    // Sign in success, update UI with the signed-in user's information
-                    finish();
                 }
             }
 
@@ -293,6 +263,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             }
         });
 
+                            //we will start the home activity here
+                            Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
+                        }else{
+                            Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                });
     }
 
     @Override

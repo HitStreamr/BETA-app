@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -71,12 +72,14 @@
                 android:orientation="vertical">
 
                 <ImageView
+                    android:id="@+id/profileImage"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_gravity="center_horizontal"
                     android:src="@drawable/artist"/>
 
                 <Button
+                    android:id="@+id/artistPicture"
                     android:layout_width="120dp"
                     android:layout_height="20dp"
                     android:text="Upload Photo"
@@ -104,9 +107,7 @@
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:maxLength="26"
-                        android:textCursorDrawable="@null"
-                        android:nextFocusRight="@+id/lastName"/>
+                        android:maxLength="26"/>
 
                     <EditText
                         android:id="@+id/artistLastName"
@@ -119,8 +120,7 @@
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:maxLength="26"
-                        android:textCursorDrawable="@null"/>
+                        android:maxLength="26"/>
 
                 </LinearLayout>
 
@@ -135,8 +135,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <EditText
                     android:id="@+id/artistPhone"
@@ -151,7 +150,6 @@
                     android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
                     android:maxLength="10"
-                    android:textCursorDrawable="@null"
                     />
 
                 <EditText
@@ -165,8 +163,7 @@
                     android:inputType="textPostalAddress"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp"
-                    android:textCursorDrawable="@null"/>
+                    android:paddingTop="3dp" />
 
                 <EditText
                     android:id="@+id/artistCity"
@@ -179,8 +176,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -201,8 +197,7 @@
                         android:inputType="number"
                         android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp"
-                        android:textCursorDrawable="@null"/>
+                        android:paddingTop="3dp" />
 
                     <Spinner
                         android:id="@+id/artistState"
@@ -243,8 +238,7 @@
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:layout_marginBottom="10dp"/>
 
                 <EditText
                     android:id="@+id/artistPassword"

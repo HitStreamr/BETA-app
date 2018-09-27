@@ -1,8 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="@color/litgryAccent"
     android:orientation="vertical">
+
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        android:background="@drawable/gradient1"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Search Results"
+            android:gravity="center"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:padding="15dp"
+            android:background="@color/colorAccent"
+            android:layout_marginBottom="5dp"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,7 +49,7 @@
                     android:orientation="vertical"
                     android:layout_marginStart="5dp"
                     android:gravity="center_vertical"
-                    android:paddingEnd="10dp">
+                        android:paddingEnd="110dp">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -36,8 +57,7 @@
                         android:text="Username"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        android:id="@+id/user_name"/>
+                            android:textSize="14sp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -54,18 +74,21 @@
                     android:gravity="center|end">
 
                     <Button
-                        android:id="@+id/follow_button"
                         android:layout_width="80dp"
                         android:layout_height="36dp"
-                        android:background="@drawable/button1"
                         android:text="Follow"
+                            android:textSize="12sp"
                         android:textColor="@color/colorAccent"
-                        android:textSize="12sp" />
+
+                            android:background="@drawable/button1"/>
+
 
                 </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
+
+        </ScrollView>
 
 </LinearLayout>

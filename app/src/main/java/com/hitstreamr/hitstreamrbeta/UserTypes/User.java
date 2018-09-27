@@ -1,15 +1,16 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class User {
-    public String username, email;
+    public String username, email, name;
 
-    public User() { }
+    public User(){
+
+    }
 
     public User(String username, String email) {
         this.username = username;
         this.email = email;
     }
-
     public String getUsername() {
         return username;
     }
@@ -25,4 +26,13 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
 }

@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,8 +40,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -60,10 +61,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
     private static final String VIDEO_CONTRIBUTOR_TYPE = "type";
-
-    private static final String VIDEO_TITLE_TERMS = "terms";
-
-
 
     //Video View
     private VideoView artistUploadVideo;
@@ -190,6 +187,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorList = new ArrayList<>();
         //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
 
+
+
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
@@ -222,7 +221,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 autoComplete.clear();
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
                     String username = suggestionSnapshot.child("username").getValue(String.class);
-                    //Log.e(TAG,"username --"+username);
+                    Log.e(TAG,"username --"+username);
                     //Add the retrieved string to the list
                     autoComplete.add(username);
                 }
@@ -316,13 +315,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot takeSnapshot) {
-                        registerFirebase();
                         videoRef.getDownloadUrl()
                                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         successVideoUpload = true;
                                         downloadVideoUri = uri.toString();
+                                        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
+                                        registerFirebase();
                                     }
                                 });
                     }
@@ -343,10 +343,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         progressBar.setProgress((int) progress);
                         TextViewSizeLabel.setText(ProgressText);
                         TextViewProgressLabel.setText(p);
-
                     }
                 });
     }
+
+    Map<String, Object> artistVideo = new HashMap<>();
     public Map<String, Object> contributorVideo = new HashMap<>();
 
     private void registerFirebase() {
@@ -374,23 +375,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         }
 
 
-        Map<String, Object> artistVideo = new HashMap<>();
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
         artistVideo.put(VIDEO_GENRE, genre);
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
-        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
+        //artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
-
-        Map<String, Boolean> terms = new HashMap<>();
-        ArrayList<String> res = processTitle(title);
-        for(int i = 0; i < res.size(); i++){
-            terms.put(res.get(i), true);
-        }
-        artistVideo.put(VIDEO_TITLE_TERMS,terms);
-
 
         db.collection("Videos").document()
                 //.set(contributorList)
@@ -410,10 +402,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
-                        /*finish();
-                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                        startActivity(homeIntent);*/
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -423,17 +411,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    private ArrayList<String> processTitle(String title){
-        // ArrayList of characters to remove
-        ArrayList<String> remove = new ArrayList<>();
-        remove.add(" ");
-
-        ArrayList<String> tmp = new ArrayList<>(Arrays.asList(title.trim().toLowerCase().split("\\s+")));
-        tmp.removeAll(remove);
-
-        return tmp;
     }
 
     private void cancelVideo() {
@@ -525,11 +502,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     }
 
     /**
-     * Method to validate the Street Address of any unwanted characters
+     * Method to validate
      */
     public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {

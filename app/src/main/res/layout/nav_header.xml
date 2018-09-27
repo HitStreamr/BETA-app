@@ -56,8 +56,9 @@
 
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/profilePicture"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:src="@mipmap/ic_launcher_round"/>
 
 
@@ -69,18 +70,19 @@
             android:gravity="center_vertical">
 
             <TextView
+                android:id="@+id/proUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="User Name Here"
                 android:textSize="18sp"
                 />
 
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Info@UserEmail.com"
                 android:textSize="12sp"
-                />
+                />-->
         </LinearLayout>
 
 
