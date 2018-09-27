@@ -1,8 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,15 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.LegalAgreementsFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -49,10 +38,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
@@ -64,10 +54,6 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -122,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        //Toolbar toolbar = findViewById(R.id.toolbar);
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -205,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
     }
 
     /**
@@ -315,7 +300,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(homeIntent);
                 break;*/
             case R.id.account:
-
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
                 accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);

@@ -113,6 +113,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
 
+    Map<String, Object> artistVideo = new HashMap<>();
+
     //List View
     private ListView ContributorValuesLV;
 
