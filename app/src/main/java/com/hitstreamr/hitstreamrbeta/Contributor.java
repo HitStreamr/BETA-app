@@ -3,6 +3,9 @@ package com.hitstreamr.hitstreamrbeta;
 public class Contributor {
     private String contributorName, contributorPercentage, contributorType;
 
+    public Contributor() {
+    }
+
     public Contributor(String contributorName, String contributorPercentage, String contributorType) {
         this.contributorName = contributorName;
         this.contributorPercentage = contributorPercentage;

@@ -1,21 +1,19 @@
 package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 public class Welcome extends AppCompatActivity implements View.OnClickListener {
     private Button sign_in, create_account;
 
-    // [START declare_auth]
-    private FirebaseAuth mAuth;
-// [END declare_auth]
+    final String TAG = "WELCOME";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,16 +26,8 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
        sign_in.setOnClickListener(this);
        create_account.setOnClickListener(this);
 
-        // [START initialize_auth]
-        mAuth = FirebaseAuth.getInstance();
-       // [END initialize_auth]
-        if(mAuth.getCurrentUser() !=null){
-            //home activity here
-            finish();
-            Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-            homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-            startActivity(homeIntent);
-        }
+        //user not logged in, because Splash redirects
+
     }
 
     @Override
