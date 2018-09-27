@@ -1,8 +1,11 @@
 package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -56,6 +59,13 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
 
     static final int RESET_PASSWORD = 1;
 
+    SharedPreferences sharedPref;
+    volatile long timeLeft;
+    CountDownTimer timer;
+    final int TIMEOUT_PASSWORD = 900000;
+    volatile Boolean locked_out;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,13 +89,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         register.setOnClickListener(this);
         forgetPassword.setOnClickListener(this);
 
+        //lock out code
         loginAttempts = 0;
+        //get shared preferences
+        sharedPref = getPreferences(Context.MODE_PRIVATE);
+        checkTimer();
 
         //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         mAuth = FirebaseAuth.getInstance();
-
 
         // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
@@ -110,8 +123,54 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 // ...
             }
         });
+    }
 
+    /* Timer Code */
+    private void checkTimer() {
+        if (sharedPref.contains("time"))
+            setTimer();
+        else {
+            locked_out = false;
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putLong("time", -1L);
+            editor.apply();
+        }
+    }
 
+    private void setTimer() {
+        timeLeft = sharedPref.getLong("time", -1L);
+        //Log.e(TAG,"Time: " + timeLeft);
+        if (timeLeft != -1L)
+            startTimer(timeLeft);
+        else
+            locked_out = false;
+            loginAttempts = 0;
+
+    }
+
+    private void startTimer(long time) {
+        locked_out = true;
+        timer = new CountDownTimer(time, 1000) {
+
+            @Override
+            public void onFinish() {
+                locked_out = false;
+                loginAttempts = 0;
+                saveToPref(-1L);
+            }
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeft = millisUntilFinished;
+                saveToPref(timeLeft);
+            }
+        }.start();
+    }
+
+    private void saveToPref(long timeLeft){
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putLong("time", timeLeft);
+        editor.apply();
     }
 
     @Override
@@ -216,15 +275,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
-                            if (loginAttempts >= MAX_LOGIN){
-                                Toast.makeText(SignInActivity.this, "Do you want to reset password?",Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+
                                 loginAttempts++;
+                                int temp = MAX_LOGIN - loginAttempts;
+                                if (temp <= 0){
+                                    //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
+                                    Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
+                                    startTimer(TIMEOUT_PASSWORD);
+                                }else{
+                                    Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
+                                }
+
                             }
                         }
-
-                    }
                 });
     }
 
@@ -298,7 +362,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         if (view == signinbtn){
-            UserLogin();
+            if (!locked_out){
+                UserLogin();
+            }else{
+                Toast.makeText(getApplicationContext(),"Please wait to attempt to login again.",Toast.LENGTH_LONG).show();
+            }
         }
 
         if (view == backbutton){
@@ -320,7 +388,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (view == forgetPassword){
             startActivityForResult(new Intent(getApplicationContext(), ResetPassword.class),RESET_PASSWORD);
         }
-
     }
 
 }
