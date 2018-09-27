@@ -1,7 +1,6 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class ArtistUser {
-
     protected String firstname, lastname, email, username, address, city, state, country, phone, zip;
     public ArtistUser(){
     }

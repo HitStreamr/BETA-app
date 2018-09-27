@@ -111,12 +111,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-
-        //Toolbar toolbar = findViewById(R.id.toolbar);
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("BETA");
@@ -195,7 +193,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -293,21 +290,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
-
-    /**
-     * Handles the search bar and view
-     * @param item
-     * @return super.onCreateOptionsMenu
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            /*case R.id.profile:
-                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
-                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                startActivity(homeIntent);
-                break;*/
+            case R.id.profile:
+                Intent proIntent = new Intent(getApplicationContext(), Profile.class);
+                proIntent.putExtra("TYPE", getString(R.string.type_artist));
+                startActivity(proIntent);
+                break;
             case R.id.account:
+
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
                 accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);
@@ -315,13 +307,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return super.onOptionsItemSelected(item);
     }
-
+    /**
+     * Handles the search bar and view
+     * @param menu menu
+     * @return super.onCreateOptionsMenu
+     */
     @Override
-    public boolean onCreateOptionsMenu(final Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
-        final MenuItem mSearch = menu.findItem(R.id.search);
-        //Items
-        profileItem = findViewById(R.id.profile);
+        MenuItem mSearch = menu.findItem(R.id.search);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
 
@@ -394,8 +388,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     search_input = null;
                 }
-                //edited from false/what is this for?
-                return true;
+                return false;
             }
         });
 
@@ -403,27 +396,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             // Stop adapters from listening so recent searches are removed
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                MainActivity.this.setItemsVisibility(menu, mSearch, true);
                 search_input = null;
                 stopAdapters();
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                fab.setVisibility(View.VISIBLE);
-                bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
-                Log.e("HOME", "On Close Initiated");
+                Log.e("HOME", "On Close Intitiated");
                 return true;  // return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
-                MainActivity.this.setItemsVisibility(menu, mSearch, false);
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 return true;  // return true to expand action view
             }
         });
@@ -475,7 +462,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public com.google.firebase.firestore.Query autocompleteQuery(String query){
         int strlength = query.length();
         String strFrontCode = query.substring(0, strlength);
-        String strEndCode = query.substring(strlength - 1);
+        String strEndCode = query.substring(strlength-1);
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
@@ -651,16 +638,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(final String userName) {
+        void setUserName(String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 
@@ -675,24 +655,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(final String userName) {
+        void setUserName(String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            Button follow = view.findViewById(R.id.follow_button);
-            follow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();
-                }
-            });
         }
     }
 
@@ -744,11 +709,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FragmentTransaction transaction;
         Bundle bundle;
-        getSupportActionBar().hide();
         switch (item.getItemId()) {
             case R.id.dashboard:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -760,8 +722,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.general_setting:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -773,46 +733,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.notification_settings:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, notifSettingsFrag);
+                transaction.replace(R.id.fragment_container,  notifSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
 
             case R.id.payment_pref:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, payPrefFrag);
+                transaction.replace(R.id.fragment_container,payPrefFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
 
             case R.id.invite_a_friend:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, inviteFrag);
+                transaction.replace(R.id.fragment_container,inviteFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
             case R.id.help_center:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -824,14 +776,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.legal_agreements:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, legalFrag);
+                transaction.replace(R.id.fragment_container,legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
             break;
@@ -858,33 +808,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+        if (suggestionAdapter != null){
+            suggestionAdapter.startListening();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-//        stopAdapters();
+        stopAdapters();
     }
 
-    /**
-     * Decide to show/hide the items in the toolbar
-     * @param menu menu
-     * @param exception menu item
-     * @param visible visibility
-     */
-    private void setItemsVisibility(final Menu menu, final MenuItem exception,
-                                    final boolean visible) {
-        for (int i = 0; i < menu.size(); ++i) {
-            MenuItem item = menu.getItem(i);
-            if (item != exception)
-                item.setVisible(visible);
-        }
-    }
 }
