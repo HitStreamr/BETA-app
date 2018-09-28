@@ -58,7 +58,9 @@
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
         <activity android:name=".VideoView" />
-        <activity android:name=".Profile"></activity>
+        <activity android:name=".Profile" />
+        <activity android:name=".Authentication.ResetPassword" />
+        <activity android:name=".ChangePassword"></activity>
     </application>
 
 </manifest>

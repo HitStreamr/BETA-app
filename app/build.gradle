@@ -70,6 +70,12 @@ dependencies {
     //SearchView
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 
+    //profile picture
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'
