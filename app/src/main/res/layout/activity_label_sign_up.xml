@@ -71,11 +71,18 @@
                 android:orientation="vertical"
                 android:paddingBottom="30dp">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/artist"/>
+                    android:src="@drawable/artist"
+                    />
+
+                <!--<ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/artist"/>-->
 
                 <Button
                     android:layout_width="120dp"

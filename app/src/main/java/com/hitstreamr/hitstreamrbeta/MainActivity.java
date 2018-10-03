@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private String type;
     FloatingActionButton fab;
+
+    FloatingActionButton vv;
+
     private ItemClickListener mListener;
     //private ImageButton userbtn;
 
@@ -152,6 +155,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
 
+        vv = findViewById(R.id.videoScreen);
+
         name = user.getDisplayName();
         photoUrl = user.getPhotoUrl();
         Log.e(TAG, "Your profile" + name + photoUrl + user);
@@ -176,11 +181,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.dashboard).setVisible(false);
                 fab.setVisibility(View.GONE);
+                vv.setVisibility(View.GONE);
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
+                    }
+                });
+
+                vv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(MainActivity.this, VideoView.class));
                     }
                 });
 
