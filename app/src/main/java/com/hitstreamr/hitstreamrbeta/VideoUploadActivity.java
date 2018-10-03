@@ -74,7 +74,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button contributeBtn;
     private Button addContributorBtn;
     private Button cancelUploadBtn;
-    private Button deleteContributorBtn;
+    private Button ContributorCancelBtn;
 
     //EditText Inputs
     private EditText EdittextTittle;
@@ -157,7 +157,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
-        //deleteContributorBtn =findViewById(R.id.deleteContributor);
+        ContributorCancelBtn =findViewById(R.id.ContributorCancel);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -195,7 +195,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
-        //visibility,
+        //visibility
         addContributorLayout.setVisibility(View.GONE);
         videoCancelLayout.setVisibility(View.GONE);
 
@@ -205,7 +205,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
         cancelUploadBtn.setOnClickListener(this);
-        //deleteContributorBtn.setOnClickListener(this);
+        ContributorCancelBtn.setOnClickListener(this);
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -666,6 +666,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         if (view == cancelUploadBtn) {
             cancelVideo();
+        }
+        if(view == ContributorCancelBtn){
+            resetContributor();
+            addContributorLayout.setVisibility(View.GONE);
         }
     }
 

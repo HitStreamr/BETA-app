@@ -64,12 +64,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
+    private Toolbar toolbar;
     private String type;
     FloatingActionButton fab;
     private ItemClickListener mListener;
     //private ImageButton userbtn;
-
-
 
     private MenuItem profileItem;
 
@@ -102,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Set up and initialize layouts and variables
+     *
      * @param savedInstanceState state
      */
     @Override
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -126,10 +126,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Recycler View
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        db  = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
+
+        Log.e(TAG, "Type of user:" + getIntent().getExtras().getString("TYPE"));
 
         //Listener for RCVs
         mListener = new ItemClickListener() {
@@ -145,25 +147,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
 
 
-        name = user.getDisplayName();
-        photoUrl = user.getPhotoUrl();
-        Log.e(TAG, "Your profile" + name + photoUrl + user);
-
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
 
+        name = user.getDisplayName();
+        photoUrl = user.getPhotoUrl();
+        Log.e(TAG, "Your profile" + name + photoUrl + user);
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
         ImageViewProfilePicture = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
-
         TextViewUsername.setVisibility(View.VISIBLE);
         ImageViewProfilePicture.setVisibility(View.VISIBLE);
-
         TextViewUsername.setText(name);
-
         Glide.with(getApplicationContext()).load(photoUrl).into(ImageViewProfilePicture);
-
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
@@ -195,11 +192,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
     }
 
     /**
      * Firebase Realtime - Basic Accounts
+     *
      * @param querySearch the input typed by the user
      */
     private void searchBasicAccounts(String querySearch) {
@@ -230,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Firebase Realtime - Artist Accounts
+     *
      * @param querySearch the input typed by the user
      */
     private void searchArtistAccounts(String querySearch) {
@@ -261,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Firebase Realtime - Artist Accounts
+     *
      * @param querySearch the input typed by the user
      */
     private void searchVideoSuggestions(String querySearch) {
@@ -293,13 +292,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.profile:
-                Intent proIntent = new Intent(getApplicationContext(), Profile.class);
-                proIntent.putExtra("TYPE", getString(R.string.type_artist));
-                startActivity(proIntent);
-                break;
+            /*case R.id.profile:
+                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
+                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                startActivity(homeIntent);
+                break;*/
             case R.id.account:
-
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
                 accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);
@@ -307,15 +305,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return super.onOptionsItemSelected(item);
     }
+
     /**
      * Handles the search bar and view
+     *
      * @param menu menu
      * @return super.onCreateOptionsMenu
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
-        MenuItem mSearch = menu.findItem(R.id.search);
+        final MenuItem mSearch = menu.findItem(R.id.search);
+        //Items
+        profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
 
@@ -383,7 +385,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (newText.trim().isEmpty()) {
                     stopAdapters();
-                    if (suggestionAdapter != null){
+                    if (suggestionAdapter != null) {
                         suggestionAdapter.stopListening();
                     }
                     search_input = null;
@@ -396,21 +398,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             // Stop adapters from listening so recent searches are removed
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                MainActivity.this.setItemsVisibility(menu, mSearch, true);
                 search_input = null;
                 stopAdapters();
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
-                Log.e("HOME", "On Close Intitiated");
+                Log.e("HOME", "On Close Initiated");
                 return true;  // return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                MainActivity.this.setItemsVisibility(menu, mSearch, false);
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 return true;  // return true to expand action view
             }
         });
@@ -459,17 +467,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onCreateOptionsMenu(menu);
     }
 
-    public com.google.firebase.firestore.Query autocompleteQuery(String query){
+    public com.google.firebase.firestore.Query autocompleteQuery(String query) {
         int strlength = query.length();
         String strFrontCode = query.substring(0, strlength);
-        String strEndCode = query.substring(strlength-1);
+        String strEndCode = query.substring(strlength - 1);
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title",query+"\uf8ff");
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff");
     }
 
-    public void searchVideoFirestore (com.google.firebase.firestore.Query searchRequest){
+    public void searchVideoFirestore(com.google.firebase.firestore.Query searchRequest) {
 
         //New RecyclerOptions and Adapter, based on Query
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
@@ -482,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
                 holder.videoTitle.setText(model.getTitle());
             }
+
             @Override
             public MainActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
@@ -489,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 View view = LayoutInflater.from(group.getContext())
                         .inflate(R.layout.search_suggestion_video, group, false);
 
-                return new MainActivity.VideoSuggestionsHolder(view,mListener);
+                return new MainActivity.VideoSuggestionsHolder(view, mListener);
             }
         };
 
@@ -499,26 +508,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public void getVideoResults(String query){
+    public void getVideoResults(String query) {
         //These Tasks are Task<QuerySnapShot>
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
-        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query ).get();
+        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query).get();
 
         //Stop using the old adapter
         stopAdapters();
 
         // build a dynamic query that has all the words
 
-        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms."+terms.get(0),true);
-        for (int i = 0; i < terms.size(); i++){
-            allWords = allWords.whereEqualTo("terms."+terms.get(i),true);
+        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms." + terms.get(0), true);
+        for (int i = 0; i < terms.size(); i++) {
+            allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
         Task<QuerySnapshot> allWordsTask = allWords.get();
 
         //allResultsRetreived is only successful, when all are succesful
-        Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch,allWordsTask);
+        Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
 
         searching.setVisibility(View.VISIBLE);
         //When everything is done, then send to adapter
@@ -528,11 +537,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onSuccess(List<QuerySnapshot> tasks) {
                         ArrayList<Video> videos = new ArrayList<>();
                         ArrayList<DocumentSnapshot> docs = new ArrayList<>();
-                        for(QuerySnapshot qTasks: tasks) {
-                            if (!qTasks.isEmpty()){
+                        for (QuerySnapshot qTasks : tasks) {
+                            if (!qTasks.isEmpty()) {
                                 ArrayList<DocumentSnapshot> tmp = new ArrayList<>(qTasks.getDocuments());
-                                for (DocumentSnapshot ds : tmp){
-                                    if(!docs.contains(ds)){
+                                for (DocumentSnapshot ds : tmp) {
+                                    if (!docs.contains(ds)) {
                                         docs.add(ds);
                                     }
                                 }
@@ -561,14 +570,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         allResultsRetrieved.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
-                if (!task.isSuccessful()){
+                if (!task.isSuccessful()) {
                     Log.e(TAG, "Search failed");
                 }
             }
         });
     }
 
-    private ArrayList<String> processQuery(String query){
+    private ArrayList<String> processQuery(String query) {
         // ArrayList of characters to remove
         ArrayList<String> remove = new ArrayList<>();
         remove.add(" ");
@@ -588,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 startActivity(acct);
@@ -598,7 +607,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(prof);
                 break;
 
-        }return true;
+        }
+        return true;
     }
 
     /*@Override
@@ -638,9 +648,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(String userName) {
+        void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -655,9 +672,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(String userName) {
+        void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Button follow = view.findViewById(R.id.follow_button);
+            follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -679,6 +711,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
+
         void onResultClick(String title);
     }
 
@@ -695,13 +728,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (firebaseRecyclerAdapter_basic != null) {
             firebaseRecyclerAdapter_basic.stopListening();
         }
-        if(resultAdapter != null){
+        if (resultAdapter != null) {
             resultAdapter.clear();
         }
     }
 
     /**
      * Handles fragment items
+     *
      * @param item menu item
      * @return true to show fragments
      */
@@ -709,8 +743,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FragmentTransaction transaction;
         Bundle bundle;
+        getSupportActionBar().hide();
         switch (item.getItemId()) {
             case R.id.dashboard:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -722,6 +759,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.general_setting:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -733,38 +772,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.notification_settings:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,  notifSettingsFrag);
+                transaction.replace(R.id.fragment_container, notifSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
 
             case R.id.payment_pref:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,payPrefFrag);
+                transaction.replace(R.id.fragment_container, payPrefFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
 
             case R.id.invite_a_friend:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,inviteFrag);
+                transaction.replace(R.id.fragment_container, inviteFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
             case R.id.help_center:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -776,15 +823,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.legal_agreements:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,legalFrag);
+                transaction.replace(R.id.fragment_container, legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
-            break;
+                break;
 
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
@@ -801,6 +850,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            //reset fab and bottom bar when going back
+            setSupportActionBar(toolbar);
+            fab.setVisibility(View.VISIBLE);
+            bottomNavView.setVisibility(View.VISIBLE);
             super.onBackPressed();
         }
     }
@@ -808,9 +861,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (suggestionAdapter != null){
+        if (suggestionAdapter != null) {
             suggestionAdapter.startListening();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     @Override
@@ -819,4 +878,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         stopAdapters();
     }
 
+    /**
+     * Decide to show/hide the items in the toolbar
+     *
+     * @param menu      menu
+     * @param exception menu item
+     * @param visible   visibility
+     */
+    private void setItemsVisibility(final Menu menu, final MenuItem exception,
+                                    final boolean visible) {
+        for (int i = 0; i < menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item != exception)
+                item.setVisible(visible);
+        }
+    }
 }

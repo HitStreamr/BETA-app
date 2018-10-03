@@ -188,13 +188,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
                 | !validateZip(zip) | !validateToc() | validateBrowseVideo() | !validateState() | !validateCountry())  {
+            Log.e(TAG,"Validation failed");
             return;
         }
+        Log.e(TAG,"Validation finished");
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
         //If validations are ok we will first show progressbar
         progressDialog.setMessage("Registering new Artist...");
-        //progressDialog.show();
+        progressDialog.show();
 
         registerAuthentication(email, password);
     }
@@ -205,6 +207,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
                             uploadFromUri(selectedImagePath);
                         } else {
                             Toast.makeText(ArtistSignUp.this, "Could not register. Please try again",Toast.LENGTH_SHORT).show();
@@ -287,6 +290,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return true;
         } else {
             mFirstName.setError(null);
+            Log.e(TAG,"1");
             return true;
         }
     }
@@ -309,6 +313,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return true;
         } else {
             mLastName.setError(null);
+            Log.e(TAG,"2");
             return true;
         }
     }
@@ -328,6 +333,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return false;
         } else {
             mAddress.setError(null);
+            Log.e(TAG,"3");
             return true;
         }
     }
@@ -337,6 +343,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
+        Log.e(TAG,"4");
         return true;
     }
 
@@ -345,6 +352,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
+        Log.e(TAG,"5");
         return true;
     }
 
@@ -362,6 +370,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mEmail.setError("Email is not valid!");
             return false;
         } else {
+            Log.e(TAG,"6");
             mEmail.setError(null);
             return true;
         }
@@ -381,6 +390,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
         } else {
+            Log.e(TAG,"7");
             mPhone.setError(null);
             return true;
         }
@@ -397,6 +407,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mCity.setError("Field can't be empty");
             return false;
         } else {
+            Log.e(TAG,"8");
             mCity.setError(null);
             return true;
         }
@@ -416,6 +427,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mZipcode.setError("Zip is invalid");
             return false;
         } else {
+            Log.e(TAG,"9");
             mZipcode.setError(null);
             return true;
         }
@@ -435,6 +447,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPassword.setError("Password too weak");
             return false;
         } else {
+            Log.e(TAG,"10");
             mPassword.setError(null);
             return true;
         }
@@ -457,6 +470,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mAddress.setError("Username is too short.");
             return false;
         } else {
+            Log.e(TAG,"11");
             mUsername.setError(null);
             return true;
         }
@@ -464,9 +478,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     private boolean validateBrowseVideo() {
         if (selectedImagePath != null) {
+            Log.e(TAG,"12");
             return true;
         }
-        profilePictureBtn.setText(R.string.video_not_selection);
+        profilePictureBtn.setText(R.string.image_not_selection);
         return false;
     }
 
@@ -490,6 +505,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
             return false;
         } else {
+            Log.e(TAG,"13");
             termsCond.setError(null);
             return true;
         }
@@ -597,16 +613,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                             roundedBitmapDrawable.setCircular(true);
                             imageViewProfile.setImageDrawable(roundedBitmapDrawable);
-                            /*profilePictureBtn.setBackgroundColor(Color.GREEN);*/
-                            profilePictureBtn.setText(R.string.image_selection);
+                            //profilePictureBtn.setText(R.string.image_selection);
                         } catch (Exception e) {
                             //#debug
                             e.printStackTrace();
                         }
-                    } else {
+                    }/* else {
                         //profilePictureBtn.setBackgroundColor(Color.RED);
                         profilePictureBtn.setText(R.string.image_not_selection);
-                    }
+                    }*/
                 }
             }
         }
@@ -620,10 +635,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == signup) {
+            Log.e(TAG, "Click entered");
             registerArtist();
         }
         if (view == goBack) {
-            //will open account type activity
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
         }

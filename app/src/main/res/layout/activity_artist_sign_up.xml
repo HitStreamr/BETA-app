@@ -299,15 +299,7 @@
                     android:layout_marginBottom="60dp"
                     />
 
-
             </LinearLayout>
-
         </ScrollView>
-
-
-
     </LinearLayout>
-
-
-
 </RelativeLayout>

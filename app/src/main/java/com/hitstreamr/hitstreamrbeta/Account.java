@@ -116,6 +116,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Log.e(TAG, "Account type" + type);
+
+
         setContentView(R.layout.activity_account);
 
         mStorageRef = storage.getReference();
@@ -157,7 +161,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         ChangePwdBtn.setOnClickListener(this);
         ChangePhotoBtn.setOnClickListener(this);
 
-        type = getIntent().getStringExtra("TYPE");
+        type = getIntent().getExtras().getString("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
 
             artistInfoLayout.setVisibility(View.VISIBLE);
