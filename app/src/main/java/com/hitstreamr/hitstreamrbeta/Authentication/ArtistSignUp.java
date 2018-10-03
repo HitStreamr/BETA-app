@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -33,7 +32,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
@@ -49,10 +47,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup, profilePictureBtn;
+    private Button signup, goBack, profilePictureBtn;
     private RadioButton termsCond;
-
-    private ImageButton goBack;
 
     //ImageView
     private ImageView imageViewProfile;
@@ -110,19 +106,17 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mStorageRef = storage.getReference();
 
         // Views
-        mFirstName = findViewById(R.id.artistFirstName);
-        mLastName = findViewById(R.id.artistLastName);
-        mEmail = findViewById(R.id.artistEmail);
-        mPassword = findViewById(R.id.artistPassword);
-        mUsername = findViewById(R.id.artistUsername);
-        mAddress = findViewById(R.id.artistAddressLine1);
-        mCity = findViewById(R.id.artistCity);
-        mZipcode = findViewById(R.id.artistZip);
-        mPhone = findViewById(R.id.artistPhone);
-
-        //Spinnner
-        mState = findViewById(R.id.artistState);
-        mCountry = findViewById(R.id.artistCountry);
+        mFirstName = findViewById(R.id.firstName);
+        mLastName = findViewById(R.id.lastName);
+        mEmail = findViewById(R.id.email);
+        mPassword = findViewById(R.id.Password);
+        mUsername = findViewById(R.id.Username);
+        mAddress = findViewById(R.id.addressLine1);
+        mCity = findViewById(R.id.city);
+        mState = findViewById(R.id.state);
+        mZipcode = findViewById(R.id.zip);
+        mCountry = findViewById(R.id.country);
+        mPhone = findViewById(R.id.phone);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -185,6 +179,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         final String country = mCountry.getSelectedItem().toString();
         final String phone = mPhone.getText().toString().trim();
 
+
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
                 | !validateZip(zip) | !validateToc() | validateBrowseVideo() | !validateState() | !validateCountry())  {
@@ -194,7 +189,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         //If validations are ok we will first show progressbar
         progressDialog.setMessage("Registering new Artist...");
-        //progressDialog.show();
+        progressDialog.show();
 
         registerAuthentication(email, password);
     }
@@ -252,10 +247,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 Toast.makeText(ArtistSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                                 finish();
-                                //startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                startActivity(homeIntent);
+                                //start next activity
+                                Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
+                                genreIntent.putExtra("TYPE", getString(R.string.type_artist));
+                                startActivity(genreIntent);
                             } else {
                                 //Display a failure message
                                 Toast.makeText(ArtistSignUp.this, "Registration Failed", Toast.LENGTH_SHORT).show();

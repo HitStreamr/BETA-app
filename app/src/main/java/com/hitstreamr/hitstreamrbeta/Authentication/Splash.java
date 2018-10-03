@@ -43,7 +43,7 @@ public class Splash extends AppCompatActivity {
                 }else{
                     startActivity(new Intent(getApplicationContext(),Welcome.class));
                 }
-                }
+            }
         },SPLASH_TIME_OUT);
     }
 

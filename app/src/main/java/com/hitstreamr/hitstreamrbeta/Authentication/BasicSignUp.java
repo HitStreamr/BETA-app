@@ -3,7 +3,6 @@ package com.hitstreamr.hitstreamrbeta.Authentication;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -11,13 +10,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -49,8 +45,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private static final String TAG = "BasicSignUp";
 
-    private Button signup, uploadPhotoBtn;
-    private ImageButton  backbtn;
+    private Button signup, backbtn, uploadPhotoBtn;
     private EditText mEmailField, mPasswordField, mUsername;
     private TextView signintext;
     private RadioButton radiobtn;
@@ -264,12 +259,12 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 if (task.isSuccessful()) {
                     Toast.makeText(BasicSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                     finish();
-                    /*Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
+                    Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
                     genreIntent.putExtra("TYPE", getString(R.string.type_basic));
-                    startActivity(genreIntent);*/
-                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(genreIntent);
+                    /*Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                     homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                    startActivity(homeIntent);
+                    startActivity(homeIntent);*/
                 } else {
                     Toast.makeText(BasicSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                 }
