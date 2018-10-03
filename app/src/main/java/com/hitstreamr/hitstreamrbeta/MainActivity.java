@@ -59,8 +59,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     private Button logout;
     private DrawerLayout drawer;
@@ -103,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Set up and initialize layouts and variables
+     *
      * @param savedInstanceState state
      */
     @Override
@@ -127,10 +126,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Recycler View
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        db  = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
+
+        Log.e(TAG, "Type of user:" + getIntent().getExtras().getString("TYPE"));
 
         //Listener for RCVs
         mListener = new ItemClickListener() {
@@ -226,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Firebase Realtime - Artist Accounts
+     *
      * @param querySearch the input typed by the user
      */
     private void searchArtistAccounts(String querySearch) {
@@ -257,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Firebase Realtime - Artist Accounts
+     *
      * @param querySearch the input typed by the user
      */
     private void searchVideoSuggestions(String querySearch) {
@@ -303,6 +306,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Handles the search bar and view
+     *
+     * @param menu menu
+     * @return super.onCreateOptionsMenu
+     */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
@@ -376,13 +385,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (newText.trim().isEmpty()) {
                     stopAdapters();
-                    if (suggestionAdapter != null){
+                    if (suggestionAdapter != null) {
                         suggestionAdapter.stopListening();
                     }
                     search_input = null;
                 }
-                //edited from false/what is this for?
-                return true;
+                return false;
             }
         });
 
@@ -459,17 +467,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onCreateOptionsMenu(menu);
     }
 
-    public com.google.firebase.firestore.Query autocompleteQuery(String query){
+    public com.google.firebase.firestore.Query autocompleteQuery(String query) {
         int strlength = query.length();
         String strFrontCode = query.substring(0, strlength);
         String strEndCode = query.substring(strlength - 1);
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title",query+"\uf8ff");
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff");
     }
 
-    public void searchVideoFirestore (com.google.firebase.firestore.Query searchRequest){
+    public void searchVideoFirestore(com.google.firebase.firestore.Query searchRequest) {
 
         //New RecyclerOptions and Adapter, based on Query
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
@@ -482,6 +490,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
                 holder.videoTitle.setText(model.getTitle());
             }
+
             @Override
             public MainActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
@@ -489,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 View view = LayoutInflater.from(group.getContext())
                         .inflate(R.layout.search_suggestion_video, group, false);
 
-                return new MainActivity.VideoSuggestionsHolder(view,mListener);
+                return new MainActivity.VideoSuggestionsHolder(view, mListener);
             }
         };
 
@@ -499,26 +508,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    public void getVideoResults(String query){
+    public void getVideoResults(String query) {
         //These Tasks are Task<QuerySnapShot>
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
-        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query ).get();
+        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query).get();
 
         //Stop using the old adapter
         stopAdapters();
 
         // build a dynamic query that has all the words
 
-        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms."+terms.get(0),true);
-        for (int i = 0; i < terms.size(); i++){
-            allWords = allWords.whereEqualTo("terms."+terms.get(i),true);
+        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms." + terms.get(0), true);
+        for (int i = 0; i < terms.size(); i++) {
+            allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
         Task<QuerySnapshot> allWordsTask = allWords.get();
 
         //allResultsRetreived is only successful, when all are succesful
-        Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch,allWordsTask);
+        Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
 
         searching.setVisibility(View.VISIBLE);
         //When everything is done, then send to adapter
@@ -528,11 +537,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onSuccess(List<QuerySnapshot> tasks) {
                         ArrayList<Video> videos = new ArrayList<>();
                         ArrayList<DocumentSnapshot> docs = new ArrayList<>();
-                        for(QuerySnapshot qTasks: tasks) {
-                            if (!qTasks.isEmpty()){
+                        for (QuerySnapshot qTasks : tasks) {
+                            if (!qTasks.isEmpty()) {
                                 ArrayList<DocumentSnapshot> tmp = new ArrayList<>(qTasks.getDocuments());
-                                for (DocumentSnapshot ds : tmp){
-                                    if(!docs.contains(ds)){
+                                for (DocumentSnapshot ds : tmp) {
+                                    if (!docs.contains(ds)) {
                                         docs.add(ds);
                                     }
                                 }
@@ -561,14 +570,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         allResultsRetrieved.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
-                if (!task.isSuccessful()){
+                if (!task.isSuccessful()) {
                     Log.e(TAG, "Search failed");
                 }
             }
         });
     }
 
-    private ArrayList<String> processQuery(String query){
+    private ArrayList<String> processQuery(String query) {
         // ArrayList of characters to remove
         ArrayList<String> remove = new ArrayList<>();
         remove.add(" ");
@@ -588,19 +597,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
-                acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
-                prof.putExtra("TYPE", getString(R.string.type_artist));
                 startActivity(prof);
                 break;
 
-        }return true;
+        }
+        return true;
     }
 
     /*@Override
@@ -703,6 +711,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
+
         void onResultClick(String title);
     }
 
@@ -719,13 +728,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (firebaseRecyclerAdapter_basic != null) {
             firebaseRecyclerAdapter_basic.stopListening();
         }
-        if(resultAdapter != null){
+        if (resultAdapter != null) {
             resultAdapter.clear();
         }
     }
 
     /**
      * Handles fragment items
+     *
      * @param item menu item
      * @return true to show fragments
      */
@@ -823,7 +833,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
-            break;
+                break;
 
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
@@ -865,15 +875,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-
-//        stopAdapters();
+        stopAdapters();
     }
 
     /**
      * Decide to show/hide the items in the toolbar
-     * @param menu menu
+     *
+     * @param menu      menu
      * @param exception menu item
-     * @param visible visibility
+     * @param visible   visibility
      */
     private void setItemsVisibility(final Menu menu, final MenuItem exception,
                                     final boolean visible) {

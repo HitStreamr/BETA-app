@@ -118,6 +118,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Log.e(TAG, "Account type" + type);
+
+
         setContentView(R.layout.activity_account);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

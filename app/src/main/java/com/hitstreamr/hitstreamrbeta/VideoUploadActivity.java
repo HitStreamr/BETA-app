@@ -218,7 +218,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
-        //visibility,
+        //visibility
         addContributorLayout.setVisibility(View.GONE);
         videoCancelLayout.setVisibility(View.GONE);
 

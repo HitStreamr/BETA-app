@@ -255,6 +255,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private void registerFirebase() {
+        //Log.e(TAG, "validations are done");
         FirebaseDatabase.getInstance().getReference("BasicAccounts")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .setValue(basicUser)
@@ -264,7 +265,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 if (task.isSuccessful()) {
                     Toast.makeText(BasicSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                     finish();
-                    Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
+                    Intent genreIntent = new Intent(getApplicationContext(), MainActivity.class);
                     genreIntent.putExtra("TYPE", getString(R.string.type_basic));
                     startActivity(genreIntent);
                     /*Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
@@ -279,6 +280,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private void registerAuthentication(String email, String password) {
+        Log.e(TAG, "Authentication entered");
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
