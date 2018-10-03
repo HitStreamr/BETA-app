@@ -8,8 +8,8 @@
     <string name="sign_in">SIGN IN</string>
     <string name="create_an_account">CREATE AN ACCOUNT</string>
     <string name="text_logo_wht">text_logo_wht</string>
-    <string name="basic_account">BASIC ACCOUNT</string>
-    <string name="artist_account">ARTIST ACCOUNT</string>
+    <string name="basic_account">LISTENER</string>
+    <string name="artist_account">ARTIST / BAND</string>
     <string name="are_you_a_label_click_here">Are you a Label? CLICK HERE.</string>
     <string name="sidebar">sidebar</string>
     <string name="title_activity_authenticator">AuthenticatorActivity</string>
