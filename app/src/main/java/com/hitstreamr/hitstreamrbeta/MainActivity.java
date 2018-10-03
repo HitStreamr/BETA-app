@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        toolbar.setLogo(R.drawable.ic_camera);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("BETA");
@@ -171,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
-
         if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //check that type exists and set it.
             type = getIntent().getStringExtra("TYPE");
@@ -670,10 +669,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()){
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
+                acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
+                prof.putExtra("TYPE", getString(R.string.type_artist));
                 startActivity(prof);
                 break;
 
