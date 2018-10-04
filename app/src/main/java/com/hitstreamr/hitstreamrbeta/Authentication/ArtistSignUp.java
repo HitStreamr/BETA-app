@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -32,6 +33,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
@@ -47,8 +49,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup, goBack, profilePictureBtn;
+    private Button signup, profilePictureBtn;
     private RadioButton termsCond;
+
+    private ImageButton goBack;
 
     //ImageView
     private ImageView imageViewProfile;
@@ -106,17 +110,19 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mStorageRef = storage.getReference();
 
         // Views
-        mFirstName = findViewById(R.id.firstName);
-        mLastName = findViewById(R.id.lastName);
-        mEmail = findViewById(R.id.email);
-        mPassword = findViewById(R.id.Password);
-        mUsername = findViewById(R.id.Username);
-        mAddress = findViewById(R.id.addressLine1);
-        mCity = findViewById(R.id.city);
-        mState = findViewById(R.id.state);
-        mZipcode = findViewById(R.id.zip);
-        mCountry = findViewById(R.id.country);
-        mPhone = findViewById(R.id.phone);
+        mFirstName = findViewById(R.id.artistFirstName);
+        mLastName = findViewById(R.id.artistLastName);
+        mEmail = findViewById(R.id.artistEmail);
+        mPassword = findViewById(R.id.artistPassword);
+        mUsername = findViewById(R.id.artistUsername);
+        mAddress = findViewById(R.id.artistAddressLine1);
+        mCity = findViewById(R.id.artistCity);
+        mZipcode = findViewById(R.id.artistZip);
+        mPhone = findViewById(R.id.artistPhone);
+
+        //Spinnner
+        mState = findViewById(R.id.artistState);
+        mCountry = findViewById(R.id.artistCountry);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -461,7 +467,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if (selectedImagePath != null) {
             return true;
         }
-        profilePictureBtn.setText(R.string.video_not_selection);
+        profilePictureBtn.setText(R.string.image_not_selection);
         return false;
     }
 
@@ -592,16 +598,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             RoundedBitmapDrawable roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(getResources(), bitmap);
                             roundedBitmapDrawable.setCircular(true);
                             imageViewProfile.setImageDrawable(roundedBitmapDrawable);
-                            /*profilePictureBtn.setBackgroundColor(Color.GREEN);*/
-                            profilePictureBtn.setText(R.string.image_selection);
+                            //profilePictureBtn.setText(R.string.image_selection);
                         } catch (Exception e) {
                             //#debug
                             e.printStackTrace();
                         }
-                    } else {
+                    }/* else {
                         //profilePictureBtn.setBackgroundColor(Color.RED);
                         profilePictureBtn.setText(R.string.image_not_selection);
-                    }
+                    }*/
                 }
             }
         }

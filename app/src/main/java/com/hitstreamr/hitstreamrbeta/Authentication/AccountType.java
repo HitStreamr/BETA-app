@@ -5,14 +5,17 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hitstreamr.hitstreamrbeta.R;
 
 public class AccountType extends AppCompatActivity implements View.OnClickListener {
 
-    private Button basicAcctBtn, artistAcctBtn, backbtn;
+    private Button basicAcctBtn, artistAcctBtn;
     private TextView labelAcct;
+    private ImageButton backbtn;
 
 
     @Override
@@ -22,7 +25,7 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
 
         basicAcctBtn = (Button) findViewById(R.id.basicAcct);
         artistAcctBtn = (Button) findViewById(R.id.artistAcct);
-        backbtn = (Button) findViewById(R.id.backBtn);
+        backbtn = (ImageButton) findViewById(R.id.backBtn);
         labelAcct = (TextView) findViewById(R.id.labelAcct);
 
         basicAcctBtn.setOnClickListener(this);

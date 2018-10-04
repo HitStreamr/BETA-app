@@ -3,6 +3,7 @@ package com.hitstreamr.hitstreamrbeta.Authentication;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -10,10 +11,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -45,7 +49,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private static final String TAG = "BasicSignUp";
 
-    private Button signup, backbtn, uploadPhotoBtn;
+    private Button signup, uploadPhotoBtn;
+    private ImageButton  backbtn;
     private EditText mEmailField, mPasswordField, mUsername;
     private TextView signintext;
     private RadioButton radiobtn;
@@ -223,7 +228,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         if (selectedImagePath != null) {
             return true;
         }
-        uploadPhotoBtn.setText(R.string.video_not_selection);
+        uploadPhotoBtn.setText(R.string.image_not_selection);
         return false;
     }
 
