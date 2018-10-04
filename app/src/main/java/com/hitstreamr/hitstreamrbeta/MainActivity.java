@@ -156,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         name = user.getDisplayName();
         photoUrl = user.getPhotoUrl();
+
         Log.e(TAG, "Your profile" + name + photoUrl + user);
 
         drawer = findViewById(R.id.drawer_layout);
@@ -170,10 +171,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextViewUsername.setVisibility(View.VISIBLE);
         CirImageViewProPic.setVisibility(View.VISIBLE);
 
-        TextViewUsername.setText(name);
 
-        Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
-
+        if(photoUrl == null){
+            //CirImageViewProPic.setImageDrawable(R.drawable.artist);
+            Log.e(TAG, "username is::" +name);
+            Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
+        }
+        else{
+            Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
+        }
+        if(name.equals("")){
+            String tempname = "Username";
+            TextViewUsername.setText(tempname);
+        }
+        else{
+            TextViewUsername.setText(name);
+        }
+       /* else{
+            TextViewUsername.setText(name);
+            Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
+        }*/
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
