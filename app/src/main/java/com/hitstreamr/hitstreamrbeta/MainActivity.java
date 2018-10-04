@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +44,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
+import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
+import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
+import com.hitstreamr.hitstreamrbeta.BottomNav.LibraryFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
@@ -58,6 +61,8 @@ import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     private Button logout;
@@ -77,7 +82,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private TextView TextViewUsername;
 
-    private ImageView ImageViewProfilePicture;
+    //private ImageView ImageViewProfilePicture;
+    private CircleImageView CirImageViewProPic;
 
     RecyclerView suggestionsRecyclerView;
     RecyclerView resultsRecyclerView;
@@ -115,9 +121,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        toolbar.setLogo(R.drawable.ic_camera);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("BETA");
@@ -134,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
 
-        Log.e(TAG, "Type of user:" + getIntent().getExtras().getString("TYPE"));
-
         //Listener for RCVs
         mListener = new ItemClickListener() {
             @Override
@@ -150,26 +154,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
 
 
+        name = user.getDisplayName();
+        photoUrl = user.getPhotoUrl();
+        Log.e(TAG, "Your profile" + name + photoUrl + user);
+
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
-
         vv = findViewById(R.id.videoScreen);
 
-        name = user.getDisplayName();
-        photoUrl = user.getPhotoUrl();
-        Log.e(TAG, "Your profile" + name + photoUrl + user);
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
-        ImageViewProfilePicture = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
+        CirImageViewProPic = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
+
         TextViewUsername.setVisibility(View.VISIBLE);
-        ImageViewProfilePicture.setVisibility(View.VISIBLE);
+        CirImageViewProPic.setVisibility(View.VISIBLE);
+
         TextViewUsername.setText(name);
-        Glide.with(getApplicationContext()).load(photoUrl).into(ImageViewProfilePicture);
+
+        Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
+
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
-
         if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //check that type exists and set it.
             type = getIntent().getStringExtra("TYPE");
@@ -189,27 +196,89 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-
                 vv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         startActivity(new Intent(MainActivity.this, VideoView.class));
                     }
                 });
-
             }
         }
 
         navigationView.setNavigationItemSelectedListener(this);
+        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentTransaction transaction;
+                Bundle bundle;
+                switch (item.getItemId()){
+                    case R.id.home:
+                        fab.setVisibility(View.VISIBLE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        HomeFragment homeFrag = new HomeFragment();
+                        homeFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, homeFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.discover:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        DiscoverFragment discFrag = new DiscoverFragment();
+                        discFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, discFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Disocver", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.activity:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        ActivityFragment actFrag = new ActivityFragment();
+                        actFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, actFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.library:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        LibraryFragment librFrag = new LibraryFragment();
+                        librFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, librFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
     }
 
     /**
      * Firebase Realtime - Basic Accounts
-     *
      * @param querySearch the input typed by the user
      */
     private void searchBasicAccounts(String querySearch) {
@@ -240,7 +309,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Firebase Realtime - Artist Accounts
-     *
      * @param querySearch the input typed by the user
      */
     private void searchArtistAccounts(String querySearch) {
@@ -272,7 +340,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Firebase Realtime - Artist Accounts
-     *
      * @param querySearch the input typed by the user
      */
     private void searchVideoSuggestions(String querySearch) {
@@ -302,6 +369,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
+
+    /**
+     * Handles the search bar and view
+     *
+     * @param item
+     * @return super.onCreateOptionsMenu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -311,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(homeIntent);
                 break;*/
             case R.id.account:
+
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
                 accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);
@@ -319,12 +394,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Handles the search bar and view
-     *
-     * @param menu menu
-     * @return super.onCreateOptionsMenu
-     */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
@@ -398,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 if (newText.trim().isEmpty()) {
                     stopAdapters();
-                    if (suggestionAdapter != null) {
+                    if (suggestionAdapter != null){
                         suggestionAdapter.stopListening();
                     }
                     search_input = null;
@@ -503,7 +572,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onBindViewHolder(MainActivity.VideoSuggestionsHolder holder, int position, Video model) {
                 holder.videoTitle.setText(model.getTitle());
             }
-
             @Override
             public MainActivity.VideoSuggestionsHolder onCreateViewHolder(ViewGroup group, int i) {
                 // Create a new instance of the ViewHolder, in this case we are using a custom
@@ -613,6 +681,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
+                acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(acct);
                 break;
             case R.id.profile:
@@ -724,7 +793,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
-
         void onResultClick(String title);
     }
 
@@ -741,14 +809,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (firebaseRecyclerAdapter_basic != null) {
             firebaseRecyclerAdapter_basic.stopListening();
         }
-        if (resultAdapter != null) {
+        if(resultAdapter != null){
             resultAdapter.clear();
         }
     }
 
     /**
      * Handles fragment items
-     *
      * @param item menu item
      * @return true to show fragments
      */
@@ -893,10 +960,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Decide to show/hide the items in the toolbar
-     *
-     * @param menu      menu
+     * @param menu menu
      * @param exception menu item
-     * @param visible   visibility
+     * @param visible visibility
      */
     private void setItemsVisibility(final Menu menu, final MenuItem exception,
                                     final boolean visible) {

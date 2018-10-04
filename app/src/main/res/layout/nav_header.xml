@@ -102,8 +102,9 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="end"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+                android:onClick="showPopup"/>
         </LinearLayout>
 
 

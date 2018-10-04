@@ -36,7 +36,7 @@ public class VideoView extends AppCompatActivity implements View.OnClickListener
         collapseDecriptionBtn.setOnClickListener(this);
 
         //DescLayout.setVisibility(View.GONE);
-        TextViewVideoDescription.setVisibility(View.GONE);
+        //TextViewVideoDescription.setVisibility(View.GONE);
 
 
     }
@@ -45,12 +45,14 @@ public class VideoView extends AppCompatActivity implements View.OnClickListener
     @Override
     public void onClick(View view) {
         if (view == collapseDecriptionBtn) {
-            //if(!collapseVariable) {
+            if (!collapseVariable) {
                 TextViewVideoDescription.setVisibility(View.GONE);
                 collapseVariable = true;
-            /*}
-            TextViewVideoDescription.setVisibility(View.GONE);
-            collapseVariable = false;*/
+            }
+            else if(collapseVariable) {
+                TextViewVideoDescription.setVisibility(View.VISIBLE);
+                collapseVariable = false;
+            }
         }
     }
 }
