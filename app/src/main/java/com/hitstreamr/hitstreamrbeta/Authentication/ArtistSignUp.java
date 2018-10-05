@@ -188,7 +188,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip) | !validateToc() | validateBrowseVideo() | !validateState() | !validateCountry())  {
+                | !validateZip(zip) | !validateToc() | !validateBrowseVideo() | !validateState() | !validateCountry())  {
             return;
         }
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
