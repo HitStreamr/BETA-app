@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +45,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface {
 
@@ -113,8 +117,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
 
-    Map<String, Object> artistVideo = new HashMap<>();
-
     //List View
     private ListView ContributorValuesLV;
 
@@ -141,6 +143,25 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_upload);
+
+        // Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("Upload");
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Profile Picture
+        if (currentFirebaseUser.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = currentFirebaseUser.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
 
         //FireStore Database
         db = FirebaseFirestore.getInstance();
@@ -318,14 +339,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot takeSnapshot) {
+                        registerFirebase();
                         videoRef.getDownloadUrl()
                                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         successVideoUpload = true;
                                         downloadVideoUri = uri.toString();
-                                        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
-                                        registerFirebase();
                                     }
                                 });
                     }
@@ -375,12 +395,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             sample.add(Contributor);
         }
 
+
+        Map<String, Object> artistVideo = new HashMap<>();
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
         artistVideo.put(VIDEO_GENRE, genre);
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
-        //artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
+        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
 
@@ -525,7 +547,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
      */
     public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -674,5 +696,15 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorList.remove(deletePosition);
         contributorFirestoreList.remove(deletePosition);
         contributorAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * Handles back button on toolbar
+     * @return true if pressed
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

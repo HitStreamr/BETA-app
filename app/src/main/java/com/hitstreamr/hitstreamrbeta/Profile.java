@@ -59,10 +59,12 @@ public class Profile extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(eventListener);
 
         // Profile Picture
-        circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-        circleImageView.setVisibility(View.VISIBLE);
-        Uri photoURL = current_user.getPhotoUrl();
-        Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        if (current_user.getPhotoUrl() != null) {
+            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
 
     }
 
@@ -73,7 +75,7 @@ public class Profile extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_nav_header, menu);
+        //getMenuInflater().inflate(R.menu.top_nav_header, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
