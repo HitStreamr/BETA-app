@@ -55,7 +55,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     private String downloadimageUri;
 
-    private Uri selectedImagePath;
+    private Uri selectedImagePath = null;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef;
@@ -131,6 +131,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         signup.setOnClickListener(this);
         goBack.setOnClickListener(this);
         profilePictureBtn.setOnClickListener(this);
+
+        Log.e(TAG, "URI value:" +selectedImagePath);
     }
 
     ArtistUser artist_object;
@@ -182,10 +184,12 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip) | !validateToc() | !validateState() | !validateCountry()) {
+                | !validateZip(zip) | !validateToc() | !validateState() | !validateCountry() | validateBrowseVideo()) {
             Log.e(TAG, "Validation failed");
+
             return;
         }
+        Log.e(TAG, "URi after:" + selectedImagePath);
         Log.e(TAG, "Validation finished");
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
@@ -472,11 +476,22 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private boolean validateBrowseVideo() {
+    /*private boolean validateBrowseVideo() {
         if (selectedImagePath != null) {
             Log.e(TAG, "12");
             return true;
         } else if (selectedImagePath == null) {
+            profilePictureBtn.setText(R.string.image_not_selection);
+            Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return false;
+    }*/
+    private boolean validateBrowseVideo() {
+        if (selectedImagePath != null) {
+            return true;
+        }
+        else if(selectedImagePath == null){
             profilePictureBtn.setText(R.string.image_not_selection);
             Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
             return false;
