@@ -106,17 +106,17 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mStorageRef = storage.getReference();
 
         // Views
-        mFirstName = findViewById(R.id.firstName);
-        mLastName = findViewById(R.id.lastName);
-        mEmail = findViewById(R.id.email);
-        mPassword = findViewById(R.id.Password);
-        mUsername = findViewById(R.id.Username);
-        mAddress = findViewById(R.id.addressLine1);
-        mCity = findViewById(R.id.city);
-        mState = findViewById(R.id.state);
-        mZipcode = findViewById(R.id.zip);
-        mCountry = findViewById(R.id.country);
-        mPhone = findViewById(R.id.phone);
+        mFirstName = findViewById(R.id.artistFirstName);
+        mLastName = findViewById(R.id.artistLastName);
+        mEmail = findViewById(R.id.artistEmail);
+        mPassword = findViewById(R.id.artistPassword);
+        mUsername = findViewById(R.id.artistUsername);
+        mAddress = findViewById(R.id.artistAddressLine1);
+        mCity = findViewById(R.id.artistCity);
+        mState = findViewById(R.id.artistState);
+        mZipcode = findViewById(R.id.artistZip);
+        mCountry = findViewById(R.id.artistCountry);
+        mPhone = findViewById(R.id.artistPhone);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -125,7 +125,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         profilePictureBtn = findViewById(R.id.artistPicture);
 
         //Image View
-        imageViewProfile = findViewById(R.id.profileImage);
+        imageViewProfile = findViewById(R.id.artistProfilePicture);
 
         // Listeners
         signup.setOnClickListener(this);
@@ -137,7 +137,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     private void uploadFromUri(final Uri fileUri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user!=null) {
+        if (user != null) {
             imageRef = mStorageRef.child("profilePictures").child(user.getUid());
             mstorageTask = imageRef.putFile(fileUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -182,11 +182,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip) | !validateToc() | validateBrowseVideo() | !validateState() | !validateCountry())  {
-            Log.e(TAG,"Validation failed");
+                | !validateZip(zip) | !validateToc() | !validateState() | !validateCountry()) {
+            Log.e(TAG, "Validation failed");
             return;
         }
-        Log.e(TAG,"Validation finished");
+        Log.e(TAG, "Validation finished");
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
         //If validations are ok we will first show progressbar
@@ -205,7 +205,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
                             uploadFromUri(selectedImagePath);
                         } else {
-                            Toast.makeText(ArtistSignUp.this, "Could not register. Please try again",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -277,15 +277,16 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if (firstname.isEmpty()) {
             mFirstName.setError("Field can't be empty");
             return false;
-        } else if (firstname.length() <= 26) {
-            if (!(checkAlphabet(firstname))) {
-                mFirstName.setError("First name must only have letters");
-                return false;
-            }
-            return true;
-        } else {
+        } else if (firstname.length() >= 26) {
+            mFirstName.setError("First name can only have 26 characters");
+            return false;
+        } else if (!(checkAlphabet(firstname))) {
+            mFirstName.setError("First name must only have letters");
+            return false;
+        }
+         else {
             mFirstName.setError(null);
-            Log.e(TAG,"1");
+            Log.e(TAG, "1");
             return true;
         }
     }
@@ -300,15 +301,15 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         if (lastname.isEmpty()) {
             mLastName.setError("Field can't be empty");
             return false;
-        } else if (lastname.length() <= 26) {
-            if (!(checkAlphabet(lastname))) {
-                mLastName.setError("Last name must only have letters");
-                return false;
-            }
-            return true;
+        } else if (lastname.length() >= 26) {
+            mLastName.setError("Last name can only have 26 characters");
+            return false;
+        } else if (!(checkAlphabet(lastname))) {
+            mLastName.setError("Last name must only have letters");
+            return false;
         } else {
             mLastName.setError(null);
-            Log.e(TAG,"2");
+            Log.e(TAG, "2");
             return true;
         }
     }
@@ -328,7 +329,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return false;
         } else {
             mAddress.setError(null);
-            Log.e(TAG,"3");
+            Log.e(TAG, "3");
             return true;
         }
     }
@@ -338,7 +339,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG,"4");
+        Log.e(TAG, "4");
         return true;
     }
 
@@ -347,7 +348,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG,"5");
+        Log.e(TAG, "5");
         return true;
     }
 
@@ -365,7 +366,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mEmail.setError("Email is not valid!");
             return false;
         } else {
-            Log.e(TAG,"6");
+            Log.e(TAG, "6");
             mEmail.setError(null);
             return true;
         }
@@ -385,7 +386,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
         } else {
-            Log.e(TAG,"7");
+            Log.e(TAG, "7");
             mPhone.setError(null);
             return true;
         }
@@ -402,7 +403,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mCity.setError("Field can't be empty");
             return false;
         } else {
-            Log.e(TAG,"8");
+            Log.e(TAG, "8");
             mCity.setError(null);
             return true;
         }
@@ -422,7 +423,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mZipcode.setError("Zip is invalid");
             return false;
         } else {
-            Log.e(TAG,"9");
+            Log.e(TAG, "9");
             mZipcode.setError(null);
             return true;
         }
@@ -442,7 +443,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPassword.setError("Password too weak");
             return false;
         } else {
-            Log.e(TAG,"10");
+            Log.e(TAG, "10");
             mPassword.setError(null);
             return true;
         }
@@ -465,7 +466,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mAddress.setError("Username is too short.");
             return false;
         } else {
-            Log.e(TAG,"11");
+            Log.e(TAG, "11");
             mUsername.setError(null);
             return true;
         }
@@ -473,10 +474,13 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     private boolean validateBrowseVideo() {
         if (selectedImagePath != null) {
-            Log.e(TAG,"12");
+            Log.e(TAG, "12");
             return true;
+        } else if (selectedImagePath == null) {
+            profilePictureBtn.setText(R.string.image_not_selection);
+            Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
+            return false;
         }
-        profilePictureBtn.setText(R.string.image_not_selection);
         return false;
     }
 
@@ -500,7 +504,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            Log.e(TAG,"13");
+            Log.e(TAG, "13");
             termsCond.setError(null);
             return true;
         }
