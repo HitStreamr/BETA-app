@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 vv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        startActivity(new Intent(MainActivity.this, VideoView.class));
+                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
                     }
                 });
             }
