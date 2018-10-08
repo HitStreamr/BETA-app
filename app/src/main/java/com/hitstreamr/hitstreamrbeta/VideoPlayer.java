@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -18,6 +19,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //ImageView
     private ImageView ImageViewPlay;
+
+    //progrss bar
+    private ProgressBar videoProgress;
+    private ProgressBar bufferProgress;
 
     //ImageButton
     private ImageButton collapseDecriptionBtn;
@@ -32,7 +37,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_view);
+        setContentView(R.layout.activity_video_player);
 
         //VideoView
         mainVideoView = findViewById(R.id.artistVideoPlayer);
@@ -42,6 +47,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //ImageView
         ImageViewPlay = findViewById(R.id.videoPlay);
+
+        //ProgressBar
+        videoProgress = findViewById(R.id.videoProgressBar);
+        bufferProgress = findViewById(R.id.bufferProgress);
 
         //ImageButton
         collapseDecriptionBtn = findViewById(R.id.collapseDescription);

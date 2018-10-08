@@ -499,32 +499,32 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if (title.isEmpty()) {
             EdittextTittle.setError("Field can't be empty");
             return false;
-        } else if (title.length() <= 100) {
-            if (!(checkAlphaNumeric(title))) {
+        } else if (title.length() >= 100) {
+            EdittextTittle.setError("Title length has crossed 100 characters");
+        } else if (!(checkAlphaNumeric(title))) {
                 EdittextTittle.setError("Title must only have letters and numbers");
                 return false;
-            }
-            return true;
         } else {
             EdittextTittle.setError(null);
             return true;
         }
+        return true;
     }
 
     private boolean validateDescription(String description) {
         if (description.isEmpty()) {
             EditTextDescription.setError("Field can't be empty");
             return false;
-        } else if (description.length() <= 100) {
-            if (!(checkAlphaNumeric(description))) {
-                EdittextTittle.setError("Description must only have letters and numbers");
-                return false;
-            }
-            return true;
+        } else if (description.length() >= 1000) {
+            EdittextTittle.setError("Description length has crossed 1000 characters");
+        } else if (!(checkAlphaNumeric(description))) {
+            EdittextTittle.setError("Title must only have letters and numbers");
+            return false;
         } else {
             EditTextDescription.setError(null);
             return true;
         }
+        return true;
     }
 
     private boolean validateGenre() {
