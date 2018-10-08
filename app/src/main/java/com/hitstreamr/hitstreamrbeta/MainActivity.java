@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +44,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
+import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
+import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
+import com.hitstreamr.hitstreamrbeta.BottomNav.LibraryFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
@@ -59,6 +62,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
     private Button logout;
     private DrawerLayout drawer;
@@ -69,13 +74,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ItemClickListener mListener;
     //private ImageButton userbtn;
 
-
-
     private MenuItem profileItem;
 
     private TextView TextViewUsername;
 
-    private ImageView ImageViewProfilePicture;
+    //private ImageView ImageViewProfilePicture;
+    private CircleImageView CirImageViewProPic;
 
     RecyclerView suggestionsRecyclerView;
     RecyclerView resultsRecyclerView;
@@ -115,9 +119,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
-        toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        getSupportActionBar().setTitle("BETA");
+        //toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
+        //getSupportActionBar().setTitle("BETA");
+        toolbar.setTitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
@@ -155,14 +161,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab = findViewById(R.id.fab);
 
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
-        ImageViewProfilePicture = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
+        CirImageViewProPic = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
 
         TextViewUsername.setVisibility(View.VISIBLE);
-        ImageViewProfilePicture.setVisibility(View.VISIBLE);
+        CirImageViewProPic.setVisibility(View.VISIBLE);
 
         TextViewUsername.setText(name);
 
-        Glide.with(getApplicationContext()).load(photoUrl).into(ImageViewProfilePicture);
+        Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
 
 
         //get menu & extras
@@ -191,8 +197,72 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         navigationView.setNavigationItemSelectedListener(this);
+        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentTransaction transaction;
+                Bundle bundle;
+                switch (item.getItemId()){
+                    case R.id.home:
+                        fab.setVisibility(View.VISIBLE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        HomeFragment homeFrag = new HomeFragment();
+                        homeFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, homeFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.discover:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        DiscoverFragment discFrag = new DiscoverFragment();
+                        discFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, discFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Disocver", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.activity:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        ActivityFragment actFrag = new ActivityFragment();
+                        actFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, actFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.library:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        LibraryFragment librFrag = new LibraryFragment();
+                        librFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, librFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -259,47 +329,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
+
     /**
-     * Firebase Realtime - Artist Accounts
-     * @param querySearch the input typed by the user
+     * Handles the options menu in the drawer
+     * @param item menu item
+     * @return super.onOptionsItemSelected
      */
-    private void searchVideoSuggestions(String querySearch) {
-        // Send a query to the database
-        FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
-        myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
-                .endAt(querySearch + "\uf8ff");
-
-        FirebaseRecyclerOptions<ArtistUser> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<ArtistUser>()
-                .setQuery(myRef, ArtistUser.class)
-                .build();
-
-        firebaseRecyclerAdapter_artist = new FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>(firebaseRecyclerOptions) {
-            @Override
-            protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
-                holder.setUserName(model.getUsername());
-            }
-
-            @NonNull
-            @Override
-            public ArtistAccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_results_user, parent, false);
-                return new ArtistAccountViewHolder(view);
-            }
-        };
-        firebaseRecyclerAdapter_artist.notifyDataSetChanged();
-        recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.profile:
                 Intent proIntent = new Intent(getApplicationContext(), Profile.class);
-                proIntent.putExtra("TYPE", getString(R.string.type_artist));
+                proIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(proIntent);
                 break;
-            case R.id.account:
 
+            case R.id.account:
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
                 accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);
@@ -313,9 +358,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @return super.onCreateOptionsMenu
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
-        MenuItem mSearch = menu.findItem(R.id.search);
+        final MenuItem mSearch = menu.findItem(R.id.search);
+        //Items
+        profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
 
@@ -388,7 +435,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     search_input = null;
                 }
-                return false;
+                //edited from false/what is this for?
+                return true;
             }
         });
 
@@ -396,21 +444,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             // Stop adapters from listening so recent searches are removed
             public boolean onMenuItemActionCollapse(MenuItem item) {
+                MainActivity.this.setItemsVisibility(menu, mSearch, true);
                 search_input = null;
                 stopAdapters();
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
+                bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
-                Log.e("HOME", "On Close Intitiated");
+                Log.e("HOME", "On Close Initiated");
                 return true;  // return true to collapse action view
             }
 
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
+                MainActivity.this.setItemsVisibility(menu, mSearch, false);
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 return true;  // return true to expand action view
             }
         });
@@ -462,14 +516,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public com.google.firebase.firestore.Query autocompleteQuery(String query){
         int strlength = query.length();
         String strFrontCode = query.substring(0, strlength);
-        String strEndCode = query.substring(strlength-1);
+        String strEndCode = query.substring(strlength - 1);
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
         return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title",query+"\uf8ff");
     }
 
-    public void searchVideoFirestore (com.google.firebase.firestore.Query searchRequest){
+    public void searchVideoFirestore(com.google.firebase.firestore.Query searchRequest) {
 
         //New RecyclerOptions and Adapter, based on Query
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
@@ -591,10 +645,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()){
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
+                acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
+                prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
                 break;
 
@@ -638,9 +694,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(String userName) {
+        void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -655,9 +718,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view = itemView;
         }
 
-        void setUserName(String userName) {
+        void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            Button follow = view.findViewById(R.id.follow_button);
+            follow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
@@ -709,8 +787,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FragmentTransaction transaction;
         Bundle bundle;
+        getSupportActionBar().hide();
         switch (item.getItemId()) {
             case R.id.dashboard:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -722,6 +803,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.general_setting:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -733,38 +816,46 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.notification_settings:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,  notifSettingsFrag);
+                transaction.replace(R.id.fragment_container, notifSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
 
             case R.id.payment_pref:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,payPrefFrag);
+                transaction.replace(R.id.fragment_container, payPrefFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
 
             case R.id.invite_a_friend:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,inviteFrag);
+                transaction.replace(R.id.fragment_container, inviteFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
                 break;
             case R.id.help_center:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -776,12 +867,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.legal_agreements:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container,legalFrag);
+                transaction.replace(R.id.fragment_container, legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
             break;
@@ -801,6 +894,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            //toolbar.setVisibility(View.VISIBLE);
+            getSupportActionBar().show();
             super.onBackPressed();
         }
     }
@@ -808,15 +903,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (suggestionAdapter != null){
-            suggestionAdapter.startListening();
-        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopAdapters();
+
+//        stopAdapters();
     }
 
+    /**
+     * Decide to show/hide the items in the toolbar
+     * @param menu menu
+     * @param exception menu item
+     * @param visible visibility
+     */
+    private void setItemsVisibility(final Menu menu, final MenuItem exception,
+                                    final boolean visible) {
+        for (int i = 0; i < menu.size(); ++i) {
+            MenuItem item = menu.getItem(i);
+            if (item != exception)
+                item.setVisible(visible);
+        }
+    }
 }

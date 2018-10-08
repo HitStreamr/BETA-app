@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -81,6 +80,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextCountry;
     private TextView UserNameText;
     private TextView LabelNameText;
+    private CircleImageView circleImageView;
 
     //Spinner
     private Spinner SpinnerState;
@@ -116,22 +116,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             Pattern.compile(("[0-9]{5}"));
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.top_nav_header, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
-     * Handles back button on toolbar
-     * @return true if pressed
-     */
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
@@ -141,7 +125,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
 
         // Profile Picture
         FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
@@ -264,6 +249,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
         Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
+
+        getSupportActionBar().setTitle(username);
     }
 
     private int getIndex(Spinner spinner, String myString) {
@@ -285,6 +272,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         EditTextEmail.setText(basic.getEmail());
         EditTextUsername.setText(basic.getUsername());
+
+        getSupportActionBar().setTitle(username);
     }
 
     private void registerUser() {
@@ -755,5 +744,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         } else if (view == ChangePhotoBtn) {
             choosePhoto();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

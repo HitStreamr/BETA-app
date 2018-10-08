@@ -69,18 +69,6 @@ public class Profile extends AppCompatActivity {
     }
 
     /**
-     * Set up the toolbar
-     * @param menu menu
-     * @return super.onCreateOptionsMenu
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.top_nav_header, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    /**
      * Get the account type of the current user
      */
     private void getUserType() {
