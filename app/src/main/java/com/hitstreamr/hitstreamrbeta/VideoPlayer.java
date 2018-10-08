@@ -7,8 +7,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
-public class VideoView extends AppCompatActivity implements View.OnClickListener {
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener {
     //Layout
     private LinearLayout DescLayout;
 
@@ -34,7 +35,7 @@ public class VideoView extends AppCompatActivity implements View.OnClickListener
         setContentView(R.layout.activity_video_view);
 
         //VideoView
-        //mainVideoView = findViewById(R.id.idVideo);
+        mainVideoView = findViewById(R.id.artistVideoPlayer);
 
         //Linear Layout
         DescLayout = findViewById(R.id.DescriptionLayout);
