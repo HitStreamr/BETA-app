@@ -768,6 +768,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setSupportActionBar(toolbar);
             fab.setVisibility(View.VISIBLE);
             bottomNavView.setVisibility(View.VISIBLE);
+            toolbar.setVisibility(View.VISIBLE);
             super.onBackPressed();
         }
 
