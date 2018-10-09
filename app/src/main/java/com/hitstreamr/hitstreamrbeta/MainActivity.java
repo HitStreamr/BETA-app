@@ -166,10 +166,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextViewUsername.setVisibility(View.VISIBLE);
         CirImageViewProPic.setVisibility(View.VISIBLE);
 
-        TextViewUsername.setText(name);
 
-        Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
-
+        if(photoUrl == null){
+            //CirImageViewProPic.setImageDrawable(R.drawable.artist);
+            Log.e(TAG, "username is::" +name);
+            Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
+        }
+        else{
+            Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
+        }
+        if(name.equals("")){
+            String tempname = "Username";
+            TextViewUsername.setText(tempname);
+        }
+        else{
+            TextViewUsername.setText(name);
+        }
+       /* else{
+            TextViewUsername.setText(name);
+            Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
+        }*/
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
@@ -245,15 +261,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case R.id.library:
                         fab.setVisibility(View.GONE);
                         bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        LibraryFragment librFrag = new LibraryFragment();
-                        librFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, librFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
+//                        transaction = getSupportFragmentManager().beginTransaction();
+//                        bundle = new Bundle();
+//                        bundle.putString("TYPE", type);
+//                        LibraryFragment librFrag = new LibraryFragment();
+//                        librFrag.setArguments(bundle);
+//                        transaction.replace(R.id.fragment_container2, librFrag);
+//                        transaction.addToBackStack(null);
+//                        transaction.commit();
                         Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                        startActivity(libraryIntent);
                         break;
                 }
                 return true;
@@ -656,32 +675,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }return true;
     }
-
-    /*@Override
-    public void onClick(View v) {
-
-        PopupMenu popupMenu = new PopupMenu(MainActivity.this, userbtn);
-        popupMenu.getMenuInflater().inflate(R.menu.acct_profile, popupMenu.getMenu());
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.account:
-                        Intent acct = new Intent(getApplicationContext(), Account.class);
-                        startActivity(acct);
-                        break;
-                    case R.id.profile:
-                        Intent prof = new Intent(getApplicationContext(), Profile.class);
-                        startActivity(prof);
-                        break;
-                }
-                return true;
-            }
-        });
-
-    }*/
-
 
     /**
      * Basic Accounts Holder - Inner Class

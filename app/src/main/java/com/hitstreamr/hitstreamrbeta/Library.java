@@ -5,33 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Profile extends AppCompatActivity {
-
-    private FirebaseUser current_user;
-    private CircleImageView circleImageView;
+public class Library extends AppCompatActivity {
     private String accountType;
 
-    /**
-     * Set up and initialize layouts and variables
-     * @param savedInstanceState state
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_library);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -39,35 +28,50 @@ public class Profile extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
+        getSupportActionBar().setTitle("Library");
 
         getUserType();
-        current_user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
 
-        // Show username on toolbar
-        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
-                .child(current_user.getUid());
-        ValueEventListener eventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String username = dataSnapshot.child("username").getValue(String.class);
-                getSupportActionBar().setTitle(username);
-            }
+        ExpandableListView expandableListView = findViewById(R.id.expandableListView);
+//        expandableListView.setIndicatorBounds(expandableListView.getWidth()-GetDipsFromPixel(35),
+//                expandableListView.getWidth()-GetDipsFromPixel(5));
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        };
-        myRef.addListenerForSingleValueEvent(eventListener);
+        expandableListView.setVisibility(View.VISIBLE);
 
         // Profile Picture
         if (current_user.getPhotoUrl() != null) {
-            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
-            ImageView profileImageView = findViewById(R.id.profileImage);
+            //ImageView profileImageView = findViewById(R.id.profileImage);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-            Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
+            //Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
         }
 
+    }
+
+    /**
+     *
+     * @param pixels pixels
+     * @return integer
+     */
+    public int GetDipsFromPixel(float pixels)
+    {
+        // Get the screen's density scale
+        final float scale = getResources().getDisplayMetrics().density;
+        // Convert the dps to pixels, based on density scale
+        return (int) (pixels * scale + 0.5f);
+    }
+
+    /**
+     * Handles back button on toolbar
+     * @return true if pressed
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     /**
@@ -88,15 +92,5 @@ public class Profile extends AppCompatActivity {
                 accountType = "LabelAccounts";
             }
         }
-    }
-
-    /**
-     * Handles back button on toolbar
-     * @return true if pressed
-     */
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 }
