@@ -117,8 +117,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
 
-    Map<String, Object> artistVideo = new HashMap<>();
-
     //List View
     private ListView ContributorValuesLV;
 
@@ -341,14 +339,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot takeSnapshot) {
+                        registerFirebase();
                         videoRef.getDownloadUrl()
                                 .addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
                                         successVideoUpload = true;
                                         downloadVideoUri = uri.toString();
-                                        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
-                                        registerFirebase();
                                     }
                                 });
                     }
@@ -398,12 +395,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             sample.add(Contributor);
         }
 
+
+        Map<String, Object> artistVideo = new HashMap<>();
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
         artistVideo.put(VIDEO_GENRE, genre);
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
-        //artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
+        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
 
@@ -548,7 +547,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
      */
     public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
