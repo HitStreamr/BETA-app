@@ -269,9 +269,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
+
+        /* Transloadit Credentials */
         transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
 
         assembly = transloadit.newAssembly(this,this);
+
+        //set template Id
+        assembly.addOption("template_id", BuildConfig.Transloadit_TEMPLATE_ID);
 
     }
 
@@ -324,6 +329,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
         String storage  = "videos/" + currentFirebaseUser.getUid()+ "/mp4" + "/" + storagetitle;
         String original = "videos/" + currentFirebaseUser.getUid()+ "/original" + "/" + storagetitle;
+        String thumbnail = "thumbnail/" + currentFirebaseUser.getUid() + "/" + storagetitle;
         // Upload file to Firebase Storage
         Log.d(TAG, "uploadFromUri:dst:" + storage);
 
@@ -332,52 +338,18 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        /*
-              "video_android": {
-              "use": "viruscheck",
-              "robot": "/video/encode",
-              "ffmpeg_stack": "v3.3.3",
-              "preset": "android",
-              "width": 320,
-              "height": 240
-             }
-    */
-
-        Map<String, Object> stepOptions = new HashMap<>();
-        stepOptions.put("use", ":original");
-        stepOptions.put("ffmpeg_stack", "v3.3.3");
-        stepOptions.put("preset", "android");
-        //stepOptions.put("result","true");
-        stepOptions.put("width", 320);
-        stepOptions.put("width", 240);
-        assembly.addStep("video_android", "/video/encode", stepOptions);
-
-        /*
-        "export": {
-      "use": [
-        "thumbnail",
-        "video_android",
-        "video_iphone",
-        "video_webm",
-        "video_hls",
-        "video_dash"
-      ],
-      "robot": "/google/store",
-      "credentials": "gcs_cred"
-    }
-         */
 
         Map<String, Object> exportOptions = new HashMap<>();
-        exportOptions.put("use", "video_android");
-        exportOptions.put("credentials", "gcs_cred");
         exportOptions.put("path", storage);
-        assembly.addStep("export", "/google/store", exportOptions);
+        assembly.addStep("store_encoded", "/google/store", exportOptions);
 
         Map<String, Object> exportOriginalOptions = new HashMap<>();
-        exportOriginalOptions.put("use", ":original");
-        exportOriginalOptions.put("credentials", "gcs_cred");
         exportOriginalOptions.put("path", original);
-        assembly.addStep("exportOriginal", "/google/store", exportOriginalOptions);
+        assembly.addStep("store_original", "/google/store", exportOriginalOptions);
+
+        Map<String, Object> exportThumbnailOptions = new HashMap<>();
+        exportOriginalOptions.put("path", thumbnail);
+        assembly.addStep("store_thumbnail", "/google/store", exportThumbnailOptions);
 
 
         SaveTask save = new SaveTask(this,assembly);
