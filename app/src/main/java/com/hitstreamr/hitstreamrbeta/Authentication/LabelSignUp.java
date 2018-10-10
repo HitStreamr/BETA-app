@@ -116,7 +116,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) |!validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateLabel(label) | !validatePhone(phone)
-                | !validateZip(zipcode) | !validateToc() | validateState(state)) {
+                | !validateZip(zipcode) | !validateToc() | !validateState(state)) {
             return;
         }
 

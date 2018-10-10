@@ -79,7 +79,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button contributeBtn;
     private Button addContributorBtn;
     private Button cancelUploadBtn;
-    private Button deleteContributorBtn;
+    private Button ContributorCancelBtn;
 
     //EditText Inputs
     private EditText EdittextTittle;
@@ -117,6 +117,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     ArrayList<String> contributorFirestoreList;
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
+
+    Map<String, Object> artistVideo = new HashMap<>();
 
     //List View
     private ListView ContributorValuesLV;
@@ -164,7 +166,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
-        //deleteContributorBtn =findViewById(R.id.deleteContributor);
+        ContributorCancelBtn =findViewById(R.id.ContributorCancel);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -202,7 +204,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
-        //visibility,
+        //visibility
         addContributorLayout.setVisibility(View.GONE);
         videoCancelLayout.setVisibility(View.GONE);
 
@@ -212,7 +214,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
         cancelUploadBtn.setOnClickListener(this);
-        //deleteContributorBtn.setOnClickListener(this);
+        ContributorCancelBtn.setOnClickListener(this);
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -397,8 +399,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             sample.add(Contributor);
         }
 
-
-        Map<String, Object> artistVideo = new HashMap<>();
         artistVideo.put(VIDEO_TITLE, title);
         artistVideo.put(VIDEO_DESCRIPTION, description);
         artistVideo.put(VIDEO_GENRE, genre);
@@ -434,10 +434,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
-                        /*finish();
-                        Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
-                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                        startActivity(homeIntent);*/
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -504,32 +500,32 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if (title.isEmpty()) {
             EdittextTittle.setError("Field can't be empty");
             return false;
-        } else if (title.length() <= 100) {
-            if (!(checkAlphaNumeric(title))) {
+        } else if (title.length() >= 100) {
+            EdittextTittle.setError("Title length has crossed 100 characters");
+        } else if (!(checkAlphaNumeric(title))) {
                 EdittextTittle.setError("Title must only have letters and numbers");
                 return false;
-            }
-            return true;
         } else {
             EdittextTittle.setError(null);
             return true;
         }
+        return true;
     }
 
     private boolean validateDescription(String description) {
         if (description.isEmpty()) {
             EditTextDescription.setError("Field can't be empty");
             return false;
-        } else if (description.length() <= 100) {
-            if (!(checkAlphaNumeric(description))) {
-                EdittextTittle.setError("Description must only have letters and numbers");
-                return false;
-            }
-            return true;
+        } else if (description.length() >= 1000) {
+            EdittextTittle.setError("Description length has crossed 1000 characters");
+        } else if (!(checkAlphaNumeric(description))) {
+            EdittextTittle.setError("Title must only have letters and numbers");
+            return false;
         } else {
             EditTextDescription.setError(null);
             return true;
         }
+        return true;
     }
 
     private boolean validateGenre() {
@@ -553,7 +549,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
      */
     public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -694,6 +690,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         if (view == cancelUploadBtn) {
             cancelVideo();
+        }
+        if(view == ContributorCancelBtn){
+            resetContributor();
+            addContributorLayout.setVisibility(View.GONE);
         }
     }
 

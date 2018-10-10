@@ -19,9 +19,9 @@
 
             <Button
                 android:id="@+id/backBtn"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:background="@drawable/back_icon_wht"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
                 android:layout_marginStart="10dp"
                 android:layout_gravity="center_vertical" />
 
