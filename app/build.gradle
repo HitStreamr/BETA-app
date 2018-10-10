@@ -15,20 +15,22 @@ android {
         release {
 
             minifyEnabled false
-            buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY;
-            buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET;
+            buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
+            buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
+            buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug{
-            buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY;
-            buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET;
+            buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
+            buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
+            buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
         }
     }
     packagingOptions {
         pickFirst "**"
     }
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.2'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
