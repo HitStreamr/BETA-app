@@ -17,14 +17,12 @@ android {
             minifyEnabled false
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
-            buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
         debug{
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
-            buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
         }
     }
     packagingOptions {
@@ -72,16 +70,24 @@ dependencies {
     implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
+    // Firestore
     implementation 'com.firebaseui:firebase-ui-database:4.1.0'
     implementation 'android.arch.paging:runtime:1.0.1'
     // Recycler View
     implementation 'com.android.support:recyclerview-v7:27.1.1'
 
+    //SearchView
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 
     implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
 
+    //profile picture
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'de.hdodenhof:circleimageview:2.1.0'
 
-
+    //Exo Player
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

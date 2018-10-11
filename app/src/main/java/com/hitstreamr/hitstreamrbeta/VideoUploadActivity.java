@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.transloadit.android.sdk.AndroidAsyncAssembly;
@@ -79,7 +80,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button contributeBtn;
     private Button addContributorBtn;
     private Button cancelUploadBtn;
-    private Button deleteContributorBtn;
+    private Button ContributorCancelBtn;
 
     //EditText Inputs
     private EditText EdittextTittle;
@@ -117,6 +118,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     ArrayList<String> contributorFirestoreList;
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
+
+    Map<String, Object> artistVideo = new HashMap<>();
 
     //List View
     private ListView ContributorValuesLV;
@@ -164,7 +167,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
-        //deleteContributorBtn =findViewById(R.id.deleteContributor);
+        ContributorCancelBtn =findViewById(R.id.ContributorCancel);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -202,7 +205,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
-        //visibility,
+        //visibility
         addContributorLayout.setVisibility(View.GONE);
         videoCancelLayout.setVisibility(View.GONE);
 
@@ -212,7 +215,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
         cancelUploadBtn.setOnClickListener(this);
-        //deleteContributorBtn.setOnClickListener(this);
+        ContributorCancelBtn.setOnClickListener(this);
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -269,14 +272,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-
-        /* Transloadit Credentials */
         transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
 
         assembly = transloadit.newAssembly(this,this);
-
-        //set template Id
-        assembly.addOption("template_id", BuildConfig.Transloadit_TEMPLATE_ID);
 
     }
 
@@ -329,7 +327,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
         String storage  = "videos/" + currentFirebaseUser.getUid()+ "/mp4" + "/" + storagetitle;
         String original = "videos/" + currentFirebaseUser.getUid()+ "/original" + "/" + storagetitle;
-        String thumbnail = "thumbnail/" + currentFirebaseUser.getUid() + "/" + storagetitle;
         // Upload file to Firebase Storage
         Log.d(TAG, "uploadFromUri:dst:" + storage);
 
@@ -338,18 +335,52 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        /*
+              "video_android": {
+              "use": "viruscheck",
+              "robot": "/video/encode",
+              "ffmpeg_stack": "v3.3.3",
+              "preset": "android",
+              "width": 320,
+              "height": 240
+             }
+    */
+
+        Map<String, Object> stepOptions = new HashMap<>();
+        stepOptions.put("use", ":original");
+        stepOptions.put("ffmpeg_stack", "v3.3.3");
+        stepOptions.put("preset", "android");
+        //stepOptions.put("result","true");
+        stepOptions.put("width", 320);
+        stepOptions.put("width", 240);
+        assembly.addStep("video_android", "/video/encode", stepOptions);
+
+        /*
+        "export": {
+      "use": [
+        "thumbnail",
+        "video_android",
+        "video_iphone",
+        "video_webm",
+        "video_hls",
+        "video_dash"
+      ],
+      "robot": "/google/store",
+      "credentials": "gcs_cred"
+    }
+         */
 
         Map<String, Object> exportOptions = new HashMap<>();
+        exportOptions.put("use", "video_android");
+        exportOptions.put("credentials", "gcs_cred");
         exportOptions.put("path", storage);
-        assembly.addStep("store_encoded", "/google/store", exportOptions);
+        assembly.addStep("export", "/google/store", exportOptions);
 
         Map<String, Object> exportOriginalOptions = new HashMap<>();
+        exportOriginalOptions.put("use", ":original");
+        exportOriginalOptions.put("credentials", "gcs_cred");
         exportOriginalOptions.put("path", original);
-        assembly.addStep("store_original", "/google/store", exportOriginalOptions);
-
-        Map<String, Object> exportThumbnailOptions = new HashMap<>();
-        exportOriginalOptions.put("path", thumbnail);
-        assembly.addStep("store_thumbnail", "/google/store", exportThumbnailOptions);
+        assembly.addStep("exportOriginal", "/google/store", exportOriginalOptions);
 
 
         SaveTask save = new SaveTask(this,assembly);
@@ -504,32 +535,32 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if (title.isEmpty()) {
             EdittextTittle.setError("Field can't be empty");
             return false;
-        } else if (title.length() <= 100) {
-            if (!(checkAlphaNumeric(title))) {
+        } else if (title.length() >= 100) {
+            EdittextTittle.setError("Title length has crossed 100 characters");
+        } else if (!(checkAlphaNumeric(title))) {
                 EdittextTittle.setError("Title must only have letters and numbers");
                 return false;
-            }
-            return true;
         } else {
             EdittextTittle.setError(null);
             return true;
         }
+        return true;
     }
 
     private boolean validateDescription(String description) {
         if (description.isEmpty()) {
             EditTextDescription.setError("Field can't be empty");
             return false;
-        } else if (description.length() <= 100) {
-            if (!(checkAlphaNumeric(description))) {
-                EdittextTittle.setError("Description must only have letters and numbers");
-                return false;
-            }
-            return true;
+        } else if (description.length() >= 1000) {
+            EdittextTittle.setError("Description length has crossed 1000 characters");
+        } else if (!(checkAlphaNumeric(description))) {
+            EdittextTittle.setError("Title must only have letters and numbers");
+            return false;
         } else {
             EditTextDescription.setError(null);
             return true;
         }
+        return true;
     }
 
     private boolean validateGenre() {
@@ -553,7 +584,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
      */
     public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -694,6 +725,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         if (view == cancelUploadBtn) {
             cancelVideo();
+        }
+        if(view == ContributorCancelBtn){
+            resetContributor();
+            addContributorLayout.setVisibility(View.GONE);
         }
     }
 
