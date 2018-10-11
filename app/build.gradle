@@ -66,14 +66,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
 
-    // Profile Picture
-    implementation 'com.github.bumptech.glide:glide:4.8.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-    implementation 'de.hdodenhof:circleimageview:2.1.0'
-
     // Expandable Layout
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
-
 
 }
 

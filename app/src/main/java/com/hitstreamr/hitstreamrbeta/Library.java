@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -27,6 +29,9 @@ public class Library extends AppCompatActivity {
     private BottomNavigationView bottomNavView;
     private RecyclerView recyclerView_watchLater, recyclerView_playlists;
 
+    // For Testing Purposes
+    private List<Book> bookList = new ArrayList<>();
+    private BookAdapter bookAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,7 @@ public class Library extends AppCompatActivity {
             //Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
         }
 
+        getWatchLaterList();
     }
 
     /**
@@ -74,17 +80,11 @@ public class Library extends AppCompatActivity {
     public void expandableButton_watchLater(View view) {
         expandableLayout_watchLater = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout_watchLater);
         expandableLayout_watchLater.toggle(); // toggle expand and collapse
-
-        recyclerView_watchLater = (RecyclerView) findViewById(R.id.recyclerView_watchLater);
-        recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
-        ArrayList<Title> titles = Title.createContactsList(10);
-        WatchLaterAdapter watchLaterAdapter = new WatchLaterAdapter(titles);
-        recyclerView_watchLater.setAdapter(watchLaterAdapter);
     }
 
     /**
      * Drop Down - Playlist
-     * @param view
+     * @param view view
      */
     public void expandableButton_playlists(View view) {
         expandableLayout_playlists = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout_playlists);
@@ -120,6 +120,41 @@ public class Library extends AppCompatActivity {
                 accountType = "LabelAccounts";
             }
         }
+    }
+
+    /**
+     * RecyclerView Test
+     */
+    private void getWatchLaterList() {
+        recyclerView_watchLater = (RecyclerView) findViewById(R.id.recyclerView_watchLater);
+        bookAdapter = new BookAdapter(bookList);
+        recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView_watchLater.setItemAnimator(new DefaultItemAnimator());
+        recyclerView_watchLater.setAdapter(bookAdapter);
+
+        initBookData();
+    }
+
+    /**
+     * Test
+     */
+    private void initBookData() {
+        Book book = new Book("Hello Android", "Ed Burnette");
+        bookList.add(book);
+
+        book = new Book("Beginning Android 3", "Mark Murphy");
+        bookList.add(book);
+
+        book = new Book("Unlocking Android", " W. Frank Ableson");
+        bookList.add(book);
+
+        book = new Book("Android Tablet Development", "Wei Meng Lee");
+        bookList.add(book);
+
+        book = new Book("Android Apps Security", "Sheran Gunasekera");
+        bookList.add(book);
+
+        bookAdapter.notifyDataSetChanged();
     }
 
 }
