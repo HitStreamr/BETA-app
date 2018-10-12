@@ -30,8 +30,9 @@ public class Library extends AppCompatActivity {
     private RecyclerView recyclerView_watchLater, recyclerView_playlists;
 
     // For Testing Purposes
-    private List<Book> bookList = new ArrayList<>();
-    private BookAdapter bookAdapter;
+    private List<Book> bookList_watchLater = new ArrayList<>();
+    private List<Book> bookList_playlists = new ArrayList<>();
+    private BookAdapter bookAdapter_watchLater, bookAdapter_playlists;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class Library extends AppCompatActivity {
         }
 
         getWatchLaterList();
+        getPlaylists();
     }
 
     /**
@@ -127,12 +129,25 @@ public class Library extends AppCompatActivity {
      */
     private void getWatchLaterList() {
         recyclerView_watchLater = (RecyclerView) findViewById(R.id.recyclerView_watchLater);
-        bookAdapter = new BookAdapter(bookList);
+        bookAdapter_watchLater = new BookAdapter(bookList_watchLater);
         recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
         recyclerView_watchLater.setItemAnimator(new DefaultItemAnimator());
-        recyclerView_watchLater.setAdapter(bookAdapter);
+        recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
 
         initBookData();
+    }
+
+    /**
+     * RecyclerView Test
+     */
+    private void getPlaylists() {
+        recyclerView_playlists = (RecyclerView) findViewById(R.id.recyclerView_playlists);
+        bookAdapter_playlists = new BookAdapter(bookList_playlists);
+        recyclerView_playlists.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView_playlists.setItemAnimator(new DefaultItemAnimator());
+        recyclerView_playlists.setAdapter(bookAdapter_playlists);
+
+        initBookData2();
     }
 
     /**
@@ -140,21 +155,72 @@ public class Library extends AppCompatActivity {
      */
     private void initBookData() {
         Book book = new Book("Hello Android", "Ed Burnette");
-        bookList.add(book);
+        bookList_watchLater.add(book);
 
         book = new Book("Beginning Android 3", "Mark Murphy");
-        bookList.add(book);
+        bookList_watchLater.add(book);
 
         book = new Book("Unlocking Android", " W. Frank Ableson");
-        bookList.add(book);
+        bookList_watchLater.add(book);
 
         book = new Book("Android Tablet Development", "Wei Meng Lee");
-        bookList.add(book);
+        bookList_watchLater.add(book);
 
         book = new Book("Android Apps Security", "Sheran Gunasekera");
-        bookList.add(book);
+        bookList_watchLater.add(book);
 
-        bookAdapter.notifyDataSetChanged();
+        book = new Book("Book1", "Author1");
+        bookList_watchLater.add(book);
+
+        book = new Book("Book2", "Author2");
+        bookList_watchLater.add(book);
+
+        book = new Book("Book3", "Author3");
+        bookList_watchLater.add(book);
+
+        book = new Book("Book4", "Author4");
+        bookList_watchLater.add(book);
+
+        book = new Book("Book5", "Author5");
+        bookList_watchLater.add(book);
+
+        bookAdapter_watchLater.notifyDataSetChanged();
     }
 
+    /**
+     * Test
+     */
+    private void initBookData2() {
+        Book book = new Book("Hello Android", "Ed Burnette");
+        bookList_playlists.add(book);
+
+        book = new Book("Beginning Android 3", "Mark Murphy");
+        bookList_playlists.add(book);
+
+        book = new Book("Unlocking Android", " W. Frank Ableson");
+        bookList_playlists.add(book);
+
+        book = new Book("Android Tablet Development", "Wei Meng Lee");
+        bookList_playlists.add(book);
+
+        book = new Book("Android Apps Security", "Sheran Gunasekera");
+        bookList_playlists.add(book);
+
+        book = new Book("Book1", "Author1");
+        bookList_playlists.add(book);
+
+        book = new Book("Book2", "Author2");
+        bookList_playlists.add(book);
+
+        book = new Book("Book3", "Author3");
+        bookList_playlists.add(book);
+
+        book = new Book("Book4", "Author4");
+        bookList_playlists.add(book);
+
+        book = new Book("Book5", "Author5");
+        bookList_playlists.add(book);
+
+        bookAdapter_playlists.notifyDataSetChanged();
+    }
 }
