@@ -30,6 +30,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
@@ -85,8 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
 
-    RecyclerView suggestionsRecyclerView;
-    RecyclerView resultsRecyclerView;
+
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
     VideoResultAdapter resultAdapter;
@@ -96,8 +97,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String name;
     Uri photoUrl;
 
+    RequestManager  glideRequests;
+
     FirebaseUser user;
     public final String TAG = "HomeActivity";
+    private final int MAX_PRELOAD = 10;
     // Database Purposes
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
@@ -125,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_camera);
         toolbar.setTitleTextColor(0xFFFFFFFF);
-        toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
+        //TODO ask about style xml?
+        //toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("BETA");
 
         // Adding tabs for searching, initially invisible
@@ -135,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Recycler View
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        glideRequests = Glide.with(this);
         db = FirebaseFirestore.getInstance();
 
         noRes = findViewById(R.id.emptyView);
@@ -149,7 +155,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onResultClick(String title) {
-                //figure out what to do next
+                //Open Video Player for song
+                Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
+                startActivity(videoPlayerIntent);
+
             }
         };
 
@@ -657,8 +666,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                         stopAdapters();
                         //set up results
-                        resultAdapter = new VideoResultAdapter(videos, mListener);
+
+                        resultAdapter = new VideoResultAdapter(videos, mListener, glideRequests);
+                        RecyclerViewPreloader<Video> preloader =
+                                new RecyclerViewPreloader<>(
+                                        Glide.with(getApplicationContext()), resultAdapter, resultAdapter, MAX_PRELOAD /*maxPreload*/);
                         resultAdapter.notifyDataSetChanged();
+                        recyclerView.addOnScrollListener(preloader);
                         recyclerView.setAdapter(resultAdapter);
                         searching.setVisibility(View.GONE);
                     }
@@ -671,6 +685,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!task.isSuccessful()) {
                     Log.e(TAG, "Search failed");
                 }
+                //TODO HANDLE ERRORS
             }
         });
     }
@@ -709,32 +724,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return true;
     }
-
-    /*@Override
-    public void onClick(View v) {
-
-        PopupMenu popupMenu = new PopupMenu(MainActivity.this, userbtn);
-        popupMenu.getMenuInflater().inflate(R.menu.acct_profile, popupMenu.getMenu());
-
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.account:
-                        Intent acct = new Intent(getApplicationContext(), Account.class);
-                        startActivity(acct);
-                        break;
-                    case R.id.profile:
-                        Intent prof = new Intent(getApplicationContext(), Profile.class);
-                        startActivity(prof);
-                        break;
-                }
-                return true;
-            }
-        });
-
-    }*/
-
 
     /**
      * Basic Accounts Holder - Inner Class
@@ -934,7 +923,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
-                //IdentityManager.getDefaultIdentityManager().signOut();
                 break;
         }
 

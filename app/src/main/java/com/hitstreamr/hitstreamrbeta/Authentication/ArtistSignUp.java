@@ -27,11 +27,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
@@ -40,6 +45,9 @@ import java.util.regex.Pattern;
 public class ArtistSignUp extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "ArtistSignUp";
+
+    //Artist User object
+    ArtistUser artist_object;
 
     // Inputs
     private EditText mFirstName, mLastName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
@@ -68,7 +76,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     // Access a Cloud Firebase instance from your Activity
     FirebaseAuth mAuth = FirebaseAuth.getInstance();
-
+    DatabaseReference takenNames;
 
     //Regex pattern for password.
     private static final Pattern PASSWORD_PATTERN =
@@ -132,10 +140,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         goBack.setOnClickListener(this);
         profilePictureBtn.setOnClickListener(this);
 
+
+       takenNames  = FirebaseDatabase.getInstance().getReference("TakenUserNames");
+
         Log.e(TAG, "URI value:" +selectedImagePath);
     }
-
-    ArtistUser artist_object;
 
     private void uploadFromUri(final Uri fileUri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -158,11 +167,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(ArtistSignUp.this, "Image Upload failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ArtistSignUp.this, "Image Upload failed. Please try again.", Toast.LENGTH_SHORT).show();
                         }
                     });
         }
-
     }
 
     /**
@@ -183,36 +191,36 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
-                | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip) | !validateToc() | !validateState() | !validateCountry() | validateBrowseVideo()) {
+                | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username)| !validatePhone(phone)
+                | !validateZip(zip) | !validateToc() | !validateState() | !validateCountry() | !validateProfilePicture()) {
             Log.e(TAG, "Validation failed");
-
+            Toast.makeText(getApplicationContext(), "Please fix indicated errors.", Toast.LENGTH_LONG).show();
             return;
         }
-        Log.e(TAG, "URi after:" + selectedImagePath);
-        Log.e(TAG, "Validation finished");
-        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
-        //If validations are ok we will first show progressbar
-        progressDialog.setMessage("Registering new Artist...");
-        progressDialog.show();
-
-        registerAuthentication(email, password);
+        validateUserNameFirebase(new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip),password);
     }
 
     private void registerAuthentication(String email, String password) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-                            uploadFromUri(selectedImagePath);
-                        } else {
-                            Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+        //Checks if the user has successfully completed the Firebase Authentication
+        if(user == null) {
+            mAuth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                uploadFromUri(selectedImagePath);
+                            } else {
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }else{
+            //failed on step after authentication
+            uploadFromUri(selectedImagePath);
+        }
     }
 
     private void updateAuthentication() {
@@ -231,11 +239,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 registerFirebase();
                                 Log.d(TAG, "User profile updated.");
+                            }else {
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
-            // else block
-            // ask to log in again(Invalid login)
         }
     }
 
@@ -252,22 +260,21 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
+                                takenNames.child(artist_object.getUsername()).setValue(true);
                                 Toast.makeText(ArtistSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                                 finish();
                                 //start next activity
-                                Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
-                                genreIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                startActivity(genreIntent);
+                                Intent mainIntent = new Intent(getApplicationContext(), MainActivity.class);
+                                mainIntent.putExtra("TYPE", getString(R.string.type_artist));
+                                startActivity(mainIntent);
                             } else {
                                 //Display a failure message
-                                Toast.makeText(ArtistSignUp.this, "Registration Failed", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
 
                     });
         }
-        // else block
-        // ask to log in again(Invalid login)
     }
 
 
@@ -290,7 +297,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
          else {
             mFirstName.setError(null);
-            Log.e(TAG, "1");
             return true;
         }
     }
@@ -470,33 +476,52 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mAddress.setError("Username is too short.");
             return false;
         } else {
-            Log.e(TAG, "11");
             mUsername.setError(null);
             return true;
         }
     }
 
-    /*private boolean validateBrowseVideo() {
+    private void validateUserNameFirebase(ArtistUser artist, String password){
+        final boolean[] isTaken = {false};
+        takenNames.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(artist.getUsername()))
+                {
+                    //username exists
+                    mUsername.setError("Username is already taken");
+                }
+                else if (!dataSnapshot.hasChild(artist.getUsername()))
+                {
+                    mUsername.setError("null");
+                    artist_object = artist;
+
+                    //If validations are ok we will first show progressbar
+                    progressDialog.setMessage("Registering new Artist...");
+                    progressDialog.show();
+
+                    registerAuthentication(artist_object.getEmail(), password);
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), "Connection Error. Please try again in some time.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private boolean validateProfilePicture() {
         if (selectedImagePath != null) {
-            Log.e(TAG, "12");
             return true;
-        } else if (selectedImagePath == null) {
+        }
+        else{
             profilePictureBtn.setText(R.string.image_not_selection);
             Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
             return false;
         }
-        return false;
-    }*/
-    private boolean validateBrowseVideo() {
-        if (selectedImagePath != null) {
-            return true;
-        }
-        else if(selectedImagePath == null){
-            profilePictureBtn.setText(R.string.image_not_selection);
-            Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return false;
     }
 
     // not working yet

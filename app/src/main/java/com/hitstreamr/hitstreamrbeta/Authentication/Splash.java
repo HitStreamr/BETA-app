@@ -37,6 +37,7 @@ public class Splash extends AppCompatActivity {
                 // [START initialize_auth]
                 mAuth = FirebaseAuth.getInstance();
                 // [END initialize_auth]
+                Log.e(TAG, mAuth.getCurrentUser()+"");
                 if(mAuth.getCurrentUser() != null){
                     //home activity here
                     sortUsers();
@@ -53,12 +54,13 @@ public class Splash extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
                     //user exists in basic user table, do something
                     Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                     homeIntent.putExtra("TYPE", getString(R.string.type_basic));
                     startActivity(homeIntent);
-                    // Sign in success, update UI with the signed-in user's information
-                    finish();
+
                 }
             }
 
@@ -73,12 +75,13 @@ public class Splash extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
                     //user exists in basic user table, do something
                     Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                     homeIntent.putExtra("TYPE", getString(R.string.type_artist));
                     startActivity(homeIntent);
-                    // Sign in success, update UI with the signed-in user's information
-                    finish();
+
                 }
             }
 
@@ -93,12 +96,13 @@ public class Splash extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
+                    // Sign in success, update UI with the signed-in user's information
+                    finish();
                     //user exists in basic user table, do something
                     Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
                     labelIntent.putExtra("TYPE", getString(R.string.type_label));
                     startActivity(labelIntent);
-                    // Sign in success, update UI with the signed-in user's information
-                    finish();
+
                 }
             }
 

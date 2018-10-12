@@ -3,8 +3,8 @@ package com.hitstreamr.hitstreamrbeta;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -12,8 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
-
-import java.net.URI;
 
 public class VideoPlayer extends AppCompatActivity implements View.OnClickListener {
     //Layout
@@ -81,7 +79,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
 
-        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
+        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FUpWI6YuzS6Qoh0I1EBrO3a6kmXQ2%2Fmp4%2Fextended%20house%20tour?alt=media&token=cc40e2e4-40db-48ab-a3e3-31ef4a8549d6");
         mainVideoView.setVideoURI(videoUri);
         mainVideoView.requestFocus();
         mainVideoView.start();
