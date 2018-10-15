@@ -61,7 +61,7 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         holder.videoTitle.setText(vids.get(position).getTitle());
         holder.videoUsername.setText(vids.get(position).getUserId());
         holder.videoViews.setText("TODO");
-        holder.videoYear.setText(vids.get(position).getPubYear());
+        holder.videoYear.setText(String.valueOf(vids.get(position).getPubYear()));
         holder.videoYear.setText("TODO");
     }
 
@@ -79,6 +79,10 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
     @NonNull
     @Override
     public List<Video> getPreloadItems(int position) {
+        if (vids.size() == 0){
+            return Collections.emptyList();
+        }
+
         return Collections.singletonList(vids.get(position));
     }
 
