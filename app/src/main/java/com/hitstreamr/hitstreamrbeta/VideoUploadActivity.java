@@ -351,8 +351,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         stepOptions.put("ffmpeg_stack", "v3.3.3");
         stepOptions.put("preset", "android");
         //stepOptions.put("result","true");
-        stepOptions.put("width", 320);
-        stepOptions.put("width", 240);
+        stepOptions.put("width", 1080);
+        stepOptions.put("height", 720);
         assembly.addStep("video_android", "/video/encode", stepOptions);
 
         /*
