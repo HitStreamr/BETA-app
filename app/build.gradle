@@ -66,10 +66,8 @@ dependencies {
     // File Storage
     //implementation 'com.amazonaws:aws-android-sdk-s3:2.6.26'
     //implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.26'
-
-    implementation "android.arch.core:runtime:1.1.1"
-    implementation "android.arch.core:common:1.1.1"
-
+    implementation 'android.arch.core:runtime:1.1.1'
+    implementation 'android.arch.core:common:1.1.1'
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.3'
     implementation 'com.google.firebase:firebase-database:16.0.2'
@@ -95,8 +93,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
 
-    /*//bitmovin
-    implementation 'com.bitmovin.api:bitmovin-java:1.11.0'*/
+    //Exo Player
+    implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
 
     implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
 
