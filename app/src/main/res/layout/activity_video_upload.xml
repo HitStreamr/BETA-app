@@ -299,10 +299,10 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/cancelVideoUpload"
+                android:id="@+id/retryVideoUpload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cancel Upload" />
+                android:text="Retry Upload" />
         </LinearLayout>
     </LinearLayout>
 

@@ -49,6 +49,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, AssemblyProgressListener {
 
@@ -82,7 +83,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button selectVideoBtn;
     private Button contributeBtn;
     private Button addContributorBtn;
-    private Button cancelUploadBtn;
+    private Button retryUploadBtn;
     private Button ContributorCancelBtn;
 
     //EditText Inputs
@@ -133,8 +134,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private boolean ContributorSuccess = false;
     public String downloadVideoUri;
     public String thumbnailVideoUri;
-    public Boolean successVideoUpload = false;
-    public Boolean successFirestoreUpload = false;
+    public AtomicBoolean successVideoUpload;
+    public AtomicBoolean successFirestoreUpload;
     private static int SPLASH_TIME_OUT = 3000;
 
     //Firestore Database
@@ -162,6 +163,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         db = FirebaseFirestore.getInstance();
         mStorageRef = storage.getReference();
 
+        //Boolean Status Checks
+        successVideoUpload = new AtomicBoolean(false);
+        successFirestoreUpload = new AtomicBoolean(false);
+
         //Layout
         addContributorLayout = findViewById(R.id.add_contributor_layout);
         videoLayout = findViewById(R.id.videoUploadScreenLayout);
@@ -172,8 +177,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         selectVideoBtn = findViewById(R.id.selectVideo);
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
-        cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
-        //ContributorCancelBtn =findViewById(R.id.deleteContributorBtn);
+        retryUploadBtn = findViewById(R.id.retryVideoUpload);
+        ContributorCancelBtn =findViewById(R.id.ContributorCancel);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -222,8 +227,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         selectVideoBtn.setOnClickListener(this);
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
-        cancelUploadBtn.setOnClickListener(this);
-        //ContributorCancelBtn.setOnClickListener(this);
+        retryUploadBtn.setOnClickListener(this);
+        ContributorCancelBtn.setOnClickListener(this);
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -376,20 +381,19 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onSuccess(Uri uri) {
                         downloadVideoUri = uri.toString();
-
+                        getThumbnailURL();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                //TODO Handle fail more gracefully (automatic placeholder?)
-                downloadVideoUri = null;
-                Toast.makeText(getApplicationContext(), "Video DL Link failed",Toast.LENGTH_LONG).show();
+                successFirestoreUpload.set(false);
+                Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
             }
         });
 
     }
 
-    private void getThumbnailURl(){
+    private void getThumbnailURL(){
         final String storagetitle = EdittextTittle.getText().toString().trim();
         thumbnailRef = mStorageRef.child("thumbnails").child(currentFirebaseUser.getUid()).child(storagetitle);
         thumbnailRef.getDownloadUrl()
@@ -402,10 +406,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                //TODO Handle fail more gracefully (automatic placeholder?)
-                thumbnailVideoUri = null;
-                downloadVideoUri = null;
                 Toast.makeText(getApplicationContext(), "Thumbnail Link failed to save",Toast.LENGTH_LONG).show();
+                successFirestoreUpload.set(false);
             }
         });
     }
@@ -462,7 +464,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "DocumentSnapshot successfully written!");
-                        successFirestoreUpload = true;
+                        successFirestoreUpload.set(true);
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -495,13 +497,15 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         return tmp;
     }
 
-    private void cancelVideo() {
-        //TODO Cancel the assembly
-        Toast.makeText(this, "Video Upload Canceled", Toast.LENGTH_SHORT).show();
-        finish();
-        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-        startActivity(homeIntent);
+    private void retryVideo() {
+        Toast.makeText(this, "Retrying Upload", Toast.LENGTH_SHORT).show();
+        // succesful upload, but some step of the firestore upload failed for whatever reason
+        if (successVideoUpload.get() && !successFirestoreUpload.get()){
+            getDownloadURL();
+        }else {
+            //if the upload failed, then nothing else matters restart the whole process
+            registerVideo();
+        }
     }
 
 
@@ -724,11 +728,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             selectVideo();
         }
         if (view == uploadBtn) {
-            registerVideo();
+           registerVideo();
         }
 
-        if (view == cancelUploadBtn) {
-            cancelVideo();
+        if (view == retryUploadBtn) {
+            retryVideo();
         }
         if(view == ContributorCancelBtn){
             resetContributor();
@@ -762,8 +766,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             String res = response.json().getString("ok");
             Log.e(TAG , "Your AndroidAsyncAssembly is done executing with status: " + res);
             if (res.equalsIgnoreCase("ASSEMBLY_COMPLETED")){
-                successVideoUpload = true;
+                successVideoUpload.set(true);
                 getDownloadURL();
+            }else {
+                successVideoUpload.set(false);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -772,11 +778,15 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onUploadFailed(Exception exception) {
+        successVideoUpload.set(false);
+        Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
         Log.e(TAG , "Upload Failed: " + exception.getMessage());
     }
 
     @Override
     public void onAssemblyStatusUpdateFailed(Exception exception) {
+        successVideoUpload.set(false);
+        Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
         Log.e(TAG , "Assembly Status Update Failed: " + exception.getMessage());
         exception.printStackTrace();
 
