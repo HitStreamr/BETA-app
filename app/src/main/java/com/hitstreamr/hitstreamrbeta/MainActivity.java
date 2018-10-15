@@ -817,6 +817,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         if(resultAdapter != null){
             resultAdapter.clear();
+            resultAdapter.notifyDataSetChanged();
         }
     }
 
@@ -947,9 +948,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (suggestionAdapter != null) {
-            suggestionAdapter.startListening();
-        }
     }
 
     @Override
