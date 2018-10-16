@@ -791,6 +791,4 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         exception.printStackTrace();
 
     }
-
-
 }
