@@ -740,6 +740,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                    Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
+                    basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    startActivity(basicProfile);
+                }
+            });
+
+
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -763,6 +774,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                    Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
+                    artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    startActivity(artistProfile);
+
+                }
+            });
 
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
