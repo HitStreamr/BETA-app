@@ -19,19 +19,6 @@ android {
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-
-        debug{
-            buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
-            buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
-        }
-    }
-    packagingOptions {
-        pickFirst "**"
-    }
-    buildToolsVersion '28.0.2'
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
