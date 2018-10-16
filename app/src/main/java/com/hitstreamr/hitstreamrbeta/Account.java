@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -37,6 +38,8 @@ import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Account extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "AccountActivity";
@@ -77,6 +80,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextCountry;
     private TextView UserNameText;
     private TextView LabelNameText;
+    private CircleImageView circleImageView;
 
     //Spinner
     private Spinner SpinnerState;
@@ -115,6 +119,23 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+
+        // Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        // Profile Picture
+        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
 
         mStorageRef = storage.getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -228,6 +249,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
         Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
+
+        getSupportActionBar().setTitle(username);
     }
 
     private int getIndex(Spinner spinner, String myString) {
@@ -249,6 +272,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         EditTextEmail.setText(basic.getEmail());
         EditTextUsername.setText(basic.getUsername());
+
+        getSupportActionBar().setTitle(username);
     }
 
     private void registerUser() {
@@ -719,5 +744,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         } else if (view == ChangePhotoBtn) {
             choosePhoto();
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

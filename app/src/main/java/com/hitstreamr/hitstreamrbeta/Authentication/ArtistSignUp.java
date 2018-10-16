@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -55,8 +56,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup, goBack, profilePictureBtn;
+    private Button signup, profilePictureBtn;
     private RadioButton termsCond;
+
+    private ImageButton goBack;
 
     //ImageView
     private ImageView imageViewProfile;
@@ -275,6 +278,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
                     });
         }
+        // else block
+        // ask to log in again(Invalid login)
     }
 
 
@@ -319,7 +324,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return false;
         } else {
             mLastName.setError(null);
-            Log.e(TAG, "2");
             return true;
         }
     }
@@ -339,7 +343,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return false;
         } else {
             mAddress.setError(null);
-            Log.e(TAG, "3");
             return true;
         }
     }
@@ -349,7 +352,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG, "4");
         return true;
     }
 
@@ -358,7 +360,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG, "5");
         return true;
     }
 
@@ -376,7 +377,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mEmail.setError("Email is not valid!");
             return false;
         } else {
-            Log.e(TAG, "6");
             mEmail.setError(null);
             return true;
         }
@@ -396,7 +396,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
         } else {
-            Log.e(TAG, "7");
             mPhone.setError(null);
             return true;
         }
@@ -413,7 +412,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mCity.setError("Field can't be empty");
             return false;
         } else {
-            Log.e(TAG, "8");
             mCity.setError(null);
             return true;
         }
@@ -433,7 +431,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mZipcode.setError("Zip is invalid");
             return false;
         } else {
-            Log.e(TAG, "9");
             mZipcode.setError(null);
             return true;
         }
@@ -453,7 +450,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPassword.setError("Password too weak");
             return false;
         } else {
-            Log.e(TAG, "10");
             mPassword.setError(null);
             return true;
         }
@@ -544,7 +540,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            Log.e(TAG, "13");
             termsCond.setError(null);
             return true;
         }
@@ -674,10 +669,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == signup) {
-            Log.e(TAG, "Click entered");
             registerArtist();
         }
         if (view == goBack) {
+            //will open account type activity
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
         }

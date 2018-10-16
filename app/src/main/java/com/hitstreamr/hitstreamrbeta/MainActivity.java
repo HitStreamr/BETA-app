@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
 
+    RecyclerView suggestionsRecyclerView;
+    RecyclerView resultsRecyclerView;
 
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
@@ -128,10 +130,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_camera);
+        //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
-        //TODO ask about style xml?
         //toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        getSupportActionBar().setTitle("BETA");
+        //getSupportActionBar().setTitle("BETA");
+        toolbar.setTitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
@@ -280,15 +284,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     case R.id.library:
                         fab.setVisibility(View.GONE);
                         bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        LibraryFragment librFrag = new LibraryFragment();
-                        librFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, librFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
+//                        transaction = getSupportFragmentManager().beginTransaction();
+//                        bundle = new Bundle();
+//                        bundle.putString("TYPE", type);
+//                        LibraryFragment librFrag = new LibraryFragment();
+//                        librFrag.setArguments(bundle);
+//                        transaction.replace(R.id.fragment_container2, librFrag);
+//                        transaction.addToBackStack(null);
+//                        transaction.commit();
                         Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                        startActivity(libraryIntent);
                         break;
                 }
                 return true;
@@ -364,6 +371,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
+
     /**
      * Firebase Realtime - Artist Accounts
      * @param querySearch the input typed by the user
@@ -401,6 +409,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      *
      * @param item
      * @return super.onCreateOptionsMenu
+     * Handles the options menu in the drawer
+     * @param item menu item
+     * @return super.onOptionsItemSelected
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -410,8 +421,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 homeIntent.putExtra("TYPE", getString(R.string.type_artist));
                 startActivity(homeIntent);
                 break;*/
-            case R.id.account:
+            case R.id.profile:
+                Intent proIntent = new Intent(getApplicationContext(), Profile.class);
+                proIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(proIntent);
+                break;
 
+            case R.id.account:
                 Intent accountIntent = new Intent(getApplicationContext(), Account.class);
                 accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(accountIntent);
@@ -419,7 +435,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return super.onOptionsItemSelected(item);
     }
-
+    /**
+     * Handles the search bar and view
+     * @param menu menu
+     * @return super.onCreateOptionsMenu
+     */
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
@@ -498,7 +518,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     search_input = null;
                 }
-                return false;
+                //edited from false/what is this for?
+                return true;
             }
         });
 
@@ -718,6 +739,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
+                prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
                 break;
 
@@ -941,6 +963,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fab.setVisibility(View.VISIBLE);
             bottomNavView.setVisibility(View.VISIBLE);
             toolbar.setVisibility(View.VISIBLE);
+            //toolbar.setVisibility(View.VISIBLE);
+            getSupportActionBar().show();
             super.onBackPressed();
         }
     }

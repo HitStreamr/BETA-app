@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient1"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    app:theme="@style/backArrowTheme"
+    app:popupTheme="@style/AppTheme">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/profilePictureToolbar"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="5dp"
+        android:src="@mipmap/ic_launcher_round"
+        android:layout_gravity="end"
+        app:civ_border_color="@color/colorAccent"
+        app:civ_border_width="2dp"/>
 
 </android.support.v7.widget.Toolbar>
