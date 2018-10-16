@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_camera);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mTabLayout.setVisibility(View.GONE);
 
         // Recycler View
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         db = FirebaseFirestore.getInstance();
@@ -399,26 +399,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * Handles the search bar and view
      *
-     * @param item
+     * @param
      * @return super.onCreateOptionsMenu
      */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            /*case R.id.profile:
-                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
-                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                startActivity(homeIntent);
-                break;*/
-            case R.id.account:
-
-                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
-                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                startActivity(accountIntent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            *//*case R.id.profile:
+//                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
+//                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+//                startActivity(homeIntent);
+//                break;*//*
+//            case R.id.account:
+//
+//                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
+//                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+//                startActivity(accountIntent);
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {

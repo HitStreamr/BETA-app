@@ -4,8 +4,8 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Profile extends AppCompatActivity  {
+public class Profile extends AppCompatActivity {
 
     private FirebaseUser current_user;
     private CircleImageView circleImageView;
@@ -33,7 +33,7 @@ public class Profile extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -58,14 +58,15 @@ public class Profile extends AppCompatActivity  {
         };
         myRef.addListenerForSingleValueEvent(eventListener);
 
-        //Profile Picture
+        // Profile Picture
         if (current_user.getPhotoUrl() != null) {
             circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
+            ImageView profileImageView = findViewById(R.id.profileImage);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+            Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
         }
-
 
     }
 

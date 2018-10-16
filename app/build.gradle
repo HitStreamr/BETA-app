@@ -17,13 +17,28 @@ android {
             minifyEnabled false
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
+            buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+        debug{
+            buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
+            buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
+            buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
+        }
+    }
+    packagingOptions {
+        pickFirst "**"
+    }
+    buildToolsVersion '28.0.2'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
@@ -32,17 +47,22 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
     // Mobile Client for initializing the SDK
     //implementation('com.amazonaws:aws-android-sdk-mobile-client:2.6.+@aar') { transitive = true }
+
     // Cognito UserPools for SignIn
     implementation 'com.android.support:support-v4:27.1.1'
     //implementation('com.amazonaws:aws-android-sdk-auth-userpools:2.6.+@aar') { transitive = true }
+
     // Sign in UI Library
     implementation 'com.android.support:appcompat-v7:27.1.1'
     //implementation('com.amazonaws:aws-android-sdk-auth-ui:2.6.+@aar') { transitive = true }
+
     // Facebook SignIn
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.facebook.android:facebook-login:4.35.0'
+
     // File Storage
     //implementation 'com.amazonaws:aws-android-sdk-s3:2.6.26'
     //implementation 'com.amazonaws:aws-android-sdk-cognito:2.6.26'
@@ -57,9 +77,9 @@ dependencies {
     implementation 'com.firebase:firebase-client-android:2.5.0'
     implementation 'com.google.firebase:firebase-storage:16.0.1'
     implementation 'com.firebaseui:firebase-ui-firestore:4.1.0'
-    // Firestore
     implementation 'com.firebaseui:firebase-ui-database:4.1.0'
     implementation 'android.arch.paging:runtime:1.0.1'
+
     // Recycler View
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     //Glide for Recycler View
@@ -68,11 +88,6 @@ dependencies {
         transitive = false
     }
 
-    //SearchView
-    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
-
-    implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
-
     //profile picture
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
@@ -80,6 +95,11 @@ dependencies {
 
     //Exo Player
     implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
+
+    implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
+
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'
