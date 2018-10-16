@@ -288,6 +288,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
+     * A listener for the Add Credits button
+     * @param view view
+     */
+    public void addCredits(View view) {
+        Intent creditsPurchaseIntent = new Intent(getApplicationContext(), CreditsPurchase.class);
+        creditsPurchaseIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(creditsPurchaseIntent);
+    }
+
+    /**
      * Firebase Realtime - Basic Accounts
      * @param querySearch the input typed by the user
      */
@@ -348,29 +358,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
-
     /**
-     * Handles the options menu in the drawer
+     * Handles the options menu in the toolbar
      * @param item menu item
      * @return super.onOptionsItemSelected
      */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.profile:
-                Intent proIntent = new Intent(getApplicationContext(), Profile.class);
-                proIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                startActivity(proIntent);
-                break;
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.profile:
+//                Intent proIntent = new Intent(getApplicationContext(), Profile.class);
+//                proIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+//                startActivity(proIntent);
+//                break;
+//
+//            case R.id.account:
+//                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
+//                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+//                startActivity(accountIntent);
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
-            case R.id.account:
-                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
-                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                startActivity(accountIntent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
     /**
      * Handles the search bar and view
      * @param menu menu
@@ -652,6 +662,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return tmp;
     }
 
+    /**
+     *
+     * @param v view
+     */
     public void showPopup(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -659,9 +673,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+    /**
+     *
+     * @param item item
+     * @return true if clicked
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
@@ -673,7 +692,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(prof);
                 break;
 
-        }return true;
+        }
+        return true;
     }
 
     /**

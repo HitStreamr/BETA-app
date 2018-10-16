@@ -69,6 +69,9 @@ dependencies {
     // Expandable Layout
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
 
+    // Google Play Billing Library
+    implementation 'com.android.billingclient:billing:1.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

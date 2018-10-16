@@ -20,14 +20,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textColor="@color/colorAccent"
                 android:textSize="12sp"
-
                 />
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -39,13 +40,14 @@
         </LinearLayout>
 
         <Button
+            android:id="@+id/add_credits_button"
             android:layout_width="68dp"
             android:layout_height="25dp"
             android:background="@drawable/button2"
             android:text="Add Credits"
             android:textSize="8dp"
-            android:textColor="@color/colorPrimary"/>
-
+            android:textColor="@color/colorPrimary"
+            android:onClick="addCredits"/>
 
     </LinearLayout>
 
@@ -53,15 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        >
-
-
-        <!--<ImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@mipmap/ic_launcher_round"/>-->
+        android:layout_marginTop="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profilePicture"
@@ -88,8 +82,8 @@
                 android:textSize="18sp"
                 />
 
-
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -107,9 +101,6 @@
                 android:onClick="showPopup"/>
         </LinearLayout>
 
-
     </LinearLayout>
-
-
 
 </LinearLayout>

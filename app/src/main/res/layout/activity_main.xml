@@ -20,7 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
-            android:background="@drawable/gradient1"/>
+            android:background="@drawable/gradient1"
+            android:theme="@style/backArrowTheme"
+            />
         <FrameLayout
             android:id="@+id/fragment_container2"
             android:layout_width="match_parent"
