@@ -2,20 +2,15 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -65,10 +60,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private boolean collapseVariable = false;
 
+    Video vid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
+
+        vid = getIntent().getParcelableExtra("VIDEO");
 
         componentListener = new ComponentListener();
         playerView = findViewById(R.id.artistVideoPlayer);
@@ -81,7 +80,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
+        TextViewVideoDescription.setText(vid.getDescription());
         TextViewTitle = findViewById(R.id.videoPlayerTitle);
+        TextViewTitle.setText(vid.getTitle());
 
         //Listners
         collapseDecriptionBtn.setOnClickListener(this);
@@ -89,7 +90,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fbeliever?alt=media&token=eb45446e-54bf-4c22-9c91-26e72d5211e4");
-        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fscreentest3?alt=media&token=bf2437ba-81ff-4ee3-bf58-f57dbe6dae23");
+        videoUri = Uri.parse(vid.getUrl());
     }
 
     @Override

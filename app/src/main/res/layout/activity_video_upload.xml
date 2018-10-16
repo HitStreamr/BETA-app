@@ -302,7 +302,8 @@
                 android:id="@+id/retryVideoUpload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Retry Upload" />
+                android:text="Retry Upload"
+                android:visibility="gone"/>
         </LinearLayout>
     </LinearLayout>
 

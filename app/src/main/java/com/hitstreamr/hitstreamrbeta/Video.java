@@ -1,8 +1,11 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
-public class Video {
+public class Video implements Parcelable {
     private String title;
     private String description;
     private String genre;
@@ -129,5 +132,60 @@ public class Video {
         return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId + " " + username;
 
     }
-}
+    protected Video(Parcel in) {
+        title = in.readString();
+        description = in.readString();
+        genre = in.readString();
+        subGenre = in.readString();
+        privacy = in.readString();
+        url = in.readString();
+        thumbnailUrl = in.readString();
+        userId = in.readString();
+        username = in.readString();
+        pubYear = in.readInt();
+        if (in.readByte() == 0x01) {
+            contributors = new ArrayList<Contributor>();
+            in.readList(contributors, Contributor.class.getClassLoader());
+        } else {
+            contributors = null;
+        }
+    }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(genre);
+        dest.writeString(subGenre);
+        dest.writeString(privacy);
+        dest.writeString(url);
+        dest.writeString(thumbnailUrl);
+        dest.writeString(userId);
+        dest.writeString(username);
+        dest.writeInt(pubYear);
+        if (contributors == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(contributors);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
+        @Override
+        public Video createFromParcel(Parcel in) {
+            return new Video(in);
+        }
+
+        @Override
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
+}

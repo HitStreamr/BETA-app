@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.ListPreloader;
@@ -57,12 +58,17 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
     @Override
     public void onBindViewHolder(@NonNull VideoResultsHolder holder, int position) {
 
-        requestBuilder.load(vids.get(position).getUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(vids.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(vids.get(position).getTitle());
         holder.videoUsername.setText(vids.get(position).getUserId());
         holder.videoViews.setText("TODO");
         holder.videoYear.setText(String.valueOf(vids.get(position).getPubYear()));
-        holder.videoYear.setText("TODO");
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onResultClick(vids.get(position));
+            }
+        });
     }
 
     @Override
@@ -106,6 +112,8 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         TextView videoYear;
         TextView videoTime;
         ImageView moreMenu;
+        LinearLayout card;
+        MainActivity.ItemClickListener mListener;
 
         public VideoResultsHolder(View itemView, final MainActivity.ItemClickListener mListener) {
             super(itemView);
@@ -116,13 +124,8 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
             videoYear = itemView.findViewById(R.id.videoYear);
             videoTime = itemView.findViewById(R.id.videoTime);
             moreMenu = itemView.findViewById(R.id.moreMenu);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onResultClick(videoTitle.toString());
-                }
-            });
-
+            card = itemView.findViewById(R.id.videoCard);
+            this.mListener = mListener;
         }
     }
 

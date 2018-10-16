@@ -154,11 +154,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onResultClick(String title) {
+            public void onResultClick(Video video) {
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", video);
                 startActivity(videoPlayerIntent);
-
             }
         };
 
@@ -799,7 +799,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
-        void onResultClick(String title);
+        void onResultClick(Video title);
     }
 
     /**

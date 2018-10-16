@@ -733,6 +733,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         if (view == retryUploadBtn) {
             retryVideo();
+            retryUploadBtn.setVisibility(View.INVISIBLE);
         }
         if(view == ContributorCancelBtn){
             resetContributor();
@@ -770,6 +771,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 getDownloadURL();
             }else {
                 successVideoUpload.set(false);
+                retryUploadBtn.setVisibility(View.VISIBLE);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -779,6 +781,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onUploadFailed(Exception exception) {
         successVideoUpload.set(false);
+        retryUploadBtn.setVisibility(View.VISIBLE);
         Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
         Log.e(TAG , "Upload Failed: " + exception.getMessage());
     }
@@ -786,6 +789,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onAssemblyStatusUpdateFailed(Exception exception) {
         successVideoUpload.set(false);
+        retryUploadBtn.setVisibility(View.VISIBLE);
         Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
         Log.e(TAG , "Assembly Status Update Failed: " + exception.getMessage());
         exception.printStackTrace();
