@@ -1,11 +1,8 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
-import com.google.firebase.auth.FirebaseUser;
-
 public class UsernameUserIdPair {
 
     protected String username, tempUserId;
-    FirebaseUser tempUser;
 
     public String getUsername() {
         return username;
@@ -23,18 +20,10 @@ public class UsernameUserIdPair {
         this.tempUserId = tempUserId;
     }
 
-    public FirebaseUser getTempUser() {
-        return tempUser;
-    }
 
-    public void setTempUser(FirebaseUser tempUser) {
-        this.tempUser = tempUser;
-    }
-
-    public UsernameUserIdPair(String username, String tempUserId, FirebaseUser tempUser) {
+    public UsernameUserIdPair(String username, String tempUserId) {
         this.username = username;
         this.tempUserId = tempUserId;
-        this.tempUser = tempUser;
     }
 
 }

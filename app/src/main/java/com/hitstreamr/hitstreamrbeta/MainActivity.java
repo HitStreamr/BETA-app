@@ -162,17 +162,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-
-        name = user.getDisplayName();
-        photoUrl = user.getPhotoUrl();
-
-        Log.e(TAG, "Your profile" + name + photoUrl + user);
-
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
         vv = findViewById(R.id.videoScreen);
+
+        name = user.getDisplayName();
+        photoUrl = user.getPhotoUrl();
+        Log.e(TAG, "Your profile" + name + photoUrl + user);
 
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
         CirImageViewProPic = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);

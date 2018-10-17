@@ -240,7 +240,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                usernameUserIdPair = new UsernameUserIdPair(artist_object.getUsername(), user.getUid(), user);
+                                usernameUserIdPair = new UsernameUserIdPair(artist_object.getUsername(), user.getUid());
                                 registerFirebase2();
                                 Log.d(TAG, "User profile updated.");
                             }else {

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
+import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -48,7 +50,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private static final String TAG = "BasicSignUp";
 
-    private Button signup, uploadPhotoBtn, backbtn;
+    private Button signup, uploadPhotoBtn;
+    private ImageButton backbtn;
     private EditText mEmailField, mPasswordField, mUsername;
     private TextView signintext;
     private RadioButton radiobtn;
@@ -71,6 +74,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     private static final int REQUEST_CODE = 123;
 
     User basicUser;
+    UsernameUserIdPair usernameUserIdPair;
 
 
 
@@ -264,6 +268,19 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         return false;
     }
 
+    private void registerFirebase2(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(basicUser.getUsername())
+                .setValue(usernameUserIdPair)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        registerFirebase();
+                    }
+                });
+    }
+
 
     private void registerUser() {
         final String username = mUsername.getText().toString().trim();
@@ -338,7 +355,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                registerFirebase();
+                                usernameUserIdPair = new UsernameUserIdPair(basicUser.getUsername(), user.getUid());
+                                registerFirebase2();
                                 Log.e(TAG, "User profile updated.");
                             }
                             else{
