@@ -685,12 +685,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!task.isSuccessful()) {
                     Log.e(TAG, "Search failed");
                 }
-                //TODO HANDLE ERRORS
             }
         });
     }
 
-    private ArrayList<String> processQuery(String query) {
+    private ArrayList<String> processQuery(String query){
         // ArrayList of characters to remove
         ArrayList<String> remove = new ArrayList<>();
         remove.add(" ");
@@ -701,6 +700,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return tmp;
     }
 
+    /**
+     *
+     * @param v view
+     */
     public void showPopup(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -708,6 +711,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+    /**
+     *
+     * @param item item
+     * @return true if clicked
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -718,6 +726,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
+                prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
                 break;
 
@@ -746,6 +755,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    basicProfile.putExtra("artistUsername", userName);
                     startActivity(basicProfile);
                 }
             });
@@ -781,6 +791,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
                     artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    artistProfile.putExtra("artistUsername", userName);
                     startActivity(artistProfile);
 
                 }

@@ -34,12 +34,13 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/ic_star_border_black_24dp" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_below="@+id/button2"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
                 android:src="@mipmap/ic_launcher_round" />
 
             <Button
