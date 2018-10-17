@@ -72,6 +72,9 @@ dependencies {
     // Google Play Billing Library
     implementation 'com.android.billingclient:billing:1.1'
 
+    // Indicator Seek Bar
+    implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -4,6 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CreditsPurchase">
+    tools:context=".CreditsPurchase"
+    android:theme="@style/MySeekBar">
 
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:text="ADD CREDITS"
+        android:textSize="20sp"
+        android:textColor="@android:color/black" />
+
+    <!--<SeekBar-->
+        <!--android:id="@+id/seekBar_credits"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentStart="true"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--android:layout_marginTop="195dp"-->
+        <!--android:max="2000"-->
+        <!--android:padding="10dp"-->
+        <!--android:progress="100" />-->
+
+    <!--<com.warkiz.widget.IndicatorStayLayout-->
+        <!--android:id="@+id/seekLayout"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+    <com.warkiz.widget.IndicatorSeekBar
+        android:id="@+id/seekBar_credits"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        app:isb_seek_smoothly="true" />
+
+    <!--</com.warkiz.widget.IndicatorStayLayout>-->
+
+    <Button
+        android:id="@+id/cancel_credits_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="58dp"
+        android:layout_marginBottom="90dp"
+        android:text="Cancel"
+        android:background="@drawable/button2"
+        android:textColor="@color/colorPrimary" />
+
+    <Button
+        android:id="@+id/confirm_credits_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/cancel_credits_button"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="60dp"
+        android:text="Confirm"
+        android:background="@drawable/button2"
+        android:textColor="@color/colorPrimary" />
+
+    <TextView
+        android:id="@+id/credits_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="200dp"
+        android:text="Credits Amount" />
 </RelativeLayout>
