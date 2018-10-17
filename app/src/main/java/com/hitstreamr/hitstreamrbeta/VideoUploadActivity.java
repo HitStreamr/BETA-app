@@ -126,6 +126,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
     Map<String, Object> contributorVideo;
+    Map<String, Object> artistVideo;
 
     //List View
     private ListView ContributorValuesLV;
@@ -232,6 +233,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorFirestoreList = new ArrayList<>();
         contributorList = new ArrayList<>();
         contributorVideo = new HashMap<>();
+        artistVideo = new HashMap<>();
 
         //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
 
@@ -439,7 +441,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         final String subGenre = SpinnerSubGenre.getSelectedItem().toString().trim();
         final String privacy = SpinnerPrivacy.getSelectedItem().toString().trim();
         final String CurrentUserID = currentFirebaseUser.getUid();
-        final int pubYear = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR) - 1900);
+        final int pubYear = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 
         ArrayList<Object> sample = new ArrayList<>();
 

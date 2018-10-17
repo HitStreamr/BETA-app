@@ -87,9 +87,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //Listners
         collapseDecriptionBtn.setOnClickListener(this);
 
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fbeliever?alt=media&token=eb45446e-54bf-4c22-9c91-26e72d5211e4");
+
         videoUri = Uri.parse(vid.getUrl());
     }
 
