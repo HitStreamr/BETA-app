@@ -3,8 +3,12 @@ package com.hitstreamr.hitstreamrbeta;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.ArrayList;
 
+@IgnoreExtraProperties
 public class Video implements Parcelable {
     private String title;
     private String description;
@@ -16,6 +20,8 @@ public class Video implements Parcelable {
     private String userId;
     private String username;
     private int pubYear;
+    @Exclude
+    private String videoId;
 
     private ArrayList<Contributor> contributors;
 
@@ -36,6 +42,7 @@ public class Video implements Parcelable {
         this.thumbnailUrl = thumbnailUrl;
         this.contributors = contributors;
         this.pubYear = pubYear;
+        this.videoId = null;
     }
 
     public String getTitle() {
@@ -127,6 +134,16 @@ public class Video implements Parcelable {
         this.pubYear = pubYear;
     }
 
+    @Exclude
+    public String getVideoId() {
+        return videoId;
+    }
+
+    @Exclude
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
+    }
+
     @Override
     public String toString() {
         return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId + " " + username;
@@ -143,6 +160,7 @@ public class Video implements Parcelable {
         userId = in.readString();
         username = in.readString();
         pubYear = in.readInt();
+        videoId = in.readString();
         if (in.readByte() == 0x01) {
             contributors = new ArrayList<Contributor>();
             in.readList(contributors, Contributor.class.getClassLoader());
@@ -168,6 +186,7 @@ public class Video implements Parcelable {
         dest.writeString(userId);
         dest.writeString(username);
         dest.writeInt(pubYear);
+        dest.writeString(videoId);
         if (contributors == null) {
             dest.writeByte((byte) (0x00));
         } else {

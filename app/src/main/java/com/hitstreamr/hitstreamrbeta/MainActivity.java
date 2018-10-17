@@ -49,7 +49,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
-import com.hitstreamr.hitstreamrbeta.BottomNav.LibraryFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
@@ -679,7 +678,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         for (DocumentSnapshot d : docs) {
                             //if doc exists
                             if (d.exists()) {
-                                Log.e(TAG, d.toObject(Video.class).toString());
+                                //Log.e(TAG, d.toObject(Video.class).toString());
+                                Video currVideo = d.toObject(Video.class);
+                                currVideo.setVideoId(d.getId());
                                 videos.add(d.toObject(Video.class));
                             } else {
                                 Log.e(TAG, "Document " + d.toString() + "does not exist");
