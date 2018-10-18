@@ -165,7 +165,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-
         name = user.getDisplayName();
         photoUrl = user.getPhotoUrl();
 
@@ -402,38 +401,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
-
-    /**
-     * Handles the search bar and view
-     *
-     * @param item
-     * @return super.onCreateOptionsMenu
-     * Handles the options menu in the drawer
-     * @param item menu item
-     * @return super.onOptionsItemSelected
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            /*case R.id.profile:
-                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
-                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                startActivity(homeIntent);
-                break;*/
-            case R.id.profile:
-                Intent proIntent = new Intent(getApplicationContext(), Profile.class);
-                proIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                startActivity(proIntent);
-                break;
-
-            case R.id.account:
-                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
-                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                startActivity(accountIntent);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
     /**
      * Handles the search bar and view
      * @param menu menu
@@ -960,11 +927,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //reset fab and bottom bar when going back
-            setSupportActionBar(toolbar);
             fab.setVisibility(View.VISIBLE);
             bottomNavView.setVisibility(View.VISIBLE);
-            toolbar.setVisibility(View.VISIBLE);
-            //toolbar.setVisibility(View.VISIBLE);
             getSupportActionBar().show();
             super.onBackPressed();
         }

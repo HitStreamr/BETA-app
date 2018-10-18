@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -69,6 +70,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String USER_ID = "userId";
     private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
+    private static final String VIDEO_DURATION = "duration";
 
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
@@ -133,11 +135,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     private static final int REQUEST_CODE = 1234;
     private Uri selectedVideoPath = null;
+    private long duration;
     private boolean ContributorSuccess = false;
-    public String downloadVideoUri;
-    public String thumbnailVideoUri;
-    public AtomicBoolean successVideoUpload;
-    public AtomicBoolean successFirestoreUpload;
+
+    private String downloadVideoUri;
+    private String thumbnailVideoUri;
+    private AtomicBoolean successVideoUpload;
+    private AtomicBoolean successFirestoreUpload;
     private static int SPLASH_TIME_OUT = 3000;
 
     //Firestore Database
@@ -179,6 +183,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             Uri photoURL = currentFirebaseUser.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        //Video Duration
+        duration = 0;
 
         //FireStore Database
         db = FirebaseFirestore.getInstance();
@@ -307,6 +314,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
+
         /* Transloadit Credentials */
         transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
 
@@ -343,11 +351,21 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
                             selectVideoBtn.setBackgroundColor(Color.GREEN);
                             selectVideoBtn.setText(R.string.video_selection);
-
                             String path = data.getData().toString();
                             artistUploadVideo.setVideoPath(path);
                             artistUploadVideo.requestFocus();
                             artistUploadVideo.start();
+                            artistUploadVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    //prepare to get duration when ready
+                                    duration = artistUploadVideo.getDuration();
+                                    //Log.e(TAG, duration+"");
+                                    //Log.e(TAG, millisecondsToString(duration));
+                                }
+                            });
+
+
                         } catch (Exception e) {
                             //#debug
                             e.printStackTrace();
@@ -470,6 +488,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
         artistVideo.put(USER_NAME, currentFirebaseUser.getDisplayName());
+        artistVideo.put(VIDEO_DURATION,millisecondsToString(duration));
 
         Map<String, Boolean> terms = new HashMap<>();
         ArrayList<String> res = processTitle(title);
@@ -816,6 +835,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         Log.e(TAG , "Assembly Status Update Failed: " + exception.getMessage());
         exception.printStackTrace();
 
+    }
+
+    private String millisecondsToString(long duration){
+        long minutes = (duration / 1000) / 60;
+        long seconds = (duration / 1000) % 60;
+        return minutes + ":" + seconds;
     }
 
 

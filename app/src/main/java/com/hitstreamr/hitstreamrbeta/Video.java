@@ -19,6 +19,7 @@ public class Video implements Parcelable {
     private String thumbnailUrl;
     private String userId;
     private String username;
+    private String duration;
     private int pubYear;
     @Exclude
     private String videoId;
@@ -30,7 +31,8 @@ public class Video implements Parcelable {
         //needed for the Firestore
     }
 
-    public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors) {
+    public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String duration,
+                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors) {
         this.title = title;
         this.description = description;
         this.genre = genre;
@@ -42,6 +44,7 @@ public class Video implements Parcelable {
         this.thumbnailUrl = thumbnailUrl;
         this.contributors = contributors;
         this.pubYear = pubYear;
+        this.duration = duration;
         this.videoId = null;
     }
 
@@ -144,6 +147,14 @@ public class Video implements Parcelable {
         this.videoId = videoId;
     }
 
+    public String getDuration() {
+        return duration;
+    }
+
+    public void setDuration(String duration) {
+        this.duration = duration;
+    }
+
     @Override
     public String toString() {
         return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId + " " + username;
@@ -161,6 +172,7 @@ public class Video implements Parcelable {
         username = in.readString();
         pubYear = in.readInt();
         videoId = in.readString();
+        duration = in.readString();
         if (in.readByte() == 0x01) {
             contributors = new ArrayList<Contributor>();
             in.readList(contributors, Contributor.class.getClassLoader());
@@ -187,6 +199,7 @@ public class Video implements Parcelable {
         dest.writeString(username);
         dest.writeInt(pubYear);
         dest.writeString(videoId);
+        dest.writeString(duration);
         if (contributors == null) {
             dest.writeByte((byte) (0x00));
         } else {
