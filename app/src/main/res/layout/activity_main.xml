@@ -16,11 +16,21 @@
         <!--<include layout="@layout/toolbar"
             android:id="@+id/toolbar"/>-->
 
+
+
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
-            android:background="@drawable/gradient1"/>
+            android:background="@drawable/gradient1"
+            app:theme="@style/backArrowTheme" />
+        <FrameLayout
+            android:id="@+id/fragment_container2"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/toolbar"
+            >
+        </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -63,15 +73,26 @@
 
     </LinearLayout>
 
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/videoScreen"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="67dp"
+            android:layout_marginLeft="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_camera"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="normal"/>
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="69dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginEnd="17dp"
+            android:layout_marginBottom="67dp"
             android:src="@drawable/ic_upload"
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal" />

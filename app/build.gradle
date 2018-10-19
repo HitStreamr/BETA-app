@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -88,6 +92,19 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.1.0'
 
     implementation 'com.bitmovin.api:bitmovin-java:1.11.0'
+
+    implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
+
+    //Google play Billing
+   // implementation 'com.android.billingclient:billing:1.2'
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+
+    // Indicator Seek Bar
+    implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.0'
+
+    // Range seek Bar
+    implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
+
 }
 
 apply plugin: 'com.google.gms.google-services'
