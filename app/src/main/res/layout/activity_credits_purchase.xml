@@ -65,7 +65,8 @@
         android:layout_marginEnd="60dp"
         android:text="Confirm"
         android:background="@drawable/button2"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimary"
+        android:onClick="confirmPurchase"/>
 
     <TextView
         android:id="@+id/credits_amount"

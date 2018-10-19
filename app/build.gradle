@@ -46,7 +46,7 @@ dependencies {
 
     // Firebase
     implementation 'com.firebase:firebase-client-android:2.5.0'
-    implementation 'com.google.firebase:firebase-auth:16.0.4'
+    implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-database:16.0.3'
     implementation 'com.google.firebase:firebase-firestore:17.1.1'
@@ -70,7 +70,8 @@ dependencies {
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
 
     // Google Play Billing Library
-    implementation 'com.android.billingclient:billing:1.1'
+    //implementation 'com.android.billingclient:billing:1.2'
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
 
     // Indicator Seek Bar
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.0'
