@@ -191,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("")){
+        if(name == null){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }

@@ -61,6 +61,7 @@
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword"></activity>
+        <activity android:name=".Library"></activity>
     </application>
 
 </manifest>

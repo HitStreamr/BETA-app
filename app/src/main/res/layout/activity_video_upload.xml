@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="0dp"
+    android:padding="10dp"
     tools:context=".VideoUploadActivity">
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar"/>
 
-        <LinearLayout
-            android:id="@+id/videoUploadScreenLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+    <LinearLayout
+        android:id="@+id/videoUploadScreenLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:orientation="vertical"
+        tools:visibility="gone">
 
         <Button
             android:id="@+id/selectVideo"
@@ -192,8 +194,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.35"
                             android:background="@drawable/button1"
-                            android:textColor="@color/colorAccent"
-                            android:text="- Cancel" />
+                            android:text="- Cancel"
+                            android:textColor="@color/colorAccent" />
                     </LinearLayout>
 
                     <Button
@@ -304,9 +306,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Retry Upload"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
 
