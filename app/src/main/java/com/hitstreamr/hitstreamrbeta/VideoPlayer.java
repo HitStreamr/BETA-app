@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
@@ -47,6 +48,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //ImageButton
     private ImageButton collapseDecriptionBtn;
+    private ImageButton likeBtn;
 
     //TextView
     private TextView TextViewVideoDescription;
@@ -74,6 +76,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //ImageButton
         collapseDecriptionBtn = findViewById(R.id.collapseDescription);
+        likeBtn = findViewById(R.id.fave);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
@@ -81,6 +84,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //Listners
         collapseDecriptionBtn.setOnClickListener(this);
+        likeBtn.setOnClickListener(this);
 
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
@@ -167,6 +171,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
+
+    private void likeVideo(){
+
+    }
+
 
     private class ComponentListener extends Player.DefaultEventListener implements
             VideoRendererEventListener, AudioRendererEventListener {
@@ -274,6 +283,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 TextViewVideoDescription.setVisibility(View.VISIBLE);
                 collapseVariable = false;
             }
+        }
+
+        if(view == likeBtn){
+            Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+            likeVideo();
         }
     }
 }

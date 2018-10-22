@@ -85,7 +85,7 @@
                 android:gravity="end"
                 android:orientation="horizontal">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/fave"
                     android:layout_width="24dp"
                     android:layout_height="24dp"

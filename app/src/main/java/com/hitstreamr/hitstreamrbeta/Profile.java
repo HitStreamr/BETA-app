@@ -146,7 +146,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
             Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
-            getFollowingCount();
+            //getFollowingCount();
             getFollowersCount();
         }
     }
@@ -187,7 +187,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                     Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
                     Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
                     getFollowersCount();
-                    getFollowingCount();
+                    //getFollowingCount();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -273,12 +273,20 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                 .child("userid")
                 .setValue(userUserID);
 
+                /*
+
+                .setValue(true);*/
+
         FirebaseDatabase.getInstance().getReference()
                 .child("followers")
                 .child(userUserID)
                 .child(current_user.getUid())
                 .child("userid")
                 .setValue(current_user.getUid());
+
+                /*;
+
+                .setValue(true);*/
 
         setFollowing();
     }
@@ -313,14 +321,15 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private void getFollowersCount() {
         Log.e(TAG, "entered getFollowers count");
         followerscount = 0;
-        queryFollowersCount.addListenerForSingleValueEvent(new ValueEventListener() {
+        queryFollowersCount.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot singlesnapshot : dataSnapshot.getChildren()) {
-                    followerscount = dataSnapshot.getChildrenCount();
+                    //followerscount = dataSnapshot.getChildrenCount();
                     followerscount++;
                 }
                 mfollowers.setText(String.valueOf(followingcount));
+                getFollowingCount();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -330,23 +339,28 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
     private void getFollowingCount() {
         followingcount = 0;
-        queryFollowingCount.addListenerForSingleValueEvent(new ValueEventListener() {
+        queryFollowingCount.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
-                Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildren());
+                Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildrenCount());
 
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Log.e(TAG, "1st iteration");
-                    followingcount = dataSnapshot.getChildrenCount();
+                    //followingcount = dataSnapshot.getChildrenCount();
                     followerscount++;
                 }
                 mfollowing.setText(String.valueOf(followingcount));
+                finished();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
+    }
+
+    private void finished(){
+        Log.e(TAG, "Finished counting");
     }
 
     /**
