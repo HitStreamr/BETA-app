@@ -1,7 +1,13 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class Label {
     protected String firstName, lastName, email, label, address, city, state, zipcode, country, phone;
+    @Exclude
+    private String labelID;
 
     public Label(String firstName, String lastName, String email, String label, String address,
                  String city, String state, String zipcode, String country, String phone) {
@@ -15,6 +21,7 @@ public class Label {
         this.phone = phone;
         this.country = country;
         this.zipcode = zipcode;
+        labelID = null;
     }
 
     public Label() {}
@@ -97,5 +104,15 @@ public class Label {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @Exclude
+    public String getLabelID() {
+        return labelID;
+    }
+
+    @Exclude
+    public void setLabelID(String labelID) {
+        this.labelID = labelID;
     }
 }

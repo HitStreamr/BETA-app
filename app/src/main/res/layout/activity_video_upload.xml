@@ -9,6 +9,8 @@
     android:padding="10dp"
     tools:context=".VideoUploadActivity">
 
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
 
     <LinearLayout
         android:id="@+id/videoUploadScreenLayout"
@@ -16,7 +18,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:visibility="gone">
 
         <Button
             android:id="@+id/selectVideo"
@@ -191,8 +194,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.35"
                             android:background="@drawable/button1"
-                            android:textColor="@color/colorAccent"
-                            android:text="- Cancel" />
+                            android:text="- Cancel"
+                            android:textColor="@color/colorAccent" />
                     </LinearLayout>
 
                     <Button
@@ -302,7 +305,8 @@
                 android:id="@+id/retryVideoUpload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Retry Upload" />
+                android:text="Retry Upload"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 

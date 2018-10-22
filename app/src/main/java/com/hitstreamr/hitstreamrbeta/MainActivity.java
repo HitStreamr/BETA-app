@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
 
+    RecyclerView suggestionsRecyclerView;
+    RecyclerView resultsRecyclerView;
 
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
@@ -125,13 +127,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.ic_camera);
+        //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
-        //TODO ask about style xml?
         //toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        getSupportActionBar().setTitle("BETA");
+        //getSupportActionBar().setTitle("BETA");
+        toolbar.setTitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
@@ -154,13 +158,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
 
             @Override
-            public void onResultClick(String title) {
+            public void onResultClick(Video video) {
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", video);
                 startActivity(videoPlayerIntent);
-
             }
         };
+
+        name = user.getDisplayName();
+        photoUrl = user.getPhotoUrl();
+
+        Log.e(TAG, "Your profile" + name + photoUrl + user);
+
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
@@ -187,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("")){
+        if(name == null){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -287,6 +297,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         transaction.addToBackStack(null);
                         transaction.commit();
                         Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                        startActivity(libraryIntent);
                         break;
                 }
                 return true;
@@ -362,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
+
     /**
      * Firebase Realtime - Artist Accounts
      * @param querySearch the input typed by the user
@@ -393,31 +407,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
-
     /**
      * Handles the search bar and view
-     *
-     * @param
+     * @param menu menu
      * @return super.onCreateOptionsMenu
      */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            *//*case R.id.profile:
-//                Intent homeIntent = new Intent(getApplicationContext(), pro.class);
-//                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-//                startActivity(homeIntent);
-//                break;*//*
-//            case R.id.account:
-//
-//                Intent accountIntent = new Intent(getApplicationContext(), Account.class);
-//                accountIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-//                startActivity(accountIntent);
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
@@ -496,7 +490,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                     search_input = null;
                 }
-                return false;
+                //edited from false/what is this for?
+                return true;
             }
         });
 
@@ -656,7 +651,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         for (DocumentSnapshot d : docs) {
                             //if doc exists
                             if (d.exists()) {
-                                Log.e(TAG, d.toObject(Video.class).toString());
+                                //Log.e(TAG, d.toObject(Video.class).toString());
+                                Video currVideo = d.toObject(Video.class);
+                                currVideo.setVideoId(d.getId());
                                 videos.add(d.toObject(Video.class));
                             } else {
                                 Log.e(TAG, "Document " + d.toString() + "does not exist");
@@ -683,11 +680,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!task.isSuccessful()) {
                     Log.e(TAG, "Search failed");
                 }
+                //TODO HANDLE ERRORS
             }
         });
     }
 
-    private ArrayList<String> processQuery(String query){
+    private ArrayList<String> processQuery(String query) {
         // ArrayList of characters to remove
         ArrayList<String> remove = new ArrayList<>();
         remove.add(" ");
@@ -698,10 +696,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return tmp;
     }
 
-    /**
-     *
-     * @param v view
-     */
     public void showPopup(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -709,11 +703,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
-    /**
-     *
-     * @param item item
-     * @return true if clicked
-     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -830,7 +819,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
-        void onResultClick(String title);
+        void onResultClick(Video title);
     }
 
     /**

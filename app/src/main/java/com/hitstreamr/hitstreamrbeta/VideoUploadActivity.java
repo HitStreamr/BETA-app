@@ -2,11 +2,13 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,6 +54,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, AssemblyProgressListener {
 
     private static final String TAG = "MyVideoUploadService";
@@ -66,6 +70,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String USER_ID = "userId";
     private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
+    private static final String VIDEO_DURATION = "duration";
 
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
@@ -123,19 +128,20 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     public ArrayList<Contributor> contributorList;
     public contributorAdapter contributorAdapter;
     Map<String, Object> contributorVideo;
-
-    Map<String, Object> artistVideo = new HashMap<>();
+    Map<String, Object> artistVideo;
 
     //List View
     private ListView ContributorValuesLV;
 
     private static final int REQUEST_CODE = 1234;
     private Uri selectedVideoPath = null;
+    private long duration;
     private boolean ContributorSuccess = false;
-    public String downloadVideoUri;
-    public String thumbnailVideoUri;
-    public AtomicBoolean successVideoUpload;
-    public AtomicBoolean successFirestoreUpload;
+
+    private String downloadVideoUri;
+    private String thumbnailVideoUri;
+    private AtomicBoolean successVideoUpload;
+    private AtomicBoolean successFirestoreUpload;
     private static int SPLASH_TIME_OUT = 3000;
 
     //Firestore Database
@@ -158,6 +164,28 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_upload);
+
+        // Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle("Upload");
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Profile Picture
+        if (currentFirebaseUser.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = currentFirebaseUser.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
+
+        //Video Duration
+        duration = 0;
 
         //FireStore Database
         db = FirebaseFirestore.getInstance();
@@ -212,6 +240,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorFirestoreList = new ArrayList<>();
         contributorList = new ArrayList<>();
         contributorVideo = new HashMap<>();
+        artistVideo = new HashMap<>();
 
         //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
 
@@ -285,6 +314,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
+
         /* Transloadit Credentials */
         transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
 
@@ -321,11 +351,21 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
                             selectVideoBtn.setBackgroundColor(Color.GREEN);
                             selectVideoBtn.setText(R.string.video_selection);
-
                             String path = data.getData().toString();
                             artistUploadVideo.setVideoPath(path);
                             artistUploadVideo.requestFocus();
                             artistUploadVideo.start();
+                            artistUploadVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mp) {
+                                    //prepare to get duration when ready
+                                    duration = artistUploadVideo.getDuration();
+                                    //Log.e(TAG, duration+"");
+                                    //Log.e(TAG, millisecondsToString(duration));
+                                }
+                            });
+
+
                         } catch (Exception e) {
                             //#debug
                             e.printStackTrace();
@@ -419,7 +459,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         final String subGenre = SpinnerSubGenre.getSelectedItem().toString().trim();
         final String privacy = SpinnerPrivacy.getSelectedItem().toString().trim();
         final String CurrentUserID = currentFirebaseUser.getUid();
-        final int pubYear = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR) - 1900);
+        final int pubYear = Integer.valueOf(Calendar.getInstance().get(Calendar.YEAR));
 
         ArrayList<Object> sample = new ArrayList<>();
 
@@ -448,6 +488,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
         artistVideo.put(USER_NAME, currentFirebaseUser.getDisplayName());
+        artistVideo.put(VIDEO_DURATION,millisecondsToString(duration));
 
         Map<String, Boolean> terms = new HashMap<>();
         ArrayList<String> res = processTitle(title);
@@ -733,6 +774,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         if (view == retryUploadBtn) {
             retryVideo();
+            retryUploadBtn.setVisibility(View.INVISIBLE);
         }
         if(view == ContributorCancelBtn){
             resetContributor();
@@ -770,6 +812,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 getDownloadURL();
             }else {
                 successVideoUpload.set(false);
+                retryUploadBtn.setVisibility(View.VISIBLE);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -779,6 +822,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onUploadFailed(Exception exception) {
         successVideoUpload.set(false);
+        retryUploadBtn.setVisibility(View.VISIBLE);
         Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
         Log.e(TAG , "Upload Failed: " + exception.getMessage());
     }
@@ -786,11 +830,28 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onAssemblyStatusUpdateFailed(Exception exception) {
         successVideoUpload.set(false);
+        retryUploadBtn.setVisibility(View.VISIBLE);
         Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
         Log.e(TAG , "Assembly Status Update Failed: " + exception.getMessage());
         exception.printStackTrace();
 
     }
 
+    private String millisecondsToString(long duration){
+        long minutes = (duration / 1000) / 60;
+        long seconds = (duration / 1000) % 60;
+        return minutes + ":" + seconds;
+    }
 
+
+
+    /**
+     * Handles back button on toolbar
+     * @return true if pressed
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

@@ -2,8 +2,8 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.C;
+import com.bumptech.glide.Glide;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -31,6 +31,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoPlayer extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "PlayerActivity";
@@ -53,6 +57,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //TextView
     private TextView TextViewVideoDescription;
     private TextView TextViewTitle;
+    private TextView artistNameBold;
+    private TextView artistName;
+
+    //CircleImageView
+    private CircleImageView artistProfPic;
+    StorageReference artistProfReference;
 
     //Video URI
     private Uri videoUri;
@@ -63,10 +73,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private boolean collapseVariable = false;
 
+    Video vid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
+
+        vid = getIntent().getParcelableExtra("VIDEO");
 
         componentListener = new ComponentListener();
         playerView = findViewById(R.id.artistVideoPlayer);
@@ -74,13 +88,33 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //Linear Layout
         DescLayout = findViewById(R.id.DescriptionLayout);
 
+        //Profile Picture
+        artistProfPic = findViewById(R.id.artistProfilePicture);
+
         //ImageButton
         collapseDecriptionBtn = findViewById(R.id.collapseDescription);
         likeBtn = findViewById(R.id.fave);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
+        TextViewVideoDescription.setText(vid.getDescription());
+
         TextViewTitle = findViewById(R.id.videoPlayerTitle);
+        TextViewTitle.setText(vid.getTitle());
+
+        artistNameBold = findViewById(R.id.artistNameBold);
+        artistName = findViewById(R.id.Artist);
+        artistName.setText(vid.getUsername());
+        artistNameBold.setText(vid.getUsername());
+
+        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUsername());
+
+        if(artistProfReference == null){
+            Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(artistProfPic);
+        }
+        else{
+            Glide.with(getApplicationContext()).load(artistProfPic).into(artistProfPic);
+        }
 
         //Listners
         collapseDecriptionBtn.setOnClickListener(this);
