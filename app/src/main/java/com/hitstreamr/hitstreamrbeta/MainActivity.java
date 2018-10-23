@@ -86,9 +86,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
 
-    RecyclerView suggestionsRecyclerView;
-    RecyclerView resultsRecyclerView;
-
     FirebaseFirestore db;
     FirestoreRecyclerAdapter suggestionAdapter;
     VideoResultAdapter resultAdapter;

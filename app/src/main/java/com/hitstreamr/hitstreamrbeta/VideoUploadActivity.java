@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -83,9 +84,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     //Video View
     private VideoView artistUploadVideo;
 
+    //Image View
+    private ImageView thumbnailImage;
+
     //Buttons
     private Button uploadBtn;
     private Button selectVideoBtn;
+    private Button selectThumbBtn;
     private Button contributeBtn;
     private Button addContributorBtn;
     private Button retryUploadBtn;
@@ -133,8 +138,11 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     //List View
     private ListView ContributorValuesLV;
 
-    private static final int REQUEST_CODE = 1234;
+    private static final int VID_REQUEST_CODE = 1234;
+    private static final int IMG_REQUEST_CODE = 5678;
+
     private Uri selectedVideoPath = null;
+    private Uri selectedImagePath = null;
     private long duration;
     private boolean ContributorSuccess = false;
 
@@ -142,6 +150,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private String thumbnailVideoUri;
     private AtomicBoolean successVideoUpload;
     private AtomicBoolean successFirestoreUpload;
+    private AtomicBoolean videoSelected;
+    private AtomicBoolean thumbnailSelected;
     private static int SPLASH_TIME_OUT = 3000;
 
     //Firestore Database
@@ -194,6 +204,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Boolean Status Checks
         successVideoUpload = new AtomicBoolean(false);
         successFirestoreUpload = new AtomicBoolean(false);
+        videoSelected = new AtomicBoolean(false);
+        thumbnailSelected = new AtomicBoolean(false);
 
         //Layout
         addContributorLayout = findViewById(R.id.add_contributor_layout);
@@ -203,6 +215,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Buttons
         uploadBtn = findViewById(R.id.uploadVideo);
         selectVideoBtn = findViewById(R.id.selectVideo);
+        selectThumbBtn = findViewById(R.id.selectThumbnail);
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
@@ -210,6 +223,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
+
+        //ImageView
+        thumbnailImage = findViewById(R.id.imageView);
 
         //Edittext
         EdittextTittle = findViewById(R.id.Title);
@@ -254,6 +270,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Listeners
         uploadBtn.setOnClickListener(this);
         selectVideoBtn.setOnClickListener(this);
+        selectThumbBtn.setOnClickListener(this);
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
         retryUploadBtn.setOnClickListener(this);
@@ -325,7 +342,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     }
 
+
+    /*
+     * Select Video and Callback from Video
+     */
     private void selectVideo() {
+        videoSelected.set(false);
         /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         i.setType("video/*");
         startActivityForResult(i, SELECT_VIDEO); //, getApplicationContext(), VideoUploadActivity.class*/
@@ -333,16 +355,34 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Intent intent = new Intent();
         intent.setType("video/*");
         //intent.setAction(intent.ACTION_GET_CONTENT);
-        //startActivityForResult(intent, REQUEST_CODE);
+        //startActivityForResult(intent, VID_REQUEST_CODE);
 
-        startActivityForResult(Intent.createChooser(intent, "Select your video"), REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(intent, "Select your video"), VID_REQUEST_CODE);
     }
+
+    /*
+     * Select Thumbnail
+     */
+    private void selectThumbnail() {
+        thumbnailSelected.set(false);
+        /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        i.setType("video/*");
+        startActivityForResult(i, SELECT_VIDEO); //, getApplicationContext(), VideoUploadActivity.class*/
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        //Intent intent = new Intent();
+        intent.setType("image/*");
+        //intent.setAction(intent.ACTION_GET_CONTENT);
+        //startActivityForResult(intent, VID_REQUEST_CODE);
+
+        startActivityForResult(Intent.createChooser(intent, "Select your image"), IMG_REQUEST_CODE);
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            if (requestCode == REQUEST_CODE) {
+            if (requestCode == VID_REQUEST_CODE) {
                 if (data != null) {
                     if (data.getData() != null) {
                         //selectedVideoPath = getPath(data.getData()); data.getData()
@@ -364,6 +404,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                                     //Log.e(TAG, millisecondsToString(duration));
                                 }
                             });
+                            // Video has been selected succesfully
+                            videoSelected.set(true);
 
 
                         } catch (Exception e) {
@@ -373,13 +415,41 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     } else {
                         selectVideoBtn.setBackgroundColor(Color.RED);
                         selectVideoBtn.setText(R.string.video_not_selection);
+                        // Video has not  been selected succesfully
+                        videoSelected.set(false);
+                    }
+                }
+            }else if (requestCode == IMG_REQUEST_CODE) {
+                if (data != null) {
+                    if (data.getData() != null) {
+                        //selectedVideoPath = getPath(data.getData()); data.getData()
+                        selectedImagePath = data.getData();
+                        try {
+                            thumbnailImage.setImageURI(selectedImagePath);
+                            selectThumbBtn.setBackgroundColor(Color.GREEN);
+                            selectThumbBtn.setText("Thumbnail Selected");
+                            //String path = data.getData().toString();
+
+                            // Image has been selected succesfully
+                            thumbnailSelected.set(true);
+
+
+                        } catch (Exception e) {
+                            //#debug
+                            e.printStackTrace();
+                        }
+                    } else {
+                        selectVideoBtn.setBackgroundColor(Color.RED);
+                        selectVideoBtn.setText(R.string.video_not_selection);
+                        // Image has not  been selected succesfully
+                        thumbnailSelected.set(true);
                     }
                 }
             }
         }
     }
 
-    private void uploadFromUri(final Uri fileUri){
+    private void uploadFromUri(final Uri videoUri, final Uri imageUri){
 
         final String storagetitle = EdittextTittle.getText().toString().trim();
         videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
@@ -390,7 +460,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         Log.d(TAG, "uploadFromUri:dst:" + storage);
 
         try {
-            assembly.addFile(getContentResolver().openInputStream(fileUri), storagetitle);
+            assembly.addFile(getContentResolver().openInputStream(videoUri), storagetitle);
+            assembly.addFile(getContentResolver().openInputStream(imageUri), storagetitle);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -567,7 +638,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             videoCancelLayout.setVisibility(View.VISIBLE);
             TextViewVideoFilename.setText(title);
 
-            uploadFromUri(selectedVideoPath);
+            uploadFromUri(selectedVideoPath, selectedImagePath);
         }
     }
 
@@ -768,8 +839,24 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if (view == selectVideoBtn) {
             selectVideo();
         }
+
+        if(view == selectThumbBtn){
+            selectThumbnail();
+        }
+
         if (view == uploadBtn) {
-           registerVideo();
+            if (videoSelected.get() && thumbnailSelected.get()){
+                registerVideo();
+            }else{
+                if (!videoSelected.get() && thumbnailSelected.get()) {
+                    Toast.makeText(this, "Please Select a Video.", Toast.LENGTH_SHORT).show();
+                }else if (!thumbnailSelected.get() && videoSelected.get()){
+                    Toast.makeText(this, "Please Select a Thumbnail.", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(this, "Please Select a Video and Thumbnail.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
         }
 
         if (view == retryUploadBtn) {
