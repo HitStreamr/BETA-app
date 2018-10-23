@@ -442,7 +442,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         selectVideoBtn.setBackgroundColor(Color.RED);
                         selectVideoBtn.setText(R.string.video_not_selection);
                         // Image has not  been selected succesfully
-                        thumbnailSelected.set(true);
+                        thumbnailSelected.set(false);
                     }
                 }
             }
@@ -461,7 +461,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         try {
             assembly.addFile(getContentResolver().openInputStream(videoUri), storagetitle);
-            assembly.addFile(getContentResolver().openInputStream(imageUri), storagetitle);
+            assembly.addFile(getContentResolver().openInputStream(imageUri), "thumbnail_" + storagetitle);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -498,7 +498,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onFailure(@NonNull Exception e) {
                 successFirestoreUpload.set(false);
-                Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
+                retryUploadBtn.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
             }
         });
 
@@ -517,7 +518,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), "Thumbnail Link failed to save",Toast.LENGTH_LONG).show();
+                retryUploadBtn.setVisibility(View.VISIBLE);
+                Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
                 successFirestoreUpload.set(false);
             }
         });
@@ -593,6 +595,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error writing document", e);
+                        retryUploadBtn.setVisibility(View.VISIBLE);
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });

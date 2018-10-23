@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -65,15 +66,18 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
     private Toolbar toolbar;
     private String type;
-    FloatingActionButton fab;
 
+    //FrameLayout
+    FrameLayout bot_frag_container;
+
+    FloatingActionButton fab;
     FloatingActionButton vv;
 
     private ItemClickListener mListener;
@@ -160,6 +164,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 videoPlayerIntent.putExtra("VIDEO", video);
                 startActivity(videoPlayerIntent);
             }
+
+            @Override
+            public void onOverflowClick(Video title, View v) {
+                showOverflow(v);
+            }
         };
 
         name = user.getDisplayName();
@@ -170,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
+        bot_frag_container = findViewById(R.id.fragment_container2);
         fab = findViewById(R.id.fab);
         vv = findViewById(R.id.videoScreen);
 
@@ -230,6 +240,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
+        bot_frag_container.setVisibility(View.GONE);
+
         navigationView.setNavigationItemSelectedListener(this);
         bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -238,7 +250,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Bundle bundle;
                 switch (item.getItemId()){
                     case R.id.home:
-                        fab.setVisibility(View.VISIBLE);
+                        if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
+                            fab.setVisibility(View.VISIBLE);
+                        }else{
+                            fab.setVisibility(View.GONE);
+                        }
                         bottomNavView.setVisibility(View.VISIBLE);
                         transaction = getSupportFragmentManager().beginTransaction();
                         bundle = new Bundle();
@@ -248,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         transaction.replace(R.id.fragment_container2, homeFrag);
                         transaction.addToBackStack(null);
                         transaction.commit();
+                        bot_frag_container.setVisibility(View.VISIBLE);
                         Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.discover:
@@ -261,7 +278,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         transaction.replace(R.id.fragment_container2, discFrag);
                         transaction.addToBackStack(null);
                         transaction.commit();
-                        Toast.makeText(MainActivity.this, "Disocver", Toast.LENGTH_SHORT).show();
+                        bot_frag_container.setVisibility(View.VISIBLE);
+                        Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.activity:
                         fab.setVisibility(View.GONE);
@@ -274,19 +292,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         transaction.replace(R.id.fragment_container2, actFrag);
                         transaction.addToBackStack(null);
                         transaction.commit();
+                        bot_frag_container.setVisibility(View.VISIBLE);
                         Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.library:
                         fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-//                        transaction = getSupportFragmentManager().beginTransaction();
-//                        bundle = new Bundle();
-//                        bundle.putString("TYPE", type);
-//                        LibraryFragment librFrag = new LibraryFragment();
-//                        librFrag.setArguments(bundle);
-//                        transaction.replace(R.id.fragment_container2, librFrag);
-//                        transaction.addToBackStack(null);
-//                        transaction.commit();
                         Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
                         Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
                         libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
@@ -366,37 +376,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
     }
 
-
-    /**
-     * Firebase Realtime - Artist Accounts
-     * @param querySearch the input typed by the user
-     */
-    private void searchVideoSuggestions(String querySearch) {
-        // Send a query to the database
-        FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
-        myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
-                .endAt(querySearch + "\uf8ff");
-
-        FirebaseRecyclerOptions<ArtistUser> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<ArtistUser>()
-                .setQuery(myRef, ArtistUser.class)
-                .build();
-
-        firebaseRecyclerAdapter_artist = new FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>(firebaseRecyclerOptions) {
-            @Override
-            protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
-                holder.setUserName(model.getUsername());
-            }
-
-            @NonNull
-            @Override
-            public ArtistAccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_results_user, parent, false);
-                return new ArtistAccountViewHolder(view);
-            }
-        };
-        firebaseRecyclerAdapter_artist.notifyDataSetChanged();
-        recyclerView.setAdapter(firebaseRecyclerAdapter_artist);
-    }
 
     /**
      * Handles the search bar and view
@@ -507,6 +486,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 MainActivity.this.setItemsVisibility(menu, mSearch, false);
+                //hide panels
+                bot_frag_container.setVisibility(View.GONE);
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 fab.setVisibility(View.GONE);
@@ -566,9 +547,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff");
+        //Query where the videos are in the correct range and not private
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
     }
 
+    /**
+     * Firestore - Video Suggestions
+     * @param searchRequest the input typed by the user
+     */
     public void searchVideoFirestore(com.google.firebase.firestore.Query searchRequest) {
 
         //New RecyclerOptions and Adapter, based on Query
@@ -603,21 +590,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //These Tasks are Task<QuerySnapShot>
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
-        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query).get();
+        final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query)
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
 
         //Stop using the old adapter
         stopAdapters();
 
         // build a dynamic query that has all the words
 
-        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms." + terms.get(0), true);
+        com.google.firebase.firestore.Query allWords = db.collection("Videos");
         for (int i = 0; i < terms.size(); i++) {
             allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
-        Task<QuerySnapshot> allWordsTask = allWords.get();
+        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
 
-        //allResultsRetreived is only successful, when all are succesful
+        //allResultsRetrieved is only successful, when all are successful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
 
         searching.setVisibility(View.VISIBLE);
@@ -645,7 +633,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 //Log.e(TAG, d.toObject(Video.class).toString());
                                 Video currVideo = d.toObject(Video.class);
                                 currVideo.setVideoId(d.getId());
-                                videos.add(d.toObject(Video.class));
+                                videos.add(currVideo);
                             } else {
                                 Log.e(TAG, "Document " + d.toString() + "does not exist");
                             }
@@ -694,6 +682,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+    public void showOverflow(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.show();
+    }
+
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -706,6 +701,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
+                break;
+            case R.id.fave_result:
+                break;
+            case R.id.addLibrary_result:
                 break;
 
         }
@@ -768,6 +767,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    /**
+     * Video Suggestions Holder - Inner Class
+     */
     class VideoSuggestionsHolder extends RecyclerView.ViewHolder {
         TextView videoTitle;
 
@@ -787,6 +789,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public interface ItemClickListener {
         void onSuggestionClick(String title);
         void onResultClick(Video title);
+        void onOverflowClick(Video title, View v);
     }
 
     /**
@@ -927,6 +930,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             fab.setVisibility(View.VISIBLE);
             bottomNavView.setVisibility(View.VISIBLE);
             getSupportActionBar().show();
+            if(bot_frag_container.getVisibility() == View.VISIBLE){
+                bot_frag_container.setVisibility(View.GONE);
+            }
             super.onBackPressed();
         }
     }
