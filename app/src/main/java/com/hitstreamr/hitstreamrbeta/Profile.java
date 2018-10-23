@@ -2,31 +2,28 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,13 +50,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private String userUserID;
 
     FirebaseDatabase database;
-    DatabaseReference myRef;
-    DatabaseReference myNewRef;
     DatabaseReference myFollowersRef, myFollowingRef;
+
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef = storage.getReference();
-
-    Query queryFollowersCount, queryFollowingCount;
 
     Uri profilePictureDownloadUrl;
 
@@ -100,43 +94,37 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         getUsername();
 
         if (userClicked.equals("")) {
-            queryFollowersCount = FirebaseDatabase.getInstance().getReference().child("Following")
-                    .child(current_user.getUid());
-            queryFollowingCount = FirebaseDatabase.getInstance().getReference().child("Following")
-                    .child(current_user.getUid());
+            Log.e(TAG, "Current user selected");
 
-
-            /*myFollowersRef = FirebaseDatabase.getInstance().getReference().child("Following")
+            myFollowersRef = FirebaseDatabase.getInstance().getReference("following")
                     .child(current_user.getUid());
-            myFollowingRef = FirebaseDatabase.getInstance().getReference().child("Following")
-                    .child(current_user.getUid());*/
+            myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
+                    .child(current_user.getUid());
             getCurrentProfile();
+            getFollowersCount();
+            getFollowingCount();
         } else {
-            //getSearchUser();
             getUserClickedUserId();
         }
-
-        /*getFollowersCount();
-        getFollowingCount();*/
-
     }
 
     private void getCurrentProfile() {
         mfollowBtn.setVisibility(View.GONE);
-        myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
-                .child(current_user.getUid());
-        ValueEventListener eventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String username = dataSnapshot.child("username").getValue(String.class);
-                getSupportActionBar().setTitle(username);
-            }
+        FirebaseDatabase.getInstance()
+                .getReference(accountType)
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String username = dataSnapshot.child("username").getValue(String.class);
+                        getSupportActionBar().setTitle(username);
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-        myRef.addListenerForSingleValueEvent(eventListener);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
         // Profile Picture
         if (current_user.getPhotoUrl() != null) {
@@ -146,51 +134,53 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
             Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
-            //getFollowingCount();
-            getFollowersCount();
         }
+        //getFollowersCount();
     }
 
     private void getSearchProfile() {
         Log.e(TAG, "Entered searchprofile");
-        myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
-                .child(userUserID);
-        ValueEventListener eventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String username = dataSnapshot.child("username").getValue(String.class);
-                getSupportActionBar().setTitle(username);
-                Log.e(TAG, "Got username :: " + username);
-                getUrlStorage();
-            }
+        FirebaseDatabase.getInstance()
+                .getReference(accountType)
+                .child(userUserID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String username = dataSnapshot.child("username").getValue(String.class);
+                        getSupportActionBar().setTitle(username);
+                        Log.e(TAG, "Got username :: " + username);
+                        getUrlStorage();
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        };
-        myRef.addListenerForSingleValueEvent(eventListener);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
     }
 
     private void getUrlStorage() {
         Log.e(TAG, "Entered storage");
-        mStorageRef.child("profilePictures").child(userUserID).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                // Got the download URL for 'users/me/profile.png'
-                profilePictureDownloadUrl = uri;
-                Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
-                if (profilePictureDownloadUrl != null) {
-                    circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-                    circleImageView.setVisibility(View.VISIBLE);
-                    CircleImageView profileImageView = findViewById(R.id.profileImage);
-                    //Uri photoURL = current_user.getPhotoUrl();
-                    Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
-                    Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
-                    getFollowersCount();
-                    //getFollowingCount();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+        mStorageRef.child("profilePictures")
+                .child(userUserID)
+                .getDownloadUrl()
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        // Got the download URL for 'users/me/profile.png'
+                        profilePictureDownloadUrl = uri;
+                        Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
+                        if (profilePictureDownloadUrl != null) {
+                            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+                            circleImageView.setVisibility(View.VISIBLE);
+                            CircleImageView profileImageView = findViewById(R.id.profileImage);
+                            //Uri photoURL = current_user.getPhotoUrl();
+                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
+                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
+                            getFollowersCount();
+                            //getFollowingCount();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle any errors
@@ -233,79 +223,86 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
 
     private void getUserClickedUserId() {
-        myNewRef = FirebaseDatabase.getInstance().getReference().child("UsernameUserId").child(userClicked);
-        myNewRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userUserID = dataSnapshot.child("tempUserId").getValue(String.class);
-                Log.e(TAG, "userid is :::" + userUserID);
-                Log.e(TAG, "data snapshot values :::" + dataSnapshot);
+        FirebaseDatabase.getInstance()
+                .getReference("UsernameUserId")
+                .child(userClicked)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        userUserID = dataSnapshot.child("tempUserId").getValue(String.class);
+                        Log.e(TAG, "userid is :::" + userUserID);
+                        Log.e(TAG, "data snapshot values :::" + dataSnapshot);
 
-                if (userUserID.equals(current_user.getUid())) {
-                    mfollowBtn.setVisibility(View.GONE);
-                }
-                /*myFollowersRef = FirebaseDatabase.getInstance().getReference().child("Following")
-                        .child(userUserID);
-                myFollowingRef = FirebaseDatabase.getInstance().getReference().child("Following")
-                        .child(userUserID);*/
+                        if (userUserID.equals(current_user.getUid())) {
+                            mfollowBtn.setVisibility(View.GONE);
+                        }
+                        myFollowersRef = FirebaseDatabase.getInstance().getReference("followers")
+                                .child(userUserID);
+                        myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
+                                .child(userUserID);
 
-                queryFollowersCount = FirebaseDatabase.getInstance().getReference().child("Following")
-                        .child(userUserID);
-                queryFollowingCount = FirebaseDatabase.getInstance().getReference().child("Following")
-                        .child(userUserID);
+                        getSearchProfile();
+                    }
 
-                getSearchProfile();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-        //myNewRef.addListenerForSingleValueEvent(eventListener);
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
     }
 
     private void addFollowers() {
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("following")
+        FirebaseDatabase.getInstance().getReference("following")
                 .child(current_user.getUid())
                 .child(userUserID)
-                .child("userid")
-                .setValue(userUserID);
+                .setValue(userUserID)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        addFollowers1();
+                    }
+                });
+    }
 
-                /*
-
-                .setValue(true);*/
-
-        FirebaseDatabase.getInstance().getReference()
-                .child("followers")
+    private void addFollowers1() {
+        FirebaseDatabase.getInstance().getReference("followers")
                 .child(userUserID)
                 .child(current_user.getUid())
-                .child("userid")
-                .setValue(current_user.getUid());
-
-                /*;
-
-                .setValue(true);*/
-
-        setFollowing();
+                .setValue(current_user.getUid())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        setFollowing();
+                    }
+                });
     }
 
     private void cancelFollowers() {
-
-        FirebaseDatabase.getInstance().getReference()
-                .child("following")
+        FirebaseDatabase.getInstance()
+                .getReference("following")
                 .child(current_user.getUid())
                 .child(userUserID)
-                .removeValue();
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        cancelFollowers1();
+                    }
+                });
+    }
 
-        FirebaseDatabase.getInstance().getReference()
-                .child("followers")
+    private void cancelFollowers1() {
+        FirebaseDatabase.getInstance()
+                .getReference("followers")
                 .child(userUserID)
                 .child(current_user.getUid())
-                .removeValue();
-
-        setUnFollowing();
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        setUnFollowing();
+                    }
+                });
     }
 
     private void setFollowing() {
@@ -321,45 +318,45 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private void getFollowersCount() {
         Log.e(TAG, "entered getFollowers count");
         followerscount = 0;
-        queryFollowersCount.addValueEventListener(new ValueEventListener() {
+        myFollowersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot singlesnapshot : dataSnapshot.getChildren()) {
-                    //followerscount = dataSnapshot.getChildrenCount();
-                    followerscount++;
-                }
-                mfollowers.setText(String.valueOf(followingcount));
-                getFollowingCount();
+                long followerscount = dataSnapshot.getChildrenCount();
+                mfollowers.setText(String.valueOf(followerscount));
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+        //getFollowingCount();
     }
 
     private void getFollowingCount() {
         followingcount = 0;
-        queryFollowingCount.addValueEventListener(new ValueEventListener() {
+        myFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
                 Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildrenCount());
 
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.e(TAG, "1st iteration");
-                    //followingcount = dataSnapshot.getChildrenCount();
-                    followerscount++;
-                }
+                long followingcount = dataSnapshot.getChildrenCount();
+                Log.e(TAG, "Value is: " + followingcount);
                 mfollowing.setText(String.valueOf(followingcount));
-                finished();
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+        finished();
     }
 
-    private void finished(){
+    private void finished() {
         Log.e(TAG, "Finished counting");
     }
 

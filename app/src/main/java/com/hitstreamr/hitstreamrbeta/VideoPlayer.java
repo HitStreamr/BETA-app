@@ -3,6 +3,7 @@ package com.hitstreamr.hitstreamrbeta;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Surface;
@@ -31,6 +32,15 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -67,6 +77,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //Video URI
     private Uri videoUri;
 
+    FirebaseUser currentFirebaseUser;
+    FirebaseDatabase database;
+    DatabaseReference myRef;
+
+
     private long playbackPosition;
     private int currentWindow;
     private boolean playWhenReady = true;
@@ -81,6 +96,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_video_player);
 
         vid = getIntent().getParcelableExtra("VIDEO");
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("VideoLikes");
 
         componentListener = new ComponentListener();
         playerView = findViewById(R.id.artistVideoPlayer);
@@ -109,10 +128,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUsername());
 
-        if(artistProfReference == null){
+        if (artistProfReference == null) {
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(artistProfPic);
-        }
-        else{
+        } else {
             Glide.with(getApplicationContext()).load(artistProfPic).into(artistProfPic);
         }
 
@@ -206,9 +224,42 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
-    private void likeVideo(){
+    private void likeVideo() {
+        Log.e(TAG, "Your video Id is:" + vid.getVideoId());
+        Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
 
+        //String temp = vid.getVideoId();
+        String ttt = "true";
 
+        FirebaseDatabase.getInstance()
+                .getReference("VideoLikes")
+                .child(vid.getUserId())
+                .child("userID")
+                .setValue(ttt)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        finished();
+                    }
+                });
+    }
+
+    private void finished() {
+        FirebaseDatabase.getInstance().getReference("VideoLikes")
+                .addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long value = dataSnapshot.getChildrenCount();
+                Log.e(TAG, "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+        Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
     }
 
 
@@ -320,8 +371,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         }
 
-        if(view == likeBtn){
-            Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+        if (view == likeBtn) {
+            //Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
             likeVideo();
         }
     }

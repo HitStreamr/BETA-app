@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mTabLayout.setVisibility(View.GONE);
 
         // Recycler View
-        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         db = FirebaseFirestore.getInstance();
@@ -654,7 +654,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 //Log.e(TAG, d.toObject(Video.class).toString());
                                 Video currVideo = d.toObject(Video.class);
                                 currVideo.setVideoId(d.getId());
-                                videos.add(d.toObject(Video.class));
+                                videos.add(currVideo);
                             } else {
                                 Log.e(TAG, "Document " + d.toString() + "does not exist");
                             }
