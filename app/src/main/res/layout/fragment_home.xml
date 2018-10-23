@@ -1,15 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/litgryAccent">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/nav_home"
-        android:textSize="30sp"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:layout_centerInParent="true"/>
+        android:orientation="vertical"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="1dp"
+        >
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/colorAccent"
+                android:padding="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FEATURED VIDEOS"
+                        android:textStyle="bold"/>
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:gravity="end">
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:text="MORE"
+                            android:textColor="@color/colorPrimary" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp">
+
+
+
+
+                </HorizontalScrollView>
+
+
+
+            </LinearLayout>
+
+        </ScrollView>
+
+
+    </LinearLayout>
 
 </RelativeLayout>

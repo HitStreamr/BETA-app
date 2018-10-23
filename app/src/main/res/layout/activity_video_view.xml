@@ -124,8 +124,7 @@
                 android:id="@+id/profilePicture"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:src="@mipmap/ic_launcher_round"
-                />
+                android:src="@mipmap/ic_launcher_round" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -182,20 +181,38 @@
             </LinearLayout>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
         <TextView
             android:id="@+id/videoDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:text="This is the description..." />
 
         <View
             android:id="@+id/descriptionDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/litgryAccent"
             android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp" />
+            android:layout_marginStart="10dp"
+            android:background="@color/litgryAccent" />
+
+            <include layout="@layout/contributor_video_listview"
+                />
+
+            <View
+                android:id="@+id/descriptionDivider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:background="@color/litgryAccent" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

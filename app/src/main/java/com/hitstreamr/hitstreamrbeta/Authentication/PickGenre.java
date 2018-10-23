@@ -11,14 +11,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.hitstreamr.hitstreamrbeta.GenreRecyclerViewAdapter;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 
 public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAdapter.ItemClickListener, View.OnClickListener{
 
@@ -28,6 +27,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
     RecyclerView.LayoutManager recyclerViewLayoutManager;
     ArrayList<Integer> selectedItems;
     String[] images;
+    HashMap<String, String> drawableToReadableNames;
 
     Button skipButton, nextButton;
 
@@ -46,6 +46,8 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
 
         images = getResources().getStringArray(R.array.genreImageDrawables);
 
+        drawableToReadableNames = setStrings();
+
         recyclerViewLayoutManager = new GridLayoutManager(context, 2);
 
         mRecyclerView.setLayoutManager(recyclerViewLayoutManager);
@@ -60,6 +62,53 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         nextButton = findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this);
     }
+
+    private HashMap<String, String> setStrings (){
+        /*
+        Genre Order
+        8 <item>genre_alternative</item> : 0 <item>Alternative Music</item>
+        13 <item>genre_blues</item> : 1 <item>Blues</item>
+        14 <item>genre_classical</item> : 2 <item>Classical Music</item>
+        4 <item>genre_country</item> : 3 <item>Country Music</item>
+        4 <item>Dance Music</item>
+        5 <item>Easy Listening</item>
+        15 <item>genre_edm</item> : 6 <item>Electronic Music</item>
+        7 <item>genre_folk</item> : 7 <item>Folk</item>
+        9 <item>genre_inspirational_gospel</item> : 8 <item>Gospel</item>
+        9 <item>Hip-Hop/R&amp;B</item>
+        0 <item>genre_hiphop_rap</item> : 10 <item>Hip-Hop/Rap</item>
+        5 <item>genre_indie</item> : 11 <item>Indie Pop</item>
+        12 <item>genre_jazz</item> : 12 <item>Jazz</item>
+        10 <item>genre_asian_pop</item> : 13 <item>K-pop</item>
+        6 <item>genre_latin</item> : 14 <item>Latin Music</item>
+        16 <item>genre_new_age</item> : 15 <item>New Age</item>
+        17 <item>genre_opera</item> : 16 <item>Opera</item>
+        1 <item>genre_pop</item> : 17 <item>Pop</item>
+        3 <item>genre_rnb_soul</item> : 18 <item>R&amp;B/Soul</item>
+        11 <item>genre_reggae</item> : 19<item>Reggae</item>
+        2 <item>genre_rock</item> : 20 <item>Rock</item>
+        21 <item>Trap</item>
+        22 <item>World Music/Beats</item>
+         */
+
+        //matches the drawable names to user used strings
+        String[] genres = getResources().getStringArray(R.array.Genre);
+        HashMap<String,String> tmp =  new HashMap<String,String>();
+        tmp.put(images[0],genres[10]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        tmp.put(images[0],genres[0]);
+        return tmp;
+
+}
 
 
     void checkButton() {
@@ -114,7 +163,6 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
                     temp[i] = images[selectedItems.get(i)];
                 }
 
-                Toast.makeText(getApplicationContext(), Arrays.deepToString(selectedItems.toArray())  + "\n" + Arrays.deepToString(temp) , Toast.LENGTH_LONG).show();
                 Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                 homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
                 homeIntent.putExtra("NUMBER_SELECTED", selectedItems);

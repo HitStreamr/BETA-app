@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int tab_position;
     private String search_input;
 
+
     /**
      * Set up and initialize layouts and variables
      * @param savedInstanceState state
@@ -202,7 +203,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Bundle bundle;
                 switch (item.getItemId()){
                     case R.id.home:
-                        fab.setVisibility(View.VISIBLE);
                         bottomNavView.setVisibility(View.VISIBLE);
                         transaction = getSupportFragmentManager().beginTransaction();
                         bundle = new Bundle();
@@ -658,6 +658,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return tmp;
     }
 
+    /**
+     *
+     * @param v view
+     */
     public void showPopup(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -665,15 +669,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+    /**
+     *
+     * @param item item
+     * @return true if clicked
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()){
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
+                acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
+                prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
                 break;
 
