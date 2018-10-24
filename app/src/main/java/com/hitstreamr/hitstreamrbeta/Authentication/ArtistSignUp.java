@@ -142,7 +142,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         // Listeners
         signup.setOnClickListener(this);
-        //goBack.setOnClickListener(this);
+        goBack.setOnClickListener(this);
         profilePictureBtn.setOnClickListener(this);
 
 

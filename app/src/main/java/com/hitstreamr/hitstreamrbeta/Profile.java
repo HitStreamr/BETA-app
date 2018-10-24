@@ -105,7 +105,29 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
             getFollowingCount();
         } else {
             getUserClickedUserId();
+
         }
+    }
+
+    private void setFollowButton(){
+        FirebaseDatabase.getInstance().getReference("followers")
+                .child(userUserID)
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String value = dataSnapshot.getValue(String.class);
+                        if(value.equals(current_user.getUid())){
+                            mfollowBtn.setVisibility(View.GONE);
+                            mUnfollowBtn.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void getCurrentProfile() {
@@ -242,6 +264,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                                 .child(userUserID);
 
                         getSearchProfile();
+                        setFollowButton();
                     }
 
                     @Override

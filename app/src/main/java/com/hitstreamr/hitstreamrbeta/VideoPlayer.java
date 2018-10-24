@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -227,8 +228,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void likeVideo() {
         Log.e(TAG, "Your video Id is:" + vid.getVideoId());
         Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
-
-        //String temp = vid.getVideoId();
         String ttt = "true";
 
         FirebaseDatabase.getInstance()
@@ -240,25 +239,30 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finished();
+                        int fillColor = Color.parseColor("#DFDFE0");
+                        likeBtn.setBackgroundColor(fillColor);
                     }
                 });
     }
 
     private void finished() {
-        FirebaseDatabase.getInstance().getReference("VideoLikes")
+        /*FirebaseDatabase.getInstance().getReference("VideoLikes")
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                long value = dataSnapshot.getChildrenCount();
-                Log.e(TAG, "Value is: " + value);
-            }
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long value = dataSnapshot.getChildrenCount();
+                        Log.e(TAG, "Value is: " + value);
+                    }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });*/
+
+
+
         Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
     }
 
