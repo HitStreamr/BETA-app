@@ -101,7 +101,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/ic_playlist_add_black_24dp" />
+                    android:src="@drawable/ic_repost_black_24dp" />
 
                 <ImageView
                     android:id="@+id/moreOptions"
