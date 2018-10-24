@@ -39,6 +39,7 @@ import com.google.firebase.storage.UploadTask;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
+import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
 
 import java.util.regex.Pattern;
 
@@ -48,6 +49,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     //Artist User object
     ArtistUser artist_object;
+
+    UsernameUserIdPair usernameUserIdPair;
 
     // Inputs
     private EditText mFirstName, mLastName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
@@ -226,7 +229,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateAuthentication() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -239,7 +242,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                registerFirebase();
+                                usernameUserIdPair = new UsernameUserIdPair(artist_object.getUsername(), user.getUid());
+                                registerFirebase2();
                                 Log.d(TAG, "User profile updated.");
                             }else {
                                 Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
@@ -277,8 +281,19 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
                     });
         }
-        // else block
-        // ask to log in again(Invalid login)
+    }
+
+    private void registerFirebase2(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(artist_object.getUsername())
+                .setValue(usernameUserIdPair)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        registerFirebase();
+                    }
+                });
     }
 
 

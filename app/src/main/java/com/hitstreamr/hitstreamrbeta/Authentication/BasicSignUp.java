@@ -38,6 +38,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
+import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -72,6 +73,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     private static final int REQUEST_CODE = 123;
 
     User basicUser;
+    UsernameUserIdPair usernameUserIdPair;
+
 
 
 
@@ -186,7 +189,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private boolean validateUsername(String artist) {
-        final boolean[] isTaken = {false};
         if (artist.isEmpty()) {
             mUsername.setError("Field can't be empty");
             return false;
@@ -197,8 +199,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             mUsername.setError("Username is too short.");
             return false;
         } else {
-                mUsername.setError(null);
-                return true;
+            mUsername.setError(null);
+            return true;
         }
     }
 
@@ -265,6 +267,19 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         return false;
     }
 
+    private void registerFirebase2(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(basicUser.getUsername())
+                .setValue(usernameUserIdPair)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        registerFirebase();
+                    }
+                });
+    }
+
 
     private void registerUser() {
         final String username = mUsername.getText().toString().trim();
@@ -281,7 +296,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private void registerFirebase() {
-        //Log.e(TAG, "validations are done");
         FirebaseDatabase.getInstance().getReference("BasicAccounts")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .setValue(basicUser)
@@ -339,7 +353,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                registerFirebase();
+                                usernameUserIdPair = new UsernameUserIdPair(basicUser.getUsername(), user.getUid());
+                                registerFirebase2();
                                 Log.e(TAG, "User profile updated.");
                             }
                             else{
@@ -366,7 +381,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                                         public void onSuccess(Uri uri) {
                                             downloadimageUri = uri.toString();
                                             updateAuthentication();
-                                            //registerFirebase();
                                         }
                                     });
                         }

@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int tab_position;
     private String search_input;
 
+
     /**
      * Set up and initialize layouts and variables
      *
@@ -608,6 +609,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return tmp;
     }
 
+    /**
+     *
+     * @param v view
+     */
     public void showPopup(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -622,6 +627,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+    /**
+     *
+     * @param item item
+     * @return true if clicked
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
