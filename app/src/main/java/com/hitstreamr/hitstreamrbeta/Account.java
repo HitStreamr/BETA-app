@@ -120,12 +120,22 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
 
+        // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        // Profile Picture
+        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
 
         mStorageRef = storage.getReference();
         mAuth = FirebaseAuth.getInstance();
@@ -166,7 +176,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         ChangePwdBtn.setOnClickListener(this);
         ChangePhotoBtn.setOnClickListener(this);
 
-        type = getIntent().getExtras().getString("TYPE");
+        type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
 
             artistInfoLayout.setVisibility(View.VISIBLE);
@@ -211,13 +221,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        //Profile Picture
+        /*//Profile Picture
         if (user.getPhotoUrl() != null) {
             circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
             Uri photoURL = user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-        }
+        }*/
 
     }
 

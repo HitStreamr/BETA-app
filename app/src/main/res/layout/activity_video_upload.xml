@@ -6,184 +6,227 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="10dp"
     tools:context=".VideoUploadActivity">
 
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar" />
 
-        <LinearLayout
-            android:id="@+id/videoUploadScreenLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+    <LinearLayout
+        android:id="@+id/videoUploadScreenLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-            android:orientation="vertical">
+        android:layout_below="@+id/toolbar"
+        android:orientation="vertical">
 
-            <Button
-                android:id="@+id/selectVideo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Browse your Video" />
-
-            <!--<ProgressBar style="@android:style/Widget.ProgressBar.Large"
+        <!--<ProgressBar style="@android:style/Widget.ProgressBar.Large"
                 android:id="@+id/video_progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"/>-->
 
 
-            <ScrollView
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:orientation="horizontal"
+                    android:weightSum="1">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:weightSum="1"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.85"
+                            app:srcCompat="@color/cardview_dark_background" />
+
+                        <Button
+                            android:id="@+id/selectThumbnail"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.15"
+                            android:text="Browse your Image" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.5"
+                        android:weightSum="1"
+                        android:orientation="vertical">
+
+                        <VideoView
+                            android:id="@+id/videoView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="right"
+                            android:layout_weight="0.85" />
+
+                        <Button
+                            android:id="@+id/selectVideo"
+                            style="@style/Widget.AppCompat.Button.Borderless"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.15"
+                            android:hint="Browse your Video" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="100">
+
+                    <EditText
+                        android:id="@+id/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:ems="10"
+                        android:hint="Title"
+                        android:inputType="textMultiLine"
+                        android:maxLength="100" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="1000">
+
+                    <EditText
+                        android:id="@+id/Description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:ems="10"
+                        android:hint="Description"
+                        android:inputType="textMultiLine"
+                        android:maxLength="1000" />
+                </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <VideoView
-                        android:id="@+id/videoView"
-                        android:layout_width="match_parent"
-                        android:layout_height="220dp"
-                        android:layout_gravity="center" />
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:counterEnabled="true"
-                        app:counterMaxLength="100">
-
-                        <EditText
-                            android:id="@+id/Title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:ems="10"
-                            android:hint="Title"
-                        android:inputType="textMultiLine"
-                        android:maxLength="100" />
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:counterEnabled="true"
-                        app:counterMaxLength="1000">
-
-                        <EditText
-                            android:id="@+id/Description"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="15dp"
-                            android:ems="10"
-                            android:hint="Description"
-                        android:inputType="textMultiLine"
-                        android:maxLength="1000" />
-                    </android.support.design.widget.TextInputLayout>
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginEnd="10dp"
+                        android:orientation="vertical">
 
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Genre" />
+
+                        <Spinner
+                            android:id="@+id/Genre"
+                            android:layout_width="160dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
-                            android:orientation="vertical">
+                            android:entries="@array/Genre" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Genre" />
+                    </LinearLayout>
 
-                            <Spinner
-                                android:id="@+id/Genre"
-                                android:layout_width="160dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="10dp"
-                                android:entries="@array/Genre" />
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:text="Sub Genre" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sub Genre" />
-
-                            <Spinner
-                                android:id="@+id/SubGenre"
-                                android:layout_width="160dp"
-                                android:layout_height="wrap_content"
-                                android:entries="@array/Genre" />
-
-                        </LinearLayout>
-
+                        <Spinner
+                            android:id="@+id/SubGenre"
+                            android:layout_width="160dp"
+                            android:layout_height="wrap_content"
+                            android:entries="@array/Genre" />
 
                     </LinearLayout>
 
 
-                    <Button
-                        android:id="@+id/ContributorBtn"
-                        android:layout_width="140dp"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="15dp"
-                        android:background="@drawable/button1"
-                        android:text="+ Contributor(s)"
-                        android:textColor="@color/colorAccent" />
+                </LinearLayout>
 
-                    <LinearLayout
-                        android:id="@+id/add_contributor_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:orientation="vertical">
 
-                        <!--<EditText
+                <Button
+                    android:id="@+id/ContributorBtn"
+                    android:layout_width="140dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/button1"
+                    android:text="+ Contributor(s)"
+                    android:textColor="@color/colorAccent" />
+
+                <LinearLayout
+                    android:id="@+id/add_contributor_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <!--<EditText
                             android:id="@+id/ContributorName"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:hint="Contributor username/ email"
                             android:inputType="textPersonName" />-->
-                        <AutoCompleteTextView
-                            android:id="@+id/ContributorName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Contributor username"
-                            android:inputType="textPersonName"/>
+                    <AutoCompleteTextView
+                        android:id="@+id/ContributorName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Contributor username"
+                        android:inputType="textPersonName" />
 
-                        <LinearLayout
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="horizontal"
-                            android:weightSum="1">
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="horizontal"
+                        android:weightSum="1">
 
-                            <EditText
-                                android:id="@+id/ContributorPercentage"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight=".10"
-                                android:hint=" 0 "
-                                android:inputType="number" />
+                        <EditText
+                            android:id="@+id/ContributorPercentage"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight=".10"
+                            android:hint=" 0 "
+                            android:inputType="number" />
 
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight=".10"
-                                android:ems="20"
-                                android:text="" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight=".10"
+                            android:ems="20"
+                            android:text="" />
 
-                            <Spinner
-                                android:id="@+id/ContributorTypeSpinner"
-                                android:layout_width="0dp"
-                                android:layout_height="match_parent"
-                                android:layout_weight="0.40"
-                                android:entries="@array/ContributorType" />
+                        <Spinner
+                            android:id="@+id/ContributorTypeSpinner"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.40"
+                            android:entries="@array/ContributorType" />
 
                         <Button
                             android:id="@+id/ContributorCancel"
@@ -193,54 +236,55 @@
                             android:background="@drawable/button1"
                             android:textColor="@color/colorAccent"
                             android:text="- Cancel" />
-                        </LinearLayout>
-
-                        <Button
-                            android:id="@+id/AddContributorButton"
-                            android:layout_width="140dp"
-                            android:layout_height="40dp"
-                            android:layout_gravity="center"
-                            android:layout_marginTop="0dp"
-                            android:background="@drawable/button1"
-                            android:text="+ ADD"
-                            android:textColor="@color/colorAccent" />
-
-
                     </LinearLayout>
 
-                    <ListView
-                        android:id="@+id/ContributorListView"
-                        android:layout_width="match_parent"
-                        android:layout_height="200dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:text="Privacy" />
-
-                    <Spinner
-                        android:id="@+id/Privacy"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:entries="@array/Privacy" />
-
                     <Button
-                        android:id="@+id/uploadVideo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Finish and Upload" />
-                </LinearLayout>
-            </ScrollView>
+                        android:id="@+id/AddContributorButton"
+                        android:layout_width="140dp"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="0dp"
+                        android:background="@drawable/button1"
+                        android:text="+ ADD"
+                        android:textColor="@color/colorAccent" />
 
-        </LinearLayout>
+
+                </LinearLayout>
+
+                <ListView
+                    android:id="@+id/ContributorListView"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Privacy" />
+
+                <Spinner
+                    android:id="@+id/Privacy"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/Privacy" />
+
+                <Button
+                    android:id="@+id/uploadVideo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Finish and Upload" />
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/cancelLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView
             android:id="@+id/uploadHeading"
@@ -299,10 +343,11 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/cancelVideoUpload"
+                android:id="@+id/retryVideoUpload"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cancel Upload" />
+                android:text="Retry Upload"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 
