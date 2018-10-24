@@ -82,6 +82,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     FirebaseDatabase database;
     DatabaseReference myRef;
 
+    private Boolean VideoLiked = false;
+
 
     private long playbackPosition;
     private int currentWindow;
@@ -139,11 +141,36 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
 
+        checkLikes();
+
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
         //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fbeliever?alt=media&token=eb45446e-54bf-4c22-9c91-26e72d5211e4");
         videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fscreentest3?alt=media&token=bf2437ba-81ff-4ee3-bf58-f57dbe6dae23");
     }
+
+    private void checkLikes() {
+        FirebaseDatabase.getInstance().getReference("VideoLikes")
+                .child(vid.getUserId())
+                .child("userID")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String value = dataSnapshot.getValue(String.class);
+                        if(value.equals("true")){
+                            /*int fillColor = Color.parseColor("#FF000000");
+                        likeBtn.setBackgroundColor(fillColor);*/
+                            Log.e(TAG, "Already Liked");
+                            VideoLiked = true;
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+
 
     @Override
     public void onStart() {
@@ -239,8 +266,27 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finished();
-                        int fillColor = Color.parseColor("#DFDFE0");
-                        likeBtn.setBackgroundColor(fillColor);
+                        /*int fillColor = Color.parseColor("#DFDFE0");
+                        likeBtn.setBackgroundColor(fillColor);*/
+                        VideoLiked = true;
+                        Log.e(TAG, "Video is liked " +VideoLiked);
+                    }
+                });
+    }
+
+    private void cancelLikeVideo(){
+        FirebaseDatabase.getInstance()
+                .getReference("VideoLikes")
+                .child(vid.getUserId())
+                /*.child("userID")*/
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        /*int fillColor = Color.parseColor("#FF000000");
+                        likeBtn.setBackgroundColor(fillColor);*/
+                        VideoLiked = false;
+                        Log.e(TAG, "Video like is cancelled " +VideoLiked);
                     }
                 });
     }
@@ -260,7 +306,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
-
 
 
         Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
@@ -377,7 +422,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         if (view == likeBtn) {
             //Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
-            likeVideo();
+
+            if(!VideoLiked){
+                likeVideo();
+            }else{
+                cancelLikeVideo();
+            }
+            //likeVideo();
         }
     }
 }
