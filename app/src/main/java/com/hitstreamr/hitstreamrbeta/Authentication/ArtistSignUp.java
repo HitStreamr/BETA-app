@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -62,7 +61,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private Button signup, profilePictureBtn;
     private RadioButton termsCond;
 
-    private ImageButton goBack;
+    private Button goBack;
 
     //ImageView
     private ImageView imageViewProfile;
@@ -495,6 +494,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     private void validateUserNameFirebase(ArtistUser artist, String password){
+        //TODO Clarify why IsTaken exists and see if it is related to the other issues
         final boolean[] isTaken = {false};
         takenNames.addValueEventListener(new ValueEventListener() {
             @Override

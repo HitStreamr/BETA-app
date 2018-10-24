@@ -64,12 +64,19 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         holder.videoViews.setText("TODO");
         holder.videoTime.setText(vids.get(position).getDuration());
         holder.videoYear.setText(String.valueOf(vids.get(position).getPubYear()));
-        holder.card.setOnClickListener(new View.OnClickListener() {
+        holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onResultClick(vids.get(position));
             }
         });
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onOverflowClick(vids.get(position), holder.moreMenu);
+            }
+        });
+
     }
 
     @Override
@@ -113,7 +120,8 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         TextView videoYear;
         TextView videoTime;
         ImageView moreMenu;
-        LinearLayout card;
+        LinearLayout mainSection;
+        ImageView overflowMenu;
         MainActivity.ItemClickListener mListener;
 
         public VideoResultsHolder(View itemView, final MainActivity.ItemClickListener mListener) {
@@ -125,7 +133,8 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
             videoYear = itemView.findViewById(R.id.videoYear);
             videoTime = itemView.findViewById(R.id.videoTime);
             moreMenu = itemView.findViewById(R.id.moreMenu);
-            card = itemView.findViewById(R.id.videoCard);
+            mainSection = itemView.findViewById(R.id.mainBody);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
             this.mListener = mListener;
         }
     }
