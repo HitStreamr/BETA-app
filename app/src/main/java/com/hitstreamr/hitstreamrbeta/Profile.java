@@ -96,7 +96,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         if (userClicked.equals("")) {
             Log.e(TAG, "Current user selected");
 
-            myFollowersRef = FirebaseDatabase.getInstance().getReference("following")
+            myFollowersRef = FirebaseDatabase.getInstance().getReference("followers")
                     .child(current_user.getUid());
             myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
                     .child(current_user.getUid());
@@ -331,7 +331,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-        //getFollowingCount();
+        getFollowingCount();
     }
 
     private void getFollowingCount() {

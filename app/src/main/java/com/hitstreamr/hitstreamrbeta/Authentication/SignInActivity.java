@@ -367,7 +367,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             if (!locked_out){
                 UserLogin();
             }else{
-                Toast.makeText(getApplicationContext(),"Please wait to attempt to login again.",Toast.LENGTH_LONG).show();
+              //  Toast.makeText(getApplicationContext(),"Please wait to attempt to login again.",Toast.LENGTH_LONG).show();
             }
         }
 

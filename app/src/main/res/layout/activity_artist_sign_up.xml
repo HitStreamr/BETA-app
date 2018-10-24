@@ -19,7 +19,7 @@
             android:layout_marginTop="15dp"
             android:orientation="horizontal">
 
-            <Button
+            <ImageButton
                 android:id="@+id/backBtn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
