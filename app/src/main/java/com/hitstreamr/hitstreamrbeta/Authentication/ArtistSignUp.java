@@ -477,8 +477,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     private void validateUserNameFirebase(ArtistUser artist, String password){
-        //TODO Clarify why IsTaken exists and see if it is related to the other issues
-        final boolean[] isTaken = {false};
         takenNames.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

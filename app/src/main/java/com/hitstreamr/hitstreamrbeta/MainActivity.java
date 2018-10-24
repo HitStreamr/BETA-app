@@ -24,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -66,7 +65,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -74,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private String type;
 
-    //FrameLayout
-    FrameLayout bot_frag_container;
 
     FloatingActionButton fab;
     FloatingActionButton vv;
@@ -179,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
-        bot_frag_container = findViewById(R.id.fragment_container2);
         fab = findViewById(R.id.fab);
         vv = findViewById(R.id.videoScreen);
 
@@ -240,74 +236,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
 
-        bot_frag_container.setVisibility(View.GONE);
-
         navigationView.setNavigationItemSelectedListener(this);
-        //TODO Ask antony about dumping frag container 2 and doing it in the original frag.
+        // TODO Ask antony about dumping frag container 2 and doing it in the original frag.
         //also try moving the hide side bar code into cases so this code can be all in one area
-        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                FragmentTransaction transaction;
-                Bundle bundle;
-                switch (item.getItemId()){
-                    case R.id.home:
-                        if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
-                            fab.setVisibility(View.VISIBLE);
-                        }else{
-                            fab.setVisibility(View.GONE);
-                        }
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        HomeFragment homeFrag = new HomeFragment();
-                        homeFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, homeFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        bot_frag_container.setVisibility(View.VISIBLE);
-                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.discover:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        DiscoverFragment discFrag = new DiscoverFragment();
-                        discFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, discFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        bot_frag_container.setVisibility(View.VISIBLE);
-                        Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.activity:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        ActivityFragment actFrag = new ActivityFragment();
-                        actFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, actFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        bot_frag_container.setVisibility(View.VISIBLE);
-                        Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.library:
-                        fab.setVisibility(View.GONE);
-                        Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
-                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
-                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                        startActivity(libraryIntent);
-                        break;
-                }
-                return true;
-            }
-        });
+        bottomNavView.setOnNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -489,7 +421,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onMenuItemActionExpand(MenuItem item) {
                 MainActivity.this.setItemsVisibility(menu, mSearch, false);
                 //hide panels
-                bot_frag_container.setVisibility(View.GONE);
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 fab.setVisibility(View.GONE);
@@ -822,9 +753,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FragmentTransaction transaction;
         Bundle bundle;
-        getSupportActionBar().hide();
+
         switch (item.getItemId()) {
             case R.id.dashboard:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -835,9 +767,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, dashFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.general_setting:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -848,9 +782,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, genSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.notification_settings:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -861,9 +797,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, notifSettingsFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.payment_pref:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -874,9 +812,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, payPrefFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.invite_a_friend:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -887,8 +827,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, inviteFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
             case R.id.help_center:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -899,9 +841,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, helpFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.legal_agreements:
+                getSupportActionBar().hide();
                 fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.GONE);
                 transaction = getSupportFragmentManager().beginTransaction();
@@ -912,14 +856,68 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction.replace(R.id.fragment_container, legalFrag);
                 transaction.addToBackStack(null);
                 transaction.commit();
+                drawer.closeDrawer(GravityCompat.START);
                 break;
 
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
+                drawer.closeDrawer(GravityCompat.START);
+                break;
+            //Bottom Navigation Cases
+            //TODO on which screen should the floating action bar be accessible
+            case R.id.home:
+                if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
+                    fab.setVisibility(View.VISIBLE);
+                }else{
+                    fab.setVisibility(View.GONE);
+                }
+                bottomNavView.setVisibility(View.VISIBLE);
+                transaction = getSupportFragmentManager().beginTransaction();
+                bundle = new Bundle();
+                bundle.putString("TYPE", type);
+                HomeFragment homeFrag = new HomeFragment();
+                homeFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_container, homeFrag);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.discover:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.VISIBLE);
+                transaction = getSupportFragmentManager().beginTransaction();
+                bundle = new Bundle();
+                bundle.putString("TYPE", type);
+                DiscoverFragment discFrag = new DiscoverFragment();
+                discFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_container, discFrag);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.activity:
+                fab.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.VISIBLE);
+                transaction = getSupportFragmentManager().beginTransaction();
+                bundle = new Bundle();
+                bundle.putString("TYPE", type);
+                ActivityFragment actFrag = new ActivityFragment();
+                actFrag.setArguments(bundle);
+                transaction.replace(R.id.fragment_container, actFrag);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.library:
+                fab.setVisibility(View.GONE);
+                Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(libraryIntent);
                 break;
         }
 
-        drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
@@ -929,12 +927,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //reset fab and bottom bar when going back
+
+            //TODO does not properly handle going back with fragments and the dashboard
             fab.setVisibility(View.VISIBLE);
             bottomNavView.setVisibility(View.VISIBLE);
             getSupportActionBar().show();
-            if(bot_frag_container.getVisibility() == View.VISIBLE){
-                bot_frag_container.setVisibility(View.GONE);
-            }
             super.onBackPressed();
         }
     }

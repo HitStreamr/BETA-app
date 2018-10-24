@@ -31,14 +31,6 @@
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
             android:background="@drawable/gradient1"/>
-        <FrameLayout
-            android:id="@+id/fragment_container2"
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/toolbar"
-            >
-
-        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
