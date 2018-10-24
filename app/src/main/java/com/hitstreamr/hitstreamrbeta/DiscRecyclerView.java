@@ -14,18 +14,17 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
-import java.net.URI;
 import java.util.ArrayList;
 
 public class DiscRecyclerView extends RecyclerView.Adapter<DiscRecyclerView.ViewHolder>{
 
     private static final String TAG = "DiscRecyclerView";
 
-    private ArrayList<URI> mImageView = new ArrayList<>();
+    private ArrayList<String> mImageView = new ArrayList<>();
     private ArrayList<String> mImageText = new ArrayList<>();
     private Context mContext;
 
-    public DiscRecyclerView(ArrayList<URI> mImageView, ArrayList<String> mImageText, Context mContext) {
+    public DiscRecyclerView(ArrayList<String> mImageView, ArrayList<String> mImageText, Context mContext) {
         this.mImageView = mImageView;
         this.mImageText = mImageText;
         this.mContext = mContext;
@@ -44,7 +43,6 @@ public class DiscRecyclerView extends RecyclerView.Adapter<DiscRecyclerView.View
         Log.d(TAG, "onBindViewHolder: called");
 
         Glide.with(mContext)
-                .asBitmap()
                 .load(mImageView.get(position))
                 .into(holder.imageView);
 
