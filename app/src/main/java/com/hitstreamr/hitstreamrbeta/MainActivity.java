@@ -243,6 +243,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         bot_frag_container.setVisibility(View.GONE);
 
         navigationView.setNavigationItemSelectedListener(this);
+        //TODO Ask antony about dumping frag container 2 and doing it in the original frag.
+        //also try moving the hide side bar code into cases so this code can be all in one area
         bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
