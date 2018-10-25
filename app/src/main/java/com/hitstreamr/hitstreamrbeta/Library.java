@@ -23,7 +23,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Library extends AppCompatActivity {
+public class Library extends AppCompatActivity   {
     private String accountType;
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
@@ -41,7 +41,7 @@ public class Library extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+       // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -60,11 +60,11 @@ public class Library extends AppCompatActivity {
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
             //Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
-        }
+            }
 
         getWatchLaterList();
         getPlaylists();
-    }
+            }
 
     /**
      * Drop Down Menu - History
@@ -141,7 +141,7 @@ public class Library extends AppCompatActivity {
      * RecyclerView Test
      */
     private void getPlaylists() {
-        recyclerView_playlists = (RecyclerView) findViewById(R.id.recyclerView_playlists);
+       recyclerView_playlists = (RecyclerView) findViewById(R.id.recyclerView_playlists);
         bookAdapter_playlists = new BookAdapter(bookList_playlists);
         recyclerView_playlists.setLayoutManager(new LinearLayoutManager(this));
         recyclerView_playlists.setItemAnimator(new DefaultItemAnimator());
