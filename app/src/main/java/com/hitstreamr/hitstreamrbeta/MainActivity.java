@@ -195,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name == null){
+        if(name.equals("")){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -669,6 +669,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
 
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                    Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
+                    basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    basicProfile.putExtra("artistUsername", userName);
+                    startActivity(basicProfile);
+                }
+            });
+
+
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -692,6 +704,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         void setUserName(final String userName) {
             TextView textView = view.findViewById(R.id.user_name);
             textView.setText(userName);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                    Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
+                    artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    artistProfile.putExtra("artistUsername", userName);
+                    startActivity(artistProfile);
+
+                }
+            });
 
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override

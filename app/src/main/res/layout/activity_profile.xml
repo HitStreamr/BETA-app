@@ -34,15 +34,17 @@
                 android:layout_marginTop="10dp"
                 android:background="@drawable/ic_star_border_black_24dp" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_below="@+id/button2"
                 android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
                 android:src="@mipmap/ic_launcher_round" />
 
             <Button
+                android:id="@+id/followUser"
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:layout_below="@+id/profileImage"
@@ -51,6 +53,19 @@
                 android:background="@drawable/button2"
                 android:elevation="4dp"
                 android:text="Follow"
+                android:textColor="@color/colorPrimary"
+                />
+
+            <Button
+                android:id="@+id/unFollowUser"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:layout_below="@+id/followUser"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button2"
+                android:elevation="4dp"
+                android:text="UNFollow"
                 android:textColor="@color/colorPrimary"
                 />
 
@@ -71,6 +86,7 @@
                     android:layout_marginEnd="30dp">
 
                     <TextView
+                        android:id="@+id/usersFollowers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"
@@ -104,6 +120,7 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/usersFollowing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0"

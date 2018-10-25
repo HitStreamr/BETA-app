@@ -88,7 +88,7 @@
                 android:gravity="end"
                 android:orientation="horizontal">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/fave"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -101,7 +101,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/ic_playlist_add_black_24dp" />
+                    android:src="@drawable/ic_repost_black_24dp" />
 
                 <ImageView
                     android:id="@+id/moreOptions"
