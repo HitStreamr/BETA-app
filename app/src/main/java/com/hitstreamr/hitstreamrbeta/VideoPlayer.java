@@ -1,7 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -34,7 +33,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -129,24 +127,22 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         artistName.setText(vid.getUsername());
         artistNameBold.setText(vid.getUsername());
 
-        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUsername());
+        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
 
         if (artistProfReference == null) {
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(artistProfPic);
         } else {
-            Glide.with(getApplicationContext()).load(artistProfPic).into(artistProfPic);
+            Glide.with(getApplicationContext()).load(artistProfReference).into(artistProfPic);
         }
 
         //Listners
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
 
-        checkLikes();
+        //checkLikes();
 
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fbeliever?alt=media&token=eb45446e-54bf-4c22-9c91-26e72d5211e4");
-        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fscreentest3?alt=media&token=bf2437ba-81ff-4ee3-bf58-f57dbe6dae23");
+
+        videoUri = Uri.parse(vid.getUrl());
     }
 
     private void checkLikes() {

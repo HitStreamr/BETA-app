@@ -296,20 +296,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
-    private void registerFirebase2(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase.getInstance().getReference("UsernameUserId")
-                .child(artist_object.getUsername())
-                .setValue(usernameUserIdPair)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        registerFirebase();
-                    }
-                });
-    }
-
-
     /**
      * Check if first name input is valid.
      *
