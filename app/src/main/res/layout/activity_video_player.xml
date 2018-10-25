@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".VideoView">
+    tools:context=".VideoPlayer">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
         android:orientation="vertical">
 
         <android.support.v7.widget.Toolbar
@@ -19,81 +18,12 @@
             android:layout_height="wrap_content"
             android:background="@drawable/gradient1" />
 
-        <RelativeLayout
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/artistVideoPlayer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <VideoView
-                android:id="@+id/videoView2"
-                android:layout_width="match_parent"
-                android:layout_height="219dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/ic_expand_view_wht_24dp" />
-
-            <ProgressBar
-                android:id="@+id/bufferProgress"
-                style="?android:attr/progressBarStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="68dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/videoView2"
-                android:layout_alignParentStart="true"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/ic_play_arrow_wht_24dp" />
-
-                <TextView
-                    android:id="@+id/currentTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="00:00"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp" />
-
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="5dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_weight="1" />
-
-                <TextView
-                    android:id="@+id/durationTime"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="00:00"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
-
-        </RelativeLayout>
+            android:layout_height="219dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp" />
 
         <TextView
             android:id="@+id/Title"
@@ -121,7 +51,7 @@
             android:padding="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profilePicture"
+                android:id="@+id/artistProfilePicture"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@mipmap/ic_launcher_round" />
@@ -133,6 +63,7 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/artistNameBold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Artist Name"
@@ -156,7 +87,7 @@
                 android:gravity="end"
                 android:orientation="horizontal">
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/fave"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
@@ -177,21 +108,24 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
-                    android:src="@drawable/ic_more_vert" />
+                    android:src="@drawable/ic_more_vert"
+                    />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/DescriptionLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="10dp">
 
-        <TextView
-            android:id="@+id/videoDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="This is the description..." />
+            <TextView
+                android:id="@+id/videoDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="This is the description..." />
 
         <View
             android:id="@+id/descriptionDivider"
@@ -212,10 +146,19 @@
                 android:layout_marginStart="10dp"
                 android:background="@color/litgryAccent" />
 
+            <ImageButton
+                android:id="@+id/collapseDescription"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+
+            <include layout="@layout/post_comment_layout"/>
+
         </LinearLayout>
 
     </LinearLayout>
 
 
 
-</RelativeLayout>
+</LinearLayout>
