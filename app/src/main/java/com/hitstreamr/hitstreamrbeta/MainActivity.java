@@ -238,8 +238,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         navigationView.setNavigationItemSelectedListener(this);
-        // TODO Ask antony about dumping frag container 2 and doing it in the original frag.
-        //also try moving the hide side bar code into cases so this code can be all in one area
         bottomNavView.setOnNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,

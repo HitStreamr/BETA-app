@@ -14,6 +14,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,8 +42,8 @@ import com.hitstreamr.hitstreamrbeta.R;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button signinbtn, backbutton;
-    //private ImageButton backbutton;
+    private Button signinbtn;
+    private ImageButton backbutton;
     private EditText ETemail, ETpassword;
     private TextView register,forgetPassword;
     private ProgressDialog progressDialog;
@@ -75,7 +76,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog = new ProgressDialog(this);
 
         //Buttons
-        backbutton = (Button)findViewById(R.id.backBtn);
+        backbutton = findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
 
 
