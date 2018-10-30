@@ -6,53 +6,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        tools:ignore="UselessParent"
-        android:padding="10dp">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profilePicture"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:src="@mipmap/ic_launcher_round"
-            app:civ_border_color="@color/colorAccent"
-            app:civ_border_width="2dp"
-            android:layout_marginEnd="5dp"/>
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="end">
+            >
 
-            <EditText
-                android:layout_width="fill_parent"
-                android:layout_height="35dp"
-                android:hint="Reply to comment..."
-                android:paddingStart="10dp"
-                android:background="@drawable/text_fields"
-                android:layout_marginStart="70dp"/>
-
-
-            <Button
-                android:layout_width="65dp"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profilePicture2"
+                android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_gravity="end"
-                android:background="@android:color/transparent"
-                android:text="reply"
-                android:textSize="12sp"
-                android:textColor="@color/colorPrimary"
-                android:layout_marginStart="5dp"/>
+                android:src="@mipmap/ic_launcher_round"
+                android:layout_marginEnd="5dp"/>
 
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textStyle="bold"
+                    android:textColor="@color/drkgryAccent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:paddingStart="10dp"
+                    android:hint="User Reply..."
+                    />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-
     </LinearLayout>
+
+
+
 
 </RelativeLayout>
