@@ -61,7 +61,8 @@
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
-        <activity android:name=".ReportVideoPopup"></activity>
+        <activity android:name=".ReportVideoPopup" />
+        <activity android:name=".Comments"></activity>
     </application>
 
 </manifest>

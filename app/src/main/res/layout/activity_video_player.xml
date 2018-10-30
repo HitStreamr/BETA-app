@@ -12,11 +12,11 @@
         android:layout_marginTop="0dp"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
+        <!--<android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gradient1" />
+            android:background="@drawable/gradient1" />-->
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/artistVideoPlayer"
@@ -27,21 +27,37 @@
 
         <TextView
             android:id="@+id/Title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
             android:layout_marginTop="5dp"
             android:text="Video Title Here"
             android:textColor="@android:color/black"
             android:textSize="16dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+
+            />
 
         <TextView
             android:id="@+id/Artist"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:textAlignment="center"
             android:text="Artist name Here" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/litgryAccent"
+            android:layout_marginTop="5dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -56,20 +72,25 @@
                 android:layout_height="40dp"
                 android:src="@mipmap/ic_launcher_round" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginStart="5dp"
-                android:orientation="vertical">
+
 
                 <TextView
                     android:id="@+id/artistNameBold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Artist Name"
+                    android:text="Artist Username"
                     android:textColor="@android:color/black"
                     android:textSize="16dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:layout_marginStart="5dp"
+                    android:layout_gravity="center_vertical"/>
+
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,37 +100,170 @@
                     android:textColor="@color/colorPrimary"
                     android:textSize="12dp" />
 
+
             </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/litgryAccent"
+            android:layout_marginTop="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Published:"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="00/00/000"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="12sp"
+                        android:layout_height="12sp"
+                        android:src="@drawable/ic_eye_black_24dp"
+                        android:tint="@color/drkgryAccent" />
+
+                    <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="00"
+                    android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:text="views"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="end"
                 android:orientation="horizontal">
 
-                <ImageButton
-                    android:id="@+id/fave"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_favorite_black_24dp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
 
-                <ImageView
-                    android:id="@+id/addToPlaylist"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center_vertical"
+                    <ImageView
+                        android:id="@+id/fave"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_favorite_black_24dp"
+                        android:tint="@color/drkgryAccent"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00"
+                        android:textSize="10sp"
+                       />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_marginStart="20dp">
+
+                    <ImageView
+                        android:id="@+id/repost"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_repost_black_24dp"
+                        android:tint="@color/drkgryAccent"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00"
+                        android:textSize="10sp"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="20dp"
+                    android:gravity="center_horizontal">
+
+                    <ImageView
+                        android:id="@+id/addToPlaylist"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_playlist_add_black_24dp"
+                        android:tint="@color/drkgryAccent"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/ic_playlist_add_black_24dp" />
+                    android:gravity="center_horizontal">
 
-                <ImageView
-                    android:id="@+id/moreOptions"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:src="@drawable/ic_more_vert"
-                    />
+                    <ImageView
+                        android:id="@+id/moreOptions"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/ic_more_vert"
+                        />
+                </LinearLayout>
+
+
+
             </LinearLayout>
         </LinearLayout>
 
@@ -138,22 +292,71 @@
             <include layout="@layout/contributor_video_listview"
                 />
 
-            <View
-                android:id="@+id/descriptionDivider2"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:background="@color/litgryAccent" />
-
-            <ImageButton
+            <Button
                 android:id="@+id/collapseDescription"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="center_horizontal"
-                android:src="@drawable/ic_keyboard_arrow_down_black_24dp" />
+                android:background="@drawable/ic_keyboard_arrow_down_black_24dp"
+                android:backgroundTint="@color/drkgryAccent"/>
 
-            <include layout="@layout/post_comment_layout"/>
+            <View
+                android:id="@+id/descriptionDivider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/litgryAccent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Username"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Username"
+                        android:layout_marginStart="5dp"
+                        android:singleLine="true"
+                        />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="5dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View all"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:layout_marginStart="3dp"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="comments"
+                        android:layout_marginStart="3dp"/>
+
+                </LinearLayout>
+
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
