@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int tab_position;
     private String search_input;
 
+
     /**
      * Set up and initialize layouts and variables
      * @param savedInstanceState state
@@ -220,7 +221,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Bundle bundle;
                 switch (item.getItemId()){
                     case R.id.home:
-                        fab.setVisibility(View.VISIBLE);
                         bottomNavView.setVisibility(View.VISIBLE);
                         transaction = getSupportFragmentManager().beginTransaction();
                         bundle = new Bundle();

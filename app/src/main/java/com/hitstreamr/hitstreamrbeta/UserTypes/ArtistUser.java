@@ -1,7 +1,8 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class ArtistUser {
-    public String firstname, lastname, email, username, address, city, state, country, phone, zip;
+
+    private String firstname, lastname, email, username, address, city, state, country, phone, zip;
 
     public ArtistUser(String firstname, String lastname, String email, String username, String address,
                       String city, String state, String country, String phone, String zip){
@@ -98,4 +99,5 @@ public class ArtistUser {
     public void setZip(String zip) {
         this.zip = zip;
     }
+
 }

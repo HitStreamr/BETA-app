@@ -3,11 +3,11 @@ package com.hitstreamr.hitstreamrbeta;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-public class VideoView extends AppCompatActivity {
+public class Comments extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_view);
+        setContentView(R.layout.activity_comments);
     }
 }

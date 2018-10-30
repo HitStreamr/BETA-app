@@ -180,7 +180,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         cancelUploadBtn = findViewById(R.id.cancelVideoUpload);
         //deleteContributorBtn =findViewById(R.id.deleteContributor);
 
-        //VideoView
+        //VideoPlayer
         artistUploadVideo = findViewById(R.id.videoView);
 
         //Edittext

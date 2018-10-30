@@ -1,7 +1,7 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class User {
-    public String username, email;
+    private String username, email;
 
     public User() { }
 
@@ -25,4 +25,5 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
 }

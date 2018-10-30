@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ReportVideoPopup"
+    android:gravity="center"
+    android:elevation="4dp">
+    
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Report Video"
+            android:textSize="16sp"
+            android:textColor="@android:color/black"
+            android:textStyle="bold"
+            android:layout_marginBottom="5dp"/>
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/litgryAccent" />
+
+
+
+        <RadioGroup
+            android:id="@+id/rRadioBtnGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/scRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sexual Content"
+                android:textSize="12sp"/>
+
+            <RadioButton
+                android:id="@+id/vorRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Violent or repulsive content"
+                android:textSize="12sp"/>
+
+            <RadioButton
+                android:id="@+id/hoaspamRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hateful or abusive content"
+                android:textSize="12sp"/>
+
+            <RadioButton
+                android:id="@+id/caRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Child abuse"
+                android:textSize="12sp"/>
+
+            <RadioButton
+                android:id="@+id/imrRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Infringes my rights"
+                android:textSize="12sp"/>
+
+            <RadioButton
+                android:id="@+id/ptRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Promotes terrorism"
+                android:textSize="12sp"/>
+
+            <RadioButton
+                android:id="@+id/spamRadioBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Spam or misleading"
+                android:textSize="12sp"/>
+
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/copyrightclaim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/copyrightclaim"
+            android:textSize="10sp"
+            android:layout_marginBottom="10dp"/>
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/litgryAccent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Cancel"
+                android:textColor="@color/colorPrimary"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:id="@+id/reportBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Report"
+                android:textColor="@color/litgryAccent"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
