@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResultClick(Video video) {
                 //Open Video Player for song
+                Log.e(TAG, "You clicked a video" +video);
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 startActivity(videoPlayerIntent);
@@ -627,6 +628,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+
     /**
      *
      * @param item item
@@ -973,6 +975,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+        if (suggestionAdapter != null) {
+            suggestionAdapter.startListening();
+        }
     }
 
     @Override

@@ -95,8 +95,8 @@
                     android:layout_gravity="center_vertical"
                     android:src="@drawable/ic_favorite_black_24dp" />
 
-                <ImageView
-                    android:id="@+id/addToPlaylist"
+                <ImageButton
+                    android:id="@+id/rePostVideo"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
@@ -109,6 +109,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="10dp"
+                    android:onClick="showVideoPlayerOverflow"
                     android:src="@drawable/ic_more_vert" />
 
             </LinearLayout>

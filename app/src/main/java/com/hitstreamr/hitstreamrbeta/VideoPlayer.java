@@ -1,16 +1,19 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +37,6 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +49,7 @@ import com.google.firebase.storage.StorageReference;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener {
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
     private static final String TAG = "PlayerActivity";
 
     // bandwidth meter to measure and estimate bandwidth
@@ -64,6 +66,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //ImageButton
     private ImageButton collapseDecriptionBtn;
     private ImageButton likeBtn;
+    private ImageButton repostBtn;
 
     //TextView
     private TextView TextViewVideoDescription;
@@ -83,6 +86,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     DatabaseReference myRef;
 
     private Boolean VideoLiked = false;
+    private Boolean VideoReposted = false;
 
 
     private long playbackPosition;
@@ -116,6 +120,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //ImageButton
         collapseDecriptionBtn = findViewById(R.id.collapseDescription);
         likeBtn = findViewById(R.id.fave);
+        repostBtn = findViewById(R.id.rePostVideo);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
@@ -129,47 +134,87 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         artistName.setText(vid.getUsername());
         artistNameBold.setText(vid.getUsername());
 
-        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUsername());
+        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
 
         if (artistProfReference == null) {
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(artistProfPic);
         } else {
-            Glide.with(getApplicationContext()).load(artistProfPic).into(artistProfPic);
+            Glide.with(getApplicationContext()).load(artistProfReference).into(artistProfPic);
         }
 
         //Listners
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
+        repostBtn.setOnClickListener(this);
 
         checkLikes();
 
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fbeliever?alt=media&token=eb45446e-54bf-4c22-9c91-26e72d5211e4");
-        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fscreentest3?alt=media&token=bf2437ba-81ff-4ee3-bf58-f57dbe6dae23");
+
+        videoUri = Uri.parse(vid.getUrl());
+    }
+
+    public void showVideoPlayerOverflow(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.video_player_overflow_menu);
+        popupMenu.show();
     }
 
     private void checkLikes() {
         FirebaseDatabase.getInstance().getReference("VideoLikes")
-                .child(vid.getUserId())
-                .child("userID")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String value = dataSnapshot.getValue(String.class);
-                        if(value.equals("true")){
-                            /*int fillColor = Color.parseColor("#FF000000");
-                        likeBtn.setBackgroundColor(fillColor);*/
-                            Log.e(TAG, "Already Liked");
-                            VideoLiked = true;
+                        if (dataSnapshot.exists()) {
+                            if (value.equals(currentFirebaseUser.getUid())) {
+                                int fillColor = Color.parseColor("#ff13ae");
+                                likeBtn.setColorFilter(fillColor);
+                                Log.e(TAG, "Video not Liked");
+                                VideoLiked = true;
+                                checkRepost();
+                            }
+                        } else {
+                            VideoLiked = false;
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
     }
 
+
+    private void checkRepost() {
+        FirebaseDatabase.getInstance().getReference("Repost")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String value = dataSnapshot.getValue(String.class);
+                        if (dataSnapshot.exists()) {
+                            if (value.equals(currentFirebaseUser.getUid())) {
+                                int fillColor = Color.parseColor("#ff13ae");
+                                repostBtn.setColorFilter(fillColor);
+                                Log.e(TAG, "Video not Reposted");
+                                VideoReposted = true;
+                            }
+                        } else {
+                            VideoReposted = false;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
 
 
     @Override
@@ -254,44 +299,46 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private void likeVideo() {
         Log.e(TAG, "Your video Id is:" + vid.getVideoId());
-        Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
         String ttt = "true";
 
         FirebaseDatabase.getInstance()
                 .getReference("VideoLikes")
-                .child(vid.getUserId())
-                .child("userID")
-                .setValue(ttt)
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
+                .setValue(currentFirebaseUser.getUid())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        finished();
-                        /*int fillColor = Color.parseColor("#DFDFE0");
-                        likeBtn.setBackgroundColor(fillColor);*/
+                        finishedLike();
+                        int fillColor = Color.parseColor("#ff13ae");
+                        likeBtn.setColorFilter(fillColor);
                         VideoLiked = true;
-                        Log.e(TAG, "Video is liked " +VideoLiked);
+                        Log.e(TAG, "Video is liked " + VideoLiked);
                     }
                 });
     }
 
-    private void cancelLikeVideo(){
+    private void cancelLikeVideo() {
         FirebaseDatabase.getInstance()
                 .getReference("VideoLikes")
-                .child(vid.getUserId())
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
                 /*.child("userID")*/
                 .removeValue()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        /*int fillColor = Color.parseColor("#FF000000");
-                        likeBtn.setBackgroundColor(fillColor);*/
+                        int fillColor = Color.parseColor("#000000");
+                        likeBtn.setColorFilter(fillColor);
                         VideoLiked = false;
-                        Log.e(TAG, "Video like is cancelled " +VideoLiked);
+                        Log.e(TAG, "Video like is cancelled " + VideoLiked);
                     }
                 });
     }
 
-    private void finished() {
+    private void finishedLike() {
         /*FirebaseDatabase.getInstance().getReference("VideoLikes")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -306,9 +353,79 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
+        Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+    }
+
+    private void finishedRepost() {
+        /*FirebaseDatabase.getInstance().getReference("VideoLikes")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long value = dataSnapshot.getChildrenCount();
+                        Log.e(TAG, "Value is: " + value);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });*/
+        Toast.makeText(VideoPlayer.this, "You reposted", Toast.LENGTH_SHORT).show();
+    }
+
+    private void repostVideo() {
+        Log.e(TAG, "Your video Id is:" + vid.getVideoId());
+        //Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
+
+        FirebaseDatabase.getInstance()
+                .getReference("Repost")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
+                .setValue(currentFirebaseUser.getUid())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        finishedRepost();
+                        int fillColor = Color.parseColor("#ff13ae");
+                        repostBtn.setColorFilter(fillColor);
+                        VideoReposted = true;
+                        Log.e(TAG, "Video is reposted " + VideoReposted);
+                    }
+                });
+    }
+
+    private void cancelRepostVideo() {
+        FirebaseDatabase.getInstance()
+                .getReference("Repost")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        int fillColor = Color.parseColor("#000000");
+                        repostBtn.setColorFilter(fillColor);
+                        VideoReposted = false;
+                        Log.e(TAG, "Video Repost is cancelled " + VideoReposted);
+                    }
+                });
+    }
 
 
-        Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.reportVideo:
+                Intent reportAct = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                reportAct.putExtra("VideoId", vid.getVideoId());
+                startActivity(reportAct);
+                break;
+            case R.id.addWatchLater:
+                break;
+        }
+        return true;
     }
 
 
@@ -423,12 +540,20 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (view == likeBtn) {
             //Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
 
-            if(!VideoLiked){
+            if (!VideoLiked) {
                 likeVideo();
-            }else{
+            } else {
                 cancelLikeVideo();
             }
-            //likeVideo();
+        }
+
+        if (view == repostBtn) {
+            Log.e(TAG, "repost clicked");
+            if (!VideoReposted) {
+                repostVideo();
+            } else {
+                cancelRepostVideo();
+            }
         }
     }
 }

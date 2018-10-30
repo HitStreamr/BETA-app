@@ -57,11 +57,12 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
-        <activity android:name=".VideoPlayer"/>
+        <activity android:name=".VideoPlayer" />
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
-        <activity android:name=".ChangePassword"></activity>
-        <activity android:name=".Library"></activity>
+        <activity android:name=".ChangePassword" />
+        <activity android:name=".Library" />
+        <activity android:name=".ReportVideoPopup"></activity>
     </application>
 
 </manifest>
