@@ -142,7 +142,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //set up UI for following
         checkFollowing(new OnDataReceiveCallback() {
             @Override
-            public void onFollowReceived(boolean following) {
+            public void onFollowChecked(boolean following) {
                 if(following){
                     //if following == true
                     follow.setVisibility(View.GONE);
@@ -168,7 +168,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         likeBtn.setOnClickListener(this);
 
         //checkLikes();
-
 
         videoUri = Uri.parse(vid.getUrl());
     }
@@ -440,16 +439,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
-        database.getReference().child("following").child(vid.getUserId()).addValueEventListener(new ValueEventListener() {
+        // check who the user is following
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e(TAG, dataSnapshot.getKey() + " Value: " + dataSnapshot.getValue());
-                if (dataSnapshot.child(currentFirebaseUser.getUid()).exists()){
+                if (dataSnapshot.child(vid.getUserId()).exists()){
                     Log.e(TAG, "Following");
-                   callback.onFollowReceived(true);
+                    callback.onFollowChecked(true);
                 }else{
                     Log.e(TAG, "Not Following");
-                    callback.onFollowReceived(false);
+                    callback.onFollowChecked(false);
                 }
             }
 
@@ -564,6 +563,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         /*
          *   Method that notifies the ui that the Data was received
         */
-        void onFollowReceived(boolean following);
+        void onFollowChecked(boolean following);
     }
 }

@@ -88,4 +88,5 @@
     <string name="password_hint">Password</string>
     <string name="email_request_rest_password">Enter email associated with account.</string>
     <string name="confirm">Confirm</string>
+    <string name="follow_notification_channel_id">New Follows</string>
 </resources>

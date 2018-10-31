@@ -57,11 +57,17 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
-        <activity android:name=".VideoPlayer"/>
+        <activity android:name=".VideoPlayer" />
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
-        <activity android:name=".ChangePassword"></activity>
-        <activity android:name=".Library"></activity>
+        <activity android:name=".ChangePassword" />
+        <activity android:name=".Library" />
+
+        <service android:name=".HitStreamrFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
