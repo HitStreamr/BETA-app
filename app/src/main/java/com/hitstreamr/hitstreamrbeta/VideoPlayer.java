@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -47,6 +48,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
@@ -63,8 +68,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //Layout
     private LinearLayout DescLayout;
 
+    //Button
+    private Button collapseDecriptionBtn;
+
     //ImageButton
-    private ImageButton collapseDecriptionBtn;
     private ImageButton likeBtn;
     private ImageButton repostBtn;
 
@@ -73,6 +80,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView TextViewTitle;
     private TextView artistNameBold;
     private TextView artistName;
+    private TextView TextViewLikesCount;
+    private TextView TextViewRepostCount;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -87,6 +96,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private Boolean VideoLiked = false;
     private Boolean VideoReposted = false;
+    private Long VideoLikesCount;
+    private Long VideoRepostCount;
 
 
     private long playbackPosition;
@@ -117,16 +128,20 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //Profile Picture
         artistProfPic = findViewById(R.id.artistProfilePicture);
 
-        //ImageButton
+        //Button
         collapseDecriptionBtn = findViewById(R.id.collapseDescription);
+
+        //ImageButton
         likeBtn = findViewById(R.id.fave);
         repostBtn = findViewById(R.id.rePostVideo);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
         TextViewVideoDescription.setText(vid.getDescription());
+        TextViewLikesCount = findViewById(R.id.videoLikes);
+        TextViewRepostCount = findViewById(R.id.repostCount);
 
-        TextViewTitle = findViewById(R.id.videoPlayerTitle);
+        TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
 
         artistNameBold = findViewById(R.id.artistNameBold);
@@ -148,6 +163,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         repostBtn.setOnClickListener(this);
 
         checkLikes();
+        checkRepost();
+        checkLikesCount();
+        checkRepostCount();
 
 
         videoUri = Uri.parse(vid.getUrl());
@@ -173,12 +191,32 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                             if (value.equals(currentFirebaseUser.getUid())) {
                                 int fillColor = Color.parseColor("#ff13ae");
                                 likeBtn.setColorFilter(fillColor);
-                                Log.e(TAG, "Video not Liked");
+                                //Log.e(TAG, "Video not Liked");
                                 VideoLiked = true;
-                                checkRepost();
                             }
                         } else {
                             VideoLiked = false;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void checkLikesCount() {
+        FirebaseDatabase.getInstance().getReference("VideoLikes")
+                .child(vid.getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            VideoLikesCount = dataSnapshot.getChildrenCount();
+                            //VideoLikesCount = 1100L;
+                            String temp = formatt(VideoLikesCount);
+                            Log.e(TAG, "Video Count likes : " + temp);
+                            TextViewLikesCount.setText(temp);
                         }
                     }
 
@@ -214,6 +252,52 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
+    }
+
+    private void checkRepostCount() {
+        FirebaseDatabase.getInstance().getReference("Repost")
+                .child(vid.getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            VideoRepostCount = dataSnapshot.getChildrenCount();
+                            String temp = formatt(VideoRepostCount);
+                            Log.e(TAG, "Repost Count : " + temp);
+                            TextViewRepostCount.setText(temp);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String formatt(long value) {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return formatt(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + formatt(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
 
@@ -413,6 +497,28 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    private void registerWatchLater() {
+        FirebaseDatabase.getInstance()
+                .getReference("WatchLater")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+                .child("VideoId")
+                .setValue(vid.getVideoId())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Log.e(TAG, "Video is added to Watch Later ");
+                        finishedWatchLater();
+                    }
+                });
+    }
+
+    private void finishedWatchLater() {
+        Toast.makeText(VideoPlayer.this, "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
+
+    }
+
 
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
@@ -423,6 +529,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 startActivity(reportAct);
                 break;
             case R.id.addWatchLater:
+                registerWatchLater();
                 break;
         }
         return true;
@@ -523,23 +630,24 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         public void onAudioDisabled(DecoderCounters counters) {
             // Do nothing.
         }
+
     }
 
     @Override
     public void onClick(View view) {
         if (view == collapseDecriptionBtn) {
             if (!collapseVariable) {
-                TextViewVideoDescription.setVisibility(View.GONE);
+                //TextViewVideoDescription.setVisibility(View.GONE);
+                DescLayout.setVisibility(View.GONE);
                 collapseVariable = true;
             } else if (collapseVariable) {
-                TextViewVideoDescription.setVisibility(View.VISIBLE);
+                //TextViewVideoDescription.setVisibility(View.VISIBLE);
+                DescLayout.setVisibility(View.VISIBLE);
                 collapseVariable = false;
             }
         }
 
         if (view == likeBtn) {
-            //Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
-
             if (!VideoLiked) {
                 likeVideo();
             } else {

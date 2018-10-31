@@ -24,7 +24,7 @@
                 android:id="@+id/back"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@drawable/ic_action_navigation_arrow_back"/>
+                android:background="@drawable/ic_keyboard_arrow_left_black_24dp"/>
 
             <TextView
                 android:id="@+id/comments"
