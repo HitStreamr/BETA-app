@@ -36,7 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -58,8 +57,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup, goBack, profilePictureBtn;
+    private Button signup, profilePictureBtn;
     private RadioButton termsCond;
+
+    private Button goBack;
 
     //ImageView
     private ImageView imageViewProfile;
@@ -117,17 +118,17 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mStorageRef = storage.getReference();
 
         // Views
-        mFirstName = findViewById(R.id.firstName);
-        mLastName = findViewById(R.id.lastName);
-        mEmail = findViewById(R.id.email);
-        mPassword = findViewById(R.id.Password);
-        mUsername = findViewById(R.id.Username);
-        mAddress = findViewById(R.id.addressLine1);
-        mCity = findViewById(R.id.city);
-        mState = findViewById(R.id.state);
-        mZipcode = findViewById(R.id.zip);
-        mCountry = findViewById(R.id.country);
-        mPhone = findViewById(R.id.phone);
+        mFirstName = findViewById(R.id.artistFirstName);
+        mLastName = findViewById(R.id.artistLastName);
+        mEmail = findViewById(R.id.artistEmail);
+        mPassword = findViewById(R.id.artistPassword);
+        mUsername = findViewById(R.id.artistUsername);
+        mAddress = findViewById(R.id.artistAddressLine1);
+        mCity = findViewById(R.id.artistCity);
+        mState = findViewById(R.id.artistState);
+        mZipcode = findViewById(R.id.artistZip);
+        mCountry = findViewById(R.id.artistCountry);
+        mPhone = findViewById(R.id.artistPhone);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -136,7 +137,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         profilePictureBtn = findViewById(R.id.artistPicture);
 
         //Image View
-        imageViewProfile = findViewById(R.id.profileImage);
+        imageViewProfile = findViewById(R.id.artistProfilePicture);
 
         // Listeners
         signup.setOnClickListener(this);
@@ -293,7 +294,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     }
                 });
     }
-
 
     /**
      * Check if first name input is valid.

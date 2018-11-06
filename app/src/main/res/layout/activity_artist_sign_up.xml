@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,27 +9,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="15dp">
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/backBtn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
-                android:layout_gravity="center_vertical" />
+                android:background="@drawable/ic_keyboard_arrow_left_black_24dp" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
+                android:gravity="end"
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -47,9 +48,9 @@
                 <ImageView
                     android:layout_width="8dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/sidebar_page_type"
                     android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/sidebar" />
+                    android:contentDescription="@string/sidebar"
+                    android:src="@drawable/sidebar_page_type" />
 
             </LinearLayout>
 
@@ -59,10 +60,10 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="20dp"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp">
 
 
             <LinearLayout
@@ -70,32 +71,39 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/artistProfilePicture"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/artist" />
+
+                <!--<ImageView
                     android:id="@+id/profileImage"
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_gravity="center_horizontal"
-                    android:src="@drawable/artist"/>
+                    android:src="@drawable/artist"/>-->
 
                 <Button
                     android:id="@+id/artistPicture"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
-                    android:text="Upload Photo"
-                    android:textStyle="bold"
-                    android:textColor="@color/colorAccent"
-                    android:background="@android:color/transparent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="15dp"/>
+                    android:layout_marginBottom="15dp"
+                    android:background="@android:color/transparent"
+                    android:text="Upload Photo"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
 
                     <EditText
-                        android:id="@+id/firstName"
+                        android:id="@+id/artistFirstName"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="10dp"
@@ -103,61 +111,60 @@
                         android:ems="10"
                         android:hint="First Name"
                         android:inputType="textPersonName"
-                        android:paddingBottom="3dp"
+                        android:maxLength="26"
+                        android:nextFocusRight="@+id/lastName"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:maxLength="26"
-                        android:textCursorDrawable="@null"
-                        android:nextFocusRight="@+id/lastName"/>
+                        android:paddingBottom="3dp"
+                        android:textCursorDrawable="@null" />
 
                     <EditText
-                        android:id="@+id/lastName"
+                        android:id="@+id/artistLastName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:ems="10"
-                        android:inputType="textPersonName"
-                        android:hint="Last Name"
                         android:background="@drawable/button2"
+                        android:ems="10"
+                        android:hint="Last Name"
+                        android:inputType="textPersonName"
+                        android:maxLength="26"
+                        android:paddingLeft="10dp"
                         android:paddingTop="3dp"
                         android:paddingBottom="3dp"
-                        android:paddingLeft="10dp"
-                        android:maxLength="26"
-                        android:textCursorDrawable="@null"/>
+                        android:textCursorDrawable="@null" />
 
                 </LinearLayout>
 
                 <EditText
-                    android:id="@+id/email"
+                    android:id="@+id/artistEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button2"
                     android:ems="10"
-                    android:inputType="textEmailAddress"
                     android:hint="Email"
-                    android:background="@drawable/button2"
+                    android:inputType="textEmailAddress"
+                    android:paddingLeft="10dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:textCursorDrawable="@null" />
 
                 <EditText
-                    android:id="@+id/phone"
+                    android:id="@+id/artistPhone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="phone"
-                    android:hint="000-000-0000"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/button2"
+                    android:ems="10"
+                    android:hint="000-000-0000"
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:paddingLeft="10dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:maxLength="10"
-                    android:textCursorDrawable="@null"
-                    />
+                    android:textCursorDrawable="@null" />
 
                 <EditText
-                    android:id="@+id/addressLine1"
+                    android:id="@+id/artistAddressLine1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
@@ -165,24 +172,24 @@
                     android:ems="10"
                     android:hint="Address Line 1"
                     android:inputType="textPostalAddress"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
                     android:paddingTop="3dp"
-                    android:textCursorDrawable="@null"/>
+                    android:paddingBottom="3dp"
+                    android:textCursorDrawable="@null" />
 
                 <EditText
-                    android:id="@+id/city"
+                    android:id="@+id/artistCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPostalAddress"
-                    android:hint="City"
+                    android:layout_marginBottom="10dp"
                     android:background="@drawable/button2"
+                    android:ems="10"
+                    android:hint="City"
+                    android:inputType="textPostalAddress"
+                    android:paddingLeft="10dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
-                    android:paddingLeft="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:textCursorDrawable="@null"/>
+                    android:textCursorDrawable="@null" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -191,95 +198,94 @@
 
 
                     <EditText
-                        android:id="@+id/zip"
+                        android:id="@+id/artistZip"
                         android:layout_width="150dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
                         android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
                         android:background="@drawable/button2"
                         android:ems="10"
                         android:hint="Zip Code"
-                        android:maxLength="5"
                         android:inputType="number"
-                        android:paddingBottom="3dp"
+                        android:maxLength="5"
                         android:paddingLeft="10dp"
                         android:paddingTop="3dp"
-                        android:textCursorDrawable="@null"/>
+                        android:paddingBottom="3dp"
+                        android:textCursorDrawable="@null" />
 
                     <Spinner
-                        android:id="@+id/state"
+                        android:id="@+id/artistState"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginBottom="10dp"
                         android:background="@drawable/button2"
                         android:ems="10"
                         android:entries="@array/stateAbbrev"
-                        android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp" />
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp" />
 
                 </LinearLayout>
 
                 <Spinner
-                    android:id="@+id/country"
+                    android:id="@+id/artistCountry"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/button2"
                     android:ems="10"
                     android:entries="@array/country"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="10dp"
-                    android:paddingTop="3dp" />
-
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp" />
 
 
                 <EditText
-                    android:id="@+id/Username"
+                    android:id="@+id/artistUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textEmailAddress"
-                    android:hint="Username"
-                    android:background="@drawable/button2"
-                    android:paddingTop="3dp"
-                    android:paddingBottom="3dp"
-                    android:paddingLeft="10dp"
                     android:layout_marginBottom="10dp"
-                    android:maxLength="15"
-                    android:textCursorDrawable="@null"/>
-
-                <EditText
-                    android:id="@+id/Password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPassword"
-                    android:hint="Password"
                     android:background="@drawable/button2"
+                    android:ems="10"
+                    android:hint="Username"
+                    android:inputType="textEmailAddress"
+                    android:maxLength="15"
+                    android:paddingLeft="10dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"
+                    android:textCursorDrawable="@null" />
+
+                <EditText
+                    android:id="@+id/artistPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:background="@drawable/button2"
+                    android:ems="10"
+                    android:hint="Password"
+                    android:inputType="textPassword"
                     android:paddingLeft="10dp"
-                    android:layout_marginBottom="15dp"/>
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp" />
 
                 <RadioButton
                     android:id="@+id/tos_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="15dp"
                     android:text="I agree to the Terms and Conditions."
                     android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:layout_marginBottom="15dp"
-                    android:layout_gravity="center_horizontal"/>
+                    android:textSize="12sp" />
 
                 <Button
                     android:id="@+id/signup_button"
                     android:layout_width="180dp"
                     android:layout_height="40dp"
-                    android:text="Sign Up"
-                    android:textColor="@android:color/white"
+                    android:layout_gravity="center_horizontal"
                     android:background="@drawable/button1"
-                    android:layout_gravity="center_horizontal"/>
+                    android:text="Sign Up"
+                    android:textColor="@android:color/white" />
 
                 <com.facebook.login.widget.LoginButton
                     android:id="@+id/fblogin_button"
@@ -293,21 +299,12 @@
                     android:id="@+id/textviewsignin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Alreay have an account? SignIn here!"
-                    android:textColor="@color/colorAccent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="60dp"
-                    />
-
+                    android:text="Alreay have an account? SignIn here!"
+                    android:textColor="@color/colorAccent" />
 
             </LinearLayout>
-
         </ScrollView>
-
-
-
     </LinearLayout>
-
-
-
 </RelativeLayout>

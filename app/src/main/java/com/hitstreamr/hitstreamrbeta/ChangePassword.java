@@ -1,21 +1,31 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.regex.Pattern;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChangePassword extends AppCompatActivity implements View.OnClickListener {
 
@@ -26,6 +36,9 @@ public class ChangePassword extends AppCompatActivity implements View.OnClickLis
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private Button changepasswordtBtn;
+    private CircleImageView circleImageView;
+    private String accountType;
+
 
     //Regex pattern for password.
     private static final Pattern PASSWORD_PATTERN =
@@ -44,6 +57,13 @@ public class ChangePassword extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_password);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
         eCurrentpassword = findViewById(R.id.currentPassword);
         eNewpassword = findViewById(R.id.NewPassword1);
         reenterpassword = findViewById(R.id.NewPassword2);
@@ -56,6 +76,48 @@ public class ChangePassword extends AppCompatActivity implements View.OnClickLis
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
+        getUserType();
+        // Show username on toolbar
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
+                .child(user.getUid());
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String username = dataSnapshot.child("username").getValue(String.class);
+                getSupportActionBar().setTitle(username);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        myRef.addListenerForSingleValueEvent(eventListener);
+
+        // Profile Picture
+        circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+        circleImageView.setVisibility(View.VISIBLE);
+        Uri photoURL = user.getPhotoUrl();
+        Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+
+    }
+
+    /**
+     * Get the account type of the current user
+     */
+    private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+            //type = getIntent().getStringExtra("TYPE");
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                // sth
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
     }
 
     private void changepwd(){
@@ -150,6 +212,12 @@ public class ChangePassword extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onBackPressed() {
             super.onBackPressed();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
 }

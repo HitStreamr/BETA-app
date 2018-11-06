@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -68,6 +69,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView TextViewTitle;
     private TextView artistNameBold;
     private TextView artistName;
+    private TextView follow;
+    private TextView unfollow;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -119,7 +122,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewVideoDescription = findViewById(R.id.videoDescription);
         TextViewVideoDescription.setText(vid.getDescription());
 
-        TextViewTitle = findViewById(R.id.Title);
+        TextViewTitle = findViewById(R.id.videoPlayerTitle);
         TextViewTitle.setText(vid.getTitle());
 
         artistNameBold = findViewById(R.id.artistNameBold);
@@ -127,24 +130,46 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         artistName.setText(vid.getUsername());
         artistNameBold.setText(vid.getUsername());
 
-        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUsername());
+        follow = findViewById(R.id.followButton);
+        unfollow = findViewById(R.id.unfollowButton);
+
+        follow.setOnClickListener(this);
+        unfollow.setOnClickListener(this);
+
+        follow.setVisibility(View.GONE);
+        unfollow.setVisibility(View.GONE);
+
+        //set up UI for following
+        checkFollowing(new OnDataReceiveCallback() {
+            @Override
+            public void onFollowChecked(boolean following) {
+                if(following){
+                    //if following == true
+                    follow.setVisibility(View.GONE);
+                    unfollow.setVisibility(View.VISIBLE);
+                }else{
+                    //if following == false
+                    follow.setVisibility(View.VISIBLE);
+                    unfollow.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
 
         if (artistProfReference == null) {
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(artistProfPic);
         } else {
-            Glide.with(getApplicationContext()).load(artistProfPic).into(artistProfPic);
+            Glide.with(getApplicationContext()).load(artistProfReference).into(artistProfPic);
         }
 
-        //Listners
+        //Listeners
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
 
-        checkLikes();
+        //checkLikes();
 
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2FHJsb8mUO2lgueTaCrs7JgIbxmJ82%2Framanuja?alt=media&token=59489ad2-977e-496a-864b-61816539220a");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F0p4OHsSkWuMMAJzPCqmQXxtzkGt2%2Fmp4%2FmusicvideoB?alt=media&token=01fe7238-a40c-4eaf-b4a4-6a6e4baef2a5");
-        //videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fbeliever?alt=media&token=eb45446e-54bf-4c22-9c91-26e72d5211e4");
-        videoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/videos%2F9UeYFJxKToThqNwmZdeqbI8gOaA2%2Fmp4%2Fscreentest3?alt=media&token=bf2437ba-81ff-4ee3-bf58-f57dbe6dae23");
+        videoUri = Uri.parse(vid.getUrl());
     }
 
     private void checkLikes() {
@@ -406,6 +431,97 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    /* Following Code
+        Save Following - the former saves the user id to the artist they are following
+
+        Save Unfollowing and Record Unfollow - the former removes the user id from the artist they are following
+     */
+
+    private void checkFollowing(OnDataReceiveCallback callback){
+        //get where the following state would be
+        // check who the user is following
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(vid.getUserId()).exists()){
+                    Log.e(TAG, "Following");
+                    callback.onFollowChecked(true);
+                }else{
+                    Log.e(TAG, "Not Following");
+                    callback.onFollowChecked(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void saveFollowing(){
+        FirebaseDatabase.getInstance().getReference("following")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getUserId())
+                .setValue(vid.getUserId())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        // do the Reciprocal on Success
+                        // artistFollowers -> user
+                        FirebaseDatabase.getInstance().getReference("followers")
+                                .child(vid.getUserId())
+                                .child(currentFirebaseUser.getUid())
+                                .setValue(currentFirebaseUser.getUid())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        // hide/show the UI
+                                        follow.setVisibility(View.GONE);
+                                        unfollow.setVisibility(View.VISIBLE);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            //TODO Error for following failing
+                                        }
+                                    });
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                //TODO Error for following failing
+            }
+        });
+    }
+
+    private void saveUnfollowing(){
+        FirebaseDatabase.getInstance()
+                .getReference("following")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getUserId())
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //remove user from artist's list of followers
+                        FirebaseDatabase.getInstance()
+                                .getReference("followers")
+                                .child(vid.getUserId())
+                                .child(currentFirebaseUser.getUid())
+                                .removeValue()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        //update UI
+                                        unfollow.setVisibility(View.GONE);
+                                        follow.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                    }
+                });
+    }
+
+
     @Override
     public void onClick(View view) {
         if (view == collapseDecriptionBtn) {
@@ -428,5 +544,25 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
             //likeVideo();
         }
+
+        // Following and Unfollowing
+        if(view == follow){
+            saveFollowing();
+        }
+
+        if(view == unfollow){
+            saveUnfollowing();
+        }
+    }
+
+
+    /*
+        Provides interface for the callback for Async call to Firebase
+     */
+    public interface OnDataReceiveCallback {
+        /*
+         *   Method that notifies the ui that the Data was received
+        */
+        void onFollowChecked(boolean following);
     }
 }

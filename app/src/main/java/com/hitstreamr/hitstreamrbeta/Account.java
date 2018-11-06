@@ -220,6 +220,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
             }
         });
+
+        /*//Profile Picture
+        if (user.getPhotoUrl() != null) {
+            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }*/
+
     }
 
     public void showArtistData(DataSnapshot dataSnapshot) {
