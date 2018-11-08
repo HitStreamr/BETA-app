@@ -97,6 +97,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     ArtistUser artist;
     ArtistUser artist_object;
     User basicUser;
+    User oldBasic;
 
     private Uri selectedImagePath;
 
@@ -276,11 +277,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         String email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
+        String userID = dataSnapshot.child("userID").getValue(String.class);
+        oldBasic = new User(username, email,userID);
 
-        User basic = new User(username, email);
-
-        EditTextEmail.setText(basic.getEmail());
-        EditTextUsername.setText(basic.getUsername());
+        EditTextEmail.setText(oldBasic.getEmail());
+        EditTextUsername.setText(oldBasic.getUsername());
 
         getSupportActionBar().setTitle(username);
     }
@@ -296,7 +297,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.show();
         progressDialog.setMessage("Registering New User...");*/
 
-        basicUser = new User(username, email);
+        //make sure the basic user has the write id
+        basicUser = new User(username, email, oldBasic.getUserID());
+        oldBasic = basicUser;
 
         if (selectedImagePath != null) {
             uploadFromUri(selectedImagePath);

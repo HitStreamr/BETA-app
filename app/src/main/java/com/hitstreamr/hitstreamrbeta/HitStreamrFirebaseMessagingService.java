@@ -5,9 +5,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -20,6 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.hitstreamr.hitstreamrbeta.Authentication.Splash;
+
+import java.util.Map;
+import java.util.Objects;
 //TODO APACHE NOTICE
 /**
  *
@@ -29,6 +34,7 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
 
     private static final String TAG = "MyFirebaseMsgService";
     private final int REQUEST_CODE = 9012;
+    private final int FOLLOW_NOTIF = 1234;
 
     /**
      * Called when message is received.
@@ -58,28 +64,27 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
-        // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-            if (/* Check if data needs to be processed by long running job */ false) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
-            }
-
-        }
-
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
+        // Check if message contains a data payload.
+        if (remoteMessage.getData().size() > 0) {
+            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
 
+            if (remoteMessage.getData().containsKey("time") && remoteMessage.getData().get("time").equalsIgnoreCase("short")) {
+                // Handle message within 10 seconds
+                if(remoteMessage.getData().containsKey("type")){
+                    handleNow(remoteMessage.getData().get("type"),remoteMessage);
+                }
+
+            } else {
+                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
+                scheduleJob();
+            }
+
+        }
     }
     // [END receive_message]
 
@@ -113,7 +118,16 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
     /**
      * Handle time allotted to BroadcastReceivers.
      */
-    private void handleNow() {
+    private void handleNow(String type, RemoteMessage message) {
+        switch(type){
+            case "follow":
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+                if(sp.contains("newFollow") && sp.contains("allNotifs") && sp.getBoolean("allNotifs", false) && sp.getBoolean("newFollow",false))
+                    sendNotification(message.getData());
+                break;
+            default:
+                break;
+        }
         Log.d(TAG, "Short lived task is done.");
     }
 
@@ -127,44 +141,46 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
      */
     private void sendRegistrationToServer(String token) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase.getInstance().getReference("FirebaseNotificationTokens")
-                .child(user.getUid())
-                .child("Tokens")
-                .child(token)
-                .setValue(true)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "New Token Saved" );
-                        } else {
-                            //Display a failure message
-                            Log.e(TAG, "Failed to Save New Token");
-                        }
-                    }
 
-                });
+        if(user != null) {
+            //if we have a user overwrite their old token
+            FirebaseDatabase.getInstance().getReference("FirebaseNotificationTokens")
+                    .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                    .child(token)
+                    .setValue(true)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                Log.d(TAG, "New Token Saved");
+                            }
+                        }
+                    });
+        }
     }
+
+
 
     /**
      * Create and show a simple notification containing the received FCM message.
      *
-     * @param messageBody FCM message body received.
+     * @param message FCM message body received as a Map
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(Map<String, String> message) {
         //Redirect to Splash in case they aren't logged in
         Intent intent = new Intent(this, Splash.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, REQUEST_CODE /* Request code */, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, REQUEST_CODE, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         String channelId = getString(R.string.follow_notification_channel_id);
+        //TODO Should this use the Hitstreamer or Prof Pic
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.hitstreamr_icon)
-                        .setContentTitle("New follow")
-                        .setContentText(messageBody)
+                        .setContentTitle(message.get("title"))
+                        .setContentText(message.get("body"))
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
@@ -180,7 +196,7 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
             notificationManager.createNotificationChannel(channel);
         }
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(FOLLOW_NOTIF, notificationBuilder.build());
     }
 }
 

@@ -80,6 +80,17 @@
                         android:textColor="@color/colorAccent"
                         />
 
+                    <Button
+                        android:id="@+id/unfollow_button"
+                        android:layout_width="80dp"
+                        android:layout_height="36dp"
+                        android:background="@drawable/button1"
+                        android:text="Unfollow"
+                        android:textSize="12sp"
+                        android:textColor="@color/colorAccent"
+                        android:visibility="gone"
+                        />
+
                 </LinearLayout>
 
             </LinearLayout>

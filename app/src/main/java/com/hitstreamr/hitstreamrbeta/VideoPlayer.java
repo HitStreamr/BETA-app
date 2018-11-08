@@ -153,6 +153,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     unfollow.setVisibility(View.GONE);
                 }
             }
+
+            @Override
+            public void onCheckUpdateFailed() {
+                Log.e("TAG", "Follow Check Failed");
+            }
         });
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
@@ -436,7 +441,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         Save Unfollowing and Record Unfollow - the former removes the user id from the artist they are following
      */
-
+    //TODO update these to more fault tolerant firebase updates?
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
         // check who the user is following
@@ -454,7 +459,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                callback.onCheckUpdateFailed();
             }
         });
     }
@@ -490,6 +495,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onFailure(@NonNull Exception e) {
                 //TODO Error for following failing
+
             }
         });
     }
@@ -564,5 +570,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
          *   Method that notifies the ui that the Data was received
         */
         void onFollowChecked(boolean following);
+        void onCheckUpdateFailed();
     }
 }

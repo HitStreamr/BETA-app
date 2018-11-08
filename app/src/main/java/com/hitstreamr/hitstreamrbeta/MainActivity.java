@@ -37,12 +37,16 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -265,6 +269,69 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
+                //set up UI for following
+                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                    @Override
+                    public void onFollowChecked(boolean following) {
+                        if(following){
+                            //if following == true
+                            holder.followButton.setVisibility(View.GONE);
+                            holder.unfollowButton.setVisibility(View.VISIBLE);
+                        }else{
+                            //if following == false
+                            holder.followButton.setVisibility(View.VISIBLE);
+                            holder.unfollowButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCheckUpdateFailed() {
+
+                    }
+                }, model.getUserID());
+
+                holder.followButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(following){
+                                    //if following == true
+                                    holder.followButton.setVisibility(View.GONE);
+                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(!following){
+                                    //if following == false
+                                    holder.followButton.setVisibility(View.VISIBLE);
+                                    holder.unfollowButton.setVisibility(View.GONE);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
             }
 
             @NonNull
@@ -283,7 +350,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param querySearch the input typed by the user
      */
     private void searchArtistAccounts(String querySearch) {
-        // Send a query to the database
         FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
         myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
                 .endAt(querySearch + "\uf8ff");
@@ -296,6 +362,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setUserName(model.getUsername());
+
             }
 
             @NonNull
@@ -657,15 +724,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
+        private TextView name;
+        private Button followButton;
+        private Button unfollowButton;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
             view = itemView;
+            name = view.findViewById(R.id.user_name);
+            followButton = view.findViewById(R.id.follow_button);
+            unfollowButton = view.findViewById(R.id.unfollow_button);
         }
 
         void setUserName(final String userName) {
-            TextView textView = view.findViewById(R.id.user_name);
-            textView.setText(userName);
+            name.setText(userName);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -678,30 +750,121 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
 
-
-            textView.setOnClickListener(new View.OnClickListener() {
+        }
+        private void checkFollowing(VideoPlayer.OnDataReceiveCallback callback,String followingId){
+            //get where the following state would be
+            // check who the user is following
+            FirebaseDatabase.getInstance().getReference().child("following").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(followingId).exists()){
+                        Log.e(TAG, "Following");
+                        callback.onFollowChecked(true);
+                    }else{
+                        Log.e(TAG, "Not Following");
+                        callback.onFollowChecked(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
             });
         }
+
+        //TODO update these to more fault tolerant firebase updates?
+        private void saveFollowing(VideoPlayer.OnDataReceiveCallback callback, String followedID){
+            FirebaseDatabase.getInstance().getReference("following")
+                    .child(user.getUid())
+                    .child(followedID)
+                    .setValue(followedID)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // do the Reciprocal on Success
+                            // artistFollowers -> user
+                            FirebaseDatabase.getInstance().getReference("followers")
+                                    .child(followedID)
+                                    .child(user.getUid())
+                                    .setValue(user.getUid())
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // hide/show the UI
+                                            callback.onFollowChecked(true);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //TODO Error for following failing
+                                    callback.onCheckUpdateFailed();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    //TODO Error for following failing
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void saveUnfollowing(VideoPlayer.OnDataReceiveCallback callback,String unfollowedID){
+            FirebaseDatabase.getInstance()
+                    .getReference("following")
+                    .child(user.getUid())
+                    .child(unfollowedID)
+                    .removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //remove user from artist's list of followers
+                            FirebaseDatabase.getInstance()
+                                    .getReference("followers")
+                                    .child(unfollowedID)
+                                    .child(user.getUid())
+                                    .removeValue()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //update UI
+                                            callback.onFollowChecked(false);
+                                        }
+                                    });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+
     }
+
 
     /**
      * Artist Accounts Holder - Inner Class
      */
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
+        private TextView name;
+        private Button followButton;
+        private Button unfollowButton;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
             view = itemView;
+            name = view.findViewById(R.id.user_name);
+            followButton = view.findViewById(R.id.follow_button);
+            unfollowButton = view.findViewById(R.id.unfollow_button);
         }
 
         void setUserName(final String userName) {
-            TextView textView = view.findViewById(R.id.user_name);
-            textView.setText(userName);
+            name.setText(userName);
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -715,15 +878,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
 
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
-                }
-            });
 
-            Button follow = view.findViewById(R.id.follow_button);
-            follow.setOnClickListener(new View.OnClickListener() {
+            followButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();

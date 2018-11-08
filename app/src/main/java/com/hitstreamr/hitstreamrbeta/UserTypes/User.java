@@ -1,13 +1,15 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class User {
-    private String username, email;
+    private String username, email, userID;
 
-    public User() { }
+    public User() {
+    }
 
-    public User(String username, String email) {
+    public User(String username, String email, String userID) {
         this.username = username;
         this.email = email;
+        this.userID = userID;
     }
 
     public String getUsername() {
@@ -26,4 +28,11 @@ public class User {
         this.email = email;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 }
