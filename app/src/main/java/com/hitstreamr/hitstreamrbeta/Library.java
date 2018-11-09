@@ -93,11 +93,14 @@ public class Library extends AppCompatActivity {
 
     private void setUpRecyclerView(){
 
+        Log.e(TAG, "Entered recycler view");
+
         Query query = bookRef;
 
         for (int i = 0; i < WatchLaterList.size(); i++) {
             query = query.whereEqualTo("videoId", WatchLaterList.get(i));
         }
+        Log.e(TAG, "quesry is:" +query);
 
         FirestoreRecyclerOptions<Book> options = new FirestoreRecyclerOptions.Builder<Book>()
                 .setQuery(query, Book.class)
