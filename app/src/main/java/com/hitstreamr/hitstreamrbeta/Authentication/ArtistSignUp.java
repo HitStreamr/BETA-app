@@ -36,7 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -297,7 +296,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     }
                 });
     }
-
 
     /**
      * Check if first name input is valid.

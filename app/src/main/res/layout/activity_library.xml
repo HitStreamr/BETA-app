@@ -34,10 +34,10 @@
 
             <com.github.aakira.expandablelayout.ExpandableRelativeLayout
                 android:id="@+id/expandableLayout_history"
-        android:layout_width="match_parent"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/expandableButton_history"
-        android:layout_alignParentStart="true"
+                android:layout_alignParentStart="true"
                 android:background="@android:color/white"
                 android:padding="16dp"
                 app:ael_duration="400"
@@ -46,13 +46,13 @@
                 app:ael_orientation="vertical">
 
                 <HorizontalScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
 
                         <Button
                             android:layout_width="wrap_content"
@@ -84,10 +84,10 @@
                             android:layout_height="wrap_content"
                             android:text="Button6" />
 
-    </LinearLayout>
+                    </LinearLayout>
 
 
-            </HorizontalScrollView>
+                </HorizontalScrollView>
 
                 <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
@@ -130,6 +130,11 @@
 
                 </android.support.v7.widget.RecyclerView>
 
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand." />-->
+
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
             <!-- PLAYLISTS -->
@@ -164,8 +169,12 @@
 
                 </android.support.v7.widget.RecyclerView>
 
-            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand" />-->
 
+            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
         </RelativeLayout>
 

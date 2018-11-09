@@ -16,10 +16,9 @@
 
         <ImageView
             android:id="@+id/videoThumbnail"
-            android:layout_width="144dp"
-            android:layout_height="90dp"
-            android:background="@drawable/round_outline"
-            android:outlineProvider="background"/>
+            android:layout_width="120dp"
+            android:layout_height="80dp"
+            android:background="@color/litgryAccent" />
 
         <LinearLayout
             android:id="@+id/mainBody"
@@ -95,13 +94,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:paddingTop="10dp">
 
         <View
             android:id="@+id/divider2"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/litgryAccent" />
+            android:background="@color/colorPrimaryDark" />
     </LinearLayout>
 
 
