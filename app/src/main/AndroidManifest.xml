@@ -64,7 +64,8 @@
         <activity android:name=".ReportVideoPopup" />
         <activity android:name=".Comments" />
         <activity android:name=".AddToPlaylsit" />
-        <activity android:name=".CreateNewPlaylist"></activity>
+        <activity android:name=".CreateNewPlaylist" />
+        <activity android:name=".CreditsPurchase"></activity>
     </application>
 
 </manifest>

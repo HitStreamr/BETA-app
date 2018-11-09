@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorAccent">
+
+    <LinearLayout
+        android:id="@+id/playlistCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/videoThumbnail"
+                android:layout_width="120dp"
+                android:layout_height="80dp"
+                android:background="@drawable/round_outline"
+                android:outlineProvider="background" />
+
+            <ImageView
+                android:id="@+id/playlist"
+                android:layout_width="50dp"
+                android:layout_height="80dp"
+                android:background="@drawable/playlist_outline"
+                android:outlineProvider="background"
+                android:backgroundTint="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/videoCount"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:text="0"
+                android:textAlignment="center"
+                android:layout_marginTop="20dp"/>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_playlist"
+                android:backgroundTint="@color/colorAccent"
+                android:layout_marginStart="15dp"
+                android:layout_below="@+id/videoCount"
+                />
+
+        </RelativeLayout>
+
+
+
+        <LinearLayout
+            android:id="@+id/mainBody"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/playlistTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title Of Playlist"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/videoUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username" />
+
+            <TextView
+                android:id="@+id/videoViews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 videos" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/moreMenu"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_more_vert" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -7,16 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
 import com.hitstreamr.hitstreamrbeta.LabelDashboard;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
@@ -44,26 +40,13 @@ public class Splash extends AppCompatActivity {
                 Log.e(TAG, mAuth.getCurrentUser()+"");
                 if(mAuth.getCurrentUser() != null){
                     //home activity here
-                    FirebaseInstanceId.getInstance().getInstanceId()
-                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                                    if (!task.isSuccessful()) {
-                                        Log.w(TAG, "getInstanceId failed", task.getException());
-                                        return;
-                                    }else{
-                                        sortUsers();
-                                    }
-                                }
-                            });
-
+                    sortUsers();
                 }else{
+                    Log.d(TAG, "null User");
                     startActivity(new Intent(getApplicationContext(),Welcome.class));
                 }
             }
         },SPLASH_TIME_OUT);
-
-
     }
 
     private void sortUsers() {

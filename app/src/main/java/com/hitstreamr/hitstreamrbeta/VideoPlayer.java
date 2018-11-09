@@ -1,15 +1,20 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +37,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -44,9 +48,13 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener {
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
     private static final String TAG = "PlayerActivity";
 
     // bandwidth meter to measure and estimate bandwidth
@@ -60,17 +68,20 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //Layout
     private LinearLayout DescLayout;
 
+    //Button
+    private Button collapseDecriptionBtn;
+
     //ImageButton
-    private ImageButton collapseDecriptionBtn;
     private ImageButton likeBtn;
+    private ImageButton repostBtn;
 
     //TextView
     private TextView TextViewVideoDescription;
     private TextView TextViewTitle;
     private TextView artistNameBold;
     private TextView artistName;
-    private TextView follow;
-    private TextView unfollow;
+    private TextView TextViewLikesCount;
+    private TextView TextViewRepostCount;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -84,6 +95,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     DatabaseReference myRef;
 
     private Boolean VideoLiked = false;
+    private Boolean VideoReposted = false;
+    private Long VideoLikesCount;
+    private Long VideoRepostCount;
 
 
     private long playbackPosition;
@@ -114,46 +128,26 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //Profile Picture
         artistProfPic = findViewById(R.id.artistProfilePicture);
 
-        //ImageButton
+        //Button
         collapseDecriptionBtn = findViewById(R.id.collapseDescription);
+
+        //ImageButton
         likeBtn = findViewById(R.id.fave);
+        repostBtn = findViewById(R.id.rePostVideo);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
         TextViewVideoDescription.setText(vid.getDescription());
+        TextViewLikesCount = findViewById(R.id.videoLikes);
+        TextViewRepostCount = findViewById(R.id.repostCount);
 
-        TextViewTitle = findViewById(R.id.videoPlayerTitle);
+        TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
 
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
         artistName.setText(vid.getUsername());
         artistNameBold.setText(vid.getUsername());
-
-        follow = findViewById(R.id.followButton);
-        unfollow = findViewById(R.id.unfollowButton);
-
-        follow.setOnClickListener(this);
-        unfollow.setOnClickListener(this);
-
-        follow.setVisibility(View.GONE);
-        unfollow.setVisibility(View.GONE);
-
-        //set up UI for following
-        checkFollowing(new OnDataReceiveCallback() {
-            @Override
-            public void onFollowChecked(boolean following) {
-                if(following){
-                    //if following == true
-                    follow.setVisibility(View.GONE);
-                    unfollow.setVisibility(View.VISIBLE);
-                }else{
-                    //if following == false
-                    follow.setVisibility(View.VISIBLE);
-                    unfollow.setVisibility(View.GONE);
-                }
-            }
-        });
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
 
@@ -163,36 +157,148 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             Glide.with(getApplicationContext()).load(artistProfReference).into(artistProfPic);
         }
 
-        //Listeners
+        //Listners
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
+        repostBtn.setOnClickListener(this);
 
-        //checkLikes();
+        checkLikes();
+        checkRepost();
+        checkLikesCount();
+        checkRepostCount();
+
 
         videoUri = Uri.parse(vid.getUrl());
     }
 
+    public void showVideoPlayerOverflow(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.show();
+    }
+
     private void checkLikes() {
         FirebaseDatabase.getInstance().getReference("VideoLikes")
-                .child(vid.getUserId())
-                .child("userID")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String value = dataSnapshot.getValue(String.class);
-                        if(value.equals("true")){
-                            /*int fillColor = Color.parseColor("#FF000000");
-                        likeBtn.setBackgroundColor(fillColor);*/
-                            Log.e(TAG, "Already Liked");
-                            VideoLiked = true;
+                        if (dataSnapshot.exists()) {
+                            if (value.equals(currentFirebaseUser.getUid())) {
+                                int fillColor = Color.parseColor("#ff13ae");
+                                likeBtn.setColorFilter(fillColor);
+                                //Log.e(TAG, "Video not Liked");
+                                VideoLiked = true;
+                            }
+                        } else {
+                            VideoLiked = false;
                         }
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
     }
 
+    private void checkLikesCount() {
+        FirebaseDatabase.getInstance().getReference("VideoLikes")
+                .child(vid.getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            VideoLikesCount = dataSnapshot.getChildrenCount();
+                            //VideoLikesCount = 1100L;
+                            String temp = formatt(VideoLikesCount);
+                            Log.e(TAG, "Video Count likes : " + temp);
+                            TextViewLikesCount.setText(temp);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+
+    private void checkRepost() {
+        FirebaseDatabase.getInstance().getReference("Repost")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String value = dataSnapshot.getValue(String.class);
+                        if (dataSnapshot.exists()) {
+                            if (value.equals(currentFirebaseUser.getUid())) {
+                                int fillColor = Color.parseColor("#ff13ae");
+                                repostBtn.setColorFilter(fillColor);
+                                Log.e(TAG, "Video not Reposted");
+                                VideoReposted = true;
+                            }
+                        } else {
+                            VideoReposted = false;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void checkRepostCount() {
+        FirebaseDatabase.getInstance().getReference("Repost")
+                .child(vid.getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            VideoRepostCount = dataSnapshot.getChildrenCount();
+                            String temp = formatt(VideoRepostCount);
+                            Log.e(TAG, "Repost Count : " + temp);
+                            TextViewRepostCount.setText(temp);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String formatt(long value) {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return formatt(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + formatt(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+    }
 
 
     @Override
@@ -277,44 +383,46 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private void likeVideo() {
         Log.e(TAG, "Your video Id is:" + vid.getVideoId());
-        Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
         String ttt = "true";
 
         FirebaseDatabase.getInstance()
                 .getReference("VideoLikes")
-                .child(vid.getUserId())
-                .child("userID")
-                .setValue(ttt)
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
+                .setValue(currentFirebaseUser.getUid())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        finished();
-                        /*int fillColor = Color.parseColor("#DFDFE0");
-                        likeBtn.setBackgroundColor(fillColor);*/
+                        finishedLike();
+                        int fillColor = Color.parseColor("#ff13ae");
+                        likeBtn.setColorFilter(fillColor);
                         VideoLiked = true;
-                        Log.e(TAG, "Video is liked " +VideoLiked);
+                        Log.e(TAG, "Video is liked " + VideoLiked);
                     }
                 });
     }
 
-    private void cancelLikeVideo(){
+    private void cancelLikeVideo() {
         FirebaseDatabase.getInstance()
                 .getReference("VideoLikes")
-                .child(vid.getUserId())
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
                 /*.child("userID")*/
                 .removeValue()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        /*int fillColor = Color.parseColor("#FF000000");
-                        likeBtn.setBackgroundColor(fillColor);*/
+                        int fillColor = Color.parseColor("#000000");
+                        likeBtn.setColorFilter(fillColor);
                         VideoLiked = false;
-                        Log.e(TAG, "Video like is cancelled " +VideoLiked);
+                        Log.e(TAG, "Video like is cancelled " + VideoLiked);
                     }
                 });
     }
 
-    private void finished() {
+    private void finishedLike() {
         /*FirebaseDatabase.getInstance().getReference("VideoLikes")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -329,9 +437,102 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
+        Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+    }
+
+    private void finishedRepost() {
+        /*FirebaseDatabase.getInstance().getReference("VideoLikes")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        long value = dataSnapshot.getChildrenCount();
+                        Log.e(TAG, "Value is: " + value);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        // Failed to read value
+                        Log.w(TAG, "Failed to read value.", error.toException());
+                    }
+                });*/
+        Toast.makeText(VideoPlayer.this, "You reposted", Toast.LENGTH_SHORT).show();
+    }
+
+    private void repostVideo() {
+        Log.e(TAG, "Your video Id is:" + vid.getVideoId());
+        //Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
+
+        FirebaseDatabase.getInstance()
+                .getReference("Repost")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .child("userId")
+                .setValue(currentFirebaseUser.getUid())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        finishedRepost();
+                        int fillColor = Color.parseColor("#ff13ae");
+                        repostBtn.setColorFilter(fillColor);
+                        VideoReposted = true;
+                        Log.e(TAG, "Video is reposted " + VideoReposted);
+                    }
+                });
+    }
+
+    private void cancelRepostVideo() {
+        FirebaseDatabase.getInstance()
+                .getReference("Repost")
+                .child(vid.getVideoId())
+                .child(currentFirebaseUser.getUid())
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        int fillColor = Color.parseColor("#000000");
+                        repostBtn.setColorFilter(fillColor);
+                        VideoReposted = false;
+                        Log.e(TAG, "Video Repost is cancelled " + VideoReposted);
+                    }
+                });
+    }
+
+    private void registerWatchLater() {
+        FirebaseDatabase.getInstance()
+                .getReference("WatchLater")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+                .child("VideoId")
+                .setValue(vid.getVideoId())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Log.e(TAG, "Video is added to Watch Later ");
+                        finishedWatchLater();
+                    }
+                });
+    }
+
+    private void finishedWatchLater() {
+        Toast.makeText(VideoPlayer.this, "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
+
+    }
 
 
-        Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
+    @Override
+    public boolean onMenuItemClick(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.reportVideo:
+                Intent reportAct = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                reportAct.putExtra("VideoId", vid.getVideoId());
+                startActivity(reportAct);
+                break;
+            case R.id.addWatchLater:
+                registerWatchLater();
+                break;
+        }
+        return true;
     }
 
 
@@ -429,140 +630,38 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         public void onAudioDisabled(DecoderCounters counters) {
             // Do nothing.
         }
+
     }
-
-    /* Following Code
-        Save Following - the former saves the user id to the artist they are following
-
-        Save Unfollowing and Record Unfollow - the former removes the user id from the artist they are following
-     */
-
-    private void checkFollowing(OnDataReceiveCallback callback){
-        //get where the following state would be
-        // check who the user is following
-        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(vid.getUserId()).exists()){
-                    Log.e(TAG, "Following");
-                    callback.onFollowChecked(true);
-                }else{
-                    Log.e(TAG, "Not Following");
-                    callback.onFollowChecked(false);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-    private void saveFollowing(){
-        FirebaseDatabase.getInstance().getReference("following")
-                .child(currentFirebaseUser.getUid())
-                .child(vid.getUserId())
-                .setValue(vid.getUserId())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        // do the Reciprocal on Success
-                        // artistFollowers -> user
-                        FirebaseDatabase.getInstance().getReference("followers")
-                                .child(vid.getUserId())
-                                .child(currentFirebaseUser.getUid())
-                                .setValue(currentFirebaseUser.getUid())
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        // hide/show the UI
-                                        follow.setVisibility(View.GONE);
-                                        unfollow.setVisibility(View.VISIBLE);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            //TODO Error for following failing
-                                        }
-                                    });
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                //TODO Error for following failing
-            }
-        });
-    }
-
-    private void saveUnfollowing(){
-        FirebaseDatabase.getInstance()
-                .getReference("following")
-                .child(currentFirebaseUser.getUid())
-                .child(vid.getUserId())
-                .removeValue()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        //remove user from artist's list of followers
-                        FirebaseDatabase.getInstance()
-                                .getReference("followers")
-                                .child(vid.getUserId())
-                                .child(currentFirebaseUser.getUid())
-                                .removeValue()
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        //update UI
-                                        unfollow.setVisibility(View.GONE);
-                                        follow.setVisibility(View.VISIBLE);
-                                    }
-                                });
-                    }
-                });
-    }
-
 
     @Override
     public void onClick(View view) {
         if (view == collapseDecriptionBtn) {
             if (!collapseVariable) {
-                TextViewVideoDescription.setVisibility(View.GONE);
+                //TextViewVideoDescription.setVisibility(View.GONE);
+                DescLayout.setVisibility(View.GONE);
                 collapseVariable = true;
             } else if (collapseVariable) {
-                TextViewVideoDescription.setVisibility(View.VISIBLE);
+                //TextViewVideoDescription.setVisibility(View.VISIBLE);
+                DescLayout.setVisibility(View.VISIBLE);
                 collapseVariable = false;
             }
         }
 
         if (view == likeBtn) {
-            //Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
-
-            if(!VideoLiked){
+            if (!VideoLiked) {
                 likeVideo();
-            }else{
+            } else {
                 cancelLikeVideo();
             }
-            //likeVideo();
         }
 
-        // Following and Unfollowing
-        if(view == follow){
-            saveFollowing();
+        if (view == repostBtn) {
+            Log.e(TAG, "repost clicked");
+            if (!VideoReposted) {
+                repostVideo();
+            } else {
+                cancelRepostVideo();
+            }
         }
-
-        if(view == unfollow){
-            saveUnfollowing();
-        }
-    }
-
-
-    /*
-        Provides interface for the callback for Async call to Firebase
-     */
-    public interface OnDataReceiveCallback {
-        /*
-         *   Method that notifies the ui that the Data was received
-        */
-        void onFollowChecked(boolean following);
     }
 }
