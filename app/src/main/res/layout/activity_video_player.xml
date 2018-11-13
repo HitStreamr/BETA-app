@@ -80,6 +80,16 @@
                     android:textColor="@color/colorPrimary"
                     android:textSize="12dp" />
 
+                <TextView
+                    android:id="@+id/unfollowButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="Unfollow"
+                    android:textColor="@color/colorPrimaryLite"
+                    android:textSize="12dp"
+                    android:visibility="gone"/>
+
             </LinearLayout>
 
             <LinearLayout
@@ -101,7 +111,7 @@
                     android:layout_height="30dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/ic_playlist_add_black_24dp" />
+                    android:src="@drawable/ic_repost_black_24dp" />
 
                 <ImageView
                     android:id="@+id/moreOptions"

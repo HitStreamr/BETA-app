@@ -298,7 +298,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 });
     }
 
-
     /**
      * Check if first name input is valid.
      *

@@ -8,7 +8,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
 
-@IgnoreExtraProperties
 public class Video implements Parcelable {
     private String title;
     private String description;
@@ -21,7 +20,6 @@ public class Video implements Parcelable {
     private String username;
     private String duration;
     private int pubYear;
-    @Exclude
     private String videoId;
 
     private ArrayList<Contributor> contributors;
@@ -137,12 +135,11 @@ public class Video implements Parcelable {
         this.pubYear = pubYear;
     }
 
-    @Exclude
     public String getVideoId() {
         return videoId;
     }
 
-    @Exclude
+
     public void setVideoId(String videoId) {
         this.videoId = videoId;
     }

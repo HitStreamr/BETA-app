@@ -88,4 +88,7 @@
     <string name="password_hint">Password</string>
     <string name="email_request_rest_password">Enter email associated with account.</string>
     <string name="confirm">Confirm</string>
+    <string name="follow_notification_channel_id">New Follows</string>
+    <string name="copyrightclaim">If you are the copyright owner of this \n video and believe it has been uploaded \n without your permission,
+please follow \n these directions to submit a copyright \n infrengment notice.</string>
 </resources>

@@ -109,6 +109,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    String value;
+
     private void setFollowButton(){
         FirebaseDatabase.getInstance().getReference("followers")
                 .child(userUserID)
@@ -116,10 +118,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String value = dataSnapshot.getValue(String.class);
-                        if(value.equals(current_user.getUid())){
-                            mfollowBtn.setVisibility(View.GONE);
-                            mUnfollowBtn.setVisibility(View.VISIBLE);
+                        if(dataSnapshot.exists()) {
+                            value = dataSnapshot.getValue(String.class);
+                            if (value.equals(current_user.getUid())) {
+                                mfollowBtn.setVisibility(View.GONE);
+                                mUnfollowBtn.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        else{
+                            mfollowBtn.setVisibility(View.VISIBLE);
+                            mUnfollowBtn.setVisibility(View.GONE);
                         }
                     }
 
