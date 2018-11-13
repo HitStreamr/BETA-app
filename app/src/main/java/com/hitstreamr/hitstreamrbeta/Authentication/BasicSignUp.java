@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -50,8 +49,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private static final String TAG = "BasicSignUp";
 
-    private Button signup, uploadPhotoBtn;
-    private ImageButton backbtn;
+    private Button signup, backbtn, uploadPhotoBtn;
     private EditText mEmailField, mPasswordField, mUsername;
     private TextView signintext;
     private RadioButton radiobtn;

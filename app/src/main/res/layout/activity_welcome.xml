@@ -4,27 +4,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Authentication.Welcome"
-    android:background="@drawable/gradient1">
+    android:background="@drawable/background_splash">
+
+    <ImageView
+        android:layout_width="220dp"
+        android:layout_height="80dp"
+        android:src="@drawable/round_hitstreamr_logo_wht"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:contentDescription="@string/text_logo_wht" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:ignore="UselessParent">
+        android:gravity="bottom">
 
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:contentDescription="@string/text_logo_wht"
-            android:paddingStart="15dp"
-            android:src="@drawable/hitstreamr_logo_wht"
-            tools:ignore="RtlSymmetry" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="280dp">
+            android:layout_marginBottom="70dp"
+            >
 
             <TextView
                 android:layout_width="wrap_content"

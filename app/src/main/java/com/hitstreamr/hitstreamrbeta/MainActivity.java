@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -109,8 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private TabLayout mTabLayout;
     private int tab_position;
-    private String search_input;
-
+    private String search_input, accountType;
 
     /**
      * Set up and initialize layouts and variables
@@ -330,6 +332,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
+
+        // Modify text colors
+        EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(Color.WHITE);
+        searchEditText.setHintTextColor(Color.WHITE);
+
+        // Profile Picture
+        MenuItem profilePicMenu = menu.findItem(R.id.profilePicMenu);
+        LinearLayout rootView = (LinearLayout) profilePicMenu.getActionView();
+        CircleImageView circleImageView = rootView.findViewById(R.id.profilePictureToolbar);
+
+        getUserType();
+        if (user.getPhotoUrl() != null) {
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
+
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(MainActivity.this, Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
 
         // Set up the listeners for searching videos, artists, and listeners
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -1007,5 +1035,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (item != exception)
                 item.setVisible(visible);
         }
+    }
+
+    /**
+     * Get the account type of the current user
+     */
+    private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
+    }
+
+    /**
+     * Open account page from navigation bar.
+     * @param view view
+     */
+    public void viewAccount(View view) {
+        Intent accountPage = new Intent(MainActivity.this, Account.class);
+        accountPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(accountPage);
+    }
+
+    /**
+     * Open profile page from navigation bar.
+     * @param view view
+     */
+    public void openProfile(View view) {
+        Intent profilePage = new Intent(MainActivity.this, Profile.class);
+        profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(profilePage);
     }
 }
