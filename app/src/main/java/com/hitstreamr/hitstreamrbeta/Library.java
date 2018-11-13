@@ -46,9 +46,6 @@ public class Library extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference bookRef = db.collection("Videos");
 
-    // For Testing Purposes
-    private List<Book> bookList_watchLater = new ArrayList<>();
-    private List<Book> bookList_playlists = new ArrayList<>();
     private BookAdapter bookAdapter_watchLater, bookAdapter_playlists;
 
     private Long WatchListCount;
@@ -85,45 +82,49 @@ public class Library extends AppCompatActivity {
         }
 
         getWatchLaterList();
-        setUpRecyclerView();
-
-        //getWatchLaterList();
-        //getPlaylists();
     }
+
+    Query query;
 
     private void setUpRecyclerView(){
 
-        Log.e(TAG, "Entered recycler view");
-
-        Query query = bookRef;
+        Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
 
         for (int i = 0; i < WatchLaterList.size(); i++) {
-            query = query.whereEqualTo("videoId", WatchLaterList.get(i));
+            query = bookRef.whereEqualTo("videoId", WatchLaterList.get(i));
         }
-        Log.e(TAG, "quesry is:" +query);
+        Log.e(TAG, "query 1:" +bookRef.whereEqualTo("title", "ABC Song").getClass());
+        /*Log.e(TAG, "query 2:" +query.getClass());
+        Log.e(TAG, "query 3:" +query.getFirestore().toString());
+        Log.e(TAG, "query 4:" +query.getFirestore());*/
 
-        FirestoreRecyclerOptions<Book> options = new FirestoreRecyclerOptions.Builder<Book>()
-                .setQuery(query, Book.class)
+        FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
+                .setQuery(query, Video.class)
                 .build();
+
+        Log.e(TAG, "query 4:" +options.getSnapshots());
 
         bookAdapter_watchLater = new BookAdapter(options);
         recyclerView_watchLater = (RecyclerView) findViewById(R.id.recyclerView_watchLater);
-        recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView_watchLater.setItemAnimator(new DefaultItemAnimator());
+        recyclerView_watchLater.setHasFixedSize(true);
+        //recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
+        //recyclerView_watchLater.setItemAnimator(new DefaultItemAnimator());
+        //bookAdapter_watchLater.notifyDataSetChanged();
         recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
+        //bookAdapter_watchLater.startListening();
     }
 
     /*@Override
     protected void onStart() {
         super.onStart();
         bookAdapter_watchLater.startListening();
-    }
+    }*/
 
     @Override
     protected void onStop() {
         super.onStop();
         bookAdapter_watchLater.stopListening();
-    }*/
+    }
 
     /**
      * Drop Down Menu - History
@@ -205,106 +206,12 @@ public class Library extends AppCompatActivity {
                                 }
                             Log.e(TAG, "Watch Later List : " + WatchLaterList);
                         }
+                        setUpRecyclerView();
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
-
-        /*recyclerView_watchLater = (RecyclerView) findViewById(R.id.recyclerView_watchLater);
-        bookAdapter_watchLater = new BookAdapter(bookList_watchLater);
-        recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView_watchLater.setItemAnimator(new DefaultItemAnimator());
-        recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
-
-        initBookData();*/
-    }
-
-    /**
-     * RecyclerView Test
-     */
-    /* private void getPlaylists() {
-        recyclerView_playlists = (RecyclerView) findViewById(R.id.recyclerView_playlists);
-        bookAdapter_playlists = new BookAdapter(bookList_playlists);
-        recyclerView_playlists.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView_playlists.setItemAnimator(new DefaultItemAnimator());
-        recyclerView_playlists.setAdapter(bookAdapter_playlists);
-
-        initBookData2();
-    } */
-
-    /**
-     * Test
-     */
-    private void initBookData() {
-        Book book = new Book("Hello Android", "Ed Burnette");
-        bookList_watchLater.add(book);
-
-        book = new Book("Beginning Android 3", "Mark Murphy");
-        bookList_watchLater.add(book);
-
-        book = new Book("Unlocking Android", " W. Frank Ableson");
-        bookList_watchLater.add(book);
-
-        book = new Book("Android Tablet Development", "Wei Meng Lee");
-        bookList_watchLater.add(book);
-
-        book = new Book("Android Apps Security", "Sheran Gunasekera");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book1", "Author1");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book2", "Author2");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book3", "Author3");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book4", "Author4");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book5", "Author5");
-        bookList_watchLater.add(book);
-
-        bookAdapter_watchLater.notifyDataSetChanged();
-    }
-
-    /**
-     * Test
-     */
-    private void initBookData2() {
-        Book book = new Book("Hello Android", "Ed Burnette");
-        bookList_playlists.add(book);
-
-        book = new Book("Beginning Android 3", "Mark Murphy");
-        bookList_playlists.add(book);
-
-        book = new Book("Unlocking Android", " W. Frank Ableson");
-        bookList_playlists.add(book);
-
-        book = new Book("Android Tablet Development", "Wei Meng Lee");
-        bookList_playlists.add(book);
-
-        book = new Book("Android Apps Security", "Sheran Gunasekera");
-        bookList_playlists.add(book);
-
-        book = new Book("Book1", "Author1");
-        bookList_playlists.add(book);
-
-        book = new Book("Book2", "Author2");
-        bookList_playlists.add(book);
-
-        book = new Book("Book3", "Author3");
-        bookList_playlists.add(book);
-
-        book = new Book("Book4", "Author4");
-        bookList_playlists.add(book);
-
-        book = new Book("Book5", "Author5");
-        bookList_playlists.add(book);
-
-        bookAdapter_playlists.notifyDataSetChanged();
     }
 }

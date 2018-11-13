@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
@@ -13,6 +14,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import com.transloadit.android.sdk.AndroidAsyncAssembly;
+import com.transloadit.sdk.exceptions.LocalOperationException;
+import com.transloadit.sdk.exceptions.RequestException;
+import com.transloadit.sdk.response.AssemblyResponse;
 
 public class ReportVideoPopup extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "PlayerActivity";
@@ -113,6 +118,42 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
         if (view == reportBtn) {
             //Log.e(TAG, "report video is clicked" + idx +selectedtext);
             registerReportVideo();
+        }
+    }
+
+    static class SaveTask extends AsyncTask<Boolean, Void, AssemblyResponse> {
+        private final String TAG = "SAVE_TASK";
+        private VideoUploadActivity activity;
+        private AndroidAsyncAssembly assembly;
+
+        SaveTask(VideoUploadActivity activity, AndroidAsyncAssembly assembly) {
+            this.activity = activity;
+            this.assembly = assembly;
+        }
+
+        @Override
+        protected void onPostExecute(AssemblyResponse response) {
+            Toast.makeText(activity, "Your androidAsyncAssembly is running on " + response.getUrl(), Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        protected void onCancelled(AssemblyResponse assemblyResponse) {
+            super.onCancelled(assemblyResponse);
+        }
+
+        @Override
+        protected AssemblyResponse doInBackground(Boolean... params) {
+            try {
+                return assembly.save(params[0]);
+            } catch (LocalOperationException e) {
+                Log.e(TAG, "Assembly Status Update Failed: " + e.getMessage());
+                e.printStackTrace();
+            } catch (RequestException e) {
+                Log.e(TAG, "Assembly Status Update Failed: " + e.getMessage());
+                e.printStackTrace();
+            }
+
+            return null;
         }
     }
 }

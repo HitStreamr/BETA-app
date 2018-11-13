@@ -40,16 +40,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="activity"
-                        android:layout_marginStart="5dp"/>
+                        android:layout_marginStart="5dp"
+                        android:text="activity" />
 
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Time posted / reposted"
                     android:layout_marginStart="5dp"
+                    android:text="Time posted / reposted"
                     android:textSize="10sp"/>
 
 
@@ -61,8 +61,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
                         android:background="@drawable/round_outline"
-                        android:outlineProvider="background"
-                        />
+                        android:outlineProvider="background" />
 
                     <TextView
                         android:id="@+id/scrollingTitle"
@@ -70,18 +69,18 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
                         android:layout_marginTop="60dp"
-                        android:textAlignment="center"
-
                         android:ellipsize="marquee"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
+
                         android:marqueeRepeatLimit="marquee_forever"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
                         android:scrollHorizontally="true"
                         android:singleLine="true"
                         android:text="Scrolling Video Title"
+                        android:textAlignment="center"
                         android:textColor="@color/colorAccent"
                         android:textSize="22sp"
                         android:textStyle="bold" />
@@ -100,11 +99,11 @@
                         android:layout_marginStart="270dp"
                         android:layout_marginTop="140dp"
                         android:background="@android:color/black"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
                         android:text="00:00"
                         android:textColor="@color/colorAccent"
-                        android:textSize="8sp"
-                        android:paddingStart="2dp"
-                        android:paddingEnd="2dp"/>
+                        android:textSize="8sp" />
 
                 </RelativeLayout>
 
@@ -175,15 +174,7 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
-
-
             </LinearLayout>
-
-
         </LinearLayout>
-
-
     </LinearLayout>
-
 </RelativeLayout>
