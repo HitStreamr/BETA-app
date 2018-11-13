@@ -1,5 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -8,7 +10,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -23,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -43,6 +50,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     private TextView mfollowers;
     private TextView mfollowing;
 
+    private ImageView ImageViewBackground;
+
     private long followerscount = 0;
     private long followingcount = 0;
 
@@ -53,7 +62,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
     DatabaseReference myFollowersRef, myFollowingRef;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageTask mstorageTask;
     private StorageReference mStorageRef = storage.getReference();
+    private StorageReference backgroundRef = null;
 
     Uri profilePictureDownloadUrl;
 
@@ -75,6 +86,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         mfollowers = findViewById(R.id.usersFollowers);
         mfollowing = findViewById(R.id.usersFollowing);
 
+        ImageViewBackground = findViewById(R.id.profileBackgroundImage);
+
         mUnfollowBtn.setVisibility(View.GONE);
 
         toolbar = findViewById(R.id.toolbar);
@@ -89,6 +102,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
         mfollowBtn.setOnClickListener(this);
         mUnfollowBtn.setOnClickListener(this);
+
+        getBackgroundImage();
 
         getUserType();
         getUsername();
@@ -389,6 +404,23 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
 
     private void finished() {
         Log.e(TAG, "Finished counting");
+    }
+
+    private void getBackgroundImage(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            //Log.e(TAG, "Background Uri selected" +fileUri);
+            backgroundRef = mStorageRef.child("backgroundPictures").child(user.getUid());
+            backgroundRef.getDownloadUrl()
+                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            Log.e(TAG,"down uri: "+uri);
+                            //ImageViewBackground.setImageURI(uri);
+                            Glide.with(getApplicationContext()).load(uri).into(ImageViewBackground);
+                        }
+                    });
+        }
     }
 
     /**

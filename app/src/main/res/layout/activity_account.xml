@@ -53,8 +53,18 @@
                 <Button
                     android:id="@+id/accountChangePhoto"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="25dp"
                     android:text="Change Photo"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@drawable/button2"
+                    android:layout_gravity="center_horizontal"/>
+
+                <Button
+                    android:id="@+id/accountChangeBackground"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:text="Change Background"
+                    android:layout_marginTop="5dp"
                     android:textColor="@color/colorPrimary"
                     android:background="@drawable/button2"
                     android:layout_gravity="center_horizontal"/>
