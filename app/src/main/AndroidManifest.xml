@@ -65,6 +65,7 @@
         <activity android:name=".Comments" />
         <activity android:name=".AddToPlaylsit" />
         <activity android:name=".CreateNewPlaylist"></activity>
+        <activity android:name=".Library"></activity>
     </application>
 
 </manifest>

@@ -37,7 +37,13 @@
                     android:layout_marginTop="10dp"
                     android:layout_gravity="center_horizontal"/>
 
-                <ImageView
+                <!--<ImageView
+                    android:id="@+id/accountPhoto"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@mipmap/ic_launcher_round"
+                    android:layout_gravity="center_horizontal"/>-->
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/accountPhoto"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -50,8 +56,10 @@
                     android:layout_height="wrap_content"
                     android:text="Change Photo"
                     android:textColor="@color/colorPrimary"
-                    android:background="@color/colorAccent"
+                    android:background="@drawable/button2"
                     android:layout_gravity="center_horizontal"/>
+
+
 
                 <TextView
                     android:id="@+id/UserNametext"

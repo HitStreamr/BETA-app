@@ -21,7 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-        debug {
+        debug{
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
             buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
@@ -67,6 +67,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:17.1.1'
     implementation 'com.google.firebase:firebase-invites:16.0.4'
     implementation 'com.google.firebase:firebase-storage:16.0.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation "com.google.firebase:firebase-iid:17.0.4"
+
+    // FirebaseUI for Cloud Storage
+    implementation 'com.firebaseui:firebase-ui-storage:4.2.1'
 
     // Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:4.2.0'
@@ -76,7 +81,7 @@ dependencies {
     // Recycler View
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     //Glide for Recycler View
-    implementation("com.github.bumptech.glide:recyclerview-integration:4.8.0") {
+    implementation ("com.github.bumptech.glide:recyclerview-integration:4.8.0") {
         // Excludes the support library because it's already included by Glide.
         transitive = false
     }

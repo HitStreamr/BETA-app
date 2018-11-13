@@ -498,6 +498,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setQuery(searchRequest, Video.class)
                 .build();
 
+        Log.e(TAG,"video search query"+searchRequest);
+
         suggestionAdapter = new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
             @NonNull
             @Override
