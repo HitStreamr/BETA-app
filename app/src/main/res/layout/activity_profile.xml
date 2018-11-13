@@ -51,8 +51,7 @@
                 android:background="@drawable/button2"
                 android:elevation="4dp"
                 android:text="Follow"
-                android:textColor="@color/colorPrimary"
-                />
+                android:textColor="@color/colorPrimary" />
 
         </RelativeLayout>
 
@@ -77,19 +76,16 @@
                         android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
-                        android:layout_gravity="center_horizontal"
-                        />
+                        android:layout_gravity="center_horizontal" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="FOLLOWERS"
                         android:textColor="@color/colorPrimary"
-                        android:layout_gravity="center_horizontal"
-                        />
-
+                        android:layout_gravity="center_horizontal" />
 
                 </LinearLayout>
-
 
                 <View
                     android:id="@+id/followDivider"
@@ -110,47 +106,56 @@
                         android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
-                        android:layout_gravity="center_horizontal"
-                        />
+                        android:layout_gravity="center_horizontal" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="FOLLOWING"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="@color/colorPrimary"
-                        />
-
+                        android:textColor="@color/colorPrimary" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:id="@+id/tabLayout_profile">
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="FEED" />
+                android:text="FEED"
+                android:id="@+id/feed_tab"/>
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UPLOADS" />
+                android:text="UPLOADS"
+                android:id="@+id/uploads_tab"/>
 
             <android.support.design.widget.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PLAYLISTS" />
+                android:text="PLAYLISTS"
+                android:id="@+id/playlists_tab"/>
 
-            <android.support.design.widget.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MERCH" />
+            <!--<android.support.design.widget.TabItem-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="MERCH" -->
+                <!--android:id="@+id/merchandise_tab"/>-->
+
         </android.support.design.widget.TabLayout>
 
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/profile_recyclerView">
+
+        </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
 
