@@ -18,7 +18,7 @@
 
             <ImageView
                 android:id="@+id/videoThumbnail"
-                android:layout_width="120dp"
+                android:layout_width="140dp"
                 android:layout_height="80dp"
                 android:background="@drawable/round_outline"
                 android:outlineProvider="background" />
@@ -62,24 +62,33 @@
 
             <TextView
                 android:id="@+id/playlistTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
                 android:text="Title Of Playlist"
                 android:textColor="@android:color/black"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="2"
+                android:scrollHorizontally="true"
+                android:singleLine="true"/>
 
             <TextView
                 android:id="@+id/videoUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username" />
+                android:text="Username"
+                android:textSize="10sp"/>
 
             <TextView
                 android:id="@+id/videoViews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 videos" />
+                android:text="0 videos"
+                android:textSize="10sp"/>
 
 
         </LinearLayout>
