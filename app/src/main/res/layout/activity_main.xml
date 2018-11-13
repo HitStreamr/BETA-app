@@ -13,25 +13,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<include layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>-->
+        <!--<include layout="@layout/toolbar"-->
+            <!--android:id="@+id/toolbar"/>-->
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
             android:background="@drawable/gradient1"
-            android:theme="@style/backArrowTheme"
-            />
+            android:theme="@style/backArrowTheme" />
+
         <FrameLayout
             android:id="@+id/fragment_container2"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
-            android:layout_below="@+id/toolbar"
-            >
-
-
-
+            android:layout_below="@+id/toolbar">
 
         </FrameLayout>
 
@@ -75,15 +71,26 @@
 
     </LinearLayout>
 
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/videoScreen"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_marginBottom="67dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_camera"-->
+            <!--app:backgroundTint="@color/colorPrimary"-->
+            <!--app:fabSize="normal"/>-->
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="69dp"
+            android:layout_alignParentBottom="true"
             android:layout_marginEnd="17dp"
+            android:layout_marginBottom="67dp"
             android:src="@drawable/ic_upload"
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal" />
@@ -105,7 +112,9 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/toolbar"
             android:background="@drawable/gradient1"
-            app:showAsAction="always|collapseActionView" >
+            app:showAsAction="always|collapseActionView"
+            app:tabTextColor="@android:color/white"
+            app:tabSelectedTextColor="@android:color/white">
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tab_videos"
@@ -126,7 +135,6 @@
                 android:text="Listeners" />
         </android.support.design.widget.TabLayout>
 
-
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
@@ -135,7 +143,6 @@
         android:layout_gravity="start"
         android:id="@+id/nav_view"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu"
-        />
+        app:menu="@menu/drawer_menu" />
 
 </android.support.v4.widget.DrawerLayout>

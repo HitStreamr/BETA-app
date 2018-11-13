@@ -26,16 +26,14 @@
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textColor="@color/colorAccent"
-                android:textSize="12sp"
-                />
-            
+                android:textSize="12sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Credits"
                 android:textSize="12sp"
-                android:layout_marginStart="5dp"
-                />
+                android:layout_marginStart="5dp" />
 
         </LinearLayout>
 
@@ -63,7 +61,8 @@
             android:layout_height="65dp"
             android:src="@mipmap/ic_launcher_round"
             app:civ_border_color="@color/colorAccent"
-            app:civ_border_width="2dp"/>
+            app:civ_border_width="2dp"
+            android:onClick="openProfile"/>
 
 
         <LinearLayout
@@ -80,25 +79,17 @@
                 android:text="User Name Here"
                 android:textColor="@color/colorAccent"
                 android:textSize="18sp"
-                />
+                android:onClick="openProfile"/>
 
-        </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit Your Account"
+                android:textColor="@color/colorAccent"
+                android:textStyle="italic"
+                android:textSize="12sp"
+                android:onClick="viewAccount"/>
 
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="bottom"
-            >
-
-            <ImageButton
-                android:id="@+id/userButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="end"
-                android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
-                android:background="@android:color/transparent"
-                android:onClick="showPopup"/>
         </LinearLayout>
 
     </LinearLayout>
