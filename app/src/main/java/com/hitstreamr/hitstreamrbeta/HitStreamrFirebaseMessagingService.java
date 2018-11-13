@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -33,7 +32,7 @@ import java.util.Objects;
 public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
-    private final int REQUEST_CODE = 9012;
+    private final int REQUEST_CODE = 90210;
     private final int FOLLOW_NOTIF = 1234;
 
     /**
@@ -119,16 +118,22 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
      * Handle time allotted to BroadcastReceivers.
      */
     private void handleNow(String type, RemoteMessage message) {
-        switch(type){
-            case "follow":
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-                if(sp.contains("newFollow") && sp.contains("allNotifs") && sp.getBoolean("allNotifs", false) && sp.getBoolean("newFollow",false))
-                    sendNotification(message.getData());
-                break;
-            default:
-                break;
-        }
-        Log.d(TAG, "Short lived task is done.");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+            switch (type) {
+                case "follow":
+                    if(user != null ) {
+                        SharedPreferences userDetails = this.getSharedPreferences(user.getUid(), MODE_PRIVATE);
+                        if (userDetails.getBoolean("pushNotifs", false) && userDetails.getBoolean("newFollow", false))
+                            sendNotification(message.getData(), true);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            Log.d(TAG, "Short lived task: " + type+ " is done.");
+
     }
 
     /**
@@ -166,7 +171,7 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
      *
      * @param message FCM message body received as a Map
      */
-    private void sendNotification(Map<String, String> message) {
+    private void sendNotification(Map<String, String> message, boolean loggedIn) {
         //Redirect to Splash in case they aren't logged in
         Intent intent = new Intent(this, Splash.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

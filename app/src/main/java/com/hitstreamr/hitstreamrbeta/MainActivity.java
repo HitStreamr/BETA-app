@@ -980,6 +980,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
+                bundle.putString("ID", user.getUid());
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
                 transaction.replace(R.id.fragment_container, notifSettingsFrag);
