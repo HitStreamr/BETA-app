@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:allowBackup="true"
@@ -57,9 +58,11 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
+
         <activity android:name=".VideoPlayer"/>
         <activity android:name=".Profile" />
         <activity android:name=".CreditsPurchase" />
+        <activity android:name=".BillingManager" />
         <activity android:name=".Library" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword">

@@ -13,10 +13,10 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/MessageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Confirm Purchase Credits"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
@@ -28,24 +28,24 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="30dp">
 
-         <Button
+            <Button
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
+                android:text="@string/cancel"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
-                android:background="@android:color/transparent"/>
+                android:background="@android:color/transparent"
+                android:layout_marginEnd="100dp"/>
 
             <Button
                 android:id="@+id/confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirm"
+                android:text="@string/ok"
                 android:textColor="@color/colorAccent"
                 android:textStyle="bold"
-                android:background="@android:color/transparent"
-                android:layout_marginEnd="20dp"/>
+                android:background="@android:color/transparent"/>
 
 
         </LinearLayout>
