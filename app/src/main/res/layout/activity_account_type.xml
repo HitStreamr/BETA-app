@@ -4,7 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Authentication.AccountType"
-    android:background="@drawable/background_splash">
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background_splash"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,7 +67,7 @@
         <ImageView
             android:layout_width="220dp"
             android:layout_height="80dp"
-            android:src="@drawable/hitstreamr_logo_wht"
+            android:src="@drawable/round_hitstreamr_logo_wht"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
             android:contentDescription="@string/text_logo_wht" />

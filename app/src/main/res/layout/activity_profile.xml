@@ -41,7 +41,9 @@
                 android:layout_below="@+id/button2"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="0dp"
-                android:src="@mipmap/ic_launcher_round" />
+                android:src="@mipmap/ic_launcher_round"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/colorAccent"/>
 
             <Button
                 android:id="@+id/followUser"

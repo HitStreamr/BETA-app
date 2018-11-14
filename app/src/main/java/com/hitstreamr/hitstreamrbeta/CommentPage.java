@@ -164,12 +164,12 @@ public class CommentPage extends AppCompatActivity {
                 mCommentMessage.setText("");
             }
         })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CommentPage.this, "Failed to post. Please try again.", Toast.LENGTH_LONG).show();
-                    }
-                });
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(CommentPage.this, "Failed to post. Please try again.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     /**

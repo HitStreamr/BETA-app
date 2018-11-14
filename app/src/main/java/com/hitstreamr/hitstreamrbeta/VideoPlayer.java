@@ -6,7 +6,9 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.Surface;
@@ -37,13 +39,17 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -54,7 +60,9 @@ import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
+import static java.lang.Math.toIntExact;
+
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "PlayerActivity";
 
     // bandwidth meter to measure and estimate bandwidth
@@ -108,6 +116,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     Video vid;
 
+    private String accountType;
+    private String username;
+    private FirebaseUser current_user;
+    private Uri photoURL;
+    private TextView allCommentsCount, recent_username, recent_message;
+    private long totalComments = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,9 +130,59 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         vid = getIntent().getParcelableExtra("VIDEO");
 
-        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("VideoLikes");
+        getUserType();
+        getRecentComment();
+
+        // Get current account's username
+        DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
+                .child(current_user.getUid());
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                username = dataSnapshot.child("username").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        myRef.addListenerForSingleValueEvent(eventListener);
+
+        allCommentsCount = findViewById(R.id.allComments_count);
+        // Get comment counts
+        DatabaseReference databaseReference_comments = FirebaseDatabase.getInstance().getReference("Comments")
+                .child(vid.getVideoId());
+        ValueEventListener eventListener_comments = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                totalComments = dataSnapshot.getChildrenCount();
+                allCommentsCount.setText(dataSnapshot.getChildrenCount() + "");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference_comments.addListenerForSingleValueEvent(eventListener_comments);
+
+        // Get reply counts
+        DatabaseReference databaseReference_replies = FirebaseDatabase.getInstance().getReference("CommentReplies")
+                .child(vid.getVideoId());
+        ValueEventListener eventListener_replies = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int x = toIntExact(dataSnapshot.getChildrenCount());
+                int temp = Integer.parseInt(allCommentsCount.getText().toString());
+                int y = x + temp;
+                allCommentsCount.setText(y + "");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        databaseReference_replies.addListenerForSingleValueEvent(eventListener_replies);
 
         componentListener = new ComponentListener();
         playerView = findViewById(R.id.artistVideoPlayer);
@@ -646,6 +711,34 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 collapseVariable = false;
             }
         }
+    }
+
+    /**
+     * Handles the back button on toolbar.
+     * @return true
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    /**
+     * Open the comments page.
+     * @param view view
+     */
+    public void viewAllComments(View view) {
+        Intent commentPageIntent = new Intent(VideoPlayer.this, CommentPage.class);
+        commentPageIntent.putExtra("VIDEO", vid);
+        commentPageIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(commentPageIntent);
+    }
+
+    /**
+     * Get the account type of the current user
+     */
+    private void getUserType() {
+        Bundle extras = getIntent().getExtras();
 
         if (view == likeBtn) {
             if (!VideoLiked) {
@@ -654,14 +747,59 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 cancelLikeVideo();
             }
         }
+    }
 
-        if (view == repostBtn) {
-            Log.e(TAG, "repost clicked");
-            if (!VideoReposted) {
-                repostVideo();
-            } else {
-                cancelRepostVideo();
+    /**
+     * Get the most recent comment for the corresponding video.
+     */
+    private void getRecentComment() {
+        recent_username = findViewById(R.id.recent_username);
+        recent_message = findViewById(R.id.recent_comment);
+        // Get most recent comment
+        DatabaseReference databaseReference_recentComment = FirebaseDatabase.getInstance().getReference("Comments");
+        databaseReference_recentComment.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(vid.getVideoId())) {
+                    Query query_recentComment = databaseReference_recentComment.child(vid.getVideoId()).orderByKey().limitToLast(1);
+                    query_recentComment.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            Comment comment = dataSnapshot.getValue(Comment.class);
+                            recent_username.setText(comment.getUsername());
+                            recent_message.setText(comment.getMessage());
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                } else {
+                    recent_username.setText("No recent comment to display");
+                    recent_message.setText("");
+                }
             }
-        }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 }
