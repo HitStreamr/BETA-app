@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Database Purposes
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder> firebaseRecyclerAdapter_artist;
+    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>  firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
 
     private TabLayout mTabLayout;
