@@ -57,10 +57,11 @@
                         android:id="@+id/user_name"/>
 
                     <TextView
+                        android:id="@+id/count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0 Followers"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp" />
 
                 </LinearLayout>
 

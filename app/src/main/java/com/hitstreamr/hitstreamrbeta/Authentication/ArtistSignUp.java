@@ -203,7 +203,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        validateUserNameFirebase(new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip),password);
+        validateUserNameFirebase(new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null),password);
     }
 
     private void registerAuthentication(String email, String password) {

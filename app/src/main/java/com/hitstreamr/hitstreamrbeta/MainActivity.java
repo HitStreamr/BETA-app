@@ -45,6 +45,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -332,6 +333,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         },model.getUserID());
                     }
                 });
+
+
+                holder.updateFollowing(new FollowCountUpdateCallback() {
+                    @Override
+                    public void onUpdateCount(long count) {
+                        holder.count.setText(count+" Followers");
+                    }
+                },model.getUserID());
             }
 
             @NonNull
@@ -362,6 +371,75 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setUserName(model.getUsername());
+                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                    @Override
+                    public void onFollowChecked(boolean following) {
+                        if(following){
+                            //if following == true
+                            holder.followButton.setVisibility(View.GONE);
+                            holder.unfollowButton.setVisibility(View.VISIBLE);
+                        }else{
+                            //if following == false
+                            holder.followButton.setVisibility(View.VISIBLE);
+                            holder.unfollowButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCheckUpdateFailed() {
+
+                    }
+                }, model.getUserID());
+
+                holder.followButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(following){
+                                    //if following == true
+                                    holder.followButton.setVisibility(View.GONE);
+                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(!following){
+                                    //if following == false
+                                    holder.followButton.setVisibility(View.VISIBLE);
+                                    holder.unfollowButton.setVisibility(View.GONE);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.updateFollowing(new FollowCountUpdateCallback() {
+                    @Override
+                    public void onUpdateCount(long count) {
+                        holder.count.setText(count+" Followers");
+                    }
+                },model.getUserID());
 
             }
 
@@ -725,6 +803,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name;
+        private TextView count;
         private Button followButton;
         private Button unfollowButton;
 
@@ -732,6 +811,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super(itemView);
             view = itemView;
             name = view.findViewById(R.id.user_name);
+            count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
         }
@@ -842,7 +922,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
         }
 
+        private void updateFollowing(MainActivity.FollowCountUpdateCallback callback, String userID){
+            DatabaseReference myFollowersRef = FirebaseDatabase.getInstance().getReference("followers")
+                    .child(userID);
+            myFollowersRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    long followerscount = dataSnapshot.getChildrenCount();
+                   callback.onUpdateCount(followerscount);
+                }
 
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
     }
 
 
@@ -852,6 +948,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name;
+        private TextView count;
         private Button followButton;
         private Button unfollowButton;
 
@@ -859,6 +956,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super(itemView);
             view = itemView;
             name = view.findViewById(R.id.user_name);
+            count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
         }
@@ -878,14 +976,127 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
 
+        }
 
-            followButton.setOnClickListener(new View.OnClickListener() {
+        private void checkFollowing(VideoPlayer.OnDataReceiveCallback callback,String followingId){
+            //get where the following state would be
+            // check who the user is following
+            FirebaseDatabase.getInstance().getReference().child("following").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(followingId).exists()){
+                        Log.e(TAG, "Following");
+                        callback.onFollowChecked(true);
+                    }else{
+                        Log.e(TAG, "Not Following");
+                        callback.onFollowChecked(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
             });
         }
+
+        //TODO update these to more fault tolerant firebase updates?
+        private void saveFollowing(VideoPlayer.OnDataReceiveCallback callback, String followedID){
+            FirebaseDatabase.getInstance().getReference("following")
+                    .child(user.getUid())
+                    .child(followedID)
+                    .setValue(followedID)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // do the Reciprocal on Success
+                            // artistFollowers -> user
+                            FirebaseDatabase.getInstance().getReference("followers")
+                                    .child(followedID)
+                                    .child(user.getUid())
+                                    .setValue(user.getUid())
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // hide/show the UI
+                                            callback.onFollowChecked(true);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //TODO Error for following failing
+                                    callback.onCheckUpdateFailed();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    //TODO Error for following failing
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void saveUnfollowing(VideoPlayer.OnDataReceiveCallback callback,String unfollowedID){
+            FirebaseDatabase.getInstance()
+                    .getReference("following")
+                    .child(user.getUid())
+                    .child(unfollowedID)
+                    .removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //remove user from artist's list of followers
+                            FirebaseDatabase.getInstance()
+                                    .getReference("followers")
+                                    .child(unfollowedID)
+                                    .child(user.getUid())
+                                    .removeValue()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //update UI
+                                            callback.onFollowChecked(false);
+                                        }
+                                    });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void updateFollowing(MainActivity.FollowCountUpdateCallback callback, String userID){
+            DatabaseReference myFollowersRef = FirebaseDatabase.getInstance().getReference("followers")
+                    .child(userID);
+            myFollowersRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    long followerscount = dataSnapshot.getChildrenCount();
+                    callback.onUpdateCount(followerscount);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
+                }
+            });
+        }
+    }
+
+    /*
+    Provides interface for the callback for Async call to Firebase
+    */
+    public interface FollowCountUpdateCallback{
+        /*
+         *   Method that notifies the ui that the Data was received
+         */
+        void onUpdateCount(long count);
+
     }
 
     /**
