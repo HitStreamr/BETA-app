@@ -17,12 +17,14 @@
             android:layout_alignParentTop="true"
             android:orientation="vertical"
             android:padding="5dp">
+            <!--it was 5dp before-->
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
                 <ImageView
+                    android:id="@+id/watchLaterThumbnail"
                     android:layout_width="180dp"
                     android:layout_height="110dp"
                     android:background="@drawable/round_outline"
@@ -49,7 +51,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/author"
+                    android:id="@+id/watchLaterAuthor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/scrollingTitle"
@@ -58,6 +60,7 @@
                     android:textColor="@color/colorAccent" />
 
                 <TextView
+                    android:id="@+id/watchLaterDuration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="150dp"
@@ -115,6 +118,7 @@
                             android:tint="@color/drkgryAccent" />
 
                         <TextView
+                            android:id="@+id/watchLaterViews"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"

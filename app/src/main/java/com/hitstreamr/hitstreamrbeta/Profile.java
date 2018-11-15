@@ -416,7 +416,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                         @Override
                         public void onSuccess(Uri uri) {
                             Log.e(TAG,"down uri: "+uri);
-                            //ImageViewBackground.setImageURI(uri);
+                            ImageViewBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             Glide.with(getApplicationContext()).load(uri).into(ImageViewBackground);
                         }
                     });
