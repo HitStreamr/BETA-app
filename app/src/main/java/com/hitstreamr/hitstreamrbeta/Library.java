@@ -86,10 +86,7 @@ public class Library extends AppCompatActivity {
         getWatchLaterList();
     }
 
-
-
     private void setUpRecyclerView() {
-
         Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
         bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
