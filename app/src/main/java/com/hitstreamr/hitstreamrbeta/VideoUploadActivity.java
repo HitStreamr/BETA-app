@@ -936,7 +936,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private String millisecondsToString(long duration){
         long minutes = (duration / 1000) / 60;
         long seconds = (duration / 1000) % 60;
-        return minutes + ":" + seconds;
+        return String.format("%d:%02d", minutes, seconds);
     }
 
 

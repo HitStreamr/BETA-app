@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @IgnoreExtraProperties
 public class Video implements Parcelable {
@@ -21,7 +22,7 @@ public class Video implements Parcelable {
     private String duration;
     private int pubYear;
     private String videoId;
-    private String timestamp;
+    private Date timestamp;
     private long views;
 
     private ArrayList<Contributor> contributors;
@@ -32,7 +33,7 @@ public class Video implements Parcelable {
     }
 
     public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String duration,
-                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, String timestamps,
+                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Date timestamps,
                  long views) {
         this.title = title;
         this.description = description;
@@ -156,11 +157,11 @@ public class Video implements Parcelable {
         this.duration = duration;
     }
 
-    public String getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -190,7 +191,8 @@ public class Video implements Parcelable {
         pubYear = in.readInt();
         videoId = in.readString();
         duration = in.readString();
-        timestamp = in.readString();
+        long tmpDate = in.readLong();
+        timestamp = tmpDate == Long.MIN_VALUE ? null : new Date(tmpDate);
         views = in.readLong();
         if (in.readByte() == 0x01) {
             contributors = new ArrayList<Contributor>();
@@ -219,7 +221,7 @@ public class Video implements Parcelable {
         dest.writeInt(pubYear);
         dest.writeString(videoId);
         dest.writeString(duration);
-        dest.writeString(timestamp);
+        dest.writeLong(timestamp != null ? timestamp.getTime() : Long.MIN_VALUE);
         dest.writeLong(views);
         if (contributors == null) {
             dest.writeByte((byte) (0x00));
