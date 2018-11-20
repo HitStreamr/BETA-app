@@ -17,7 +17,6 @@
         android:padding="20dp">
 
         <TextView
-            android:id="@+id/createplaylist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New Playlist"
@@ -27,6 +26,7 @@
             android:textColor="@color/drkgryAccent" />
 
         <EditText
+            android:id="@+id/createPlayListTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Title"
@@ -41,7 +41,7 @@
             android:textColor="@color/drkgryAccent" />
 
         <Spinner
-            android:id="@+id/Privacy"
+            android:id="@+id/createPlaylistPrivacy"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/Privacy" />
@@ -55,7 +55,7 @@
             >
 
             <Button
-                android:id="@+id/cancel"
+                android:id="@+id/createPlayListCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cancel"
@@ -63,7 +63,7 @@
                 android:background="@android:color/transparent"/>
 
             <Button
-                android:id="@+id/confirm"
+                android:id="@+id/createPlayListConfirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="OK"

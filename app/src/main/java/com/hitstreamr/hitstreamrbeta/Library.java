@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -38,11 +39,10 @@ public class Library extends AppCompatActivity {
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
     private ListView listView_watchLater;
-    //private RecyclerView recyclerView_watchLater, recyclerView_playlists;
+    private RecyclerView recyclerView_watchLater, recyclerView_playlists;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference bookRef = db.collection("Videos");
-    Query query;
 
     private BookAdapter bookAdapter_watchLater, bookAdapter_playlists;
 
@@ -65,7 +65,9 @@ public class Library extends AppCompatActivity {
 
         bottomNavView = findViewById(R.id.bottomNav);
 
-        listView_watchLater = findViewById(R.id.listView_watchLater);
+        //listView_watchLater = findViewById(R.id.listView_watchLater);
+
+        recyclerView_watchLater = findViewById(R.id.recyclerView_watchLater);
 
         WatchLaterList = new ArrayList<>();
         Watch = new ArrayList<>();
@@ -104,9 +106,10 @@ public class Library extends AppCompatActivity {
     }
 
     private void call(){
-        bookAdapter_watchLater = new BookAdapter(this, R.layout.watch_later_results, Watch);
-        listView_watchLater.setAdapter(bookAdapter_watchLater);
-        bookAdapter_watchLater.notifyDataSetChanged();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView_watchLater.setLayoutManager(layoutManager);
+        bookAdapter_watchLater = new BookAdapter(Watch);
+        recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
     }
 
     /**
@@ -171,7 +174,7 @@ public class Library extends AppCompatActivity {
         }
     }
 
-    //Object temp;
+
 
     /**
      * RecyclerView Test

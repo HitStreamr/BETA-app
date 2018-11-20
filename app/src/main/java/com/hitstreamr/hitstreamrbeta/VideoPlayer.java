@@ -74,6 +74,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //ImageButton
     private ImageButton likeBtn;
     private ImageButton repostBtn;
+    private ImageButton addToPlaylistBtn;
 
     //TextView
     private TextView TextViewVideoDescription;
@@ -134,6 +135,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //ImageButton
         likeBtn = findViewById(R.id.fave);
         repostBtn = findViewById(R.id.rePostVideo);
+        addToPlaylistBtn = findViewById(R.id.addToPlaylist);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
@@ -161,6 +163,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
         repostBtn.setOnClickListener(this);
+        addToPlaylistBtn.setOnClickListener(this);
 
         checkLikes();
         checkRepost();
@@ -662,6 +665,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             } else {
                 cancelRepostVideo();
             }
+        }
+
+        if(view == addToPlaylistBtn){
+            Log.e(TAG, "add to Playlist clicked"+vid.getVideoId());
+            Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
+            playListAct.putExtra("VideoId", vid.getVideoId());
+            startActivity(playListAct);
         }
     }
 }
