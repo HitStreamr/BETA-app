@@ -1,38 +1,55 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.widget.ExpandableListView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Library extends AppCompatActivity {
+
+    private static final String TAG = "LibraryActivity";
+
     private String accountType;
+    private FirebaseUser current_user;
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
-    private RecyclerView recyclerView_watchLater, recyclerView_playlists;
+    private ListView listView_watchLater;
+    //private RecyclerView recyclerView_watchLater, recyclerView_playlists;
 
-    // For Testing Purposes
-    private List<Book> bookList_watchLater = new ArrayList<>();
-    private List<Book> bookList_playlists = new ArrayList<>();
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference bookRef = db.collection("Videos");
+    Query query;
+
     private BookAdapter bookAdapter_watchLater, bookAdapter_playlists;
+
+    private Long WatchListCount;
+    private ArrayList<String> WatchLaterList;
+    private ArrayList<Video> Watch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +58,7 @@ public class Library extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -49,8 +66,13 @@ public class Library extends AppCompatActivity {
 
         bottomNavView = findViewById(R.id.bottomNav);
 
+        listView_watchLater = findViewById(R.id.listView_watchLater);
+
+        WatchLaterList = new ArrayList<>();
+        Watch = new ArrayList<>();
+
         getUserType();
-        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Profile Picture
         if (current_user.getPhotoUrl() != null) {
@@ -63,11 +85,34 @@ public class Library extends AppCompatActivity {
         }
 
         getWatchLaterList();
-        getPlaylists();
+    }
+
+    private void setUpRecyclerView() {
+        Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
+        bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    if (WatchLaterList.contains(document.getId())) {
+                        Log.e(TAG, "entered    :::" + document.getId() + document.getData());
+                        Watch.add(document.toObject(Video.class));
+                    }
+                }
+                Log.e(TAG, "objects :::" + Watch);
+                call();
+            }
+        });
+    }
+
+    private void call(){
+        bookAdapter_watchLater = new BookAdapter(this, R.layout.watch_later_results, Watch);
+        listView_watchLater.setAdapter(bookAdapter_watchLater);
+        bookAdapter_watchLater.notifyDataSetChanged();
     }
 
     /**
      * Drop Down Menu - History
+     *
      * @param view view
      */
     public void expandableButton_history(View view) {
@@ -77,6 +122,7 @@ public class Library extends AppCompatActivity {
 
     /**
      * Drop Down - Watch Later
+     *
      * @param view view
      */
     public void expandableButton_watchLater(View view) {
@@ -86,6 +132,7 @@ public class Library extends AppCompatActivity {
 
     /**
      * Drop Down - Playlist
+     *
      * @param view view
      */
     public void expandableButton_playlists(View view) {
@@ -96,6 +143,7 @@ public class Library extends AppCompatActivity {
 
     /**
      * Handles back button on toolbar
+     *
      * @return true if pressed
      */
     @Override
@@ -124,103 +172,31 @@ public class Library extends AppCompatActivity {
         }
     }
 
+    //Object temp;
+
     /**
      * RecyclerView Test
      */
     private void getWatchLaterList() {
-        recyclerView_watchLater = (RecyclerView) findViewById(R.id.recyclerView_watchLater);
-        bookAdapter_watchLater = new BookAdapter(bookList_watchLater);
-        recyclerView_watchLater.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView_watchLater.setItemAnimator(new DefaultItemAnimator());
-        recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
 
-        initBookData();
-    }
+        FirebaseDatabase.getInstance().getReference("WatchLater")
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot each : dataSnapshot.getChildren()) {
+                                //temp = each.getValue().toString();
+                                WatchLaterList.add(String.valueOf(each.getKey()));
+                            }
+                            Log.e(TAG, "Watch Later List : " + WatchLaterList);
+                        }
+                        setUpRecyclerView();
+                    }
 
-    /**
-     * RecyclerView Test
-     */
-    private void getPlaylists() {
-        recyclerView_playlists = (RecyclerView) findViewById(R.id.recyclerView_playlists);
-        bookAdapter_playlists = new BookAdapter(bookList_playlists);
-        recyclerView_playlists.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView_playlists.setItemAnimator(new DefaultItemAnimator());
-        recyclerView_playlists.setAdapter(bookAdapter_playlists);
-
-        initBookData2();
-    }
-
-    /**
-     * Test
-     */
-    private void initBookData() {
-        Book book = new Book("Hello Android", "Ed Burnette");
-        bookList_watchLater.add(book);
-
-        book = new Book("Beginning Android 3", "Mark Murphy");
-        bookList_watchLater.add(book);
-
-        book = new Book("Unlocking Android", " W. Frank Ableson");
-        bookList_watchLater.add(book);
-
-        book = new Book("Android Tablet Development", "Wei Meng Lee");
-        bookList_watchLater.add(book);
-
-        book = new Book("Android Apps Security", "Sheran Gunasekera");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book1", "Author1");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book2", "Author2");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book3", "Author3");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book4", "Author4");
-        bookList_watchLater.add(book);
-
-        book = new Book("Book5", "Author5");
-        bookList_watchLater.add(book);
-
-        bookAdapter_watchLater.notifyDataSetChanged();
-    }
-
-    /**
-     * Test
-     */
-    private void initBookData2() {
-        Book book = new Book("Hello Android", "Ed Burnette");
-        bookList_playlists.add(book);
-
-        book = new Book("Beginning Android 3", "Mark Murphy");
-        bookList_playlists.add(book);
-
-        book = new Book("Unlocking Android", " W. Frank Ableson");
-        bookList_playlists.add(book);
-
-        book = new Book("Android Tablet Development", "Wei Meng Lee");
-        bookList_playlists.add(book);
-
-        book = new Book("Android Apps Security", "Sheran Gunasekera");
-        bookList_playlists.add(book);
-
-        book = new Book("Book1", "Author1");
-        bookList_playlists.add(book);
-
-        book = new Book("Book2", "Author2");
-        bookList_playlists.add(book);
-
-        book = new Book("Book3", "Author3");
-        bookList_playlists.add(book);
-
-        book = new Book("Book4", "Author4");
-        bookList_playlists.add(book);
-
-        book = new Book("Book5", "Author5");
-        bookList_playlists.add(book);
-
-        bookAdapter_playlists.notifyDataSetChanged();
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
     }
 }

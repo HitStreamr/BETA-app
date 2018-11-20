@@ -61,7 +61,11 @@
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
-        <activity android:name=".Library" />
+        <activity android:name=".ReportVideoPopup" />
+        <activity android:name=".Comments" />
+        <activity android:name=".AddToPlaylsit" />
+        <activity android:name=".CreateNewPlaylist"></activity>
+        <activity android:name=".Library"></activity>
 
         <service android:name=".HitStreamrFirebaseMessagingService">
             <intent-filter>

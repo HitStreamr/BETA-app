@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResultClick(Video video) {
                 //Open Video Player for song
+                Log.e(TAG, "You clicked a video" +video);
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 startActivity(videoPlayerIntent);
@@ -640,6 +641,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setQuery(searchRequest, Video.class)
                 .build();
 
+        Log.e(TAG,"video search query"+searchRequest);
+
         suggestionAdapter = new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
             @NonNull
             @Override
@@ -769,6 +772,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.inflate(R.menu.video_overflow_menu);
         popupMenu.show();
     }
+
 
     /**
      *
@@ -1339,6 +1343,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+        if (suggestionAdapter != null) {
+            suggestionAdapter.startListening();
+        }
     }
 
     @Override

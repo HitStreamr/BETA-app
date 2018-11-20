@@ -99,6 +99,17 @@ dependencies {
     implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
 
 
+    implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
+
+    //Google play Billing
+    // implementation 'com.android.billingclient:billing:1.2'
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+
+    // Indicator Seek Bar
+    implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.0'
+
+    // Range seek Bar
+    implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
 
 }
 

@@ -7,12 +7,16 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.hitstreamr.hitstreamrbeta.LabelDashboard;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
@@ -39,7 +43,64 @@ public class Splash extends AppCompatActivity {
                 // [END initialize_auth]
                 Log.e(TAG, mAuth.getCurrentUser()+"");
                 if(mAuth.getCurrentUser() != null){
-                    sortUsers();
+                    //store the notification token/overirde if different
+
+                    //find the refto user notif
+                    DatabaseReference notifRef = FirebaseDatabase.getInstance().getReference().child("FirebaseNotificationTokens").child(mAuth.getCurrentUser().getUid());
+
+                    notifRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Log.e(TAG, ""+dataSnapshot.getChildrenCount());
+                            if(dataSnapshot.exists()){
+                                for(DataSnapshot child: dataSnapshot.getChildren()){
+                                    Log.e(TAG, "Child Key: " + child.getKey() + " Value: " + child.getValue(Boolean.TYPE));
+                                    FirebaseInstanceId.getInstance().getInstanceId()
+                                            .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                    if (!task.isSuccessful()) {
+                                                        Log.w(TAG, "getInstanceId failed", task.getException());
+                                                        return;
+                                                    }else{
+                                                        //phone token takes precendence, if they are different overwite
+                                                        String currentToken = child.getKey();
+
+                                                        if (!task.getResult().getToken().equals(currentToken)){
+                                                            notifRef.child(currentToken).removeValue();
+                                                            notifRef.child(task.getResult().getToken()).setValue(true);
+                                                        }
+
+                                                        sortUsers();
+                                                    }
+                                                }
+                                            });
+                                }
+                            }
+                            else{
+                                //user has no notification tokens
+                                //Instace id stuff
+                                FirebaseInstanceId.getInstance().getInstanceId()
+                                        .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                                                if (!task.isSuccessful()) {
+                                                    Log.w(TAG, "getInstanceId failed", task.getException());
+                                                    return;
+                                                }else{
+                                                    notifRef.child(task.getResult().getToken()).setValue(true);
+                                                    sortUsers();
+                                                }
+                                            }
+                                        });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                 }else{
                     startActivity(new Intent(getApplicationContext(),Welcome.class));
                 }

@@ -34,6 +34,19 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
     private static final String TAG = "MyFirebaseMsgService";
     private final int REQUEST_CODE = 90210;
     private final int FOLLOW_NOTIF = 1234;
+    private final int FAVE_NOTIF = 1235;
+
+    //Preference Constants
+    private final String FOLLOW = "newFollow";
+    private final String ALL_PUSH = "pushNotifs";
+    private final String REPOST = "repostVid";
+    private final String NEW_POST = "newPost";
+    private final String FAVE = "newFave";
+    private final String COMMENT = "newComment";
+    private final String REPLY = "replyComment";
+    private final String FEATURES = "newFeatures";
+    private final String TIPS = "hitstreamrTips";
+    private final String SURVEY = "surveys";
 
     /**
      * Called when message is received.
@@ -125,8 +138,15 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
                 case "follow":
                     if(user != null ) {
                         SharedPreferences userDetails = this.getSharedPreferences(user.getUid(), MODE_PRIVATE);
-                        if (userDetails.getBoolean("pushNotifs", false) && userDetails.getBoolean("newFollow", false))
-                            sendNotification(message.getData(), true);
+                        if (userDetails.getBoolean(ALL_PUSH, false) && userDetails.getBoolean(FOLLOW, false))
+                            sendNotification(type, message.getData(), true);
+                    }
+                    break;
+                case "fave":
+                    if(user != null ) {
+                        SharedPreferences userDetails = this.getSharedPreferences(user.getUid(), MODE_PRIVATE);
+                        if (userDetails.getBoolean(ALL_PUSH, false) && userDetails.getBoolean(FAVE, false))
+                            sendNotification(type,message.getData(), true);
                     }
                     break;
                 default:
@@ -171,14 +191,23 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
      *
      * @param message FCM message body received as a Map
      */
-    private void sendNotification(Map<String, String> message, boolean loggedIn) {
+    private void sendNotification(String type, Map<String, String> message, boolean loggedIn) {
         //Redirect to Splash in case they aren't logged in
         Intent intent = new Intent(this, Splash.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, REQUEST_CODE, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        String channelId = getString(R.string.follow_notification_channel_id);
+        String channelId = "Default Channel ID";
+        switch(type){
+            case "follow":
+                channelId = getString(R.string.follow_notification_channel_id);
+                break;
+            case "fave":
+                channelId = "New Fave";
+                break;
+        }
+
         //TODO Should this use the Hitstreamer or Prof Pic
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
@@ -195,13 +224,32 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
 
         // Since android Oreo notification channel is needed.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId,
-                    "New Follows",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel("", "DEFAULT", NotificationManager.IMPORTANCE_DEFAULT);
+            switch(type){
+                case "follow":
+                  channel = new NotificationChannel(channelId,
+                            "New Follows",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    break;
+                case "fave":
+                   channel = new NotificationChannel(channelId,
+                            "New Follows",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    break;
+            }
+
             notificationManager.createNotificationChannel(channel);
         }
 
-        notificationManager.notify(FOLLOW_NOTIF, notificationBuilder.build());
+        switch(type){
+            case "follow":
+                notificationManager.notify(FOLLOW_NOTIF, notificationBuilder.build());
+                break;
+            case "fave":
+                notificationManager.notify(FAVE_NOTIF, notificationBuilder.build());
+                break;
+        }
+
     }
 }
 

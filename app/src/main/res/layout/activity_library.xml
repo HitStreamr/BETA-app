@@ -50,9 +50,9 @@
                     android:layout_height="wrap_content">
 
                     <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal" >
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
 
                         <Button
                             android:layout_width="wrap_content"
@@ -87,7 +87,7 @@
                     </LinearLayout>
 
 
-            </HorizontalScrollView>
+                </HorizontalScrollView>
 
                 <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
@@ -122,18 +122,23 @@
                 app:ael_interpolator="bounce"
                 app:ael_orientation="vertical">
 
-                <android.support.v7.widget.RecyclerView
+                <!--<android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView_watchLater"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scrollbars="vertical">
 
-                </android.support.v7.widget.RecyclerView>
+                </android.support.v7.widget.RecyclerView>-->
+
+                <ListView
+                    android:id="@+id/listView_watchLater"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
 
                 <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand." />-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand." />-->
 
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
@@ -170,9 +175,9 @@
                 </android.support.v7.widget.RecyclerView>
 
                 <!--<TextView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand" />-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand" />-->
 
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 

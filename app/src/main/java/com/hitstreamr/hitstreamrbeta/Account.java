@@ -55,10 +55,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private StorageReference mStorageRef;
     private StorageTask mstorageTask;
     private StorageReference imageRef = null;
+    private StorageReference backgroundRef = null;
 
     private String downloadimageUri;
+    private String downloadBackgroundUri;
 
     private boolean photoChanged = false;
+    private boolean backgroundChanged = false;
 
     private String email;
 
@@ -92,6 +95,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private Button SaveAccountBtn;
     private Button ChangePwdBtn;
     private Button ChangePhotoBtn;
+    private Button ChangeBackgroundBtn;
 
     //Object
     ArtistUser artist;
@@ -99,7 +103,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     User basicUser;
     User oldBasic;
 
+    private boolean selectPhoto = false;
+    private boolean selectBackground = false;
+
     private Uri selectedImagePath;
+    private Uri selectedBackgroundPath;
 
     private static final int REQUEST_CODE = 123;
 
@@ -172,10 +180,12 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SaveAccountBtn = findViewById(R.id.saveAccount);
         SaveAccountBtn.setOnClickListener(this);
         ChangePhotoBtn = findViewById(R.id.accountChangePhoto);
+        ChangeBackgroundBtn = findViewById(R.id.accountChangeBackground);
 
         ChangePwdBtn = findViewById(R.id.ChangePassword);
         ChangePwdBtn.setOnClickListener(this);
         ChangePhotoBtn.setOnClickListener(this);
+        ChangeBackgroundBtn.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -301,6 +311,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         basicUser = new User(username, email, oldBasic.getUserID());
         oldBasic = basicUser;
 
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
         if (selectedImagePath != null) {
             uploadFromUri(selectedImagePath);
         }
@@ -353,6 +367,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         }
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
 
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
         videoSelection();
 
         Log.e(TAG, "email details" + artist.getEmail() + "new email" + email);
@@ -362,6 +380,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void videoSelection(){
+
         if (selectedImagePath != null) {
             uploadFromUri(selectedImagePath);
         }
@@ -450,6 +469,35 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                                         public void onSuccess(Uri uri) {
                                             downloadimageUri = uri.toString();
                                             updateAuthentication();
+                                        }
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(Account.this, "Image Upload failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+
+    }
+
+    private void uploadBackgroundImage (final Uri fileUri) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.e(TAG, "Background Uri selected" +fileUri);
+            backgroundRef = mStorageRef.child("backgroundPictures").child(user.getUid());
+            mstorageTask = backgroundRef.putFile(fileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot takeSnapshot) {
+                            backgroundRef.getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            downloadBackgroundUri = uri.toString();
+                                            Log.e(TAG, "Download url"+downloadBackgroundUri);
                                         }
                                     });
                         }
@@ -714,9 +762,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void choosePhoto() {
+        selectPhoto = true;
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select your profile picture"), REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(intent, "Select your profile picture"), 123);
     }
 
     @Override
@@ -740,7 +789,32 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                     }
                 }
             }
+            if (requestCode == 1234) {
+                Log.e(TAG, "Entered background uri gallery");
+                if (data != null) {
+                    if (data.getData() != null) {
+                        selectedBackgroundPath = data.getData();
+                        try {
+                            backgroundChanged = true;
+                            Log.e(TAG, "On Activity Result entered" + selectedBackgroundPath);
+                            //uploadFromUri(selectedImagePath);
+
+                        } catch (Exception e) {
+                            //#debug
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private void chooseBackgroundPhoto() {
+        Log.e(TAG, "Entered Background chooser");
+        selectBackground = true;
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select your Background picture"), 1234);
     }
 
     @Override
@@ -755,6 +829,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             selectChangePassword();
         } else if (view == ChangePhotoBtn) {
             choosePhoto();
+        } else if(view == ChangeBackgroundBtn){
+            chooseBackgroundPhoto();
         }
     }
 

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profilePicture"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@mipmap/ic_launcher_round"
+                android:layout_marginEnd="5dp"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textStyle="bold"
+                    android:textColor="@color/drkgryAccent" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:paddingStart="10dp"
+                    android:hint="User Comment..."
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/descriptionDivider2"
+                android:layout_width="50dp"
+                android:layout_height="1dp"
+                android:background="@color/litgryAccent" />
+            <TextView
+                android:id="@+id/viewReply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="View Replies"
+                android:textSize="10sp"
+                android:layout_marginStart="5dp"/>
+            <TextView
+                android:id="@+id/replyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(0)"
+                android:textSize="10sp"/>
+
+
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/postedReplies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp">
+
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            android:text="REPLY"
+            android:textSize="12sp"
+            android:textColor="@color/litgryAccent"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

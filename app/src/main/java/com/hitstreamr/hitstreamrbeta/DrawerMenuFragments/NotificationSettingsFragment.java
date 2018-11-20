@@ -26,12 +26,13 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
     SwitchCompat newPostByFollowed;
     SwitchCompat favesVid;
     SwitchCompat commentVid;
+    SwitchCompat replyComment;
     SwitchCompat newHitstreamr;
     SwitchCompat surveysFeedback;
     SwitchCompat hitstreamrTips;
 
     //email Notifications
-    SwitchCompat email_allPush;
+/*    SwitchCompat email_allPush;
     SwitchCompat email_newFollow;
     SwitchCompat email_repostVid;
     SwitchCompat email_newPostByFollowed;
@@ -39,7 +40,7 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
     SwitchCompat email_commentVid;
     SwitchCompat email_newHitstreamr;
     SwitchCompat email_surveysFeedback;
-    SwitchCompat email_hitstreamrTips;
+    SwitchCompat email_hitstreamrTips;*/
 
     //Notification Preference File
     SharedPreferences userNotifSettings;
@@ -51,6 +52,7 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
     private final String NEW_POST = "newPost";
     private final String FAVE = "newFave";
     private final String COMMENT = "newComment";
+    private final String REPLY = "replyComment";
     private final String FEATURES = "newFeatures";
     private final String TIPS = "hitstreamrTips";
     private final String SURVEY = "surveys";
@@ -82,15 +84,23 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
         newPostByFollowed= view.findViewById(R.id.newPost);
         favesVid= view.findViewById(R.id.favesVid);
         commentVid= view.findViewById(R.id.commentVid);
+        replyComment = view.findViewById(R.id.replyToComment);
         newHitstreamr= view.findViewById(R.id.newFeatures);
         surveysFeedback= view.findViewById(R.id.surveyFeedback);
         hitstreamrTips= view.findViewById(R.id.hitstreamrTips);
+
+        //hide options that basic users shouldn't have
+        if(getArguments().getString("TYPE").equals(getString(R.string.type_basic))){
+            favesVid.setVisibility(View.GONE);
+            commentVid.setVisibility(View.GONE);
+        }
 
         allPush.setOnCheckedChangeListener(this);
         newFollow.setOnCheckedChangeListener(this);
         newPostByFollowed.setOnCheckedChangeListener(this);
         favesVid.setOnCheckedChangeListener(this);
         commentVid.setOnCheckedChangeListener(this);
+        replyComment.setOnCheckedChangeListener(this);
         newHitstreamr.setOnCheckedChangeListener(this);
         surveysFeedback.setOnCheckedChangeListener(this);
         hitstreamrTips.setOnCheckedChangeListener(this);
@@ -110,6 +120,7 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
         newPostByFollowed.setChecked(sp.getBoolean(NEW_POST,false));
         favesVid.setChecked(sp.getBoolean(FAVE, false));
         commentVid.setChecked(sp.getBoolean(COMMENT, false));
+        replyComment.setChecked(sp.getBoolean(REPLY, false));
         newHitstreamr.setChecked(sp.getBoolean(FEATURES, false));
         surveysFeedback.setChecked(sp.getBoolean(SURVEY, false));
         hitstreamrTips.setChecked(sp.getBoolean(TIPS, false));
@@ -129,6 +140,7 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
                     newPostByFollowed.setChecked(false);
                     favesVid.setChecked(false);
                     commentVid.setChecked(false);
+                    replyComment.setChecked(false);
                     newHitstreamr.setChecked(false);
                     surveysFeedback.setChecked(false);
                     hitstreamrTips.setChecked(false);
@@ -195,6 +207,18 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
                     edit.putBoolean(COMMENT, false);
                     edit.apply();
                     //Toast.makeText(getActivity(),"New Comment unchecked", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            case R.id.replyToComment:
+                if(isChecked){
+                    edit.putBoolean(REPLY, true);
+                    edit.apply();
+                    allPush.setChecked(true);
+                    //Toast.makeText(getActivity(),"New Reply checked", Toast.LENGTH_SHORT).show();
+                }else{
+                    edit.putBoolean(REPLY, false);
+                    edit.apply();
+                    //Toast.makeText(getActivity(),"New Reply unchecked", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.newFeatures:

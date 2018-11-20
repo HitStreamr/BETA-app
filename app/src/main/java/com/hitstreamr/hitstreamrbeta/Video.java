@@ -3,12 +3,9 @@ package com.hitstreamr.hitstreamrbeta;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
 import java.util.ArrayList;
 import java.util.Date;
 
-@IgnoreExtraProperties
 public class Video implements Parcelable {
     private String title;
     private String description;
