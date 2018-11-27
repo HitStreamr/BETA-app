@@ -97,6 +97,7 @@ public class NotificationSettingsFragment extends Fragment implements CompoundBu
 
         allPush.setOnCheckedChangeListener(this);
         newFollow.setOnCheckedChangeListener(this);
+        repostVid.setOnCheckedChangeListener(this);
         newPostByFollowed.setOnCheckedChangeListener(this);
         favesVid.setOnCheckedChangeListener(this);
         commentVid.setOnCheckedChangeListener(this);

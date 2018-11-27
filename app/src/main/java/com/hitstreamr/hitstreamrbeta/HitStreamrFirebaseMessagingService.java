@@ -35,6 +35,9 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
     private final int REQUEST_CODE = 90210;
     private final int FOLLOW_NOTIF = 1234;
     private final int FAVE_NOTIF = 1235;
+    private final int REPLY_NOTIF = 1236;
+    private final int REPOST_NOTIF = 1237;
+    private final int POST_NOTIF = 1237;
 
     //Preference Constants
     private final String FOLLOW = "newFollow";
@@ -149,6 +152,27 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
                             sendNotification(type,message.getData(), true);
                     }
                     break;
+                case "reply": {
+                    if(user != null ) {
+                        SharedPreferences userDetails = this.getSharedPreferences(user.getUid(), MODE_PRIVATE);
+                        if (userDetails.getBoolean(ALL_PUSH, false) && userDetails.getBoolean(REPLY, false))
+                            sendNotification(type,message.getData(), true);
+                    }
+                }
+                case "repost": {
+                    if(user != null ) {
+                        SharedPreferences userDetails = this.getSharedPreferences(user.getUid(), MODE_PRIVATE);
+                        if (userDetails.getBoolean(ALL_PUSH, false) && (userDetails.getBoolean(REPOST, false) || (userDetails.getBoolean(NEW_POST, false))))
+                            sendNotification(type, message.getData(), true);
+                    }
+                }
+                case "post": {
+                    if(user != null ) {
+                        SharedPreferences userDetails = this.getSharedPreferences(user.getUid(), MODE_PRIVATE);
+                        if (userDetails.getBoolean(ALL_PUSH, false) && (userDetails.getBoolean(NEW_POST, false)))
+                            sendNotification(type, message.getData(), true);
+                    }
+                }
                 default:
                     break;
             }
@@ -206,6 +230,18 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
             case "fave":
                 channelId = "New Fave";
                 break;
+            case "reply": {
+                channelId = "New Reply";
+                break;
+            }
+            case "repost": {
+                channelId = "New Repost";
+                break;
+            }
+            case "post": {
+                channelId = "New Post";
+                break;
+            }
         }
 
         //TODO Should this use the Hitstreamer or Prof Pic
@@ -233,9 +269,27 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
                     break;
                 case "fave":
                    channel = new NotificationChannel(channelId,
-                            "New Follows",
+                            "New Faves",
                             NotificationManager.IMPORTANCE_DEFAULT);
                     break;
+                case "reply": {
+                    channel = new NotificationChannel(channelId,
+                            "New Replies",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    break;
+                }
+                case "repost": {
+                    channel = new NotificationChannel(channelId,
+                            "New Reposts",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    break;
+                }
+                case "post": {
+                    channel = new NotificationChannel(channelId,
+                            "New Posts",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    break;
+                }
             }
 
             notificationManager.createNotificationChannel(channel);
@@ -248,6 +302,16 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
             case "fave":
                 notificationManager.notify(FAVE_NOTIF, notificationBuilder.build());
                 break;
+            case "reply":
+                notificationManager.notify(REPLY_NOTIF,notificationBuilder.build());
+                break;
+            case "repost":
+                notificationManager.notify(REPOST_NOTIF, notificationBuilder.build());
+                break;
+            case "post": {
+                notificationManager.notify(POST_NOTIF, notificationBuilder.build());
+                break;
+            }
         }
 
     }
