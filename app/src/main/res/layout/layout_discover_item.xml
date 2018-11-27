@@ -1,25 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:id="@+id/discover_layout">
+    android:id="@+id/discover_layout"
+    >
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:id="@+id/discoverimage"
-        android:src="@drawable/gradient1"/>
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:id="@+id/discoverimage"
+            android:src="@drawable/gradient1"
+            android:scaleType="centerCrop"
+            />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="149dp"
-        android:text="New Releases"
-        android:textColor="@color/colorAccent"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:id="@+id/discovertext"/>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="149dp"
+            android:text="New Releases"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:id="@+id/discovertext"
+            android:shadowColor="@color/drkgryAccent"
+            android:shadowDx="4"
+            android:shadowDy="4"
+            android:shadowRadius="4"
+            />
 </RelativeLayout>

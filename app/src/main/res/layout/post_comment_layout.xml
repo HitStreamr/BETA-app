@@ -6,55 +6,47 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            tools:ignore="UselessParent"
-            android:padding="10dp">
+            android:gravity="center_vertical">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profilePicture"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:id="@+id/profilePicture_comment"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:src="@mipmap/ic_launcher_round"
                 app:civ_border_color="@color/colorAccent"
                 app:civ_border_width="2dp"
                 android:layout_marginEnd="5dp"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <EditText
+                android:id="@+id/commentMessage"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end">
-
-                    <EditText
-                        android:layout_width="fill_parent"
-                        android:layout_height="35dp"
-                        android:hint="Leave a comment..."
-                        android:paddingStart="10dp"
-                        android:background="@drawable/text_fields"
-                        android:layout_marginStart="70dp"/>
-
-
-                <Button
-                    android:layout_width="65dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="end"
-                    android:background="@drawable/button1"
-                    android:text="post"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorAccent"
-                    android:layout_marginStart="5dp"/>
-
-
-
-            </LinearLayout>
-
-
+                android:hint="Leave a comment..."
+                android:paddingStart="15dp"
+                android:background="@drawable/text_fields"
+                android:textSize="14sp"/>
         </LinearLayout>
 
+        <Button
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:background="@drawable/button1"
+            android:text="post"
+            android:textSize="12sp"
+            android:textColor="@color/colorAccent"
+            android:onClick="onPostingCommentReply"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
