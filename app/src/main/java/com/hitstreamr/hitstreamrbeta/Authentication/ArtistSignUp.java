@@ -176,6 +176,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                         }
                     });
         }
+
     }
 
     /**

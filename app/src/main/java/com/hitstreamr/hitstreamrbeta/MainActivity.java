@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,6 +25,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,6 +54,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
@@ -80,8 +85,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     FloatingActionButton fab;
-    FloatingActionButton vv;
-
     private ItemClickListener mListener;
     //private ImageButton userbtn;
 
@@ -114,8 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private TabLayout mTabLayout;
     private int tab_position;
-    private String search_input;
-
+    private String search_input, accountType;
 
     /**
      * Set up and initialize layouts and variables
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.ic_camera);
         //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -149,6 +150,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
@@ -184,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
-        vv = findViewById(R.id.videoScreen);
 
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
         CirImageViewProPic = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
@@ -201,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("")){
+        if(name == null){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -226,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.dashboard).setVisible(false);
                 fab.setVisibility(View.GONE);
-                vv.setVisibility(View.GONE);
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -234,12 +237,78 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-                vv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
-                    }
-                });
+//                vv.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
+//                    }
+//                });
+            }
+        }
+
+        navigationView.setNavigationItemSelectedListener(this);
+        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentTransaction transaction;
+                Bundle bundle;
+                switch (item.getItemId()){
+                    case R.id.home:
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        HomeFragment homeFrag = new HomeFragment();
+                        homeFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, homeFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.discover:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        DiscoverFragment discFrag = new DiscoverFragment();
+                        discFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, discFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Disocver", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.activity:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+                        transaction = getSupportFragmentManager().beginTransaction();
+                        bundle = new Bundle();
+                        bundle.putString("TYPE", type);
+                        ActivityFragment actFrag = new ActivityFragment();
+                        actFrag.setArguments(bundle);
+                        transaction.replace(R.id.fragment_container2, actFrag);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.library:
+                        fab.setVisibility(View.GONE);
+                        bottomNavView.setVisibility(View.VISIBLE);
+//                        transaction = getSupportFragmentManager().beginTransaction();
+//                        bundle = new Bundle();
+//                        bundle.putString("TYPE", type);
+//                        LibraryFragment librFrag = new LibraryFragment();
+//                        librFrag.setArguments(bundle);
+//                        transaction.replace(R.id.fragment_container2, librFrag);
+//                        transaction.addToBackStack(null);
+//                        transaction.commit();
+                        Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                        startActivity(libraryIntent);
+                        break;
+                }
+                return true;
             }
         }
 
@@ -252,6 +321,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+    }
+
+    /**
+     * A listener for the Add Credits button
+     * @param view view
+     */
+    public void addCredits(View view) {
+        Intent creditsPurchaseIntent = new Intent(getApplicationContext(), CreditsPurchase.class);
+        creditsPurchaseIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(creditsPurchaseIntent);
     }
 
     /**
@@ -469,6 +548,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
+
+        // Modify text colors
+        EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(Color.WHITE);
+        searchEditText.setHintTextColor(Color.WHITE);
+
+        // Profile Picture
+        MenuItem profilePicMenu = menu.findItem(R.id.profilePicMenu);
+        LinearLayout rootView = (LinearLayout) profilePicMenu.getActionView();
+        CircleImageView circleImageView = rootView.findViewById(R.id.profilePictureToolbar);
+
+        getUserType();
+        if (user.getPhotoUrl() != null) {
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
+
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(MainActivity.this, Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
 
         // Set up the listeners for searching videos, artists, and listeners
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -1141,7 +1246,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (firebaseRecyclerAdapter_basic != null) {
             firebaseRecyclerAdapter_basic.stopListening();
         }
-        if(resultAdapter != null){
+        if (resultAdapter != null) {
             resultAdapter.clear();
             resultAdapter.notifyDataSetChanged();
         }
@@ -1343,16 +1448,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (suggestionAdapter != null) {
-            suggestionAdapter.startListening();
-        }
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
+    protected void onResume() { super.onResume(); }
 
     @Override
     protected void onStop() {
@@ -1373,5 +1472,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (item != exception)
                 item.setVisible(visible);
         }
+    }
+
+    /**
+     * Get the account type of the current user
+     */
+    private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
+    }
+
+    /**
+     * Open account page from navigation bar.
+     * @param view view
+     */
+    public void viewAccount(View view) {
+        Intent accountPage = new Intent(MainActivity.this, Account.class);
+        accountPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(accountPage);
+    }
+
+    /**
+     * Open profile page from navigation bar.
+     * @param view view
+     */
+    public void openProfile(View view) {
+        Intent profilePage = new Intent(MainActivity.this, Profile.class);
+        profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(profilePage);
     }
 }

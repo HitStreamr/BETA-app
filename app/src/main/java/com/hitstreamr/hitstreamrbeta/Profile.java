@@ -1,6 +1,9 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
+import android.support.design.widget.TabItem;
+import android.support.design.widget.TabLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -190,6 +193,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                         getUrlStorage();
                     }
 
+        // Set up tab layout & items
+        TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
+        TabItem feed_tab = findViewById(R.id.feed_tab);
+        TabItem uploads_tab = findViewById(R.id.uploads_tab);
+        TabItem playlists_tab = findViewById(R.id.playlists_tab);
+
+        // Hide uploads for basic users
+        if (getIntent().getStringExtra("TYPE").equals("BASIC")) {
+            mTabLayout.removeTabAt(1);
+        }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
