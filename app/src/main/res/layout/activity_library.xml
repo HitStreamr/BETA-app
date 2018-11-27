@@ -26,7 +26,7 @@
                 android:id="@+id/expandableButton_history"
                 android:layout_width="fill_parent"
                 android:layout_height="32dp"
-                android:background="#d3d3d3"
+                android:background="@android:color/transparent"
                 android:drawableRight="@android:drawable/arrow_down_float"
                 android:onClick="expandableButton_history"
                 android:paddingRight="10dp"
@@ -105,7 +105,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="6dp"
-                android:background="#d3d3d3"
+                android:background="@android:color/transparent"
                 android:drawableRight="@android:drawable/arrow_down_float"
                 android:onClick="expandableButton_watchLater"
                 android:paddingRight="10dp"
@@ -140,13 +140,13 @@
                 android:layout_width="fill_parent"
                 android:layout_height="32dp"
                 android:layout_below="@+id/expandableLayout_watchLater"
-                android:background="#d3d3d3"
+                android:background="@android:color/transparent"
                 android:drawableRight="@android:drawable/arrow_down_float"
                 android:onClick="expandableButton_playlists"
                 android:paddingRight="10dp"
                 android:text="PLAYLISTS" />
 
-            <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+            <!--<com.github.aakira.expandablelayout.ExpandableRelativeLayout
                 android:id="@+id/expandableLayout_playlists"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -156,22 +156,24 @@
                 app:ael_duration="400"
                 app:ael_expanded="false"
                 app:ael_interpolator="bounce"
-                app:ael_orientation="vertical">
+                app:ael_orientation="vertical">-->
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerView_playlists"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="vertical">
 
-                </android.support.v7.widget.RecyclerView>
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_below="@+id/expandableButton_playlists"
+                        android:id="@+id/recyclerView_playlists"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical">
+
+                    </android.support.v7.widget.RecyclerView>
 
                 <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
                 <!--android:layout_height="wrap_content"-->
                 <!--android:text="An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand. An android library that brings the expandable and collapsible layouts or views or widgets with various animation effect and material design color. You can include optional contents and use everywhere according to your demand" />-->
 
-            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+            <!--</com.github.aakira.expandablelayout.ExpandableRelativeLayout>-->
 
         </RelativeLayout>
 
