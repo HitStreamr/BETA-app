@@ -63,7 +63,7 @@
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
         <activity android:name=".ReportVideoPopup" />
-        <activity android:name=".Comments" />
+        <activity android:name=".CommentPage" />
         <activity android:name=".AddToPlaylsit" />
         <activity android:name=".CreateNewPlaylist"></activity>
         <activity android:name=".Library"></activity>

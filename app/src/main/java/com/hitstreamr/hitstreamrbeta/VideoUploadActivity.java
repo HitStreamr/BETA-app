@@ -482,7 +482,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         assembly.addStep("store_thumbnail", "/google/store", exportThumbnailOptions);
 
 
-        ReportVideoPopup.SaveTask save = new ReportVideoPopup.SaveTask(this,assembly);
+        SaveTask save = new SaveTask(this,assembly);
         save.execute(true);
     }
 

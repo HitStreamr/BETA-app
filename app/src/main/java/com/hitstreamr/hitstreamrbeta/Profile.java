@@ -1,11 +1,10 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
-import android.support.design.widget.TabItem;
-import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabItem;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -192,6 +191,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
                         Log.e(TAG, "Got username :: " + username);
                         getUrlStorage();
                     }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
 
         // Set up tab layout & items
         TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
@@ -203,10 +206,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener {
         if (getIntent().getStringExtra("TYPE").equals("BASIC")) {
             mTabLayout.removeTabAt(1);
         }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
     }
 
     private void getUrlStorage() {

@@ -26,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -171,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e(TAG, "You clicked a video" +video);
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 startActivity(videoPlayerIntent);
             }
 
@@ -243,72 +243,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
 //                    }
 //                });
-            }
-        }
-
-        navigationView.setNavigationItemSelectedListener(this);
-        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                FragmentTransaction transaction;
-                Bundle bundle;
-                switch (item.getItemId()){
-                    case R.id.home:
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        HomeFragment homeFrag = new HomeFragment();
-                        homeFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, homeFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.discover:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        DiscoverFragment discFrag = new DiscoverFragment();
-                        discFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, discFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Disocver", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.activity:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        ActivityFragment actFrag = new ActivityFragment();
-                        actFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, actFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.library:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-//                        transaction = getSupportFragmentManager().beginTransaction();
-//                        bundle = new Bundle();
-//                        bundle.putString("TYPE", type);
-//                        LibraryFragment librFrag = new LibraryFragment();
-//                        librFrag.setArguments(bundle);
-//                        transaction.replace(R.id.fragment_container2, librFrag);
-//                        transaction.addToBackStack(null);
-//                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
-                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
-                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                        startActivity(libraryIntent);
-                        break;
-                }
-                return true;
             }
         }
 

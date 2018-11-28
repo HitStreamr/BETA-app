@@ -6,14 +6,15 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.support.v7.widget.Toolbar;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -48,7 +49,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -56,8 +56,10 @@ import com.google.firebase.storage.StorageReference;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import static java.lang.Math.toIntExact;
+
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static java.lang.Math.toIntExact;
 
 public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
     private static final String TAG = "PlayerActivity";
@@ -77,14 +79,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Button collapseDecriptionBtn;
 
     //ImageButton
-    private ImageButton likeBtn;
-    private ImageButton repostBtn;
+    private ImageView likeBtn;
+    private ImageView repostBtn;
 
     //TextView
     private TextView TextViewVideoDescription;
     private TextView TextViewTitle;
     private TextView artistNameBold;
     private TextView artistName;
+    private TextView contributors;
     private TextView TextViewLikesCount;
     private TextView TextViewRepostCount;
     private TextView follow;
@@ -108,11 +111,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Boolean VideoReposted = false;
     private Long VideoLikesCount;
     private Long VideoRepostCount;
-
-
-    private long playbackPosition;
-    private int currentWindow;
-    private boolean playWhenReady = true;
 
     private boolean collapseVariable = false;
 
@@ -224,12 +222,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //ImageButton
         likeBtn = findViewById(R.id.fave);
-        repostBtn = findViewById(R.id.rePostVideo);
+        repostBtn = findViewById(R.id.repost);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
         TextViewVideoDescription.setText(vid.getDescription());
-        TextViewLikesCount = findViewById(R.id.videoLikes);
+        TextViewLikesCount = findViewById(R.id.faveCount);
         TextViewRepostCount = findViewById(R.id.repostCount);
 
         TextViewTitle = findViewById(R.id.Title);
@@ -241,8 +239,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         artistNameBold.setText(vid.getUsername());
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
-        follow = findViewById(R.id.followButton);
-        unfollow = findViewById(R.id.unfollowButton);
+        follow = findViewById(R.id.followText);
+        unfollow = findViewById(R.id.unfollowText);
 
         follow.setOnClickListener(this);
         unfollow.setOnClickListener(this);
@@ -908,7 +906,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         void onFollowChecked(boolean following);
         void onCheckUpdateFailed();
     }
-}
+
 
     /**
      * Handles the back button on toolbar.

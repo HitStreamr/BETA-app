@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".VideoPlayer"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar"/>
@@ -97,6 +95,16 @@
                         android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/unfollowText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="Unfollow"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/followText"
                             android:layout_width="wrap_content"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
@@ -198,6 +206,7 @@
                                 android:tint="@color/drkgryAccent"/>
 
                             <TextView
+                                android:id="@+id/faveCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="00"
@@ -221,6 +230,7 @@
                                 android:tint="@color/drkgryAccent"/>
 
                             <TextView
+                                android:id="@+id/repostCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="00"
@@ -286,7 +296,10 @@
                         android:layout_marginStart="10dp"
                         android:background="@color/litgryAccent" />
 
-                    <include layout="@layout/contributor_video_listview" />
+                    <ListView
+                        android:id="@+id/ContributorListView"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp" />
 
                     <Button
                         android:id="@+id/collapseDescription"

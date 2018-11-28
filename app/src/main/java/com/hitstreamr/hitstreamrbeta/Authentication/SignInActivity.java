@@ -76,7 +76,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog = new ProgressDialog(this);
 
         //Buttons
-<<<<<<<<< Temporary merge branch 1
         backbutton = findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
 
