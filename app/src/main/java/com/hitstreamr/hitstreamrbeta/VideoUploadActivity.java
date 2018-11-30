@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,7 +39,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ServerTimestamp;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -436,23 +439,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
-
-                        // Creates like counts for artists if it does not exist yet
-                        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                        DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
-                                .document(CurrentUserID);
-
-                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot documentSnapshot = task.getResult();
-                                if (documentSnapshot == null) {
-                                    Map<String, Object> artistLikes = new HashMap<>();
-                                    artistLikes.put("likes", 0);
-                                    documentReference.set(artistLikes);
-                                }
-                            }
-                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -462,6 +448,32 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        // Creates like counts for artists if it does not exist yet
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
+                .document(CurrentUserID);
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (!documentSnapshot.exists()) {
+                    Map<String, Object> artistLikes = new HashMap<>();
+                    artistLikes.put("likes", 0);
+                    artistLikes.put("timestamp", FieldValue.serverTimestamp());
+                    //documentReference.set(artistLikes);
+                    firebaseFirestore.collection("ArtistsNumbers").document(CurrentUserID)
+                            .set(artistLikes)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d("SUCCESS", "SUCCESS");
+                        }
+                    });
+                }
+            }
+        });
     }
 
     private ArrayList<String> processTitle(String title){
