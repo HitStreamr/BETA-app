@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -60,6 +59,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView TextViewTitle;
     private TextView artistNameBold;
     private TextView artistName;
-    private TextView contributors;
+    private TextView TextViewDate;
     private TextView TextViewLikesCount;
     private TextView TextViewRepostCount;
     private TextView follow;
@@ -134,7 +135,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private VideoContributorAdapter contributorAdapter;
     private ArrayList<TextView> contributorTextViews;
-    private ListView contributorView;
+    private LinearLayout contributorView;
     private Context context;
 
     @Override
@@ -243,12 +244,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewVideoDescription.setText(vid.getDescription());
         TextViewLikesCount = findViewById(R.id.faveCount);
         TextViewRepostCount = findViewById(R.id.repostCount);
+        TextViewDate = findViewById(R.id.publishDate);
 
         TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
 
-        //List View
-        contributorView = findViewById(R.id.ContributorListView);
+        //LinearLayout
+        contributorView = findViewById(R.id.contributorLayout);
 
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
@@ -349,7 +351,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                 contributorTextViews.set(contributorTextViews.size()-1,last);
 
                                 for(TextView tv : contributorTextViews){
-                                    DescLayout.addView(tv);
+                                    contributorView.addView(tv);
                                 }
 
 
@@ -361,7 +363,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
 
 
-
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        TextViewDate.setText(df.format(vid.getTimestamp()));
 
 
     }
