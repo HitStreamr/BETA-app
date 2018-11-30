@@ -95,8 +95,8 @@ dependencies {
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
     //Exo Player
     implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
-
     implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
+
 
 
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'

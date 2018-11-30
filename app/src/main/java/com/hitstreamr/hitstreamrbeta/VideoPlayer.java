@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,8 +41,10 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -50,9 +54,14 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -122,6 +131,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Uri photoURL;
     private TextView allCommentsCount, recent_username, recent_message;
     private long totalComments = 0;
+
+    private VideoContributorAdapter contributorAdapter;
+    private ArrayList<Contributor> contributorList;
+    private ListView contributorView;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -233,6 +247,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
 
+        //List View
+        contributorView = findViewById(R.id.ContributorListView);
+
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
         artistName.setText(vid.getUsername());
@@ -287,8 +304,45 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         checkLikesCount();
         checkRepostCount();
 
-
         videoUri = Uri.parse(vid.getUrl());
+
+        context = this;
+
+        contributorList = new ArrayList<>();
+
+        FirebaseFirestore.getInstance().collection("Videos")
+                .whereEqualTo("videoId", vid.getVideoId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
+
+
+
+                               for(HashMap<String,String> contributor : temp){
+                                   Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
+                                   contributorList.add(new Contributor(contributor.get("contributorName"), contributor.get("percentage"), contributor.get("type")));
+                               }
+
+                                Log.d(TAG, contributorList.toString());
+
+                                contributorAdapter = new VideoContributorAdapter(context, R.layout.contributor_video_listview, contributorList);
+                                contributorView.setAdapter(contributorAdapter);
+                                contributorAdapter.notifyDataSetChanged();
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+
+
+
     }
 
     public void showVideoPlayerOverflow(View v) {
