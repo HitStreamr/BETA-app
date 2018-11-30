@@ -270,17 +270,19 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            long current = player.getCurrentPosition();
-                            if (current > 15000) {
-                                Log.e(TAG, "Video player inside if state" + current);
-                                timer.cancel();
-                                runCheck = true;
-                                try {
-                                   checkViewTime();
-                                } catch (ParseException e) {
-                                    e.printStackTrace();
+                            if (!(player == null) ) {
+                                long current = player.getCurrentPosition();
+                                if (current > 15000) {
+                                    Log.e(TAG, "Video player inside if state" + current);
+                                    timer.cancel();
+                                    runCheck = true;
+                                    try {
+                                        checkViewTime();
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.e(TAG, "Video player inside if cancel timer & runcheck " + runCheck);
                                 }
-                                Log.e(TAG, "Video player inside if cancel timer & runcheck "+runCheck);
                             }
                         }
                     });
@@ -375,16 +377,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     // This method is to compare the current time with 4 hrs specified time limit for particular user
     private void checkTimeStamp() throws ParseException{
-        Log.e(TAG, "Your video date checktimestamp" + sTimeStamp);
+        //Log.e(TAG, "Your video date checktimestamp" + sTimeStamp);
         if(!Strings.isNullOrEmpty(sTimeStamp)) {
             Calendar now = Calendar.getInstance();
             Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(sTimeStamp);
             Calendar c = Calendar.getInstance();
             c.setTime(parsedDate);
-            Log.e(TAG, "Your video date format from db" + c.getTime());
-            Log.e(TAG, "Your video date format from db now" + now.getTime());
+           // Log.e(TAG, "Your video date format from db" + c.getTime());
+            //Log.e(TAG, "Your video date format from db now" + now.getTime());
             if (now.getTime().after(c.getTime())) {
-                Log.e(TAG, "Your video date format after checking inside if");
+              //  Log.e(TAG, "Your video date format after checking inside if");
                 updatevideoview();
                 updateCreditValue();
             }
@@ -682,6 +684,41 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    private void userLikedVideo() {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String strDate = simpleFormat.format(now.getTime());
+        FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+               // .child("TimeStamp")
+                //.setValue(strDate)
+                .child("Likes")
+                .setValue("Y")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e(TAG, "User Video is reposted ");
+                    }
+                });
+    }
+
+    private void cancelUserLikedVideo() {
+        FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+                .child("Likes")
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                });
+    }
+
+
     private void finishedLike() {
         /*FirebaseDatabase.getInstance().getReference("VideoLikes")
                 .addValueEventListener(new ValueEventListener() {
@@ -753,6 +790,40 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         repostBtn.setColorFilter(fillColor);
                         VideoReposted = false;
                         Log.e(TAG, "Video Repost is cancelled " + VideoReposted);
+                    }
+                });
+    }
+
+    private void userRepostVideo() {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String strDate = simpleFormat.format(now.getTime());
+       FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+               .child("Repost")
+                .setValue("Y")
+               // .child("TimeStamp")
+               //.setValue(strDate)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e(TAG, "User Video is reposted ");
+                    }
+                });
+    }
+
+    private void cancelUserRepostVideo() {
+        FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+                .child("Repost")
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
                     }
                 });
     }
@@ -920,8 +991,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (view == likeBtn) {
             if (!VideoLiked) {
                 likeVideo();
+                userLikedVideo();
             } else {
                 cancelLikeVideo();
+                cancelUserLikedVideo();
             }
         }
 
@@ -929,8 +1002,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             Log.e(TAG, "repost clicked");
             if (!VideoReposted) {
                 repostVideo();
+                userRepostVideo();
             } else {
                 cancelRepostVideo();
+                cancelUserRepostVideo();
             }
         }
         if(view == confirmBtn){

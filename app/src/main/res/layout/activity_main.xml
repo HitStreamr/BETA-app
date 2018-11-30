@@ -13,24 +13,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!--<include layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>-->
-
-        <ProgressBar
-            android:id="@+id/loadingSearch"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foregroundTint="@color/colorPrimaryDark"
-            android:indeterminate="true"
-            android:visibility="visible"
-            android:layout_below="@id/search_tabs"/>
+        <!--<include layout="@layout/toolbar"-->
+            <!--android:id="@+id/toolbar"/>-->
 
         <android.support.v7.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
-            android:background="@drawable/gradient1"/>
+            android:background="@drawable/gradient1"
+            android:theme="@style/backArrowTheme" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container2"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/toolbar">
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,6 +49,14 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="96dp"
                     android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/loadingSearch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundTint="@color/colorPrimaryDark"
+                android:indeterminate="true"
+                android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/emptyView"
@@ -103,7 +110,9 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/toolbar"
             android:background="@drawable/gradient1"
-            app:showAsAction="always|collapseActionView" >
+            app:showAsAction="always|collapseActionView"
+            app:tabTextColor="@android:color/white"
+            app:tabSelectedTextColor="@android:color/white">
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tab_videos"
@@ -133,7 +142,6 @@
         android:layout_gravity="start"
         android:id="@+id/nav_view"
         app:headerLayout="@layout/nav_header"
-        app:menu="@menu/drawer_menu"
-        />
+        app:menu="@menu/drawer_menu" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
-                        videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
+                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
                    /* }
                     else{

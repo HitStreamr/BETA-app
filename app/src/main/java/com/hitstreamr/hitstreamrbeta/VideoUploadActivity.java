@@ -525,6 +525,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
+
     private void registerFirebase() {
         final String title = EdittextTittle.getText().toString().trim();
         final String description = EditTextDescription.getText().toString().trim();
