@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,8 +14,10 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +35,8 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -67,6 +72,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //Layout
     private LinearLayout DescLayout;
+    private LinearLayout hideFullLayout;
 
     //Button
     private Button collapseDecriptionBtn;
@@ -75,6 +81,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private ImageButton likeBtn;
     private ImageButton repostBtn;
     private ImageButton addToPlaylistBtn;
+    private ImageView fullscreenExapndBtn;
+    private ImageView fullscreenShrinkBtn;
+
 
     //TextView
     private TextView TextViewVideoDescription;
@@ -83,6 +92,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView artistName;
     private TextView TextViewLikesCount;
     private TextView TextViewRepostCount;
+
+    private RelativeLayout MediaContolLayout;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -99,6 +110,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Boolean VideoReposted = false;
     private Long VideoLikesCount;
     private Long VideoRepostCount;
+
+    PlayerControlView controlView;
 
 
     private long playbackPosition;
@@ -125,6 +138,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //Linear Layout
         DescLayout = findViewById(R.id.DescriptionLayout);
+        hideFullLayout = findViewById(R.id.hideFullscreenLayount);
 
         //Profile Picture
         artistProfPic = findViewById(R.id.artistProfilePicture);
@@ -164,6 +178,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         likeBtn.setOnClickListener(this);
         repostBtn.setOnClickListener(this);
         addToPlaylistBtn.setOnClickListener(this);
+
+        initFullscreenButton();
 
         checkLikes();
         checkRepost();
@@ -337,6 +353,85 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checking the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            hideFullLayout.setVisibility(View.GONE);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    playerView.getLayoutParams();
+
+            Log.e(TAG, "LANDSCAPE" + params.height);
+            params.width = params.MATCH_PARENT;
+            params.height = params.MATCH_PARENT;
+            playerView.setLayoutParams(params);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    playerView.getLayoutParams();
+            Log.e(TAG, "POTRAIT" + params.height);
+            hideFullLayout.setVisibility(View.VISIBLE);
+            //unhide your objects here.
+            params.width = params.MATCH_PARENT;
+            params.height = 575;
+            playerView.setLayoutParams(params);
+        }
+    }
+
+    private void initFullscreenButton() {
+
+        controlView = playerView.findViewById(R.id.exo_controller);
+        fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
+        fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
+        fullscreenShrinkBtn.setVisibility(View.GONE);
+        MediaContolLayout = controlView.findViewById(R.id.fullscreen_expand);
+
+        fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFullscreenDialog();
+            }
+        });
+
+        fullscreenShrinkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFullscreenDialog();
+            }
+        });
+    }
+
+    private void closeFullscreenDialog() {
+        fullscreenExapndBtn.setVisibility(View.VISIBLE);
+        fullscreenShrinkBtn.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                playerView.getLayoutParams();
+        Log.e(TAG, "POTRAIT" + params.height);
+        hideFullLayout.setVisibility(View.VISIBLE);
+        //unhide your objects here.
+        params.width = params.MATCH_PARENT;
+        params.height = 575;
+        playerView.setLayoutParams(params);
+    }
+
+
+    private void openFullscreenDialog() {
+
+        fullscreenExapndBtn.setVisibility(View.GONE);
+        fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+        hideFullLayout.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                playerView.getLayoutParams();
+
+        Log.e(TAG, "LANDSCAPE" + params.height);
+        params.width = params.MATCH_PARENT;
+        params.height = params.MATCH_PARENT;
+        playerView.setLayoutParams(params);
+    }
+
+
     private void initializePlayer() {
         if (player == null) {
             // a factory to create an AdaptiveVideoTrackSelection
@@ -441,6 +536,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     }
                 });*/
         Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+        openFullscreenDialog();
     }
 
     private void finishedRepost() {
@@ -667,11 +763,23 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         }
 
-        if(view == addToPlaylistBtn){
-            Log.e(TAG, "add to Playlist clicked"+vid.getVideoId());
+        if (view == addToPlaylistBtn) {
+            Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
             Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
             playListAct.putExtra("VideoId", vid.getVideoId());
             startActivity(playListAct);
         }
+
+        /*if(view == fullscreenExapndBtn){
+            Log.e(TAG, "Fullscreen button clicked");
+            fullscreenExapndBtn.setVisibility(View.GONE);
+            openFullscreenDialog();
+        }
+
+        if(view == fullscreenShrinkBtn){
+            Log.e(TAG, "Fullscreen button clicked");
+            fullscreenExapndBtn.setVisibility(View.VISIBLE);
+            openFullscreenDialog();
+        }*/
     }
 }

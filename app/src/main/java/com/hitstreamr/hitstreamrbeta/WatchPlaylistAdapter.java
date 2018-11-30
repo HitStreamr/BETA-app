@@ -10,12 +10,22 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+
 import java.util.ArrayList;
+
+import javax.annotation.Nullable;
+
 
 public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdapter.WatchPlaylistViewHolder> {
     private static final String TAG = "WatchPlayListAdapter";
     private ArrayList<Playlist> Playlist;
     private Context mContext;
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public WatchPlaylistAdapter(ArrayList<Playlist> playlist) {
         Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
@@ -36,6 +46,14 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     public void onBindViewHolder(@NonNull WatchPlaylistViewHolder holder, int position) {
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
         holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()));
+
+        /*db.collection("Videos").document(Playlist.get(position).getPlayVideos().get(0)).get()
+                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                    @Override
+                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                    }
+                });*/
     }
 
     @Override
