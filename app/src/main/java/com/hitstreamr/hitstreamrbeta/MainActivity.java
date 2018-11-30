@@ -148,11 +148,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
-        db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
+        //prevent from crashing due to setting the settings again
+        if (savedInstanceState == null) {
+            db = FirebaseFirestore.getInstance();
+            FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                    .setTimestampsInSnapshotsEnabled(true)
+                    .build();
+            db.setFirestoreSettings(settings);
+        }
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);

@@ -300,14 +300,15 @@
                         android:id="@+id/ContributorListView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
+                </LinearLayout>
 
-                    <Button
-                        android:id="@+id/collapseDescription"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/ic_keyboard_arrow_down_black_24dp"
-                        android:backgroundTint="@color/drkgryAccent"/>
+                <Button
+                    android:id="@+id/collapseDescription"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/ic_keyboard_arrow_up_black_24dp"
+                    android:backgroundTint="@color/drkgryAccent" />
 
                     <View
                         android:id="@+id/descriptionDivider2"
@@ -373,7 +374,6 @@
 
                     </LinearLayout>
 
-                </LinearLayout>
 
                 <View
                     android:id="@+id/divider3"

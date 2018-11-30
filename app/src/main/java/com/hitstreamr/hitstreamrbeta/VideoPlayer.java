@@ -914,13 +914,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             if (!collapseVariable) {
                 //TextViewVideoDescription.setVisibility(View.GONE);
                 DescLayout.setVisibility(View.GONE);
+                collapseDecriptionBtn.setBackground(getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
                 collapseVariable = true;
             } else if (collapseVariable) {
                 //TextViewVideoDescription.setVisibility(View.VISIBLE);
+                collapseDecriptionBtn.setBackground(getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
                 DescLayout.setVisibility(View.VISIBLE);
                 collapseVariable = false;
             }
         }
+
 
         if (view == likeBtn) {
             if (!VideoLiked) {

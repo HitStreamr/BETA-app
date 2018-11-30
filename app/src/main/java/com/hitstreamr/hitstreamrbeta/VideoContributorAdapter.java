@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -39,8 +40,17 @@ public class VideoContributorAdapter extends ArrayAdapter<Contributor> {
 
         TextViewContributorName.setText(currentContributors.getContributorName());
 
+        TextViewContributorName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, Profile.class);
+                intent.putExtra("TYPE", mContext.getString(R.string.type_artist));
+                intent.putExtra("artistUsername", currentContributors.getContributorName());
+                mContext.startActivity(intent);
+            }
+        });
+
         return convertView;
     }
-
 
 }
