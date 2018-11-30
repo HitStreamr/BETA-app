@@ -102,6 +102,7 @@ public class Splash extends AppCompatActivity {
                         }
                     });
                 }else{
+                    Log.d(TAG, "null User");
                     startActivity(new Intent(getApplicationContext(),Welcome.class));
                 }
             }

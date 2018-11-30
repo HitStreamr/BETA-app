@@ -230,7 +230,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateAuthentication() {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()

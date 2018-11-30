@@ -71,6 +71,7 @@
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/fan"
                 android:contentDescription="@string/basic_account"
+                android:scaleType="centerCrop"
                 />
             <!--<ImageView
                 android:id="@+id/basicProfilePhoto"

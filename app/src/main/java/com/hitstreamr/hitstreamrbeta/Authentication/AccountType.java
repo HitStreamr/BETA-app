@@ -15,6 +15,7 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
     private Button basicAcctBtn, artistAcctBtn;
     private ImageButton backbtn;
     private TextView labelAcct;
+    private ImageButton backbtn;
 
 
     @Override

@@ -3,6 +3,7 @@ package com.hitstreamr.hitstreamrbeta;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,9 +16,12 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +39,8 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -67,6 +73,10 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.lang.Math.toIntExact;
@@ -84,6 +94,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //Layout
     private LinearLayout DescLayout;
+    private LinearLayout hideFullLayout;
 
     //Button
     private Button collapseDecriptionBtn;
@@ -91,6 +102,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //ImageButton
     private ImageView likeBtn;
     private ImageView repostBtn;
+    private ImageView addToPlaylistBtn;
+    private ImageView fullscreenExapndBtn;
+    private ImageView fullscreenShrinkBtn;
 
     //TextView
     private TextView TextViewVideoDescription;
@@ -102,6 +116,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView TextViewRepostCount;
     private TextView follow;
     private TextView unfollow;
+    private RelativeLayout MediaContolLayout;
+
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -121,6 +137,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Boolean VideoReposted = false;
     private Long VideoLikesCount;
     private Long VideoRepostCount;
+    PlayerControlView controlView;
+
 
     private boolean collapseVariable = false;
 
@@ -228,6 +246,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //Linear Layout
         DescLayout = findViewById(R.id.DescriptionLayout);
+        hideFullLayout = findViewById(R.id.hideFullscreenLayount);
 
         //Profile Picture
         artistProfPic = findViewById(R.id.artistProfilePicture);
@@ -238,6 +257,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //ImageButton
         likeBtn = findViewById(R.id.fave);
         repostBtn = findViewById(R.id.repost);
+        addToPlaylistBtn = findViewById(R.id.addToPlaylist);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
@@ -300,6 +320,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
         repostBtn.setOnClickListener(this);
+        addToPlaylistBtn.setOnClickListener(this);
+
+        initFullscreenButton();
+
 
         checkLikes();
         checkRepost();
@@ -519,7 +543,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        //hideSystemUi();
+        hideSystemUi();
         if ((Util.SDK_INT <= 23 || player == null)) {
             initializePlayer();
         }
@@ -540,6 +564,85 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             releasePlayer();
         }
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checking the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            hideFullLayout.setVisibility(View.GONE);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    playerView.getLayoutParams();
+
+            Log.e(TAG, "LANDSCAPE" + params.height);
+            params.width = params.MATCH_PARENT;
+            params.height = params.MATCH_PARENT;
+            playerView.setLayoutParams(params);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    playerView.getLayoutParams();
+            Log.e(TAG, "POTRAIT" + params.height);
+            hideFullLayout.setVisibility(View.VISIBLE);
+            //unhide your objects here.
+            params.width = params.MATCH_PARENT;
+            params.height = 575;
+            playerView.setLayoutParams(params);
+        }
+    }
+
+    private void initFullscreenButton() {
+
+        controlView = playerView.findViewById(R.id.exo_controller);
+        fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
+        fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
+        fullscreenShrinkBtn.setVisibility(View.GONE);
+        MediaContolLayout = controlView.findViewById(R.id.fullscreen_expand);
+
+        fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFullscreenDialog();
+            }
+        });
+
+        fullscreenShrinkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFullscreenDialog();
+            }
+        });
+    }
+
+    private void closeFullscreenDialog() {
+        fullscreenExapndBtn.setVisibility(View.VISIBLE);
+        fullscreenShrinkBtn.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                playerView.getLayoutParams();
+        Log.e(TAG, "POTRAIT" + params.height);
+        hideFullLayout.setVisibility(View.VISIBLE);
+        //unhide your objects here.
+        params.width = params.MATCH_PARENT;
+        params.height = 575;
+        playerView.setLayoutParams(params);
+    }
+
+
+    private void openFullscreenDialog() {
+
+        fullscreenExapndBtn.setVisibility(View.GONE);
+        fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+        hideFullLayout.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                playerView.getLayoutParams();
+
+        Log.e(TAG, "LANDSCAPE" + params.height);
+        params.width = params.MATCH_PARENT;
+        params.height = params.MATCH_PARENT;
+        playerView.setLayoutParams(params);
+    }
+
 
     private void initializePlayer() {
         if (player == null) {
@@ -644,25 +747,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
-        Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
-    }
-
-    private void finishedRepost() {
-        /*FirebaseDatabase.getInstance().getReference("VideoLikes")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        long value = dataSnapshot.getChildrenCount();
-                        Log.e(TAG, "Value is: " + value);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError error) {
-                        // Failed to read value
-                        Log.w(TAG, "Failed to read value.", error.toException());
-                    }
-                });*/
         Toast.makeText(VideoPlayer.this, "You reposted", Toast.LENGTH_SHORT).show();
+        openFullscreenDialog();
     }
 
     private void repostVideo() {
@@ -723,6 +809,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private void finishedWatchLater() {
         Toast.makeText(VideoPlayer.this, "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void finishedRepost() {
+        Toast.makeText(VideoPlayer.this, "Video has been reposted.", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -973,6 +1064,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         if(view == unfollow){
             saveUnfollowing();
+        }
+
+        if (view == addToPlaylistBtn) {
+            Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
+            Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
+            playListAct.putExtra("VideoId", vid.getVideoId());
+            startActivity(playListAct);
         }
     }
 

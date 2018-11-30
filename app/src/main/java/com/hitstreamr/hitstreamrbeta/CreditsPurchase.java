@@ -28,7 +28,7 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
     private TextView creditsAmount;
     private IndicatorSeekBar seekBar;
     private IndicatorStayLayout stayLayout;
-//    private BillingClient billingClient;
+    //    private BillingClient billingClient;
     private BillingProcessor billingProcessor;
     private List SKU_list = new ArrayList<String>();
 

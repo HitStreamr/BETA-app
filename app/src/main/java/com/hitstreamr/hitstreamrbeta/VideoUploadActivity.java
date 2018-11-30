@@ -228,7 +228,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
         ContributorCancelBtn =findViewById(R.id.ContributorCancel);
 
-        //VideoPlayer
+        //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
 
         //ImageView
@@ -486,7 +486,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         assembly.addStep("store_thumbnail", "/google/store", exportThumbnailOptions);
 
 
-        SaveTask save = new SaveTask(this,assembly);
+        ReportVideoPopup.SaveTask save = new ReportVideoPopup.SaveTask(this,assembly);
         save.execute(true);
     }
 

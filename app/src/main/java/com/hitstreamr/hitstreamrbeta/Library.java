@@ -1,15 +1,16 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
-
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,7 +23,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -39,17 +39,18 @@ public class Library extends AppCompatActivity {
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
     private ListView listView_watchLater;
-    //private RecyclerView recyclerView_watchLater, recyclerView_playlists;
+    private RecyclerView recyclerView_watchLater, recyclerView_playlists;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference bookRef = db.collection("Videos");
-    Query query;
 
-    private BookAdapter bookAdapter_watchLater, bookAdapter_playlists;
+    private BookAdapter bookAdapter_watchLater;
+    private WatchPlaylistAdapter playlistAdapter_playlists;
 
     private Long WatchListCount;
     private ArrayList<String> WatchLaterList;
     private ArrayList<Video> Watch;
+    private ArrayList<Playlist> Play;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +67,14 @@ public class Library extends AppCompatActivity {
 
         bottomNavView = findViewById(R.id.bottomNav);
 
-        listView_watchLater = findViewById(R.id.listView_watchLater);
+        //listView_watchLater = findViewById(R.id.listView_watchLater);
+
+        recyclerView_watchLater = findViewById(R.id.recyclerView_watchLater);
+        recyclerView_playlists = findViewById(R.id.recyclerView_playlists);
 
         WatchLaterList = new ArrayList<>();
         Watch = new ArrayList<>();
+        Play = new ArrayList<>();
 
         getUserType();
         current_user = FirebaseAuth.getInstance().getCurrentUser();
@@ -85,6 +90,7 @@ public class Library extends AppCompatActivity {
         }
 
         getWatchLaterList();
+        getPlaylistsList();
     }
 
     private void setUpRecyclerView() {
@@ -94,20 +100,29 @@ public class Library extends AppCompatActivity {
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (WatchLaterList.contains(document.getId())) {
-                        Log.e(TAG, "entered    :::" + document.getId() + document.getData());
+                        //Log.e(TAG, "entered    :::" + document.getId() + document.getData());
                         Watch.add(document.toObject(Video.class));
                     }
                 }
-                Log.e(TAG, "objects :::" + Watch);
+                //Log.e(TAG, "objects :::" + Watch);
                 call();
             }
         });
     }
 
     private void call(){
-        bookAdapter_watchLater = new BookAdapter(this, R.layout.watch_later_results, Watch);
-        listView_watchLater.setAdapter(bookAdapter_watchLater);
-        bookAdapter_watchLater.notifyDataSetChanged();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerView_watchLater.setLayoutManager(layoutManager);
+        bookAdapter_watchLater = new BookAdapter(Watch);
+        recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
+    }
+
+    private void setUpPlaylistRecyclerView() {
+        Log.e(TAG, "Entered setup playlist recycler view");
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView_playlists.setLayoutManager(layoutManager);
+        playlistAdapter_playlists = new WatchPlaylistAdapter(Play);
+        recyclerView_playlists.setAdapter(playlistAdapter_playlists);
     }
 
     /**
@@ -136,8 +151,8 @@ public class Library extends AppCompatActivity {
      * @param view view
      */
     public void expandableButton_playlists(View view) {
-        expandableLayout_playlists = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout_playlists);
-        expandableLayout_playlists.toggle(); // toggle expand and collapse
+        //expandableLayout_playlists = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout_playlists);
+        //expandableLayout_playlists.toggle(); // toggle expand and collapse
     }
 
 
@@ -172,7 +187,7 @@ public class Library extends AppCompatActivity {
         }
     }
 
-    //Object temp;
+
 
     /**
      * RecyclerView Test
@@ -192,6 +207,39 @@ public class Library extends AppCompatActivity {
                             Log.e(TAG, "Watch Later List : " + WatchLaterList);
                         }
                         setUpRecyclerView();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void getPlaylistsList() {
+
+        FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot each : dataSnapshot.getChildren()) {
+                                Playlist p = new Playlist();
+                                p.setPlaylistname(String.valueOf(each.getKey()));
+                                Play.add(p);
+                                Log.e(TAG, "each children"+each.getChildren());
+                                ArrayList<String> a = new ArrayList<>();
+                                for(DataSnapshot eachplaylist : each.getChildren()){
+                                    a.add(eachplaylist.getKey());
+                                    //eachplaylist.getKey();
+                                    Log.e(TAG, "videos in playlist"+eachplaylist.getKey());
+                                }
+                                p.setPlayVideos(a);
+                            }
+                            Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos());
+                            Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlaylistname() + " " + Play.get(1).getPlayVideos());
+                        }
+                        setUpPlaylistRecyclerView();
                     }
 
                     @Override
