@@ -296,10 +296,14 @@
                         android:layout_marginStart="10dp"
                         android:background="@color/litgryAccent" />
 
-                    <ListView
-                        android:id="@+id/ContributorListView"
+                    <TextView
+                        android:id="@+id/ContributorTitle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Contributors: " />
+
+
                 </LinearLayout>
 
                 <Button

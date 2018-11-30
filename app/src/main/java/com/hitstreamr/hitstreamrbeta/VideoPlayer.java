@@ -133,7 +133,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private long totalComments = 0;
 
     private VideoContributorAdapter contributorAdapter;
-    private ArrayList<Contributor> contributorList;
+    private ArrayList<TextView> contributorTextViews;
     private ListView contributorView;
     private Context context;
 
@@ -308,7 +308,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         context = this;
 
-        contributorList = new ArrayList<>();
+
+        contributorTextViews = new ArrayList<>();
 
         FirebaseFirestore.getInstance().collection("Videos")
                 .whereEqualTo("videoId", vid.getVideoId())
@@ -324,14 +325,34 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
                                for(HashMap<String,String> contributor : temp){
                                    Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
-                                   contributorList.add(new Contributor(contributor.get("contributorName"), contributor.get("percentage"), contributor.get("type")));
+                                   TextView TVtemp = new TextView(context);
+                                   TVtemp.setText(contributor.get("contributorName") + "(" +  contributor.get("type") + ")"+", ");
+                                   TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                           LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                   TVtemp.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
+                                           Intent intent = new Intent(context, Profile.class);
+                                           intent.putExtra("TYPE", context.getString(R.string.type_artist));
+                                           intent.putExtra("artistUsername", contributor.get("contributorName"));
+                                           context.startActivity(intent);
+                                       }
+                                   });
+
+                                   contributorTextViews.add(TVtemp);
                                }
 
-                                Log.d(TAG, contributorList.toString());
+                               //remove extra ,0
+                                TextView last = contributorTextViews.get(contributorTextViews.size()-1);
+                                last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
+                                contributorTextViews.set(contributorTextViews.size()-1,last);
 
-                                contributorAdapter = new VideoContributorAdapter(context, R.layout.contributor_video_listview, contributorList);
-                                contributorView.setAdapter(contributorAdapter);
-                                contributorAdapter.notifyDataSetChanged();
+                                for(TextView tv : contributorTextViews){
+                                    DescLayout.addView(tv);
+                                }
+
+
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
