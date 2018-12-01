@@ -1,16 +1,17 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -94,7 +95,7 @@ public class Library extends AppCompatActivity {
     }
 
     private void setUpRecyclerView() {
-        Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
+        Log.e(TAG, "Entered recycler view");
         bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

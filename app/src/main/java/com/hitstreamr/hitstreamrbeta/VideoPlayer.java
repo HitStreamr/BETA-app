@@ -503,7 +503,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void checkViewCount() {
-        FirebaseDatabase.getInstance().getReference("Repost")
+        FirebaseDatabase.getInstance().getReference("VideoViews")
                 .child(vid.getVideoId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -620,7 +620,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
         fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
         fullscreenShrinkBtn.setVisibility(View.GONE);
-        MediaControlLayout = controlView.findViewById(R.id.fullscreen_expand);
+        MediaControlLayout = controlView.findViewById(R.id.playerControlLayout);
 
         fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
             @Override

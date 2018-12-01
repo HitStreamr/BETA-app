@@ -10,15 +10,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 import java.util.ArrayList;
-
-import javax.annotation.Nullable;
 
 
 public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdapter.WatchPlaylistViewHolder> {
@@ -28,7 +22,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     public WatchPlaylistAdapter(ArrayList<Playlist> playlist) {
-        Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
+        Log.e(TAG, "Entered Watch Playlist recycler view" + playlist.size());
         this.Playlist = playlist;
     }
 
