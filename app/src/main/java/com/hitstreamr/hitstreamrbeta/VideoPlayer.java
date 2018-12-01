@@ -375,6 +375,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             fullscreenExapndBtn.setVisibility(View.VISIBLE);
             fullscreenShrinkBtn.setVisibility(View.GONE);
+
+            hideSystemUi();
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
             Log.e(TAG, "POTRAIT" + params.height);
@@ -410,6 +412,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void closeFullscreenDialog() {
+
         fullscreenExapndBtn.setVisibility(View.VISIBLE);
         fullscreenShrinkBtn.setVisibility(View.GONE);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
@@ -427,6 +430,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         fullscreenExapndBtn.setVisibility(View.GONE);
         fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+        hideSystemUi();
 
         hideFullLayout.setVisibility(View.GONE);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
