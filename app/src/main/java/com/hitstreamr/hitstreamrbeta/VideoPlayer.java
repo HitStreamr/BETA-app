@@ -385,7 +385,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
         fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
         fullscreenShrinkBtn.setVisibility(View.GONE);
-        MediaContolLayout = controlView.findViewById(R.id.fullscreen_expand);
+        MediaContolLayout = controlView.findViewById(R.id.playerControlLayout);
 
         fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -34,9 +34,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <FrameLayout android:id="@id/exo_overlay"
+    <FrameLayout
+        android:id="@id/exo_overlay"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </merge>
 
