@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,6 +49,10 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
         holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()));
 
+        holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()) + " videos");
+
+        holder.username.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
         /*db.collection("Videos").document(Playlist.get(position).getPlayVideos().get(0)).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
                     @Override
@@ -66,6 +72,8 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
         public LinearLayout parentLayout;
         //public TextView userPlaylist;
         public TextView videoCountPlaylist;
+        public TextView videoCount;
+        public TextView username;
 
         public WatchPlaylistViewHolder(View view) {
             super(view);
@@ -73,6 +81,9 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
             parentLayout = view.findViewById(R.id.playlistCard);
             //userPlaylist = view.findViewById(R.id.videoUsername);
             videoCountPlaylist = view.findViewById(R.id.videoCount);
+            videoCount = view.findViewById(R.id.videoPViews);
+            username = view.findViewById(R.id.videoUsername);
+
 
         }
     }
