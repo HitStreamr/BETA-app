@@ -536,7 +536,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     }
                 });*/
         Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
-        openFullscreenDialog();
     }
 
     private void finishedRepost() {
