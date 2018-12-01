@@ -16,10 +16,8 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupMenu;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -39,7 +37,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -69,10 +66,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
-
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -114,6 +107,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView TextViewDate;
     private TextView TextViewLikesCount;
     private TextView TextViewRepostCount;
+    private TextView TextViewViewCount;
     private TextView follow;
     private TextView unfollow;
     private RelativeLayout MediaContolLayout;
@@ -137,6 +131,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Boolean VideoReposted = false;
     private Long VideoLikesCount;
     private Long VideoRepostCount;
+    private Long VideoViewCount;
     PlayerControlView controlView;
 
 
@@ -265,6 +260,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewLikesCount = findViewById(R.id.faveCount);
         TextViewRepostCount = findViewById(R.id.repostCount);
         TextViewDate = findViewById(R.id.publishDate);
+        TextViewViewCount = findViewById(R.id.TextViewViewCount);
 
         TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
@@ -322,13 +318,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         repostBtn.setOnClickListener(this);
         addToPlaylistBtn.setOnClickListener(this);
 
-        initFullscreenButton();
+        //initFullscreenButton();
 
 
         checkLikes();
         checkRepost();
         checkLikesCount();
         checkRepostCount();
+        checkViewCount();
 
         videoUri = Uri.parse(vid.getUrl());
 
@@ -505,6 +502,31 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    private void checkViewCount() {
+        FirebaseDatabase.getInstance().getReference("Repost")
+                .child(vid.getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            VideoViewCount = dataSnapshot.getChildrenCount();
+                            String temp = formatt(VideoViewCount);
+                            Log.e(TAG, "View Count : " + temp);
+                            TextViewViewCount.setText(temp);
+                        }else{
+                            VideoViewCount = 0l;
+                            String temp = formatt(VideoViewCount);
+                            Log.e(TAG, "Video Count reposts : " + temp);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
 
     static {
@@ -591,6 +613,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
+    /*
     private void initFullscreenButton() {
 
         controlView = playerView.findViewById(R.id.exo_controller);
@@ -613,6 +636,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         });
     }
+    */
 
     private void closeFullscreenDialog() {
         fullscreenExapndBtn.setVisibility(View.VISIBLE);

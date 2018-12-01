@@ -28,6 +28,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/hideFullscreenLayount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -170,6 +171,7 @@
                                 android:tint="@color/drkgryAccent" />
 
                             <TextView
+                                android:id="@+id/TextViewViewCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="3dp"
