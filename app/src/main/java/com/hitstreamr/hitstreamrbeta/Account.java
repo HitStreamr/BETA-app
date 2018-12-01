@@ -106,8 +106,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private boolean selectPhoto = false;
     private boolean selectBackground = false;
 
-    private boolean selectPhoto = false;
-    private boolean selectBackground = false;
 
     private Uri selectedImagePath;
     private Uri selectedBackgroundPath;

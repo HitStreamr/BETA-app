@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -93,9 +94,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Button collapseDecriptionBtn;
 
     //ImageButton
-    private ImageView likeBtn;
-    private ImageView repostBtn;
-    private ImageView addToPlaylistBtn;
+    private ImageButton likeBtn;
+    private ImageButton repostBtn;
+    private ImageButton addToPlaylistBtn;
     private ImageView fullscreenExapndBtn;
     private ImageView fullscreenShrinkBtn;
 
@@ -110,7 +111,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView TextViewViewCount;
     private TextView follow;
     private TextView unfollow;
-    private RelativeLayout MediaContolLayout;
+    private RelativeLayout MediaControlLayout;
 
 
     //CircleImageView
@@ -251,13 +252,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //ImageButton
         likeBtn = findViewById(R.id.fave);
-        repostBtn = findViewById(R.id.repost);
+        repostBtn = findViewById(R.id.rePostVideo);
         addToPlaylistBtn = findViewById(R.id.addToPlaylist);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
         TextViewVideoDescription.setText(vid.getDescription());
-        TextViewLikesCount = findViewById(R.id.faveCount);
+        TextViewLikesCount = findViewById(R.id.videoLikes);
         TextViewRepostCount = findViewById(R.id.repostCount);
         TextViewDate = findViewById(R.id.publishDate);
         TextViewViewCount = findViewById(R.id.TextViewViewCount);
@@ -318,8 +319,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         repostBtn.setOnClickListener(this);
         addToPlaylistBtn.setOnClickListener(this);
 
-        //initFullscreenButton();
-
+        initFullscreenButton();
 
         checkLikes();
         checkRepost();
@@ -613,14 +613,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    /*
+
     private void initFullscreenButton() {
 
         controlView = playerView.findViewById(R.id.exo_controller);
         fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
         fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
         fullscreenShrinkBtn.setVisibility(View.GONE);
-        MediaContolLayout = controlView.findViewById(R.id.fullscreen_expand);
+        MediaControlLayout = controlView.findViewById(R.id.fullscreen_expand);
 
         fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -636,7 +636,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         });
     }
-    */
+
 
     private void closeFullscreenDialog() {
         fullscreenExapndBtn.setVisibility(View.VISIBLE);
@@ -772,7 +772,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     }
                 });*/
         Toast.makeText(VideoPlayer.this, "You reposted", Toast.LENGTH_SHORT).show();
-        openFullscreenDialog();
     }
 
     private void repostVideo() {
