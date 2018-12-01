@@ -359,6 +359,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         // Checking the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
+            fullscreenExapndBtn.setVisibility(View.GONE);
+            fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+            hideSystemUi();
+
             hideFullLayout.setVisibility(View.GONE);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
@@ -368,6 +373,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             params.height = params.MATCH_PARENT;
             playerView.setLayoutParams(params);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            fullscreenExapndBtn.setVisibility(View.VISIBLE);
+            fullscreenShrinkBtn.setVisibility(View.GONE);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
             Log.e(TAG, "POTRAIT" + params.height);
