@@ -7,6 +7,7 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 @IgnoreExtraProperties
 public class Video implements Parcelable {
@@ -23,6 +24,8 @@ public class Video implements Parcelable {
     private int pubYear;
     @Exclude
     private String videoId;
+    private Date timestamp;
+    private long views;
 
     private ArrayList<Contributor> contributors;
 
@@ -32,7 +35,8 @@ public class Video implements Parcelable {
     }
 
     public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String duration,
-                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors) {
+                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Date timestamps,
+                 long views) {
         this.title = title;
         this.description = description;
         this.genre = genre;
@@ -45,7 +49,9 @@ public class Video implements Parcelable {
         this.contributors = contributors;
         this.pubYear = pubYear;
         this.duration = duration;
-        this.videoId = null;
+        this.videoId = videoId;
+        this.timestamp=timestamps;
+        this.views = views;
     }
 
     public String getTitle() {
@@ -155,6 +161,22 @@ public class Video implements Parcelable {
         this.duration = duration;
     }
 
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public long getViews() {
+        return views;
+    }
+
+    public void setViews(long views) {
+        this.views = views;
+    }
+
     @Override
     public String toString() {
         return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId + " " + username;
@@ -173,6 +195,9 @@ public class Video implements Parcelable {
         pubYear = in.readInt();
         videoId = in.readString();
         duration = in.readString();
+        long tmpDate = in.readLong();
+        timestamp = tmpDate == Long.MIN_VALUE ? null : new Date(tmpDate);
+        views = in.readLong();
         if (in.readByte() == 0x01) {
             contributors = new ArrayList<Contributor>();
             in.readList(contributors, Contributor.class.getClassLoader());
@@ -200,6 +225,8 @@ public class Video implements Parcelable {
         dest.writeInt(pubYear);
         dest.writeString(videoId);
         dest.writeString(duration);
+        dest.writeLong(timestamp != null ? timestamp.getTime() : Long.MIN_VALUE);
+        dest.writeLong(views);
         if (contributors == null) {
             dest.writeByte((byte) (0x00));
         } else {
