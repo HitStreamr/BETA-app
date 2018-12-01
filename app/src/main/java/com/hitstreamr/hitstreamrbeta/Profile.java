@@ -311,6 +311,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                 switch (tab_position) {
                     case 0:
+                        listView_UserFeed.setVisibility(View.VISIBLE);
+                        listView_UserUpload.setVisibility(View.GONE);
                         getUserFeedDeatils();
                         getUserFeed();
 
@@ -664,8 +666,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 });
 
     }
-    String check;
-    private void getUserUploadVideoId(){
+
+   private void getUserUploadVideoId(){
         String cUser = current_user.getUid();
 
         videoIdRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -689,9 +691,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                   if (userUploadVideoList.get(0).contains(document.getId())) {
-                        UserUploadVideoId.add(document.toObject(Video.class));
-                   }
+                    if(userUploadVideoList.size() > 0) {
+                        if (userUploadVideoList.get(0).contains(document.getId())) {
+                            UserUploadVideoId.add(document.toObject(Video.class));
+                        }
+                    }
                 }
                // Log.e(TAG, "profile video ids list:: " +UserUploadVideoId);
                 callVideoAdapter();
