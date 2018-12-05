@@ -332,6 +332,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 userAdapter.clear();
+                if (userVideoAdapter != null) {
+                    userVideoAdapter.clear();
+                }
                 tab_position = mTabLayout.getSelectedTabPosition();
 
             }

@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,8 +18,10 @@ import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,11 +41,14 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -55,6 +61,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
@@ -62,6 +72,7 @@ import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -88,6 +99,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //Layout
     private LinearLayout DescLayout;
+   // private LinearLayout hideFullLayout;
 
     //Button
     private Button collapseDecriptionBtn;
@@ -95,6 +107,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //ImageButton
     private ImageButton likeBtn;
     private ImageButton repostBtn;
+   // private ImageButton addToPlaylistBtn;
+   // private ImageView fullscreenExapndBtn;
+   // private ImageView fullscreenShrinkBtn;
+
 
     //TextView
     private TextView TextViewVideoDescription;
@@ -103,6 +119,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView artistName;
     private TextView TextViewLikesCount;
     private TextView TextViewRepostCount;
+
+   // private RelativeLayout MediaContolLayout;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -115,10 +133,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     FirebaseDatabase database;
     DatabaseReference myRef;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference videoIdRef = db.collection("ArtistVideo");
+    private ArrayList<String> userUploadVideoList;
+
     private Boolean VideoLiked = false;
     private Boolean VideoReposted = false;
     private Long VideoLikesCount;
     private Long VideoRepostCount;
+
+   // PlayerControlView controlView;
 
 
     private long playbackPosition;
@@ -141,6 +165,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private String credit;
     private String sTimeStamp = "";
+    private boolean uploadbyUser = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,6 +175,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         vid = getIntent().getParcelableExtra("VIDEO");
 
         credit = getIntent().getStringExtra("CREDIT");
+        userUploadVideoList = new ArrayList<>();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
@@ -160,6 +186,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         //Linear Layout
         DescLayout = findViewById(R.id.DescriptionLayout);
+      //  hideFullLayout = findViewById(R.id.hideFullscreenLayount);
 
         //Profile Picture
         artistProfPic = findViewById(R.id.artistProfilePicture);
@@ -170,6 +197,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //ImageButton
         likeBtn = findViewById(R.id.fave);
         repostBtn = findViewById(R.id.rePostVideo);
+       // addToPlaylistBtn = findViewById(R.id.addToPlaylist);
 
         //TextView
         TextViewVideoDescription = findViewById(R.id.videoDescription);
@@ -197,6 +225,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         collapseDecriptionBtn.setOnClickListener(this);
         likeBtn.setOnClickListener(this);
         repostBtn.setOnClickListener(this);
+       // addToPlaylistBtn.setOnClickListener(this);
+
+       // initFullscreenButton();
 
         checkLikes();
         checkRepost();
@@ -209,40 +240,40 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
         currentCreditVal = credit;
-       /* readData(new MyCallback() {
+        readData(new MyCallback() {
             @Override
-            public void onCallback(String value) {
-               if(!Strings.isNullOrEmpty(value)) {
-                    currentCreditVal = value;
-                    if (Integer.parseInt(value) > 0) {
-                      initializePlayer();
-                    }
+            public void onCallback(ArrayList value) {
+               if(value.size() > 0) {
+                   Log.e(TAG, "player before inside callback "+value);
+                   checkuploaded();
+                }
+             Log.e(TAG, "player before before if  "+uploadbyUser);
+                if (Integer.parseInt(currentCreditVal) > 0) {
+                    Log.e(TAG, "player before inside if ");
+                   // Log.e(TAG, "player before initializePlayer success ");
+                    initializePlayer();
+                }
+                else if (uploadbyUser)
+                {
+                    //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+                    initializePlayer();
                 }
                 else
                 {
                     initializePlayer1();
+                    runCheck = true;
+
                 }
             }
-        });*/
-        if (Integer.parseInt(currentCreditVal) > 0) {
-            Log.e(TAG, "player before initializePlayer success ");
-            initializePlayer();
-        }
-        else
-        {
-            initializePlayer1();
-            runCheck = true;
-
-        }
-
+        });
     }
 
 
     public interface MyCallback {
-        void onCallback(String value);
+        void onCallback(ArrayList value);
     }
 
-    public void readData(MyCallback myCallback) {
+    /*public void readData(MyCallback myCallback) {
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(currentFirebaseUser.getUid()).child("creditvalue")
                 .addValueEventListener(new ValueEventListener() {
@@ -255,7 +286,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onCancelled(DatabaseError databaseError) {}
                 });
-    }
+    }*/
 
 
 // This method is to check the player position every second and after 15 seconds initiate the DB call
@@ -425,18 +456,52 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //To reduce 1 user credit for watching a video
     private void updateCreditValue(){
-        if(!Strings.isNullOrEmpty(currentCreditVal)){
-            int creditval = Integer.parseInt(currentCreditVal);
-            creditval = creditval-1;
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Credits").child(currentFirebaseUser.getUid());
-            ref.child("creditvalue").setValue(String.valueOf(creditval))
-                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                        }
-                    });
+        if(!uploadbyUser) {
+            if (!Strings.isNullOrEmpty(currentCreditVal)) {
+                int creditval = Integer.parseInt(currentCreditVal);
+                creditval = creditval - 1;
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Credits").child(currentFirebaseUser.getUid());
+                ref.child("creditvalue").setValue(String.valueOf(creditval))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        });
+            }
         }
+    }
 
+   // private void getUserUploadVideoId(){
+   public void readData(MyCallback myCallback) {
+       String cUser = currentFirebaseUser.getUid();
+
+        videoIdRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                     if (cUser.contains(document.getId())) {
+                        userUploadVideoList.add( document.get("videos").toString());
+                    }
+                }
+               // Log.e(TAG, "player user uploaded userUploadVideoList "+userUploadVideoList);
+                myCallback.onCallback(userUploadVideoList);
+            }
+        });
+       // Log.e(TAG, "player user uploaded userUploadVideoList "+userUploadVideoList);
+
+        //checkuploaded();
+    }
+
+    public void checkuploaded(){
+        Log.e(TAG, "player user uploaded video list "+userUploadVideoList);
+        if (userUploadVideoList.get(0).contains(vid.getVideoId())) {
+            uploadbyUser = true;
+            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
+        }
+        else{
+            uploadbyUser = false;
+            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
+        }
 
     }
 
@@ -595,6 +660,97 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             releasePlayer();
         }
     }
+
+/*    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        // Checking the orientation of the screen
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            fullscreenExapndBtn.setVisibility(View.GONE);
+            fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+            hideSystemUi();
+
+            hideFullLayout.setVisibility(View.GONE);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    playerView.getLayoutParams();
+
+            Log.e(TAG, "LANDSCAPE" + params.height);
+            params.width = params.MATCH_PARENT;
+            params.height = params.MATCH_PARENT;
+            playerView.setLayoutParams(params);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            fullscreenExapndBtn.setVisibility(View.VISIBLE);
+            fullscreenShrinkBtn.setVisibility(View.GONE);
+
+            hideSystemUi();
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                    playerView.getLayoutParams();
+            Log.e(TAG, "POTRAIT" + params.height);
+            hideFullLayout.setVisibility(View.VISIBLE);
+            //unhide your objects here.
+            params.width = params.MATCH_PARENT;
+            params.height = 575;
+            playerView.setLayoutParams(params);
+        }
+    }
+
+    private void initFullscreenButton() {
+
+        controlView = playerView.findViewById(R.id.exo_controller);
+        fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
+        fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
+        fullscreenShrinkBtn.setVisibility(View.GONE);
+        MediaContolLayout = controlView.findViewById(R.id.playerControlLayout);
+
+        fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFullscreenDialog();
+            }
+        });
+
+        fullscreenShrinkBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                closeFullscreenDialog();
+            }
+        });
+    }
+
+    private void closeFullscreenDialog() {
+
+        fullscreenExapndBtn.setVisibility(View.VISIBLE);
+        fullscreenShrinkBtn.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                playerView.getLayoutParams();
+        Log.e(TAG, "POTRAIT" + params.height);
+        hideFullLayout.setVisibility(View.VISIBLE);
+        //unhide your objects here.
+        params.width = params.MATCH_PARENT;
+        params.height = 575;
+        playerView.setLayoutParams(params);
+    }
+
+
+    private void openFullscreenDialog() {
+
+        fullscreenExapndBtn.setVisibility(View.GONE);
+        fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+        hideSystemUi();
+
+        hideFullLayout.setVisibility(View.GONE);
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
+                playerView.getLayoutParams();
+
+        Log.e(TAG, "LANDSCAPE" + params.height);
+        params.width = params.MATCH_PARENT;
+        params.height = params.MATCH_PARENT;
+        playerView.setLayoutParams(params);
+    }
+*/
 
     private void initializePlayer() {
         if (player == null) {
@@ -1008,6 +1164,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 cancelUserRepostVideo();
             }
         }
+       /* if (view == addToPlaylistBtn) {
+            Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
+            Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
+            playListAct.putExtra("VideoId", vid.getVideoId());
+            startActivity(playListAct);
+        }*/
         if(view == confirmBtn){
             finish();
             startActivity(new Intent(getApplicationContext(), CreditsPurchase.class));

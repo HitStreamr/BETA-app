@@ -87,20 +87,22 @@ public class Library extends AppCompatActivity {
     }
 
     private void setUpRecyclerView(){
-        Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
-        bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-    @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    if (WatchLaterList.contains(document.getId())) {
-                        Log.e(TAG, "entered    :::" + document.getId() + document.getData());
-                        Watch.add(document.toObject(Video.class));
+        //Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
+        if (WatchLaterList.size() > 0) {
+            bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (WatchLaterList.contains(document.getId())) {
+                            Log.e(TAG, "entered    :::" + document.getId() + document.getData());
+                            Watch.add(document.toObject(Video.class));
+                        }
                     }
+                    Log.e(TAG, "objects :::" + Watch);
+                    call();
                 }
-                Log.e(TAG, "objects :::" + Watch);
-                call();
-            }
-        });
+            });
+        }
     }
 
     private void call(){
