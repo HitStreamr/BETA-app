@@ -58,12 +58,14 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
-        <activity android:name=".VideoView" />
+        <activity android:name=".VideoPlayer" />
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
         <activity android:name=".Library" />
-        <activity android:name=".CreditsPurchase"></activity>
+        <activity android:name=".CreditsPurchase" />
+        <activity android:name=".CommentPage" />
+        <activity android:name=".DiscoverResultPage"></activity>
     </application>
 
 </manifest>

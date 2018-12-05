@@ -1,7 +1,9 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,11 +25,13 @@ public class DiscRecyclerView extends RecyclerView.Adapter<DiscRecyclerView.View
     private ArrayList<String> mImageView = new ArrayList<>();
     private ArrayList<String> mImageText = new ArrayList<>();
     private Context mContext;
+    private Intent mIntent;
 
-    public DiscRecyclerView(ArrayList<String> mImageView, ArrayList<String> mImageText, Context mContext) {
+    public DiscRecyclerView(ArrayList<String> mImageView, ArrayList<String> mImageText, Context mContext, Intent mIntent) {
         this.mImageView = mImageView;
         this.mImageText = mImageText;
         this.mContext = mContext;
+        this.mIntent = mIntent;
     }
 
     @NonNull
@@ -55,6 +59,10 @@ public class DiscRecyclerView extends RecyclerView.Adapter<DiscRecyclerView.View
 
                 Toast.makeText(mContext, mImageText.get(position), Toast.LENGTH_SHORT).show();
 
+                Intent discoverResult = new Intent(mContext, DiscoverResultPage.class);
+                discoverResult.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                discoverResult.putExtra("DISCOVER", mImageText.get(position));
+                mContext.startActivity(discoverResult);
             }
         });
 
