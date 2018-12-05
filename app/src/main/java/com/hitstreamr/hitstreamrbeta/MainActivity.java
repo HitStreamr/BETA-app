@@ -75,6 +75,10 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
+    private final String HOME = "home";
+    private final String DISCOVER = "discover";
+    private final String ACTIVITY = "activity";
+
     private Button logout;
     private DrawerLayout drawer;
     private NavigationView navigationView;
@@ -131,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -143,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
         mTabLayout.setVisibility(View.GONE);
+
 
         // Recycler View
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -251,6 +256,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView.setNavigationItemSelectedListener(this);
         bottomNavView.setOnNavigationItemSelectedListener(this);
+
+        //setting the fragments
+        if(getIntent().hasExtra("OPTIONAL_FRAG"))
+        {
+            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
+            switch(frag){
+                case HOME:
+                    bottomNavView.setSelectedItemId(R.id.home);
+                    break;
+                case DISCOVER:
+                    bottomNavView.setSelectedItemId(R.id.discover);
+                    break;
+                case ACTIVITY:
+                    bottomNavView.setSelectedItemId(R.id.activity);
+                    break;
+            }
+        }else{
+            //FRAG not set; default to home
+            bottomNavView.setSelectedItemId(R.id.home);
+        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -1342,7 +1367,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.activity:
-                fab.setVisibility(View.GONE);
                 bottomNavView.setVisibility(View.VISIBLE);
                 transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
