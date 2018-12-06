@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class Playlist {
     public String playlistname;
-    public ArrayList<String> playVideos;
+    public ArrayList<Video> playVideos;
 
-    public Playlist(String playlistname, ArrayList<String> playVideos) {
+    public Playlist(String playlistname, ArrayList<Video> playVideos) {
         this.playlistname = playlistname;
         this.playVideos = playVideos;
     }
@@ -22,11 +22,11 @@ public class Playlist {
         this.playlistname = playlistname;
     }
 
-    public ArrayList<String> getPlayVideos() {
+    public ArrayList<Video> getPlayVideos() {
         return playVideos;
     }
 
-    public void setPlayVideos(ArrayList<String> playVideos) {
+    public void setPlayVideos(ArrayList<Video> playVideos) {
         this.playVideos = playVideos;
     }
 }

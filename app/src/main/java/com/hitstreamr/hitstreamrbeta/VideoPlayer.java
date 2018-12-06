@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -415,6 +416,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         fullscreenExapndBtn.setVisibility(View.VISIBLE);
         fullscreenShrinkBtn.setVisibility(View.GONE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                 playerView.getLayoutParams();
         Log.e(TAG, "POTRAIT" + params.height);
@@ -432,6 +434,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         fullscreenShrinkBtn.setVisibility(View.VISIBLE);
 
         hideSystemUi();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         hideFullLayout.setVisibility(View.GONE);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
@@ -777,7 +781,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (view == addToPlaylistBtn) {
             Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
             Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
-            playListAct.putExtra("VideoId", vid.getVideoId());
+            playListAct.putExtra("VIDEO", vid);
+            //playListAct.putExtra("VideoId", vid.getVideoId());
             startActivity(playListAct);
         }
 

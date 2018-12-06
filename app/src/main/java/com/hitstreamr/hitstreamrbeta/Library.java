@@ -228,11 +228,11 @@ public class Library extends AppCompatActivity {
                                 p.setPlaylistname(String.valueOf(each.getKey()));
                                 Play.add(p);
                                 Log.e(TAG, "each children"+each.getChildren());
-                                ArrayList<String> a = new ArrayList<>();
+                                ArrayList<Video> a = new ArrayList<>();
                                 for(DataSnapshot eachplaylist : each.getChildren()){
-                                    a.add(eachplaylist.getKey());
-                                    //eachplaylist.getKey();
-                                    Log.e(TAG, "videos in playlist"+eachplaylist.getKey());
+                                    a.add(eachplaylist.getValue(Video.class));
+                                    //eachplaylist.getValue();
+                                    Log.e(TAG, "videos in playlist"+eachplaylist.getValue());
                                 }
                                 p.setPlayVideos(a);
                             }
