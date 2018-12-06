@@ -1,6 +1,8 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +11,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,11 +23,13 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -74,17 +80,24 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
     private final String HOME = "home";
     private final String DISCOVER = "discover";
     private final String ACTIVITY = "activity";
+    private static final String FRAG_OTHER = "other_fragment";
+    private static final String FRAG_HOME = "home_fragment";
 
     private Button logout;
     private DrawerLayout drawer;
+    private LinearLayout contentHolder;
+    private ViewGroup.LayoutParams defaultParams;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
     private Toolbar toolbar;
     private String type;
+    private Activity main;
 
 
     FloatingActionButton fab;
@@ -132,6 +145,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        main = this;
+
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
@@ -148,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
         mTabLayout.setVisibility(View.GONE);
 
+        //Linear Layout
+        contentHolder = findViewById(R.id.content_holder);
+        defaultParams = contentHolder.getLayoutParams();
 
         // Recycler View
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -618,6 +636,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 MainActivity.this.setItemsVisibility(menu, mSearch, true);
                 search_input = null;
                 stopAdapters();
+                bottomNavView.setSelectedItemId(R.id.home);
+                MarginLayoutParams params = (MarginLayoutParams) contentHolder.getLayoutParams();
+                TypedValue typedValue = new TypedValue();
+                (main).getTheme().resolveAttribute(R.attr.actionBarSize, typedValue, true);
+                int[] textSizeAttr = new int[] { android.R.attr.actionBarSize };
+                int indexOfAttrTextSize = 0;
+                TypedArray a = main.obtainStyledAttributes(typedValue.data, textSizeAttr);
+                int marginSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
+                a.recycle();
+                params.topMargin = marginSize;
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
@@ -633,6 +661,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onMenuItemActionExpand(MenuItem item) {
                 MainActivity.this.setItemsVisibility(menu, mSearch, false);
                 //hide panels
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+                transaction.commit();
+                MarginLayoutParams params = (MarginLayoutParams) contentHolder.getLayoutParams();
+                params.topMargin = 0;
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 fab.setVisibility(View.GONE);
@@ -1221,174 +1254,186 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        FragmentTransaction transaction;
         Bundle bundle;
+
 
         switch (item.getItemId()) {
             case R.id.dashboard:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 DashboardFragment dashFrag = new DashboardFragment();
                 dashFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, dashFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(dashFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
 
             case R.id.general_setting:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 GeneralSettingsFragment genSettingsFrag = new GeneralSettingsFragment();
                 genSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, genSettingsFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(genSettingsFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
 
             case R.id.notification_settings:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 bundle.putString("ID", user.getUid());
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, notifSettingsFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(notifSettingsFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
 
             case R.id.payment_pref:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, payPrefFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(payPrefFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
 
             case R.id.invite_a_friend:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, inviteFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(inviteFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
             case R.id.help_center:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 HelpCenterFragment helpFrag = new HelpCenterFragment();
                 helpFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, helpFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(helpFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
 
             case R.id.legal_agreements:
-                getSupportActionBar().hide();
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, legalFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(legalFrag,FRAG_OTHER);
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
 
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
                 drawer.closeDrawer(GravityCompat.START);
-                break;
+                return true;
             //Bottom Navigation Cases
             //TODO on which screen should the floating action bar be accessible
             case R.id.home:
+
                 if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
-                    fab.setVisibility(View.VISIBLE);
+                    bottomNavSetUp(true);
                 }else{
-                    fab.setVisibility(View.GONE);
+                    bottomNavSetUp(false);
                 }
-                bottomNavView.setVisibility(View.VISIBLE);
-                transaction = getSupportFragmentManager().beginTransaction();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, homeFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(homeFrag,FRAG_HOME);
                 Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
-                break;
+                return true;
             case R.id.discover:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.VISIBLE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                bottomNavSetUp(false);
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 DiscoverFragment discFrag = new DiscoverFragment();
                 discFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, discFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(discFrag,FRAG_OTHER);
                 Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
-                break;
+                return true;
             case R.id.activity:
-                bottomNavView.setVisibility(View.VISIBLE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                bottomNavSetUp(false);
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 ActivityFragment actFrag = new ActivityFragment();
                 actFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, actFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
+                viewFragment(actFrag,FRAG_OTHER);
                 Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
-                break;
+                return true;
             case R.id.library:
-                fab.setVisibility(View.GONE);
                 Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
                 libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(libraryIntent);
-                break;
+                return true;
         }
 
 
-        return true;
+        return false;
+    }
+
+    private void bottomNavSetUp(boolean fabvisibility){
+        getSupportActionBar().show();
+        if(fabvisibility){
+            fab.setVisibility(View.VISIBLE);
+        }else{
+            fab.setVisibility(View.GONE);
+        }
+        bottomNavView.setVisibility(View.VISIBLE);
+        MarginLayoutParams params = (MarginLayoutParams) contentHolder.getLayoutParams();
+        TypedValue typedValue = new TypedValue();
+        (main).getTheme().resolveAttribute(R.attr.actionBarSize, typedValue, true);
+        int[] textSizeAttr = new int[] { android.R.attr.actionBarSize };
+        int indexOfAttrTextSize = 0;
+        TypedArray a = main.obtainStyledAttributes(typedValue.data, textSizeAttr);
+        int marginSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
+        a.recycle();
+        params.topMargin = marginSize;
+    }
+
+
+    private void sideNavSetup(){
+        MarginLayoutParams params;
+        params = (MarginLayoutParams) contentHolder.getLayoutParams();
+        params.topMargin = 0;
+        getSupportActionBar().hide();
+        fab.setVisibility(View.GONE);
+        bottomNavView.setVisibility(View.GONE);
+    }
+
+    private void viewFragment(Fragment fragment, String name){
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        // 1. Know how many fragments there are in the stack
+        final int count = fragmentManager.getBackStackEntryCount();
+        // 2. If the fragment is **not** "home type", save it to the stack
+        if( name.equals(FRAG_OTHER) ) {
+            fragmentTransaction.addToBackStack(name);
+        }
+        // Commit !
+        fragmentTransaction.commit();
+        // 3. After the commit, if the fragment is not an "home type" the back stack is changed, triggering the
+        // OnBackStackChanged callback
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                // If the stack decreases it means I clicked the back button
+                if( fragmentManager.getBackStackEntryCount() <= count){
+                    // pop all the fragment and remove the listener
+                    fragmentManager.popBackStack(FRAG_OTHER, POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.removeOnBackStackChangedListener(this);
+                    // set the home button selected
+                    bottomNavView.setSelectedItemId(R.id.home);
+                }
+            }
+        });
     }
 
     @Override
@@ -1396,12 +1441,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //reset fab and bottom bar when going back
-
-            //TODO does not properly handle going back with fragments and the dashboard
-            fab.setVisibility(View.VISIBLE);
-            bottomNavView.setVisibility(View.VISIBLE);
-            getSupportActionBar().show();
             super.onBackPressed();
         }
     }
