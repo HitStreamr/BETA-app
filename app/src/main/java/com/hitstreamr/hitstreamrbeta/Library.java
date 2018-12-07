@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -48,9 +49,13 @@ public class Library extends AppCompatActivity {
     private WatchPlaylistAdapter playlistAdapter_playlists;
 
     private Long WatchListCount;
-    private ArrayList<String> WatchLaterList;
+    private ArrayList<Video> WatchLaterList;
     private ArrayList<Video> Watch;
     private ArrayList<Playlist> Play;
+
+    private ItemClickListener mlistner;
+    private Video vid;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +94,24 @@ public class Library extends AppCompatActivity {
             //Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
         }
 
+        mlistner = new ItemClickListener() {
+            @Override
+            public void onResultClick(Video selectedVideo) {
+                Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                startActivity(videoPlayerIntent);
+            }
+        };
+
+
+
         getWatchLaterList();
         getPlaylistsList();
     }
 
     private void setUpRecyclerView() {
         Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
-        bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        /*bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
@@ -107,13 +123,15 @@ public class Library extends AppCompatActivity {
                 //Log.e(TAG, "objects :::" + Watch);
                 call();
             }
-        });
+        });*/
+
+        call();
     }
 
     private void call(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView_watchLater.setLayoutManager(layoutManager);
-        bookAdapter_watchLater = new BookAdapter(Watch);
+        bookAdapter_watchLater = new BookAdapter(this,WatchLaterList, mlistner);
         recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
     }
 
@@ -202,7 +220,7 @@ public class Library extends AppCompatActivity {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot each : dataSnapshot.getChildren()) {
                                 //temp = each.getValue().toString();
-                                WatchLaterList.add(String.valueOf(each.getKey()));
+                                WatchLaterList.add(each.getValue(Video.class));
                             }
                             Log.e(TAG, "Watch Later List : " + WatchLaterList);
                         }
@@ -246,5 +264,9 @@ public class Library extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
+    }
+
+    public interface ItemClickListener {
+        void onResultClick(Video selectedVideo);
     }
 }

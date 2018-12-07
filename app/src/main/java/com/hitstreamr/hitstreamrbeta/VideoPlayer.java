@@ -616,8 +616,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 .getReference("WatchLater")
                 .child(currentFirebaseUser.getUid())
                 .child(vid.getVideoId())
-                .child("VideoId")
-                .setValue(vid.getVideoId())
+                .setValue(vid)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

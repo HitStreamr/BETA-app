@@ -64,8 +64,6 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
 
         Glide.with(getApplicationContext()).load(Uri.parse(object.getThumbnailUrl())).into(holder.thumbnailPlaylist);
 
-        //holder.thumbnailPlaylist.setImageURI(Uri.parse(object.getThumbnailUrl()));
-
     }
 
     @Override
