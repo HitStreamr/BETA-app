@@ -62,17 +62,6 @@
 
         </LinearLayout>
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/videoScreen"
-            android:layout_alignParentBottom="true"
-            android:layout_marginBottom="67dp"
-            android:layout_marginLeft="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_camera"
-            app:backgroundTint="@color/colorPrimary"
-            app:fabSize="normal"/>
-
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fab"

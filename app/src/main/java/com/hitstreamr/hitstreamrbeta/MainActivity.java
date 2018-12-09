@@ -43,9 +43,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -78,7 +82,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     FloatingActionButton fab;
-    FloatingActionButton vv;
 
     private ItemClickListener mListener;
     //private ImageButton userbtn;
@@ -86,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MenuItem profileItem;
 
     private TextView TextViewUsername;
+
+    private TextView userCredits;
 
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
@@ -113,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout mTabLayout;
     private int tab_position;
     private String search_input, accountType;
+
+    private String creditValue;
 
     /**
      * Set up and initialize layouts and variables
@@ -147,6 +154,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
 
+        getUserType();
+
+
         //Listener for RCVs
         mListener = new ItemClickListener() {
             @Override
@@ -159,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
+                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
+                videoPlayerIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(videoPlayerIntent);
             }
 
@@ -177,7 +189,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
-        vv = findViewById(R.id.videoScreen);
+
 
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
         CirImageViewProPic = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
@@ -194,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("")){
+        if(name.equals("") || name.equals(null)){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -219,18 +231,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.dashboard).setVisible(false);
                 fab.setVisibility(View.GONE);
-                vv.setVisibility(View.GONE);
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
-                    }
-                });
-                vv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
                     }
                 });
             }
@@ -245,7 +250,51 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        userCredits = navigationView.getHeaderView(0).findViewById(R.id.credits);
+        Log.e(TAG, "Main activity user id  " + user.getUid());
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Main activity credit val " + currentCredit);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            userCredits.setText(currentCredit);
+                        }
+                        else
+                            userCredits.setText("0");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
     }
+
+
+   /* private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+            //type = getIntent().getStringExtra("TYPE");
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
+        Log.e(TAG, "account type selected :"+accountType);
+    }*/
 
     /**
      * A listener for the Add Credits button
@@ -1008,6 +1057,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+        if (suggestionAdapter != null) {
+            suggestionAdapter.startListening();
+        }
     }
 
     @Override

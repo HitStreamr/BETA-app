@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorAccent"
-    tools:context=".VideoPlayer">
+    tools:context=".VideoPlayer"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,12 +16,6 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:orientation="vertical">
-
-        <!--<android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/gradient1" />-->
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/artistVideoPlayer"
@@ -31,6 +29,7 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/hideFullscreenLayount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -39,35 +38,33 @@
                     android:id="@+id/Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textAlignment="center"
                     android:layout_marginTop="5dp"
+                    android:text="Video Title Here"
+                    android:textColor="@android:color/black"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
-
-                    android:singleLine="true"
-                    android:text="Video Title Here"
-                    android:textAlignment="center"
-                    android:textColor="@android:color/black"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-
-                    />
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/Artist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Artist name Here"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:text="Artist name Here" />
 
                 <View
                     android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/litgryAccent" />
+                    android:background="@color/litgryAccent"
+                    android:layout_marginTop="5dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -82,18 +79,16 @@
                         android:layout_height="40dp"
                         android:src="@mipmap/ic_launcher_round" />
 
-
                     <TextView
                         android:id="@+id/artistNameBold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="5dp"
                         android:text="Artist Username"
                         android:textColor="@android:color/black"
                         android:textSize="16dp"
-                        android:textStyle="bold" />
-
+                        android:textStyle="bold"
+                        android:layout_marginStart="5dp"
+                        android:layout_gravity="center_vertical"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
@@ -102,7 +97,16 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/followButton"
+                            android:id="@+id/unfollowText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="20dp"
+                            android:layout_gravity="center_vertical"
+                            android:text="Unfollow"
+                            android:textColor="@color/colorPrimaryDark"
+                            android:textSize="12dp" />
+
+                        <TextView
+                            android:id="@+id/followText"
                             android:layout_width="wrap_content"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
@@ -110,25 +114,23 @@
                             android:textColor="@color/colorPrimary"
                             android:textSize="12dp" />
 
-
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <View
                     android:id="@+id/divider2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@color/litgryAccent" />
+                    android:background="@color/litgryAccent"
+                    android:layout_marginTop="5dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal"
-                    android:padding="10dp"
-
-                    >
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -148,11 +150,13 @@
                                 android:textSize="12sp" />
 
                             <TextView
+                                android:id="@+id/publishDate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="3dp"
                                 android:text="00/00/000"
                                 android:textSize="12sp" />
+
                         </LinearLayout>
 
                         <LinearLayout
@@ -168,6 +172,7 @@
                                 android:tint="@color/drkgryAccent" />
 
                             <TextView
+                                android:id="@+id/TextViewViewCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="3dp"
@@ -182,9 +187,7 @@
                                 android:textSize="12sp" />
                         </LinearLayout>
 
-
                     </LinearLayout>
-
 
                     <LinearLayout
                         android:layout_width="fill_parent"
@@ -195,17 +198,16 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal">
 
                             <ImageButton
                                 android:id="@+id/fave"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/ic_favorite_black_24dp"
-                                android:tint="@color/drkgryAccent"
-                                android:background="@color/colorAccent"/>
+                                android:background="@drawable/ic_favorite_black_24dp"
+                                android:backgroundTint="@color/drkgryAccent"/>
 
                             <TextView
                                 android:id="@+id/videoLikes"
@@ -219,18 +221,17 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="20dp"
+                            android:orientation="vertical"
                             android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:layout_marginStart="20dp">
 
                             <ImageButton
                                 android:id="@+id/rePostVideo"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/ic_repost_black_24dp"
-                                android:tint="@color/drkgryAccent"
-                                android:background="@color/colorAccent"/>
+                                android:background="@drawable/ic_repost_black_24dp"
+                                android:backgroundTint="@color/drkgryAccent"/>
 
                             <TextView
                                 android:id="@+id/repostCount"
@@ -244,9 +245,9 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:layout_marginStart="20dp"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:gravity="center_horizontal">
 
                             <ImageButton
                                 android:id="@+id/addToPlaylist"
@@ -255,15 +256,16 @@
                                 android:layout_gravity="center_vertical"
                                 android:src="@drawable/ic_playlist_add_black_24dp"
                                 android:tint="@color/drkgryAccent"
-                                android:background="@color/colorAccent"/>
+                                android:background="@android:color/transparent"/>
+
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:orientation="vertical"
                             android:layout_marginStart="15dp"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:gravity="center_horizontal">
 
                             <ImageView
                                 android:id="@+id/moreOptions"
@@ -274,8 +276,8 @@
                                 android:src="@drawable/ic_more_vert" />
                         </LinearLayout>
 
-
                     </LinearLayout>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -283,6 +285,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     android:padding="10dp">
 
                     <TextView
@@ -296,37 +299,50 @@
                         android:id="@+id/descriptionDivider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginStart="10dp"
                         android:layout_marginEnd="10dp"
+                        android:layout_marginStart="10dp"
                         android:background="@color/litgryAccent" />
 
-                    <include layout="@layout/contributor_video_listview" />
+                    <TextView
+                        android:id="@+id/ContributorTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="5dp"
+                        android:text="Contributors: " />
+
+                    <LinearLayout
+                        android:id="@+id/contributorLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        />
+
 
                 </LinearLayout>
-
-                <View
-                    android:id="@+id/descriptionDivider2"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/litgryAccent" />
 
                 <Button
                     android:id="@+id/collapseDescription"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/ic_keyboard_arrow_down_black_24dp"
+                    android:background="@drawable/ic_keyboard_arrow_up_black_24dp"
                     android:backgroundTint="@color/drkgryAccent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    <View
+                        android:id="@+id/descriptionDivider2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/litgryAccent" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
                             <TextView
                                 android:id="@+id/recent_username"
@@ -342,7 +358,7 @@
                                 android:layout_marginStart="5dp"
                                 android:singleLine="true" />
 
-                    </LinearLayout>
+                        </LinearLayout>
 
                         <!-- COMMENTS -->
                         <LinearLayout
@@ -376,7 +392,6 @@
 
                     </LinearLayout>
 
-                </LinearLayout>
 
                 <View
                     android:id="@+id/divider3"
@@ -387,30 +402,29 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:gravity="center_vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RELATED VIDEOS"
-                        android:textColor="@color/drkgryAccent"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/drkgryAccent"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="end"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="end">
 
                         <Switch
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Autoplay" />
+                            android:text="Autoplay"/>
 
                     </LinearLayout>
-
 
                 </LinearLayout>
 
@@ -418,16 +432,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-
                 </android.support.v7.widget.RecyclerView>
 
             </LinearLayout>
 
-
         </ScrollView>
 
-
     </LinearLayout>
-
 
 </LinearLayout>
