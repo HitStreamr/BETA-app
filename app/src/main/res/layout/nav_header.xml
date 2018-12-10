@@ -22,6 +22,7 @@
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/credits"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"

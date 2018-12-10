@@ -50,6 +50,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -101,12 +102,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     FloatingActionButton fab;
+
     private ItemClickListener mListener;
     //private ImageButton userbtn;
 
     private MenuItem profileItem;
 
     private TextView TextViewUsername;
+
+    private TextView userCredits;
 
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
@@ -134,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private TabLayout mTabLayout;
     private int tab_position;
     private String search_input, accountType;
+
+    private String creditValue;
 
     /**
      * Set up and initialize layouts and variables
@@ -183,6 +189,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
 
+        getUserType();
+
+
         //Listener for RCVs
         mListener = new ItemClickListener() {
             @Override
@@ -193,10 +202,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onResultClick(Video video) {
                 //Open Video Player for song
-                Log.e(TAG, "You clicked a video" +video);
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
             }
 
@@ -231,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name == null){
+        if(name.equals("") || name.equals(null)){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -300,6 +309,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        userCredits = navigationView.getHeaderView(0).findViewById(R.id.credits);
+        Log.e(TAG, "Main activity user id  " + user.getUid());
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Main activity credit val " + currentCredit);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            userCredits.setText(currentCredit);
+                        }
+                        else
+                            userCredits.setText("0");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
 
     }
 
@@ -740,8 +775,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(searchRequest, Video.class)
                 .build();
-
-        Log.e(TAG,"video search query"+searchRequest);
 
         suggestionAdapter = new FirestoreRecyclerAdapter<Video, MainActivity.VideoSuggestionsHolder>(options) {
             @NonNull

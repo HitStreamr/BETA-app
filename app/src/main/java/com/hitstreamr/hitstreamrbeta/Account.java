@@ -107,6 +107,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private boolean selectBackground = false;
 
 
+    private boolean selectPhoto = false;
+    private boolean selectBackground = false;
+
     private Uri selectedImagePath;
     private Uri selectedBackgroundPath;
 
@@ -320,6 +323,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             uploadBackgroundImage(selectedBackgroundPath);
         }
 
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
         if (selectedImagePath != null) {
             uploadFromUri(selectedImagePath);
         }
@@ -371,6 +378,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return;
         }
         artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);

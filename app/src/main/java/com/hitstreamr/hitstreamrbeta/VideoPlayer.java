@@ -11,7 +11,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
@@ -33,6 +35,7 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -48,6 +51,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -57,6 +61,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -64,11 +69,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -128,6 +138,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     FirebaseDatabase database;
     DatabaseReference myRef;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference videoIdRef = db.collection("ArtistVideo");
+    private ArrayList<String> userUploadVideoList;
+
     private Boolean VideoLiked = false;
     private Boolean VideoReposted = false;
     private Long VideoLikesCount;
@@ -136,10 +150,25 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     PlayerControlView controlView;
 
 
-    private boolean collapseVariable = false;
+    private boolean collapseVariable = true;
+    private boolean uploadbyUser = false;
 
     Video vid;
 
+    private String creditValue="";
+
+    private Button confirmBtn, cancelBtn;
+    private TextView messgText;
+    private LayoutInflater mInflater;
+    private DatabaseReference myRefview;
+
+    private boolean runCheck = false;
+    private String currentCreditVal;
+
+    private String credit;
+    private String sTimeStamp = "";
+
+    //Comment stuff
     private String accountType;
     private String username;
     private FirebaseUser current_user;
@@ -147,7 +176,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView allCommentsCount, recent_username, recent_message;
     private long totalComments = 0;
 
-    private VideoContributorAdapter contributorAdapter;
+    //private VideoContributorAdapter contributorAdapter;
     private ArrayList<TextView> contributorTextViews;
     private LinearLayout contributorView;
     private Context context;
@@ -182,6 +211,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
 
         vid = getIntent().getParcelableExtra("VIDEO");
+
+        credit = getIntent().getStringExtra("CREDIT");
+        userUploadVideoList = new ArrayList<>();
+
+        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("VideoLikes");
 
         getUserType();
         getRecentComment();
@@ -555,14 +591,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
     @Override
-    public void onStart() {
-        super.onStart();
-        if (Util.SDK_INT > 23) {
-            initializePlayer();
-        }
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         hideSystemUi();
@@ -756,6 +784,41 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    private void userLikedVideo() {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String strDate = simpleFormat.format(now.getTime());
+        FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+               // .child("TimeStamp")
+                //.setValue(strDate)
+                .child("Likes")
+                .setValue("Y")
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e(TAG, "User Video is reposted ");
+                    }
+                });
+    }
+
+    private void cancelUserLikedVideo() {
+        FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+                .child("Likes")
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                });
+    }
+
+
     private void finishedLike() {
         /*FirebaseDatabase.getInstance().getReference("VideoLikes")
                 .addValueEventListener(new ValueEventListener() {
@@ -813,6 +876,40 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    private void userRepostVideo() {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String strDate = simpleFormat.format(now.getTime());
+       FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+               .child("Repost")
+                .setValue("Y")
+               // .child("TimeStamp")
+               //.setValue(strDate)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e(TAG, "User Video is reposted ");
+                    }
+                });
+    }
+
+    private void cancelUserRepostVideo() {
+        FirebaseDatabase.getInstance()
+                .getReference("UserFeed")
+                .child(currentFirebaseUser.getUid())
+                .child(vid.getVideoId())
+                .child("Repost")
+                .removeValue()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                    }
+                });
+    }
+
     private void registerWatchLater() {
         FirebaseDatabase.getInstance()
                 .getReference("WatchLater")
@@ -856,6 +953,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         return true;
     }
 
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
 
     private class ComponentListener extends Player.DefaultEventListener implements
             VideoRendererEventListener, AudioRendererEventListener {
@@ -872,9 +974,19 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     break;
                 case Player.STATE_READY:
                     stateString = "ExoPlayer.STATE_READY     -";
+                    if (!(player.equals(""))) {
+                        if (player.getCurrentPosition() == 0) {
+                            timerCounter();
+                        }
+                    }
+
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
+                    if (!(Integer.parseInt(currentCreditVal) > 0)) {
+                        callPurchase();
+                    }
+
                     break;
                 default:
                     stateString = "UNKNOWN_STATE             -";
@@ -1148,6 +1260,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 accountType = "LabelAccounts";
             }
         }
+        Log.e(TAG, "account type selected :"+accountType);
     }
 
     /**

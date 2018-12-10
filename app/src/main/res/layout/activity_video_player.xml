@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -197,22 +198,22 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:gravity="center_horizontal">
 
                             <ImageButton
                                 android:id="@+id/fave"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/ic_favorite_black_24dp"
-                                android:tint="@color/drkgryAccent" />
+                                android:background="@drawable/ic_favorite_black_24dp"
+                                android:backgroundTint="@color/drkgryAccent"/>
 
                             <TextView
                                 android:id="@+id/videoLikes"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="00"
+                                android:text="0"
                                 android:textSize="10sp" />
 
                         </LinearLayout>
@@ -229,14 +230,14 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:src="@drawable/ic_repost_black_24dp"
-                                android:tint="@color/drkgryAccent"/>
+                                android:background="@drawable/ic_repost_black_24dp"
+                                android:backgroundTint="@color/drkgryAccent"/>
 
                             <TextView
                                 android:id="@+id/repostCount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="00"
+                                android:text="0"
                                 android:textSize="10sp" />
 
                         </LinearLayout>
@@ -246,7 +247,8 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:layout_marginStart="20dp"
-                            android:gravity="center_horizontal">
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
                             <ImageButton
                                 android:id="@+id/addToPlaylist"
@@ -254,7 +256,8 @@
                                 android:layout_height="30dp"
                                 android:layout_gravity="center_vertical"
                                 android:src="@drawable/ic_playlist_add_black_24dp"
-                                android:tint="@color/drkgryAccent"/>
+                                android:tint="@color/drkgryAccent"
+                                android:background="@android:color/transparent"/>
 
                         </LinearLayout>
 
@@ -283,6 +286,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:visibility="gone"
                     android:padding="10dp">
 
                     <TextView

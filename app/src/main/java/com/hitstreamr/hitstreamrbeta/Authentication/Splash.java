@@ -22,7 +22,7 @@ import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 public class Splash extends AppCompatActivity {
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 2000;
     // [START declare_auth]
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;

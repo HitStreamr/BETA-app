@@ -95,16 +95,19 @@
                         android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
-                        android:layout_gravity="center_horizontal" />
-
+                        android:layout_gravity="center_horizontal"
+                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="FOLLOWERS"
                         android:textColor="@color/colorPrimary"
-                        android:layout_gravity="center_horizontal" />
+                        android:layout_gravity="center_horizontal"
+                        />
+
 
                 </LinearLayout>
+
 
                 <View
                     android:id="@+id/followDivider"
@@ -126,22 +129,25 @@
                         android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"
-                        android:layout_gravity="center_horizontal" />
-
+                        android:layout_gravity="center_horizontal"
+                        />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="FOLLOWING"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="@color/colorPrimary" />
+                        android:textColor="@color/colorPrimary"
+                        />
+
 
                 </LinearLayout>
 
             </LinearLayout>
 
+
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+                android:layout_height="wrap_content"
             android:id="@+id/tabLayout_profile">
 
             <android.support.design.widget.TabItem
@@ -170,12 +176,24 @@
 
         </android.support.design.widget.TabLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <!--<android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/profile_recyclerView">
 
-        </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.RecyclerView>-->
+        <ListView
+            android:id="@+id/listView_Feed"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listView_Upload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
