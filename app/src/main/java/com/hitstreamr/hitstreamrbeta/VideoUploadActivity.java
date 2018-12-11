@@ -607,10 +607,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
 
-        Calendar now = Calendar.getInstance();
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String strDate = simpleFormat.format(now.getTime());
-
         // Creates like counts for artists if it does not exist yet
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
@@ -622,11 +618,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (!documentSnapshot.exists()) {
                     Map<String, Object> artistLikes = new HashMap<>();
-                    artistLikes.put("timestamp",strDate);
-
-                    //artistLikes.put("timestamp", FieldValue.serverTimestamp());
-                    //documentReference.set(artistLikes);
-                    firebaseFirestore.collection("ArtistsNumbers").document(CurrentUserID)
+                    firebaseFirestore.collection("ArtistsLikes").document(CurrentUserID)
                             .set(artistLikes)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
