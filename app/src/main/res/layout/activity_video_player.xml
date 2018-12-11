@@ -247,8 +247,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:layout_marginStart="20dp"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:gravity="center_horizontal">
 
                             <ImageButton
                                 android:id="@+id/addToPlaylist"
