@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="1dp"
@@ -16,45 +15,43 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/featuredVideosFrame">
-            <!-- Featured Videos -->
+            android:id="@+id/featuredVideosFrame"
+            >
+
             <LinearLayout
                 android:id="@+id/featuredVideosLinLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:orientation="vertical"
-                android:padding="10dp"
-                android:layout_alignParentTop="true">
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FEATURED VIDEOS"
+                    android:text="@string/featured_videos"
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:gravity="top"
-                    android:orientation="horizontal"
-                    tools:layout_width="wrap_content">
+                    android:gravity="end"
+                    android:orientation="horizontal">
 
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:gravity="end"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
             </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/featuredVideoRCV"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"></android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/featuredVideosRCV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
         </FrameLayout>
         <!--Fresh Releases-->
         <FrameLayout
@@ -68,13 +65,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:orientation="vertical"
-                android:padding="10dp"
-                >
+                android:orientation="horizontal"
+                android:padding="10dp">
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FEATURED VIDEOS"
+                    android:text="@string/fresh_releases"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -87,7 +84,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
             </LinearLayout>
@@ -109,14 +106,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:orientation="vertical"
-                android:padding="10dp"
-                >
+                android:orientation="horizontal"
+                android:padding="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FEATURED VIDEOS"
+                    android:text="@string/trending_now"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -129,7 +125,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
             </LinearLayout>
@@ -152,13 +148,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FEATURED VIDEOS"
+                    android:text="@string/artists_to_watch"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -171,7 +167,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
             </LinearLayout>
@@ -193,13 +189,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:padding="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FEATURED VIDEOS"
+                    android:text="@string/popular_people"
                     android:textStyle="bold" />
 
                 <LinearLayout
@@ -212,7 +208,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
-                        android:text="MORE"
+                        android:text="@string/more"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
             </LinearLayout>
