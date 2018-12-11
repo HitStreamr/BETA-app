@@ -91,4 +91,5 @@
     <string name="follow_notification_channel_id">New Follows</string>
     <string name="copyrightclaim">If you are the copyright owner of this \n video and believe it has been uploaded \n without your permission,
 please follow \n these directions to submit a copyright \n infrengment notice.</string>
+    <string name="title_activity_playlist_videos">PlaylistVideosActivity</string>
 </resources>

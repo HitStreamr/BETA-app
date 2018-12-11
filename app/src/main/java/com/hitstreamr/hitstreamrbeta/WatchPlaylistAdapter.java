@@ -13,30 +13,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
-
-import java.net.URI;
 import java.util.ArrayList;
-
-import javax.annotation.Nullable;
-
 import static com.facebook.FacebookSdk.getApplicationContext;
-
 
 public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdapter.WatchPlaylistViewHolder> {
     private static final String TAG = "WatchPlayListAdapter";
     private ArrayList<Playlist> Playlist;
     private Context mContext;
+    private Library.ItemClickListener mlistner;
 
-    public WatchPlaylistAdapter(ArrayList<Playlist> playlist) {
+    public WatchPlaylistAdapter(Context context, ArrayList<Playlist> playlist, Library.ItemClickListener mlistner) {
         Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
         this.Playlist = playlist;
+        this.mContext = context;
+        this.mlistner = mlistner;
     }
 
     @NonNull
@@ -53,16 +43,18 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     public void onBindViewHolder(@NonNull WatchPlaylistViewHolder holder, int position) {
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
         holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()));
-
         holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()) + " videos");
-
-        //holder.username.setText(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
         holder.username.setText(Playlist.get(position).getPlayVideos().get(0).getUsername());
-
         Video object = Playlist.get(position).getPlayVideos().get(0);
         Log.e(TAG, "Object of playlist" + object.getThumbnailUrl());
-
         Glide.with(getApplicationContext()).load(Uri.parse(object.getThumbnailUrl())).into(holder.thumbnailPlaylist);
+
+        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mlistner.onPlaylistClick(Playlist.get(position));
+            }
+        });
 
     }
 
@@ -74,7 +66,6 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     public class WatchPlaylistViewHolder extends RecyclerView.ViewHolder {
         public TextView singlePlaylist;
         public LinearLayout parentLayout;
-        //public TextView userPlaylist;
         public TextView videoCountPlaylist;
         public TextView videoCount;
         public TextView username;
@@ -84,13 +75,10 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
             super(view);
             singlePlaylist = view.findViewById(R.id.playlistTitle);
             parentLayout = view.findViewById(R.id.playlistCard);
-            //userPlaylist = view.findViewById(R.id.videoUsername);
             videoCountPlaylist = view.findViewById(R.id.videoCount);
             videoCount = view.findViewById(R.id.videoPViews);
             username = view.findViewById(R.id.videoUsername);
             thumbnailPlaylist = view.findViewById(R.id.videoThumbnail);
-
-
         }
     }
 }
