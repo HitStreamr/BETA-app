@@ -40,9 +40,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -84,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private TextView TextViewUsername;
 
+    private TextView userCredits;
+
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
 
@@ -111,6 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private int tab_position;
     private String search_input;
 
+    private String creditValue;
 
     /**
      * Set up and initialize layouts and variables
@@ -157,11 +164,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onResultClick(Video video) {
+               /* String CheckCreditVal = userCredits.getText().toString();
+                Log.e("HOME", "CheckCreditVal -"+CheckCreditVal);
+                if(!(Strings.isNullOrEmpty(CheckCreditVal))) {
+                    int Value = Integer.parseInt(CheckCreditVal);
+                    if (Value > 0) {*/
                 //Open Video Player for song
-                Log.e(TAG, "You clicked a video" +video);
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
+                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
+                   /* }
+                    else{
+                        Toast.makeText(MainActivity.this, "Please purchase credits to watch videos", Toast.LENGTH_SHORT).show();
+                    }*/
+               // }
             }
 
             @Override
@@ -196,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("")){
+        if(name.equals("") || name.equals(null)){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -249,6 +266,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        userCredits = navigationView.getHeaderView(0).findViewById(R.id.credits);
+        Log.e(TAG, "Main activity user id  " + user.getUid());
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Main activity credit val " + currentCredit);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            userCredits.setText(currentCredit);
+                        }
+                        else
+                            userCredits.setText("0");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
+    }
+
+    /**
+     * A listener for the Add Credits button
+     * @param view view
+     */
+    public void addCredits(View view) {
+        Intent creditsPurchaseIntent = new Intent(getApplicationContext(), CreditsPurchase.class);
+        creditsPurchaseIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        startActivity(creditsPurchaseIntent);
     }
 
     /**
@@ -612,10 +665,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return tmp;
     }
 
-    /**
-     *
-     * @param v view
-     */
     public void showPopup(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -630,12 +679,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
-
-    /**
-     *
-     * @param item item
-     * @return true if clicked
-     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
@@ -965,8 +1008,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //reset fab and bottom bar when going back
-
-            //TODO does not properly handle going back with fragments and the dashboard
             fab.setVisibility(View.VISIBLE);
             bottomNavView.setVisibility(View.VISIBLE);
             getSupportActionBar().show();

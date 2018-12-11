@@ -21,7 +21,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 
-        debug {
+        debug{
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
             buildConfigField 'String', "Transloadit_TEMPLATE_ID", TEMPLATE_ID
@@ -81,12 +81,15 @@ dependencies {
     // Recycler View
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     //Glide for Recycler View
-    implementation("com.github.bumptech.glide:recyclerview-integration:4.8.0") {
+    implementation ("com.github.bumptech.glide:recyclerview-integration:4.8.0") {
         // Excludes the support library because it's already included by Glide.
         transitive = false
     }
 
-    // Profile Picture
+    //SearchView
+    implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
+    //profile picture
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
@@ -102,7 +105,7 @@ dependencies {
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
 
     //Google play Billing
-    // implementation 'com.android.billingclient:billing:1.2'
+   // implementation 'com.android.billingclient:billing:1.2'
     implementation 'com.anjlab.android.iab.v3:library:1.0.44'
 
     // Indicator Seek Bar

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@drawable/round_outline_wht"
-    android:outlineProvider="background"
+    android:background="@color/litgryAccent"
     android:gravity="center"
     android:elevation="4dp"
     >
@@ -14,10 +13,10 @@
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/MessageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/clear_user_data"
             android:textAlignment="center"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
@@ -31,12 +30,12 @@
 
             <Button
                 android:id="@+id/cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/cancel"
-                android:textColor="@color/colorPrimary"
-            android:textStyle="bold"
-            android:background="@android:color/transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:background="@android:color/transparent"
                 android:layout_marginEnd="100dp"/>
 
             <Button
@@ -44,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ok"
-                android:textColor="@color/litgryAccent"
+                android:textColor="@color/colorAccent"
                 android:textStyle="bold"
                 android:background="@android:color/transparent"/>
 
