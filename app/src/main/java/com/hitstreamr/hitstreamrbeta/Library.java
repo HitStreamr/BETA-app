@@ -4,13 +4,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
+import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,9 +31,12 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Library extends AppCompatActivity {
+public class Library extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = "LibraryActivity";
+    private final String HOME = "home";
+    private final String DISCOVER = "discover";
+    private final String ACTIVITY = "activity";
 
     private String accountType;
     private FirebaseUser current_user;
@@ -64,6 +72,8 @@ public class Library extends AppCompatActivity {
         getSupportActionBar().setTitle("Library");
 
         bottomNavView = findViewById(R.id.bottomNav);
+        bottomNavView.setOnNavigationItemSelectedListener(this);
+        bottomNavView.setSelectedItemId(R.id.library);
 
         //listView_watchLater = findViewById(R.id.listView_watchLater);
 
@@ -256,4 +266,45 @@ public class Library extends AppCompatActivity {
         void onResultClick(Video selectedVideo);
         void onPlaylistClick(Playlist selectedPlaylist);
     }
+
+    /**
+     * Handles fragment items
+     * @param item menu item
+     * @return true to show fragments
+     */
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        FragmentTransaction transaction;
+        Bundle bundle;
+        switch (item.getItemId()) {
+            case R.id.home:
+                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
+                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                homeIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                homeIntent.putExtra("OPTIONAL_FRAG", HOME);
+                startActivity(homeIntent);
+                break;
+            case R.id.discover:
+                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
+                Intent discoverIntent = new Intent(getApplicationContext(), MainActivity.class);
+                discoverIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                discoverIntent.putExtra("OPTIONAL_FRAG", DISCOVER);
+                startActivity(discoverIntent);
+                break;
+            case R.id.activity:
+                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
+                Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
+                activityIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                activityIntent.putExtra("OPTIONAL_FRAG", ACTIVITY);
+                startActivity(activityIntent);
+                break;
+            case R.id.library:
+                break;
+        }
+        return true;
+    }
+
+
+
+
 }

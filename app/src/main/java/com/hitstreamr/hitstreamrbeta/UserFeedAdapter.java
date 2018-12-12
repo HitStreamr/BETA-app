@@ -22,7 +22,7 @@ public class UserFeedAdapter extends ArrayAdapter<Video> {
     private int mResource;
     private ArrayList<Video> objects1 = new ArrayList<>();
     private ArrayList<Feed> objects2 = new ArrayList<>();
-    LinearLayout FeedLikes, FeesRepost;
+    LinearLayout FeedLikes, FeedRepost;
     Profile.ItemClickListener mListener;
 
     public UserFeedAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Video> objects, @NonNull ArrayList<Feed> UserFeedDtls, Profile.ItemClickListener mListener) {
@@ -62,7 +62,7 @@ public class UserFeedAdapter extends ArrayAdapter<Video> {
         Glide.with(mContext).load(currentVideo.getThumbnailUrl()).into(thumbnail);
 
         FeedLikes =convertView.findViewById(R.id.Like);
-        FeesRepost = convertView.findViewById(R.id.Repost);
+        FeedRepost = convertView.findViewById(R.id.Repost);
 
         userLike = feedDtls.getFeedLike();
         UserRepost = feedDtls.getFeedRepost();
@@ -73,7 +73,7 @@ public class UserFeedAdapter extends ArrayAdapter<Video> {
         }
         if(UserRepost.equals("Y"))
         {
-            FeesRepost.setVisibility(View.VISIBLE);
+            FeedRepost.setVisibility(View.VISIBLE);
         }
 
         mainSection.setOnClickListener(new View.OnClickListener() {

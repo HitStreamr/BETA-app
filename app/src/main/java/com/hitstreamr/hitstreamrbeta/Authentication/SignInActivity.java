@@ -76,7 +76,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog = new ProgressDialog(this);
 
         //Buttons
-        backbutton = (ImageButton) findViewById(R.id.backBtn);
+        backbutton = findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
 
 

@@ -12,11 +12,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.hitstreamr.hitstreamrbeta.GenreRecyclerViewAdapter;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAdapter.ItemClickListener, View.OnClickListener{
@@ -28,7 +33,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
     ArrayList<Integer> selectedItems;
     String[] images;
     HashMap<String, String> drawableToReadableNames;
-
+    FirebaseUser user;
     Button skipButton, nextButton;
 
     private final int MIN_GENRE = 3;
@@ -46,7 +51,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
 
         images = getResources().getStringArray(R.array.genreImageDrawables);
 
-        drawableToReadableNames = setStrings();
+        //drawableToReadableNames = setStrings();
 
         recyclerViewLayoutManager = new GridLayoutManager(context, 2);
 
@@ -55,6 +60,8 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         recyclerView_Adapter = new GenreRecyclerViewAdapter(images,this);
 
         mRecyclerView.setAdapter(recyclerView_Adapter);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         skipButton = findViewById(R.id.skipButton);
         skipButton.setOnClickListener(this);
@@ -140,6 +147,36 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         checkButton();
     }
 
+    private void saveGenre(){
+        Intent tempIntent = getIntent();
+
+        String[] temp = new String[selectedItems.size()];
+
+        for(int i = 0; i < selectedItems.size(); i++ ){
+            temp[i] = images[selectedItems.get(i)];
+        }
+
+        if (temp.length > 0 ) {
+            try {
+                FirebaseDatabase.getInstance().getReference().child("BasicAccounts/" + user.getUid() + "/genres").setValue(Arrays.asList(temp));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                FirebaseDatabase.getInstance().getReference().child("BasicAccounts/" + user.getUid() + "/genres").setValue(Collections.EMPTY_LIST);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+        homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
+        homeIntent.putExtra("NUMBER_SELECTED", selectedItems);
+        homeIntent.putExtra("GENRES_SELECTED", temp);
+        startActivity(homeIntent);
+    }
+
     //button onClick
     @Override
     public void onClick(View v) {
@@ -155,21 +192,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         }
 
         if(v == nextButton){
-            Intent tempIntent = getIntent();
-            if (tempIntent.getStringExtra("TYPE") != null){
-                String[] temp = new String[selectedItems.size()];
-
-                for(int i = 0; i < selectedItems.size(); i++ ){
-                    temp[i] = images[selectedItems.get(i)];
-                }
-
-                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
-                homeIntent.putExtra("NUMBER_SELECTED", selectedItems);
-                homeIntent.putExtra("GENRES_SELECTED", temp);
-                startActivity(homeIntent);
-            }
-
+                saveGenre();
         }
     }
 

@@ -1,15 +1,14 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,8 +16,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -26,16 +25,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
 import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -50,8 +46,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -86,7 +80,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     DatabaseReference myFollowersRef, myFollowingRef;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageTask mstorageTask;
     private StorageReference mStorageRef = storage.getReference();
     private StorageReference backgroundRef = null;
 
@@ -153,9 +146,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         getUserType();
         getUsername();
-
-       // listView_UserUpload.setVisibility(View.VISIBLE);
-        //getUserUploadVideoId();
 
         if (userClicked.equals("")) {
             Log.e(TAG, "Current user selected");
@@ -362,7 +352,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         Log.e(TAG, "Got username :: " + username);
                         getUrlStorage();
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }

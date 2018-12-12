@@ -54,7 +54,7 @@ public class Pop extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.cancel:
-
+                finish();
                 break;
 
             case R.id.confirm:

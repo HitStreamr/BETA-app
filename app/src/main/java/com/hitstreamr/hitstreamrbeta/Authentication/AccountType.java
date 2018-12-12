@@ -13,8 +13,9 @@ import com.hitstreamr.hitstreamrbeta.R;
 public class AccountType extends AppCompatActivity implements View.OnClickListener {
 
     private Button basicAcctBtn, artistAcctBtn;
-    private TextView labelAcct;
     private ImageButton backbtn;
+    private TextView labelAcct;
+
 
 
     @Override

@@ -30,7 +30,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Edit Account Informaion"
+                    android:text="Edit Account Information"
                     android:textSize="16dp"
                     android:textStyle="bold"
                     android:layout_marginBottom="10dp"
@@ -56,7 +56,7 @@
                     android:layout_height="25dp"
                     android:text="Change Photo"
                     android:textColor="@color/colorPrimary"
-                    android:background="@drawable/button2"
+                    android:background="@android:color/transparent"
                     android:layout_gravity="center_horizontal"/>
 
                 <Button
@@ -112,7 +112,7 @@
                     android:layout_height="30dp"
                     android:text="Change Password"
                     android:textColor="@color/colorPrimary"
-                    android:background="@color/colorAccent"
+                    android:background="@android:color/transparent"
                     android:layout_marginTop="10dp"/>
 
                 <TextView
