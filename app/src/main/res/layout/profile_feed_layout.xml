@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/videoCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/videoThumbnail"
+            android:layout_width="140dp"
+            android:layout_height="80dp"
+            android:background="@drawable/round_outline"
+            android:outlineProvider="background" />
+
+        <LinearLayout
+            android:id="@+id/mainBody"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/videoUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Artist Username"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/videoTitle"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:text="Title Of Video"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:textStyle="bold"
+
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="2"
+                android:scrollHorizontally="true"
+                android:singleLine="true"/>
+
+            <LinearLayout
+                android:id = "@+id/Repost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/activityImage"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/ic_repost_black_24dp"
+                    android:layout_marginEnd="5dp"
+                     />
+
+                <TextView
+                    android:id="@+id/activity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="Reposted"
+                    android:textSize="10sp"
+                    android:layout_marginEnd="5dp"/>
+
+              </LinearLayout>
+
+            <LinearLayout
+                android:id = "@+id/Like"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/likedvideo"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:background="@drawable/ic_favorite_black_24dp"
+                    android:layout_marginEnd="5dp"
+                    />
+
+                <TextView
+                    android:id="@+id/liked"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="end"
+                    android:text="Liked"
+                    android:textSize="10sp"
+                    android:layout_marginEnd="5dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

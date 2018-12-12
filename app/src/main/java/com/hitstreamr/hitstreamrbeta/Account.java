@@ -396,6 +396,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void videoSelection(){
+
         if (selectedImagePath != null) {
             uploadFromUri(selectedImagePath);
         }

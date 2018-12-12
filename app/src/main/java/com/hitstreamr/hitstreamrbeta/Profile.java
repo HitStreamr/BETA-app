@@ -109,6 +109,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     /**
      * Set up and initialize layouts and variables
+     *
      * @param savedInstanceState state
      */
     @Override
@@ -722,6 +723,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     /**
      * Handles back button on toolbar
+     *
      * @return true if pressed
      */
     @Override

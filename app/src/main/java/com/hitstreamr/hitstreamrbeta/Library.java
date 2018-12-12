@@ -32,7 +32,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -138,6 +137,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     /**
      * Drop Down Menu - History
+     *
      * @param view view
      */
     public void expandableButton_history(View view) {
@@ -147,6 +147,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     /**
      * Drop Down - Watch Later
+     *
      * @param view view
      */
     public void expandableButton_watchLater(View view) {
@@ -156,6 +157,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     /**
      * Drop Down - Playlist
+     *
      * @param view view
      */
     public void expandableButton_playlists(View view) {
@@ -166,6 +168,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     /**
      * Handles back button on toolbar
+     *
      * @return true if pressed
      */
     @Override
@@ -193,6 +196,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             }
         }
     }
+
+
 
     /**
      * RecyclerView Test
@@ -289,4 +294,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         }
         return true;
     }
+
+
+
+
 }
