@@ -103,7 +103,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_fullscreen_expand" />
             <ImageView
                 android:id="@+id/fullscreen_shrink"
@@ -111,7 +111,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"/>
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_fullscreen_skrink" />
 
 

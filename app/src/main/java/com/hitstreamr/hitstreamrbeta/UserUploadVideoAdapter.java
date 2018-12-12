@@ -2,24 +2,18 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideoAdapter.VideoUploadHolder> {
@@ -61,7 +55,7 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
         holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               mListener.onOverflowClick(vids.get(position), holder.moreMenu);
+                mListener.onOverflowClick(vids.get(position), holder.moreMenu);
             }
         });
 

@@ -27,7 +27,8 @@
                 android:id="@+id/playlist"
                 android:layout_width="50dp"
                 android:layout_height="80dp"
-               android:outlineProvider="background"
+                android:background="@drawable/playlist_outline"
+                android:outlineProvider="background"
                 android:backgroundTint="@android:color/black"/>
 
             <TextView
@@ -42,6 +43,7 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:background="@drawable/ic_playlist"
                 android:backgroundTint="@color/colorAccent"
                 android:layout_marginStart="15dp"
                 android:layout_below="@+id/videoCount"

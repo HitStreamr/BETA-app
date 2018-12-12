@@ -7,51 +7,51 @@
     android:layout_height="match_parent"
     tools:context=".CommentPage">
 
-        <LinearLayout
+    <LinearLayout
         android:id="@+id/topBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:elevation="4dp"
         android:gravity="center_vertical"
-            android:orientation="horizontal"
+        android:orientation="horizontal"
         android:padding="10dp">
 
-            <Button
-                android:id="@+id/back"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
+        <Button
+            android:id="@+id/back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
             android:backgroundTint="@android:color/black"
             android:onClick="onBack" />
 
-            <TextView
-                android:id="@+id/comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-                android:text="Comments"
-                android:textColor="@color/drkgryAccent"
+            android:text="Comments"
+            android:textColor="@color/drkgryAccent"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        </LinearLayout>
+    </LinearLayout>
 
     <ScrollView
         android:id="@+id/recyclerViewLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="10dp"
         android:layout_below="@id/topBar"
         android:layout_above="@+id/leaveCommentLayout">
 
-            <android.support.v7.widget.RecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/postedComments_recyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            </android.support.v7.widget.RecyclerView>
+        </android.support.v7.widget.RecyclerView>
 
     </ScrollView>
 

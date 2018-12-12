@@ -40,7 +40,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -53,7 +52,6 @@ import com.transloadit.sdk.response.AssemblyResponse;
 import org.json.JSONException;
 
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -74,6 +72,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_DOWNLOAD_LINK = "url";
     private static final String THUMBNAIL_DOWNLOAD_LINK = "thumbnailUrl";
     private static final String VIDEO_PUB_YEAR = "pubYear";
+    private static final String VIDEO_TIME_STAMP = "timestamp";
+    private static final String VIDEO_ID = "videoId";
+    private static final String VIDEO_VIEWS = "views";
     private static final String USER_ID = "userId";
     private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
@@ -531,7 +532,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         });
     }
 
-
     private void registerFirebase() {
         final String title = EdittextTittle.getText().toString().trim();
         final String description = EditTextDescription.getText().toString().trim();
@@ -569,6 +569,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(USER_ID, CurrentUserID);
         artistVideo.put(USER_NAME, currentFirebaseUser.getDisplayName());
         artistVideo.put(VIDEO_DURATION,millisecondsToString(duration));
+        artistVideo.put(VIDEO_TIME_STAMP, null);
+        artistVideo.put(VIDEO_ID,null);
+        artistVideo.put(VIDEO_VIEWS,0l);
 
         Map<String, Boolean> terms = new HashMap<>();
         ArrayList<String> res = processTitle(title);
@@ -596,6 +599,23 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
+
+                        // Creates like counts for artists if it does not exist yet
+                        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+                        DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
+                                .document(CurrentUserID);
+
+                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                DocumentSnapshot documentSnapshot = task.getResult();
+                                if (documentSnapshot == null) {
+                                    Map<String, Object> artistLikes = new HashMap<>();
+                                    artistLikes.put("likes", 0);
+                                    documentReference.set(artistLikes);
+                                }
+                            }
+                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -606,29 +626,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        // Creates like counts for artists if it does not exist yet
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
-                .document(CurrentUserID);
-
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if (!documentSnapshot.exists()) {
-                    Map<String, Object> artistLikes = new HashMap<>();
-                    firebaseFirestore.collection("ArtistsLikes").document(CurrentUserID)
-                            .set(artistLikes)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            Log.d("SUCCESS", "SUCCESS");
-                        }
-                    });
-                }
-            }
-        });
     }
 
     private ArrayList<String> processTitle(String title){
@@ -960,7 +957,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private String millisecondsToString(long duration){
         long minutes = (duration / 1000) / 60;
         long seconds = (duration / 1000) % 60;
-        return minutes + ":" + seconds;
+        return String.format("%d:%02d", minutes, seconds);
     }
 
 

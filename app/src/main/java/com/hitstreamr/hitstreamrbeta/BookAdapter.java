@@ -1,54 +1,55 @@
 package com.hitstreamr.hitstreamrbeta;
-
-import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
-public class BookAdapter extends ArrayAdapter<Video> {
 
-    private Context mContext;
-    private int mResource;
-    private ArrayList<Video> objects1 = new ArrayList<>();
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder>{
 
-    public BookAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Video> objects) {
-        super(context, resource, objects);
-        this.mContext =  context;
-        this.mResource = resource;
-        this.objects1 = objects;
+    private ArrayList<Video> bookList;
+
+    public BookAdapter(ArrayList<Video> bookList) {
+        this.bookList = bookList;
     }
 
-    @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public BookViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.watch_later_results, parent, false);
 
-        Log.e("TAG", "object values"+objects1.toString());
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        convertView = inflater.inflate(mResource, parent, false);
-        Video currentVideo = objects1.get(position);
+        return new BookViewHolder(itemView);
+    }
 
-        Log.e("TAG", "object current values"+currentVideo.toString());
+    @Override
+    public void onBindViewHolder(BookViewHolder holder, int position) {
+        holder.title.setText(bookList.get(position).getTitle());
+        holder.author.setText(bookList.get(position).getUsername());
+        holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        Glide.with(holder.thumbnail).load(bookList.get(position).getThumbnailUrl()).into(holder.thumbnail);
+        holder.duration.setText(bookList.get(position).getDuration());
+    }
 
-        TextView title = convertView.findViewById(R.id.scrollingTitle);
-        TextView author = convertView.findViewById(R.id.watchLaterAuthor);
-        ImageView thumbnail = convertView.findViewById(R.id.watchLaterThumbnail);
-        TextView duration = convertView.findViewById(R.id.watchLaterDuration);
+    @Override
+    public int getItemCount() {
+        return bookList.size();
+    }
 
+    public class BookViewHolder extends RecyclerView.ViewHolder {
+        public TextView title;
+        public TextView author;
+        public ImageView thumbnail;
+        public  TextView duration;
 
-        title.setText(currentVideo.getTitle());
-        author.setText(currentVideo.getUsername());
-        thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(mContext).load(currentVideo.getThumbnailUrl()).into(thumbnail);
-        duration.setText(currentVideo.getDuration());
-
-        return convertView;
+        public BookViewHolder(View view) {
+            super(view);
+            title = view.findViewById(R.id.scrollingTitle);
+            author = view.findViewById(R.id.watchLaterAuthor);
+            thumbnail = view.findViewById(R.id.watchLaterThumbnail);
+            duration = view.findViewById(R.id.watchLaterDuration);
+        }
     }
 }

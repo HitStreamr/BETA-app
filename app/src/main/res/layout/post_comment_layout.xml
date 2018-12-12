@@ -6,11 +6,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-            android:padding="10dp">
+        android:padding="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -27,26 +27,26 @@
                 app:civ_border_width="2dp"
                 android:layout_marginEnd="5dp"/>
 
-                    <EditText
+            <EditText
                 android:id="@+id/commentMessage"
-                        android:layout_width="fill_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                        android:hint="Leave a comment..."
+                android:hint="Leave a comment..."
                 android:paddingStart="15dp"
-                        android:background="@drawable/text_fields"
+                android:background="@drawable/text_fields"
                 android:textSize="14sp"/>
         </LinearLayout>
 
-                <Button
+        <Button
             android:layout_width="70dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="end"
-                    android:background="@drawable/button1"
-                    android:text="post"
-                    android:textSize="12sp"
-                    android:textColor="@color/colorAccent"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:background="@drawable/button1"
+            android:text="post"
+            android:textSize="12sp"
+            android:textColor="@color/colorAccent"
             android:onClick="onPostingCommentReply"/>
 
-        </LinearLayout>
+    </LinearLayout>
 
 </RelativeLayout>
