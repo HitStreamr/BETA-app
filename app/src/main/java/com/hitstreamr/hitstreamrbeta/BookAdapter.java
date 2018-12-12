@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder>{
+public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder> {
 
     private List<Book> bookList;
 

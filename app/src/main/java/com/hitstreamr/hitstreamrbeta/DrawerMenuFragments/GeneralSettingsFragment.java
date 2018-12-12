@@ -26,13 +26,10 @@ public class GeneralSettingsFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MainActivity.class);
                 intent.putExtra("TYPE", getArguments().getString("TYPE"));
-
                 startActivity(intent);
 
             }
         });
-
-
         return view;
     }
 }

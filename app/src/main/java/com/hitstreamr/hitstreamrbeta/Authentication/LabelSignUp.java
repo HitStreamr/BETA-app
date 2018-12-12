@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -32,8 +31,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
     // Add address line 1 and 2?
 
     // Buttons
-    private Button signup;
-    private ImageButton goBack;
+    private Button signup, goBack;
     private RadioButton termsCond;
 
     private ProgressDialog progressDialog;
@@ -118,7 +116,7 @@ public class LabelSignUp extends AppCompatActivity implements View.OnClickListen
 
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) |!validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateLabel(label) | !validatePhone(phone)
-                | !validateZip(zipcode) | !validateToc() | validateState(state)) {
+                | !validateZip(zipcode) | !validateToc() | !validateState(state)) {
             return;
         }
 

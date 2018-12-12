@@ -55,10 +55,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private StorageReference mStorageRef;
     private StorageTask mstorageTask;
     private StorageReference imageRef = null;
+    private StorageReference backgroundRef = null;
 
     private String downloadimageUri;
+    private String downloadBackgroundUri;
 
     private boolean photoChanged = false;
+    private boolean backgroundChanged = false;
 
     private String email;
 
@@ -92,13 +95,19 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private Button SaveAccountBtn;
     private Button ChangePwdBtn;
     private Button ChangePhotoBtn;
+    private Button ChangeBackgroundBtn;
 
     //Object
     ArtistUser artist;
     ArtistUser artist_object;
     User basicUser;
+    User oldBasic;
+
+    private boolean selectPhoto = false;
+    private boolean selectBackground = false;
 
     private Uri selectedImagePath;
+    private Uri selectedBackgroundPath;
 
     private static final int REQUEST_CODE = 123;
 
@@ -171,10 +180,12 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SaveAccountBtn = findViewById(R.id.saveAccount);
         SaveAccountBtn.setOnClickListener(this);
         ChangePhotoBtn = findViewById(R.id.accountChangePhoto);
+        ChangeBackgroundBtn = findViewById(R.id.accountChangeBackground);
 
         ChangePwdBtn = findViewById(R.id.ChangePassword);
         ChangePwdBtn.setOnClickListener(this);
         ChangePhotoBtn.setOnClickListener(this);
+        ChangeBackgroundBtn.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -220,6 +231,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
             }
         });
+
+        /*//Profile Picture
+        if (user.getPhotoUrl() != null) {
+            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }*/
+
     }
 
     public void showArtistData(DataSnapshot dataSnapshot) {
@@ -235,7 +255,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
+        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -267,11 +287,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         String email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
+        String userID = dataSnapshot.child("userID").getValue(String.class);
+        oldBasic = new User(username, email,userID);
 
-        User basic = new User(username, email);
-
-        EditTextEmail.setText(basic.getEmail());
-        EditTextUsername.setText(basic.getUsername());
+        EditTextEmail.setText(oldBasic.getEmail());
+        EditTextUsername.setText(oldBasic.getUsername());
 
         getSupportActionBar().setTitle(username);
     }
@@ -287,7 +307,21 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.show();
         progressDialog.setMessage("Registering New User...");*/
 
-        basicUser = new User(username, email);
+        //make sure the basic user has the write id
+        basicUser = new User(username, email, oldBasic.getUserID());
+        oldBasic = basicUser;
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
 
         if (selectedImagePath != null) {
             uploadFromUri(selectedImagePath);
@@ -339,7 +373,19 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             Log.e(TAG, "register Artist no validation" + type);
             return;
         }
-        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
+        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
 
         videoSelection();
 
@@ -438,6 +484,35 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                                         public void onSuccess(Uri uri) {
                                             downloadimageUri = uri.toString();
                                             updateAuthentication();
+                                        }
+                                    });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(Account.this, "Image Upload failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+
+    }
+
+    private void uploadBackgroundImage (final Uri fileUri) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.e(TAG, "Background Uri selected" +fileUri);
+            backgroundRef = mStorageRef.child("backgroundPictures").child(user.getUid());
+            mstorageTask = backgroundRef.putFile(fileUri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot takeSnapshot) {
+                            backgroundRef.getDownloadUrl()
+                                    .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                        @Override
+                                        public void onSuccess(Uri uri) {
+                                            downloadBackgroundUri = uri.toString();
+                                            Log.e(TAG, "Download url"+downloadBackgroundUri);
                                         }
                                     });
                         }
@@ -702,9 +777,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void choosePhoto() {
+        selectPhoto = true;
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/*");
-        startActivityForResult(Intent.createChooser(intent, "Select your profile picture"), REQUEST_CODE);
+        startActivityForResult(Intent.createChooser(intent, "Select your profile picture"), 123);
     }
 
     @Override
@@ -728,7 +804,32 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                     }
                 }
             }
+            if (requestCode == 1234) {
+                Log.e(TAG, "Entered background uri gallery");
+                if (data != null) {
+                    if (data.getData() != null) {
+                        selectedBackgroundPath = data.getData();
+                        try {
+                            backgroundChanged = true;
+                            Log.e(TAG, "On Activity Result entered" + selectedBackgroundPath);
+                            //uploadFromUri(selectedImagePath);
+
+                        } catch (Exception e) {
+                            //#debug
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    private void chooseBackgroundPhoto() {
+        Log.e(TAG, "Entered Background chooser");
+        selectBackground = true;
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/*");
+        startActivityForResult(Intent.createChooser(intent, "Select your Background picture"), 1234);
     }
 
     @Override
@@ -743,6 +844,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             selectChangePassword();
         } else if (view == ChangePhotoBtn) {
             choosePhoto();
+        } else if(view == ChangeBackgroundBtn){
+            chooseBackgroundPhoto();
         }
     }
 

@@ -21,66 +21,52 @@
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
             android:background="@drawable/gradient1"
-            android:theme="@style/backArrowTheme" />
+            android:theme="@style/backArrowTheme"
+            />
 
-        <FrameLayout
-            android:id="@+id/fragment_container2"
+        <LinearLayout
+            android:id="@+id/content_holder"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/toolbar">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="?attr/actionBarSize">
 
-        </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_view"
+            <FrameLayout
+                android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="416dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="96dp"
-                android:visibility="gone" />
+                android:layout_height="match_parent">
 
-            <ProgressBar
-                android:id="@+id/loadingSearch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:foregroundTint="@color/colorPrimaryDark"
-                android:indeterminate="true"
-                android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/emptyView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/no_results"
-                android:textSize="20sp"
-                android:visibility="gone" />
-        </FrameLayout>
+                <ProgressBar
+                    android:id="@+id/loadingSearch"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foregroundTint="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                   />
 
-    </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="416dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="96dp"
+                    android:visibility="gone" />
 
-        <!--<android.support.design.widget.FloatingActionButton-->
-            <!--android:id="@+id/videoScreen"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_marginBottom="67dp"-->
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:src="@drawable/ic_camera"-->
-            <!--app:backgroundTint="@color/colorPrimary"-->
-            <!--app:fabSize="normal"/>-->
+                <TextView
+                    android:id="@+id/emptyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_results"
+                    android:textSize="20sp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </LinearLayout>
 
 
         <android.support.design.widget.FloatingActionButton

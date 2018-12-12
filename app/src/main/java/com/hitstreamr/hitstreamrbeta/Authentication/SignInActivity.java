@@ -42,8 +42,8 @@ import com.hitstreamr.hitstreamrbeta.R;
 
 public class SignInActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Button signinbtn, backbutton;
-    //private ImageButton backbutton;
+    private Button signinbtn;
+    private ImageButton backbutton;
     private EditText ETemail, ETpassword;
     private TextView register,forgetPassword;
     private ProgressDialog progressDialog;

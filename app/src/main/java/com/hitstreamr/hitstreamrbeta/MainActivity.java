@@ -1,6 +1,8 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,6 +11,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,14 +23,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
@@ -41,12 +46,18 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -70,16 +81,27 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener {
+import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
+    private final String HOME = "home";
+    private final String DISCOVER = "discover";
+    private final String ACTIVITY = "activity";
+    private static final String FRAG_OTHER = "other_fragment";
+    private static final String FRAG_HOME = "home_fragment";
+
     private Button logout;
     private DrawerLayout drawer;
+    private LinearLayout contentHolder;
+    private ViewGroup.LayoutParams defaultParams;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
     private Toolbar toolbar;
     private String type;
-    FloatingActionButton fab;
+    private Activity main;
 
-//    FloatingActionButton vv;
+
+    FloatingActionButton fab;
 
     private ItemClickListener mListener;
     //private ImageButton userbtn;
@@ -87,6 +109,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MenuItem profileItem;
 
     private TextView TextViewUsername;
+
+    private TextView userCredits;
 
     //private ImageView ImageViewProfilePicture;
     private CircleImageView CirImageViewProPic;
@@ -100,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String name;
     Uri photoUrl;
 
-    RequestManager glideRequests;
+    RequestManager  glideRequests;
 
     FirebaseUser user;
     public final String TAG = "HomeActivity";
@@ -108,15 +132,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Database Purposes
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder> firebaseRecyclerAdapter_artist;
+    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>  firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
 
     private TabLayout mTabLayout;
     private int tab_position;
     private String search_input, accountType;
 
+    private String creditValue;
+
     /**
      * Set up and initialize layouts and variables
+     *
      * @param savedInstanceState state
      */
     @Override
@@ -124,12 +151,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        main = this;
+
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //toolbar.setLogo(R.drawable.ic_camera);
         //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
@@ -141,18 +169,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
         mTabLayout.setVisibility(View.GONE);
 
+        //Linear Layout
+        contentHolder = findViewById(R.id.content_holder);
+        defaultParams = contentHolder.getLayoutParams();
+
         // Recycler View
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
-        db = FirebaseFirestore.getInstance();
-        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
-                .setTimestampsInSnapshotsEnabled(true)
-                .build();
-        db.setFirestoreSettings(settings);
+        //prevent from crashing due to setting the settings again
+        if (savedInstanceState == null) {
+            db = FirebaseFirestore.getInstance();
+            FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                    .setTimestampsInSnapshotsEnabled(true)
+                    .build();
+            db.setFirestoreSettings(settings);
+        }
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
+
+        getUserType();
+
 
         //Listener for RCVs
         mListener = new ItemClickListener() {
@@ -166,21 +204,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
-                videoPlayerIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
+            }
+
+            @Override
+            public void onOverflowClick(Video title, View v) {
+                showOverflow(v);
             }
         };
 
-
         name = user.getDisplayName();
         photoUrl = user.getPhotoUrl();
+
         Log.e(TAG, "Your profile" + name + photoUrl + user);
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
-//        vv = findViewById(R.id.videoScreen);
 
         TextViewUsername = navigationView.getHeaderView(0).findViewById(R.id.proUsername);
         CirImageViewProPic = navigationView.getHeaderView(0).findViewById(R.id.profilePicture);
@@ -197,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         else{
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name == null){
+        if(name.equals("") || name.equals(null)){
             String tempname = "Username";
             TextViewUsername.setText(tempname);
         }
@@ -211,7 +254,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //get menu & extras
         Bundle extras = getIntent().getExtras();
-
         if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //check that type exists and set it.
             type = getIntent().getStringExtra("TYPE");
@@ -223,7 +265,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
                 navigationView.getMenu().findItem(R.id.dashboard).setVisible(false);
                 fab.setVisibility(View.GONE);
-//                vv.setVisibility(View.GONE);
             } else {
                 fab.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -241,76 +282,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         navigationView.setNavigationItemSelectedListener(this);
-        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                FragmentTransaction transaction;
-                Bundle bundle;
-                switch (item.getItemId()){
-                    case R.id.home:
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        HomeFragment homeFrag = new HomeFragment();
-                        homeFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, homeFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.discover:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        DiscoverFragment discFrag = new DiscoverFragment();
-                        discFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, discFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Disocver", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.activity:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        bundle = new Bundle();
-                        bundle.putString("TYPE", type);
-                        ActivityFragment actFrag = new ActivityFragment();
-                        actFrag.setArguments(bundle);
-                        transaction.replace(R.id.fragment_container2, actFrag);
-                        transaction.addToBackStack(null);
-                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
-                        break;
-                    case R.id.library:
-                        fab.setVisibility(View.GONE);
-                        bottomNavView.setVisibility(View.VISIBLE);
-//                        transaction = getSupportFragmentManager().beginTransaction();
-//                        bundle = new Bundle();
-//                        bundle.putString("TYPE", type);
-//                        LibraryFragment librFrag = new LibraryFragment();
-//                        librFrag.setArguments(bundle);
-//                        transaction.replace(R.id.fragment_container2, librFrag);
-//                        transaction.addToBackStack(null);
-//                        transaction.commit();
-                        Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
-                        Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
-                        libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                        startActivity(libraryIntent);
-                        break;
-                }
-                return true;
+        bottomNavView.setOnNavigationItemSelectedListener(this);
+
+        //setting the fragments
+        if(getIntent().hasExtra("OPTIONAL_FRAG"))
+        {
+            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
+            switch(frag){
+                case HOME:
+                    bottomNavView.setSelectedItemId(R.id.home);
+                    break;
+                case DISCOVER:
+                    bottomNavView.setSelectedItemId(R.id.discover);
+                    break;
+                case ACTIVITY:
+                    bottomNavView.setSelectedItemId(R.id.activity);
+                    break;
             }
-        });
+        }else{
+            //FRAG not set; default to home
+            bottomNavView.setSelectedItemId(R.id.home);
+        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        userCredits = navigationView.getHeaderView(0).findViewById(R.id.credits);
+        Log.e(TAG, "Main activity user id  " + user.getUid());
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Main activity credit val " + currentCredit);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            userCredits.setText(currentCredit);
+                        }
+                        else
+                            userCredits.setText("0");
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+
 
     }
 
@@ -341,6 +365,77 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
+                //set up UI for following
+                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                    @Override
+                    public void onFollowChecked(boolean following) {
+                        if(following){
+                            //if following == true
+                            holder.followButton.setVisibility(View.GONE);
+                            holder.unfollowButton.setVisibility(View.VISIBLE);
+                        }else{
+                            //if following == false
+                            holder.followButton.setVisibility(View.VISIBLE);
+                            holder.unfollowButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCheckUpdateFailed() {
+
+                    }
+                }, model.getUserID());
+
+                holder.followButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(following){
+                                    //if following == true
+                                    holder.followButton.setVisibility(View.GONE);
+                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(!following){
+                                    //if following == false
+                                    holder.followButton.setVisibility(View.VISIBLE);
+                                    holder.unfollowButton.setVisibility(View.GONE);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+
+                holder.updateFollowing(new FollowCountUpdateCallback() {
+                    @Override
+                    public void onUpdateCount(long count) {
+                        holder.count.setText(count+" Followers");
+                    }
+                },model.getUserID());
             }
 
             @NonNull
@@ -359,7 +454,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param querySearch the input typed by the user
      */
     private void searchArtistAccounts(String querySearch) {
-        // Send a query to the database
         FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
         myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
                 .endAt(querySearch + "\uf8ff");
@@ -372,6 +466,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setUserName(model.getUsername());
+                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                    @Override
+                    public void onFollowChecked(boolean following) {
+                        if(following){
+                            //if following == true
+                            holder.followButton.setVisibility(View.GONE);
+                            holder.unfollowButton.setVisibility(View.VISIBLE);
+                        }else{
+                            //if following == false
+                            holder.followButton.setVisibility(View.VISIBLE);
+                            holder.unfollowButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCheckUpdateFailed() {
+
+                    }
+                }, model.getUserID());
+
+                holder.followButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(following){
+                                    //if following == true
+                                    holder.followButton.setVisibility(View.GONE);
+                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(!following){
+                                    //if following == false
+                                    holder.followButton.setVisibility(View.VISIBLE);
+                                    holder.unfollowButton.setVisibility(View.GONE);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.updateFollowing(new FollowCountUpdateCallback() {
+                    @Override
+                    public void onUpdateCount(long count) {
+                        holder.count.setText(count+" Followers");
+                    }
+                },model.getUserID());
+
             }
 
             @NonNull
@@ -507,6 +671,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 MainActivity.this.setItemsVisibility(menu, mSearch, true);
                 search_input = null;
                 stopAdapters();
+                bottomNavView.setSelectedItemId(R.id.home);
+                MarginLayoutParams params = (MarginLayoutParams) contentHolder.getLayoutParams();
+                TypedValue typedValue = new TypedValue();
+                (main).getTheme().resolveAttribute(R.attr.actionBarSize, typedValue, true);
+                int[] textSizeAttr = new int[] { android.R.attr.actionBarSize };
+                int indexOfAttrTextSize = 0;
+                TypedArray a = main.obtainStyledAttributes(typedValue.data, textSizeAttr);
+                int marginSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
+                a.recycle();
+                params.topMargin = marginSize;
                 mSearchView.setQuery("", false);
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
@@ -521,6 +695,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 MainActivity.this.setItemsVisibility(menu, mSearch, false);
+                //hide panels
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container));
+                transaction.commit();
+                MarginLayoutParams params = (MarginLayoutParams) contentHolder.getLayoutParams();
+                params.topMargin = 0;
                 mTabLayout.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 fab.setVisibility(View.GONE);
@@ -631,14 +811,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // build a dynamic query that has all the words
 
-        com.google.firebase.firestore.Query allWords = db.collection("Videos").whereEqualTo("terms." + terms.get(0), true);
+        com.google.firebase.firestore.Query allWords = db.collection("Videos");
         for (int i = 0; i < terms.size(); i++) {
             allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
-        Task<QuerySnapshot> allWordsTask = allWords.get();
+        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
 
-        //allResultsRetreived is only successful, when all are succesful
+        //allResultsRetrieved is only successful, when all are successful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
 
         searching.setVisibility(View.VISIBLE);
@@ -692,7 +872,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (!task.isSuccessful()) {
                     Log.e(TAG, "Search failed");
                 }
-                // TODO HANDLE ERRORS
+                //TODO HANDLE ERRORS
             }
         });
     }
@@ -719,6 +899,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         popupMenu.show();
     }
 
+    public void showOverflow(View v) {
+        PopupMenu popupMenu = new PopupMenu(this, v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.show();
+    }
+
+
     /**
      *
      * @param item item
@@ -737,6 +925,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
                 break;
+            case R.id.fave_result:
+                break;
+            case R.id.addLibrary_result:
+                break;
 
         }
         return true;
@@ -747,57 +939,306 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
+        private TextView name;
+        private TextView count;
+        private Button followButton;
+        private Button unfollowButton;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
             view = itemView;
+            name = view.findViewById(R.id.user_name);
+            count = view.findViewById(R.id.count);
+            followButton = view.findViewById(R.id.follow_button);
+            unfollowButton = view.findViewById(R.id.unfollow_button);
         }
 
         void setUserName(final String userName) {
-            TextView textView = view.findViewById(R.id.user_name);
-            textView.setText(userName);
+            name.setText(userName);
 
-            textView.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                    Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
+                    basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    basicProfile.putExtra("artistUsername", userName);
+                    startActivity(basicProfile);
+                }
+            });
+
+        }
+        private void checkFollowing(VideoPlayer.OnDataReceiveCallback callback,String followingId){
+            //get where the following state would be
+            // check who the user is following
+            FirebaseDatabase.getInstance().getReference().child("following").child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(followingId).exists()){
+                        Log.e(TAG, "Following");
+                        callback.onFollowChecked(true);
+                    }else{
+                        Log.e(TAG, "Not Following");
+                        callback.onFollowChecked(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        //TODO update these to more fault tolerant firebase updates?
+        private void saveFollowing(VideoPlayer.OnDataReceiveCallback callback, String followedID){
+            FirebaseDatabase.getInstance().getReference("following")
+                    .child(user.getUid())
+                    .child(followedID)
+                    .setValue(followedID)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // do the Reciprocal on Success
+                            // artistFollowers -> user
+                            FirebaseDatabase.getInstance().getReference("followers")
+                                    .child(followedID)
+                                    .child(user.getUid())
+                                    .setValue(user.getUid())
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // hide/show the UI
+                                            callback.onFollowChecked(true);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //TODO Error for following failing
+                                    callback.onCheckUpdateFailed();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    //TODO Error for following failing
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void saveUnfollowing(VideoPlayer.OnDataReceiveCallback callback,String unfollowedID){
+            FirebaseDatabase.getInstance()
+                    .getReference("following")
+                    .child(user.getUid())
+                    .child(unfollowedID)
+                    .removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //remove user from artist's list of followers
+                            FirebaseDatabase.getInstance()
+                                    .getReference("followers")
+                                    .child(unfollowedID)
+                                    .child(user.getUid())
+                                    .removeValue()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //update UI
+                                            callback.onFollowChecked(false);
+                                        }
+                                    });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void updateFollowing(MainActivity.FollowCountUpdateCallback callback, String userID){
+            DatabaseReference myFollowersRef = FirebaseDatabase.getInstance().getReference("followers")
+                    .child(userID);
+            myFollowersRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    long followerscount = dataSnapshot.getChildrenCount();
+                   callback.onUpdateCount(followerscount);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
                 }
             });
         }
     }
+
 
     /**
      * Artist Accounts Holder - Inner Class
      */
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
+        private TextView name;
+        private TextView count;
+        private Button followButton;
+        private Button unfollowButton;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
             view = itemView;
+            name = view.findViewById(R.id.user_name);
+            count = view.findViewById(R.id.count);
+            followButton = view.findViewById(R.id.follow_button);
+            unfollowButton = view.findViewById(R.id.unfollow_button);
         }
 
         void setUserName(final String userName) {
-            TextView textView = view.findViewById(R.id.user_name);
-            textView.setText(userName);
+            name.setText(userName);
 
-            textView.setOnClickListener(new View.OnClickListener() {
+            view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
+                    Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
+                    artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                    artistProfile.putExtra("artistUsername", userName);
+                    startActivity(artistProfile);
+
                 }
             });
 
-            Button follow = view.findViewById(R.id.follow_button);
-            follow.setOnClickListener(new View.OnClickListener() {
+        }
+
+        private void checkFollowing(VideoPlayer.OnDataReceiveCallback callback,String followingId){
+            //get where the following state would be
+            // check who the user is following
+            FirebaseDatabase.getInstance().getReference().child("following").child(user.getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), "Followed", Toast.LENGTH_SHORT).show();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.child(followingId).exists()){
+                        Log.e(TAG, "Following");
+                        callback.onFollowChecked(true);
+                    }else{
+                        Log.e(TAG, "Not Following");
+                        callback.onFollowChecked(false);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        //TODO update these to more fault tolerant firebase updates?
+        private void saveFollowing(VideoPlayer.OnDataReceiveCallback callback, String followedID){
+            FirebaseDatabase.getInstance().getReference("following")
+                    .child(user.getUid())
+                    .child(followedID)
+                    .setValue(followedID)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // do the Reciprocal on Success
+                            // artistFollowers -> user
+                            FirebaseDatabase.getInstance().getReference("followers")
+                                    .child(followedID)
+                                    .child(user.getUid())
+                                    .setValue(user.getUid())
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            // hide/show the UI
+                                            callback.onFollowChecked(true);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    //TODO Error for following failing
+                                    callback.onCheckUpdateFailed();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    //TODO Error for following failing
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void saveUnfollowing(VideoPlayer.OnDataReceiveCallback callback,String unfollowedID){
+            FirebaseDatabase.getInstance()
+                    .getReference("following")
+                    .child(user.getUid())
+                    .child(unfollowedID)
+                    .removeValue()
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            //remove user from artist's list of followers
+                            FirebaseDatabase.getInstance()
+                                    .getReference("followers")
+                                    .child(unfollowedID)
+                                    .child(user.getUid())
+                                    .removeValue()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //update UI
+                                            callback.onFollowChecked(false);
+                                        }
+                                    });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    callback.onCheckUpdateFailed();
+                }
+            });
+        }
+
+        private void updateFollowing(MainActivity.FollowCountUpdateCallback callback, String userID){
+            DatabaseReference myFollowersRef = FirebaseDatabase.getInstance().getReference("followers")
+                    .child(userID);
+            myFollowersRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    long followerscount = dataSnapshot.getChildrenCount();
+                    callback.onUpdateCount(followerscount);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value
+                    Log.w(TAG, "Failed to read value.", error.toException());
                 }
             });
         }
     }
 
+    /*
+    Provides interface for the callback for Async call to Firebase
+    */
+    public interface FollowCountUpdateCallback{
+        /*
+         *   Method that notifies the ui that the Data was received
+         */
+        void onUpdateCount(long count);
+
+    }
+
+    /**
+     * Video Suggestions Holder - Inner Class
+     */
     class VideoSuggestionsHolder extends RecyclerView.ViewHolder {
         TextView videoTitle;
 
@@ -817,6 +1258,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public interface ItemClickListener {
         void onSuggestionClick(String title);
         void onResultClick(Video title);
+        void onOverflowClick(Video title, View v);
     }
 
     /**
@@ -845,107 +1287,186 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        FragmentTransaction transaction;
         Bundle bundle;
-        getSupportActionBar().hide();
+
+
         switch (item.getItemId()) {
             case R.id.dashboard:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 DashboardFragment dashFrag = new DashboardFragment();
                 dashFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, dashFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
+                viewFragment(dashFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
 
             case R.id.general_setting:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 GeneralSettingsFragment genSettingsFrag = new GeneralSettingsFragment();
                 genSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, genSettingsFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
+                viewFragment(genSettingsFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
 
             case R.id.notification_settings:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
+                bundle.putString("ID", user.getUid());
                 NotificationSettingsFragment notifSettingsFrag = new NotificationSettingsFragment();
                 notifSettingsFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, notifSettingsFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
+                viewFragment(notifSettingsFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
 
             case R.id.payment_pref:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 PaymentPrefFragment payPrefFrag = new PaymentPrefFragment();
                 payPrefFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, payPrefFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
+                viewFragment(payPrefFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
 
             case R.id.invite_a_friend:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
                 inviteFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, inviteFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
+                viewFragment(inviteFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
             case R.id.help_center:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 HelpCenterFragment helpFrag = new HelpCenterFragment();
                 helpFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, helpFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-                break;
+                viewFragment(helpFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
 
             case R.id.legal_agreements:
-                fab.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                transaction = getSupportFragmentManager().beginTransaction();
+                sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
                 LegalAgreementsFragment legalFrag = new LegalAgreementsFragment();
                 legalFrag.setArguments(bundle);
-                transaction.replace(R.id.fragment_container, legalFrag);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            break;
+                viewFragment(legalFrag,FRAG_OTHER);
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
 
             case R.id.logout:
                 startActivity(new Intent(this, Pop.class));
-                break;
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            //Bottom Navigation Cases
+            //TODO on which screen should the floating action bar be accessible
+            case R.id.home:
+
+                if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
+                    bottomNavSetUp(true);
+                }else{
+                    bottomNavSetUp(false);
+                }
+                bundle = new Bundle();
+                bundle.putString("TYPE", type);
+                HomeFragment homeFrag = new HomeFragment();
+                homeFrag.setArguments(bundle);
+                viewFragment(homeFrag,FRAG_HOME);
+                Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.discover:
+                bottomNavSetUp(false);
+                bundle = new Bundle();
+                bundle.putString("TYPE", type);
+                DiscoverFragment discFrag = new DiscoverFragment();
+                discFrag.setArguments(bundle);
+                viewFragment(discFrag,FRAG_OTHER);
+                Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.activity:
+                bottomNavSetUp(false);
+                bundle = new Bundle();
+                bundle.putString("TYPE", type);
+                ActivityFragment actFrag = new ActivityFragment();
+                actFrag.setArguments(bundle);
+                viewFragment(actFrag,FRAG_OTHER);
+                Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.library:
+                Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
+                Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(libraryIntent);
+                return true;
         }
 
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+
+        return false;
+    }
+
+    private void bottomNavSetUp(boolean fabvisibility){
+        getSupportActionBar().show();
+        if(fabvisibility){
+            fab.setVisibility(View.VISIBLE);
+        }else{
+            fab.setVisibility(View.GONE);
+        }
+        bottomNavView.setVisibility(View.VISIBLE);
+        MarginLayoutParams params = (MarginLayoutParams) contentHolder.getLayoutParams();
+        TypedValue typedValue = new TypedValue();
+        (main).getTheme().resolveAttribute(R.attr.actionBarSize, typedValue, true);
+        int[] textSizeAttr = new int[] { android.R.attr.actionBarSize };
+        int indexOfAttrTextSize = 0;
+        TypedArray a = main.obtainStyledAttributes(typedValue.data, textSizeAttr);
+        int marginSize = a.getDimensionPixelSize(indexOfAttrTextSize, -1);
+        a.recycle();
+        params.topMargin = marginSize;
+    }
+
+
+    private void sideNavSetup(){
+        MarginLayoutParams params;
+        params = (MarginLayoutParams) contentHolder.getLayoutParams();
+        params.topMargin = 0;
+        getSupportActionBar().hide();
+        fab.setVisibility(View.GONE);
+        bottomNavView.setVisibility(View.GONE);
+    }
+
+    private void viewFragment(Fragment fragment, String name){
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        // 1. Know how many fragments there are in the stack
+        final int count = fragmentManager.getBackStackEntryCount();
+        // 2. If the fragment is **not** "home type", save it to the stack
+        if( name.equals(FRAG_OTHER) ) {
+            fragmentTransaction.addToBackStack(name);
+        }
+        // Commit !
+        fragmentTransaction.commit();
+        // 3. After the commit, if the fragment is not an "home type" the back stack is changed, triggering the
+        // OnBackStackChanged callback
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                // If the stack decreases it means I clicked the back button
+                if( fragmentManager.getBackStackEntryCount() <= count){
+                    // pop all the fragment and remove the listener
+                    fragmentManager.popBackStack(FRAG_OTHER, POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.removeOnBackStackChangedListener(this);
+                    // set the home button selected
+                    bottomNavView.setSelectedItemId(R.id.home);
+                }
+            }
+        });
     }
 
     @Override
@@ -953,10 +1474,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //reset fab and bottom bar when going back
-            fab.setVisibility(View.VISIBLE);
-            bottomNavView.setVisibility(View.VISIBLE);
-            getSupportActionBar().show();
             super.onBackPressed();
         }
     }

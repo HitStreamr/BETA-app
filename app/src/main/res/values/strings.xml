@@ -8,8 +8,8 @@
     <string name="sign_in">SIGN IN</string>
     <string name="create_an_account">CREATE AN ACCOUNT</string>
     <string name="text_logo_wht">text_logo_wht</string>
-    <string name="basic_account">LISTENER</string>
-    <string name="artist_account">ARTIST / BAND</string>
+    <string name="basic_account">BASIC ACCOUNT</string>
+    <string name="artist_account">ARTIST ACCOUNT</string>
     <string name="are_you_a_label_click_here">Are you a Label? CLICK HERE.</string>
     <string name="sidebar">sidebar</string>
     <string name="title_activity_authenticator">AuthenticatorActivity</string>
@@ -88,6 +88,18 @@
     <string name="password_hint">Password</string>
     <string name="email_request_rest_password">Enter email associated with account.</string>
     <string name="confirm">Confirm</string>
-    <string name="copyrightclaim">If you are the copyright owner of this \n video and beleive it has been uploaded \n without your permission,
+    <string name="follow_notification_channel_id">New Follows</string>
+    <string name="copyrightclaim">If you are the copyright owner of this \n video and believe it has been uploaded \n without your permission,
 please follow \n these directions to submit a copyright \n infrengment notice.</string>
+    <string name="title_activity_dashboard">Dashboard</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="featured_videos">FEATURED VIDEOS</string>
+    <string name="more">MORE</string>
+    <string name="fresh_releases">FRESH RELEASES</string>
+    <string name="trending_now">TRENDING NOW</string>
+    <string name="artists_to_watch">ARTISTS TO WATCH</string>
+    <string name="popular_people">POPULAR PEOPLE</string>
 </resources>
