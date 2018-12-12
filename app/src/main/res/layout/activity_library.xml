@@ -124,18 +124,13 @@
                 app:ael_interpolator="bounce"
                 app:ael_orientation="vertical">
 
-                <!--<android.support.v7.widget.RecyclerView
+                <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView_watchLater"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
                     android:scrollbars="horizontal">
 
-                </android.support.v7.widget.RecyclerView>-->
-
-                <ListView
-                    android:id="@+id/listView_watchLater"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp" />
+                </android.support.v7.widget.RecyclerView>
 
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
@@ -172,6 +167,9 @@
                         android:scrollbars="vertical">
 
                     </android.support.v7.widget.RecyclerView>
+
+
+
 
                 <!--<TextView-->
                 <!--android:layout_width="wrap_content"-->
