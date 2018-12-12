@@ -274,7 +274,7 @@ public class DiscoverResultPage extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("ArtistsNumbers").orderBy("likes", Query.Direction.DESCENDING)
+        firebaseFirestore.collection("ArtistsLikes").orderBy("likes", Query.Direction.DESCENDING)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -287,7 +287,7 @@ public class DiscoverResultPage extends AppCompatActivity {
 
                 // Query to Firebase
                 List<ArtistUser> artistList = new ArrayList<>(artistFireStoreList.size());
-                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList);
+                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList, getApplicationContext(), getIntent());
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
                 databaseReference.addChildEventListener(new ChildEventListener() {
