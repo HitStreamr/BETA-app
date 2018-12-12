@@ -602,7 +602,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
                         // Creates like counts for artists if it does not exist yet
                         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                        DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
+                        DocumentReference documentReference = firebaseFirestore.collection("ArtistsLikes")
                                 .document(CurrentUserID);
 
                         documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
