@@ -101,6 +101,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     ArtistUser artist;
     ArtistUser artist_object;
     User basicUser;
+    User oldBasic;
 
     private boolean selectPhoto = false;
     private boolean selectBackground = false;
@@ -254,7 +255,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
+        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -286,11 +287,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         String email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
+        String userID = dataSnapshot.child("userID").getValue(String.class);
+        oldBasic = new User(username, email,userID);
 
-        User basic = new User(username, email);
-
-        EditTextEmail.setText(basic.getEmail());
-        EditTextUsername.setText(basic.getUsername());
+        EditTextEmail.setText(oldBasic.getEmail());
+        EditTextUsername.setText(oldBasic.getUsername());
 
         getSupportActionBar().setTitle(username);
     }
@@ -306,7 +307,17 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.show();
         progressDialog.setMessage("Registering New User...");*/
 
-        basicUser = new User(username, email);
+        //make sure the basic user has the write id
+        basicUser = new User(username, email, oldBasic.getUserID());
+        oldBasic = basicUser;
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
@@ -362,7 +373,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             Log.e(TAG, "register Artist no validation" + type);
             return;
         }
-        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
+        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
+
+        if(selectedBackgroundPath!= null){
+            uploadBackgroundImage(selectedBackgroundPath);
+        }
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);

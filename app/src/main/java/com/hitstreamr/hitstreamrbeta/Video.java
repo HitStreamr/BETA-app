@@ -3,13 +3,9 @@ package com.hitstreamr.hitstreamrbeta;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.IgnoreExtraProperties;
-
 import java.util.ArrayList;
 import java.util.Date;
 
-@IgnoreExtraProperties
 public class Video implements Parcelable {
     private String title;
     private String description;
@@ -22,7 +18,6 @@ public class Video implements Parcelable {
     private String username;
     private String duration;
     private int pubYear;
-    @Exclude
     private String videoId;
     private Date timestamp;
     private long views;
@@ -143,12 +138,10 @@ public class Video implements Parcelable {
         this.pubYear = pubYear;
     }
 
-    @Exclude
     public String getVideoId() {
         return videoId;
     }
 
-    @Exclude
     public void setVideoId(String videoId) {
         this.videoId = videoId;
     }

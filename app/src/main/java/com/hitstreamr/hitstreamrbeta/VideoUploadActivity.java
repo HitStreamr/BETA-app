@@ -72,6 +72,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_DOWNLOAD_LINK = "url";
     private static final String THUMBNAIL_DOWNLOAD_LINK = "thumbnailUrl";
     private static final String VIDEO_PUB_YEAR = "pubYear";
+    private static final String VIDEO_TIME_STAMP = "timestamp";
+    private static final String VIDEO_ID = "videoId";
+    private static final String VIDEO_VIEWS = "views";
     private static final String USER_ID = "userId";
     private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
