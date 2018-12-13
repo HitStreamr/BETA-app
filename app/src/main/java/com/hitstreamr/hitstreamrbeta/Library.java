@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,12 +40,12 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private final String ACTIVITY = "activity";
 
     private String accountType;
-    private FirebaseUser current_user;
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
     private RecyclerView recyclerView_watchLater, recyclerView_playlists;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseUser current_user;
     private CollectionReference bookRef = db.collection("Videos");
 
     private BookAdapter bookAdapter_watchLater;
@@ -57,11 +58,15 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private ItemClickListener mlistner;
     private Video vid;
 
+    private String CreditVal;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
+
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,8 +89,31 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Watch = new ArrayList<>();
         Play = new ArrayList<>();
 
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            CreditVal = currentCredit;
+                        }
+                        else
+                            CreditVal = "0";
+
+                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+        Log.e(TAG, "Watch later credit val " + CreditVal);
+
         getUserType();
-        current_user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Profile Picture
         if (current_user.getPhotoUrl() != null) {
@@ -100,6 +128,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             public void onResultClick(Video selectedVideo) {
                 Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }
 
@@ -125,10 +154,12 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
     private void setUpRecyclerView() {
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerView_watchLater.setLayoutManager(layoutManager);
-        bookAdapter_watchLater = new BookAdapter(this,WatchLaterList, mlistner);
-        recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
+        if(WatchLaterList.size()>0) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            recyclerView_watchLater.setLayoutManager(layoutManager);
+            bookAdapter_watchLater = new BookAdapter(this, WatchLaterList, mlistner);
+            recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
+        }
     }
 
     private void setUpPlaylistRecyclerView() {

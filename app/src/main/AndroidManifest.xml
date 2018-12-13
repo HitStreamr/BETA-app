@@ -58,40 +58,36 @@
         <activity android:name=".LabelDashboard" />
         <activity android:name=".Authentication.PickGenre" />
         <activity android:name=".Account" />
-        <activity android:name=".VideoPlayer"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"/>
+        <activity
+            android:name=".VideoPlayer"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode" />
         <activity android:name=".Profile" />
         <activity android:name=".CreditsPurchase" />
         <activity android:name=".BillingManager" />
-        <activity android:name=".Library" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
         <activity android:name=".ReportVideoPopup" />
-        <activity android:name=".Comments" />
         <activity android:name=".CommentPage" />
-        <activity android:name=".CreateNewPlaylist" />
-        <activity android:name=".Library" />
         <activity
             android:name=".PlaylistVideosActivity"
             android:label="@string/title_activity_playlist_videos"
-            android:theme="@style/AppTheme"></activity>
-        <activity android:name=".CreateNewPlaylist"></activity>
-        <activity android:name=".Library"></activity>
-        <activity android:name=".CreditsPurchase"></activity>
+            android:theme="@style/AppTheme" />
 
         <service android:name=".HitStreamrFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <activity
             android:name=".Dashboard.Dashboard"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme" />
-        <activity android:name=".DiscoverResultPage"></activity>
-<activity android:name=".AddToPlaylsit" />
-<activity android:name=".CreateNewPlaylist"></activity>
-<activity android:name=".Library"></activity>
+        <activity android:name=".DiscoverResultPage" />
+        <activity android:name=".AddToPlaylsit" />
+        <activity android:name=".CreateNewPlaylist" />
+        <activity android:name=".Library" />
+        <activity android:name=".TrendingVideos"></activity>
     </application>
 
-    </manifest>
+</manifest>

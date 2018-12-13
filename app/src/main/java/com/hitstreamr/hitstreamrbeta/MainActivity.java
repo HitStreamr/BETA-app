@@ -201,11 +201,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onResultClick(Video video) {
-               /* String CheckCreditVal = userCredits.getText().toString();
-                Log.e("HOME", "CheckCreditVal -"+CheckCreditVal);
-                if(!(Strings.isNullOrEmpty(CheckCreditVal))) {
-                    int Value = Integer.parseInt(CheckCreditVal);
-                    if (Value > 0) {*/
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);

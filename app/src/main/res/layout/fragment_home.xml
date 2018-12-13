@@ -9,14 +9,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/featuredVideosFrame"
-            >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <LinearLayout
                 android:id="@+id/featuredVideosLinLayout"
@@ -51,13 +49,13 @@
                 android:id="@+id/featuredVideosRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </FrameLayout>
         <!--Fresh Releases-->
         <FrameLayout
+            android:id="@+id/freshReleasesFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/freshReleasesFrame"
             android:layout_below="@+id/featuredVideosFrame">
 
             <LinearLayout
@@ -95,10 +93,11 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
         </FrameLayout>
-        <FrameLayout
+
+        <RelativeLayout
+            android:id="@+id/trendingNowFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/trendingNowFrame"
             android:layout_below="@id/freshReleasesFrame">
             <!-- Trending Now-->
             <LinearLayout
@@ -122,20 +121,29 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/trendingMore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:text="@string/more"
                         android:textColor="@color/colorPrimary" />
                 </LinearLayout>
+
+
             </LinearLayout>
+
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/trendingNowRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"></android.support.v7.widget.RecyclerView>
-        </FrameLayout>
+                android:layout_below="@+id/trendingNowLinLayout"
+                android:background="@android:color/white"
+                android:scrollbars="horizontal"
+                android:visibility="visible">
+
+            </android.support.v7.widget.RecyclerView>
+        </RelativeLayout>
 
         <FrameLayout
             android:id="@+id/artistWatchFrame"
@@ -178,10 +186,11 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
         </FrameLayout>
+
         <FrameLayout
+            android:id="@+id/popularUsersFrame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/popularUsersFrame"
             android:layout_below="@+id/artistWatchFrame">
             <!-- Popular People -->
             <LinearLayout
