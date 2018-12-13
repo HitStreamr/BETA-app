@@ -32,6 +32,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -73,6 +75,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     User basicUser;
     UsernameUserIdPair usernameUserIdPair;
+
 
 
 
@@ -150,6 +153,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         return flag;
     }
 
+    //TODO clear old errors
     private void clearErrors(){};
 
     /**
@@ -187,7 +191,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private boolean validateUsername(String artist) {
-        final boolean[] isTaken = {false};
         if (artist.isEmpty()) {
             mUsername.setError("Field can't be empty");
             return false;
@@ -198,8 +201,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             mUsername.setError("Username is too short.");
             return false;
         } else {
-                mUsername.setError(null);
-                return true;
+            mUsername.setError(null);
+            return true;
         }
     }
 
@@ -266,6 +269,20 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         return false;
     }
 
+    private void registerUser() {
+        final String username = mUsername.getText().toString().trim();
+        final String email = mEmailField.getText().toString().trim();
+        String password = mPasswordField.getText().toString().trim();
+
+        if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
+                | !validateToc() | !validateBrowseVideo())  {
+            return;
+        }
+
+        validateUserNameFirebase(new User(username, email,null), password);
+
+    }
+
     private void registerFirebase2(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase.getInstance().getReference("UsernameUserId")
@@ -279,23 +296,40 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    private void registerNotifcationTokens(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
 
-    private void registerUser() {
-        final String username = mUsername.getText().toString().trim();
-        final String email = mEmailField.getText().toString().trim();
-        String password = mPasswordField.getText().toString().trim();
+                        // Get new Instance ID token
+                        String notifToken = task.getResult().getToken();
 
-        if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
-                | !validateToc() | !validateBrowseVideo())  {
-            return;
-        }
+                        FirebaseDatabase.getInstance().getReference("FirebaseNotificationTokens")
+                                .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                                .child(notifToken)
+                                .setValue(true)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
 
-        validateUserNameFirebase(new User(username, email), password);
-
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if(task.isSuccessful()) {
+                                            //Upload Prof Image
+                                            uploadFromUri(selectedImagePath);
+                                        }
+                                    }
+                                });
+                    }
+                });
     }
 
+
     private void registerFirebase() {
-        //Log.e(TAG, "validations are done");
+        //TODO make sure that newID is not being made when not needed
         FirebaseDatabase.getInstance().getReference("BasicAccounts")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .setValue(basicUser)
@@ -306,6 +340,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                     Toast.makeText(BasicSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                     takenNames.child(basicUser.getUsername()).setValue(true);
                     finish();
+                    //TODO: Do something with genres
                     Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
                     genreIntent.putExtra("TYPE", getString(R.string.type_basic));
                     startActivity(genreIntent);
@@ -327,6 +362,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 uploadFromUri(selectedImagePath);
+                                registerNotifcationTokens();
                             } else {
                                 Toast.makeText(BasicSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                             }
@@ -334,6 +370,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                     });
         }else{
             //failed on step after authentication
+            registerNotifcationTokens();
             uploadFromUri(selectedImagePath);
         }
 

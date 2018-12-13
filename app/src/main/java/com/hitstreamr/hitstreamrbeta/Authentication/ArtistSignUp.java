@@ -175,6 +175,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                         }
                     });
         }
+
     }
 
     /**
@@ -202,7 +203,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        validateUserNameFirebase(new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip),password);
+        validateUserNameFirebase(new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null),password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -498,8 +499,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void validateUserNameFirebase(final ArtistUser artist, final String password){
-        final boolean[] isTaken = {false};
+    private void validateUserNameFirebase(ArtistUser artist, String password){
         takenNames.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
