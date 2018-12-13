@@ -112,7 +112,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_fullscreen_skrink" />
+                android:src="@drawable/ic_fullscreen_shrink" />
 
 
 
