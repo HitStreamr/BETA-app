@@ -2,12 +2,13 @@ package com.hitstreamr.hitstreamrbeta.UserTypes;
 
 public class ArtistUser {
 
-    private String firstname, lastname, email, username, address, city, state, country, phone, zip, userID;
+    private String firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, userID;
 
-    public ArtistUser(String firstname, String lastname, String email, String username, String address,
+    public ArtistUser(String firstname, String lastname, String artistname, String email, String username, String address,
                       String city, String state, String country, String phone, String zip, String userID){
         this.firstname = firstname;
         this.lastname = lastname;
+        this.artistname = artistname;
         this.email =  email;
         this.username = username;
         this.address = address;
@@ -35,6 +36,14 @@ public class ArtistUser {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
+    }
+
+    public String getArtistname() {
+        return artistname;
+    }
+
+    public void setArtistname(String firstname) {
+        this.artistname = firstname;
     }
 
     public String getEmail() {

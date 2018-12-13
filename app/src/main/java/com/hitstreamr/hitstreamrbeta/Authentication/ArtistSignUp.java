@@ -52,7 +52,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     UsernameUserIdPair usernameUserIdPair;
 
     // Inputs
-    private EditText mFirstName, mLastName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
+    private EditText mFirstName, mLastName, mArtistName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
     private Spinner mState, mCountry;
     // Add address line 1 and 2?
 
@@ -120,6 +120,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         // Views
         mFirstName = findViewById(R.id.artistFirstName);
         mLastName = findViewById(R.id.artistLastName);
+        mArtistName = findViewById(R.id.artistName);
         mEmail = findViewById(R.id.artistEmail);
         mPassword = findViewById(R.id.artistPassword);
         mUsername = findViewById(R.id.artistUsername);
@@ -184,6 +185,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private void registerArtist() {
         final String firstname = mFirstName.getText().toString().trim();
         final String lastname = mLastName.getText().toString().trim();
+        final String artistname = mArtistName.getText().toString().trim();
         final String email = mEmail.getText().toString().trim();
         final String password = mPassword.getText().toString().trim();
         final String username = mUsername.getText().toString().trim();
@@ -195,7 +197,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         final String phone = mPhone.getText().toString().trim();
 
 
-        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validatePassword(password)
+        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname) | !validateEmail(email) | !validatePassword(password)
                 | !validateAddressLine(address) | !validateCity(city) | !validateUsername(username)| !validatePhone(phone)
                 | !validateZip(zip) | !validateToc() | !validateState() | !validateCountry() | !validateProfilePicture()) {
             Log.e(TAG, "Validation failed");
@@ -203,7 +205,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        validateUserNameFirebase(new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null),password);
+        validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, null),password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -345,6 +347,26 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     /**
      * Check if address input is valid.
      *
+     * @param artistname address line
+     * @return true if valid, otherwise false and display an error message
+     */
+    private boolean validateArtistName(String artistname) {
+        if (artistname.isEmpty()) {
+            mAddress.setError("Field can't be empty");
+            return false;
+        } else if (!checkAlphaArtistname(artistname)) {
+            mAddress.setError("Artist name is not valid.");
+            return false;
+        } else {
+            mAddress.setError(null);
+            Log.e(TAG, "3");
+            return true;
+        }
+    }
+
+    /**
+     * Check if address input is valid.
+     *
      * @param address address line
      * @return true if valid, otherwise false and display an error message
      */
@@ -357,7 +379,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return false;
         } else {
             mAddress.setError(null);
-            Log.e(TAG, "3");
+            Log.e(TAG, "11");
             return true;
         }
     }
@@ -620,6 +642,27 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < s.length(); i++) {
             for (int count = 0; count < AlphaNumeric.length(); count++) {
                 if (s.charAt(i) == AlphaNumeric.charAt(count)) {
+                    value_for_each_comparison[i] = true;
+                    break;
+                } else {
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
+    /**
+     * Method to validate the Street Address of any unwanted characters
+     */
+    public boolean checkAlphaArtistname(String s) {
+
+        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{};':'<>,./? ";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < AlphaNumericSymbol.length(); count++) {
+                if (s.charAt(i) == AlphaNumericSymbol.charAt(count)) {
                     value_for_each_comparison[i] = true;
                     break;
                 } else {

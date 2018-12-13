@@ -76,6 +76,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextBio;
     private EditText EditTextFirstName;
     private EditText EditTextLastName;
+    private EditText EditTextArtistName;
     private EditText EditTextAddress;
     private EditText EditTextCity;
     private EditText EditTextZip;
@@ -83,6 +84,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextCountry;
     private TextView UserNameText;
     private TextView LabelNameText;
+    private TextView ArtistNameText;
     private CircleImageView circleImageView;
 
     //Spinner
@@ -159,6 +161,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         //EditText
         EditTextUsername = findViewById(R.id.accountUsername);
         EditTextEmail = findViewById(R.id.accountEmail);
+        EditTextArtistName = findViewById(R.id.artistName);
         EditTextBio = findViewById(R.id.Bio);
         EditTextFirstName = findViewById(R.id.accountFirstName);
         EditTextLastName = findViewById(R.id.accountLastName);
@@ -169,6 +172,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextCountry = findViewById(R.id.accountCountry);
         UserNameText = findViewById(R.id.UserNametext);
         LabelNameText = findViewById(R.id.Labeltext);
+        ArtistNameText = findViewById(R.id.ArtistNametext);
 
         //Spinners
         SpinnerState = findViewById(R.id.accountState);
@@ -202,6 +206,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         } else if (type.equals(getString(R.string.type_label))) {
             UserNameText.setVisibility(View.GONE);
+            ArtistNameText.setVisibility(View.GONE);
             LabelNameText.setVisibility(View.VISIBLE);
             ArtistInfoLayout.setVisibility(View.VISIBLE);
             EditTextUsername.setEnabled(false);
@@ -232,7 +237,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        /*//Profile Picture
+        /*Profile Picture
         if (user.getPhotoUrl() != null) {
             circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
@@ -246,6 +251,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         String firstname = dataSnapshot.child("firstname").getValue(String.class);
         String lastname = dataSnapshot.child("lastname").getValue(String.class);
+        String artistname = dataSnapshot.child("artistname").getValue(String.class);
         String email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
         String address = dataSnapshot.child("address").getValue(String.class);
@@ -255,10 +261,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+        artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, null);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
+        EditTextArtistName.setText(artist.getArtistname());
         EditTextEmail.setText(artist.getEmail());
         EditTextUsername.setText(artist.getUsername());
         EditTextAddress.setText(artist.getAddress());
@@ -270,7 +277,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
 
-        getSupportActionBar().setTitle(username);
+        getSupportActionBar().setTitle(artistname);
     }
 
     private int getIndex(Spinner spinner, String myString) {
@@ -358,6 +365,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         Log.e(TAG, "Entered register artist firstname:::::" + firstname);
         final String lastname = EditTextLastName.getText().toString().trim();
         email = EditTextEmail.getText().toString().trim();
+        final String artistname = EditTextArtistName.getText().toString().trim();
         final String username = EditTextUsername.getText().toString().trim();
         final String address = EditTextAddress.getText().toString().trim();
         final String city = EditTextCity.getText().toString().trim();
@@ -366,14 +374,14 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String country = EditTextCountry.getText().toString().trim();
         final String phone = EditTextPhone.getText().toString().trim();
 
-        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validateAddressLine(address)
+        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname) | !validateEmail(email) | !validateAddressLine(address)
                 | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
                 | !validateZip(zip)) {
 
             Log.e(TAG, "register Artist no validation" + type);
             return;
         }
-        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+        artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, null);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
@@ -582,6 +590,28 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     /**
+     * Check if last name input is valid.
+     *
+     * @param artistname artist name
+     * @return true if valid, otherwise false and display an error message
+     */
+    private boolean validateArtistName(String artistname) {
+        if (artistname.isEmpty()) {
+            EditTextArtistName.setError("Field can't be empty");
+            return false;
+        } else if (artistname.length() <= 26) {
+            if (!(checkAlphaNumericSymbol(artistname))) {
+                EditTextLastName.setError("Last name must only have letters");
+                return false;
+            }
+            return true;
+        } else {
+            EditTextArtistName.setError(null);
+            return true;
+        }
+    }
+
+    /**
      * Check if address input is valid.
      *
      * @param address address line
@@ -767,6 +797,27 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         for (int i = 0; i < s.length(); i++) {
             for (int count = 0; count < AlphaUsername.length(); count++) {
                 if (s.charAt(i) == AlphaUsername.charAt(count)) {
+                    value_for_each_comparison[i] = true;
+                    break;
+                } else {
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
+    /**
+     * Method to validate the Street Address of any unwanted characters
+     */
+    public boolean checkAlphaNumericSymbol(String s) {
+
+        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{}<>,./";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < AlphaNumericSymbol.length(); count++) {
+                if (s.charAt(i) == AlphaNumericSymbol.charAt(count)) {
                     value_for_each_comparison[i] = true;
                     break;
                 } else {
