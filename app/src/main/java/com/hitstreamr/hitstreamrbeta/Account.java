@@ -161,7 +161,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         //EditText
         EditTextUsername = findViewById(R.id.accountUsername);
         EditTextEmail = findViewById(R.id.accountEmail);
-        EditTextArtistName = findViewById(R.id.artistName);
+        EditTextArtistName = findViewById(R.id.accountArtistName);
         EditTextBio = findViewById(R.id.Bio);
         EditTextFirstName = findViewById(R.id.accountFirstName);
         EditTextLastName = findViewById(R.id.accountLastName);
@@ -601,7 +601,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return false;
         } else if (artistname.length() <= 26) {
             if (!(checkAlphaNumericSymbol(artistname))) {
-                EditTextLastName.setError("Last name must only have letters");
+                EditTextLastName.setError("Name must be less than 26 Characters");
                 return false;
             }
             return true;
