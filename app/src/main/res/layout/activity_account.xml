@@ -53,23 +53,40 @@
                 <Button
                     android:id="@+id/accountChangePhoto"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:text="Change Photo"
                     android:textColor="@color/colorPrimary"
                     android:background="@android:color/transparent"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="3dp"/>
 
                 <Button
                     android:id="@+id/accountChangeBackground"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:text="Change Background"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorPrimary"
-                    android:background="@drawable/button2"
-                    android:layout_gravity="center_horizontal"/>
+                    android:background="@color/colorAccent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"/>
 
 
+
+                <TextView
+                    android:id="@+id/ArtistNametext"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Artist/Band Name"
+                    android:layout_marginTop="10dp"
+                    android:visibility="visible"/>
+                <EditText
+                    android:id="@+id/accountArtistName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Artist/Band Name"
+                    android:inputType="textPersonName"/>
 
                 <TextView
                     android:id="@+id/UserNametext"
