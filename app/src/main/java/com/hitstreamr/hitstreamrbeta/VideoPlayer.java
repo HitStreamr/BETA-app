@@ -396,15 +396,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                }
 
                                //remove extra ,0
-                                TextView last = contributorTextViews.get(contributorTextViews.size()-1);
-                                last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
-                                contributorTextViews.set(contributorTextViews.size()-1,last);
+                                if (contributorTextViews.size() > 0) {
+                                    TextView last = contributorTextViews.get(contributorTextViews.size() - 1);
+                                    last.setText(last.getText().toString().substring(0, last.getText().toString().length() - 2));
+                                    contributorTextViews.set(contributorTextViews.size() - 1, last);
 
-                                for(TextView tv : contributorTextViews){
-                                    contributorView.addView(tv);
+                                    for (TextView tv : contributorTextViews) {
+                                        contributorView.addView(tv);
+                                    }
                                 }
-
-
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());

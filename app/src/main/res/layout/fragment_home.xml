@@ -176,7 +176,9 @@
                 android:id="@+id/artistWatchRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+                android:visibility="gone">
+
+            </android.support.v7.widget.RecyclerView>
         </FrameLayout>
         <FrameLayout
             android:layout_width="match_parent"
