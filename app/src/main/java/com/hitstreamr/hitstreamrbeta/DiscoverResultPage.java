@@ -158,10 +158,10 @@ public class DiscoverResultPage extends AppCompatActivity {
             category = "R&B/Soul";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
-        } else if (category.equals("World Music/beats")) {
-            category = "World Music/Beats";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+//        } else if (category.equals("World Music/beats")) {
+//            category = "World Music/Beats";
+//            getSupportActionBar().setTitle(category);
+//            query = query.whereEqualTo("genre", category);
         } else if (category.equals("Indie/rock")) {
             category = "Indie/Rock";
             getSupportActionBar().setTitle(category);
