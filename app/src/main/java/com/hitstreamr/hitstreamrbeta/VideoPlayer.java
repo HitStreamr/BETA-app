@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -48,7 +50,7 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -66,12 +68,16 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -368,7 +374,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
@@ -395,6 +401,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                    contributorTextViews.add(TVtemp);
                                }
 
+                               if(contributorTextViews.size()>0) {
+
                                //remove extra ,0
                                 TextView last = contributorTextViews.get(contributorTextViews.size()-1);
                                 last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
@@ -403,6 +411,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                 for(TextView tv : contributorTextViews){
                                     contributorView.addView(tv);
                                 }
+                               }
 
 
                             }
@@ -417,7 +426,273 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewDate.setText(df.format(vid.getTimestamp()));
 
 
+        // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
+        currentCreditVal = credit;
+        readData(new MyCallback() {
+            @Override
+            public void onCallback(ArrayList value) {
+               if(value.size() > 0) {
+                   Log.e(TAG, "player before inside callback "+value);
+                   checkuploaded();
+                }
+             Log.e(TAG, "player before before if  "+uploadbyUser);
+                if (Integer.parseInt(currentCreditVal) > 0) {
+                    Log.e(TAG, "player before inside if ");
+                   // Log.e(TAG, "player before initializePlayer success ");
+                    initializePlayer();
+                }
+                else if (uploadbyUser)
+                {
+                    //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+                    initializePlayer();
+                }
+                else
+                {
+                    initializePlayer1();
+                    runCheck = true;
+
+                }
+            }
+        });
     }
+
+
+    public interface MyCallback {
+        void onCallback(ArrayList value);
+    }
+
+    /*public void readData(MyCallback myCallback) {
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(currentFirebaseUser.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        creditValue = dataSnapshot.getValue(String.class);
+                        myCallback.onCallback(creditValue);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {}
+                });
+    }*/
+
+
+// This method is to check the player position every second and after 15 seconds initiate the DB call
+    private Timer timer;
+    private void timerCounter(){
+        if (!runCheck) {
+            timer = new Timer();
+            Log.e(TAG, "Video player inside if statetime counter ");
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!(player == null) ) {
+                                long current = player.getCurrentPosition();
+                                if (current > 15000) {
+                                    Log.e(TAG, "Video player inside if state" + current);
+                                    timer.cancel();
+                                    runCheck = true;
+                                    try {
+                                        checkViewTime();
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+                                    Log.e(TAG, "Video player inside if cancel timer & runcheck " + runCheck);
+                                }
+                            }
+                        }
+                    });
+                }
+            };
+            timer.schedule(task, 0, 1000);
+        }
+    }
+
+    // Original video is clipped for 15 sec for users with 0 credits
+    private void initializePlayer1() {
+        if (player == null) {
+            // a factory to create an AdaptiveVideoTrackSelection
+            TrackSelection.Factory adaptiveTrackSelectionFactory =
+                    new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
+            // using a DefaultTrackSelector with an adaptive video selection factory
+            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this),
+                    new DefaultTrackSelector(adaptiveTrackSelectionFactory), new DefaultLoadControl());
+            player.addListener(componentListener);
+            //player.addVideoDebugListener(componentListener);
+            //player.addAudioDebugListener(componentListener);
+            playerView.setPlayer(player);
+            player.setPlayWhenReady(playWhenReady);
+            player.seekTo(currentWindow, playbackPosition);
+        }
+        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
+        ExtractorMediaSource mediaSource1 = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri);
+//        ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 5_000_000, 15_000_000);
+        ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 0, 15_000_000);
+        player.prepare(clippingSource, true, false);
+        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+    }
+
+    // After watching 15 sec clipped video user is prompted to purchase credits on confirmation redirected to purchase credits page
+    private void callPurchase(){
+
+        setContentView(R.layout.activity_confirm);
+        //Button
+        confirmBtn = findViewById(R.id.confirm);
+        confirmBtn.setOnClickListener(this);
+
+        cancelBtn = findViewById(R.id.cancel);
+        cancelBtn.setOnClickListener(this);
+
+        messgText = findViewById(R.id.MessageText);
+        messgText.setText("Please purchase credits to watch videos");
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+
+        getWindow().setLayout((int) (width * .8), (int) (height * .4));
+
+    }
+
+    //This method is called after 15 secs for users with credits watch to check if they watched the video before
+    private void checkViewTime() throws ParseException {
+
+        FirebaseDatabase.getInstance().getReference("VideoViews")
+                .child(vid.getVideoId()).child(currentFirebaseUser.getUid()).child("TimeLimit")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        sTimeStamp = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Your video date from db check view time " + sTimeStamp);
+                        if(!Strings.isNullOrEmpty(sTimeStamp)) {
+                            try {
+                                checkTimeStamp();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else
+                        {
+                            try {
+                                updatevideoview();
+                                updateCreditValue();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    // This method is to compare the current time with 4 hrs specified time limit for particular user
+    private void checkTimeStamp() throws ParseException{
+        //Log.e(TAG, "Your video date checktimestamp" + sTimeStamp);
+        if(!Strings.isNullOrEmpty(sTimeStamp)) {
+            Calendar now = Calendar.getInstance();
+            Date parsedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").parse(sTimeStamp);
+            Calendar c = Calendar.getInstance();
+            c.setTime(parsedDate);
+           // Log.e(TAG, "Your video date format from db" + c.getTime());
+            //Log.e(TAG, "Your video date format from db now" + now.getTime());
+            if (now.getTime().after(c.getTime())) {
+              //  Log.e(TAG, "Your video date format after checking inside if");
+                updatevideoview();
+                updateCreditValue();
+            }
+        }
+    }
+
+    // to update the user id and time frame (current time + 4hrs) values into VideoView DB
+    private void updatevideoview() throws ParseException {
+
+       /* long currentTimeMillis = System.currentTimeMillis();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date date = new Date(currentTimeMillis);
+        String currentTime = dateFormat.format(date);
+        Log.e(TAG, "Your video date format :" + currentTime);*/
+
+        Calendar now = Calendar.getInstance();
+        Calendar tmp = (Calendar) now.clone();
+        tmp.add(Calendar.HOUR_OF_DAY, 4);
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String strDate = simpleFormat.format(tmp.getTime());
+        Log.e(TAG, "Your video date format after" +strDate);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
+      /*  Map<String, Object> value = new HashMap<>();
+        value.put("UserId", currentFirebaseUser.getUid());
+        value.put("timestamp", System.currentTimeMillis());
+        ref.setValue(value)*/
+        ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                    }
+                });
+    }
+
+    //To reduce 1 user credit for watching a video
+    private void updateCreditValue(){
+        if(!uploadbyUser) {
+            if (!Strings.isNullOrEmpty(currentCreditVal)) {
+                int creditval = Integer.parseInt(currentCreditVal);
+                creditval = creditval - 1;
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Credits").child(currentFirebaseUser.getUid());
+                ref.child("creditvalue").setValue(String.valueOf(creditval))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                            }
+                        });
+            }
+        }
+    }
+
+   // private void getUserUploadVideoId(){
+   public void readData(MyCallback myCallback) {
+       String cUser = currentFirebaseUser.getUid();
+
+        videoIdRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                     if (cUser.contains(document.getId())) {
+                        userUploadVideoList.add( document.get("videos").toString());
+                    }
+                }
+               // Log.e(TAG, "player user uploaded userUploadVideoList "+userUploadVideoList);
+                myCallback.onCallback(userUploadVideoList);
+    }
+        });
+       // Log.e(TAG, "player user uploaded userUploadVideoList "+userUploadVideoList);
+
+        //checkuploaded();
+    }
+
+    public void checkuploaded(){
+        Log.e(TAG, "player user uploaded video list "+userUploadVideoList);
+        if (userUploadVideoList.get(0).contains(vid.getVideoId())) {
+            uploadbyUser = true;
+            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
+        }
+        else{
+            uploadbyUser = false;
+            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
+        }
+
+    }
+
 
     public void showVideoPlayerOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
@@ -969,7 +1244,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     stateString = "ExoPlayer.STATE_READY     -";
                     if (!(player.equals(""))) {
                         if (player.getCurrentPosition() == 0) {
-                            //timerCounter();
+                            timerCounter();
                         }
                     }
 
@@ -977,7 +1252,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
                     if (!(Integer.parseInt(currentCreditVal) > 0)) {
-                        //callPurchase();
+                        callPurchase();
                     }
 
                     break;
@@ -1171,8 +1446,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (view == likeBtn) {
             if (!VideoLiked) {
                 likeVideo();
+                userLikedVideo();
             } else {
                 cancelLikeVideo();
+                cancelUserLikedVideo();
             }
         }
 
@@ -1180,11 +1457,19 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             Log.e(TAG, "repost clicked");
             if (!VideoReposted) {
                 repostVideo();
+                userRepostVideo();
             } else {
                 cancelRepostVideo();
+                cancelUserRepostVideo();
             }
+            }
+        if(view == confirmBtn){
+            finish();
+            startActivity(new Intent(getApplicationContext(), CreditsPurchase.class));
         }
-
+        else if (view == cancelBtn){
+            super.onBackPressed();
+        }
         // Following and Unfollowing
         if(view == follow){
             saveFollowing();

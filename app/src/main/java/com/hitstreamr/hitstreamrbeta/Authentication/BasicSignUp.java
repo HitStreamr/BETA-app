@@ -51,8 +51,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private static final String TAG = "BasicSignUp";
 
-    private Button signup, uploadPhotoBtn;
-    private Button  backbtn;
+    private Button signup, backbtn, uploadPhotoBtn;
     private EditText mEmailField, mPasswordField, mUsername;
     private TextView signintext;
     private RadioButton radiobtn;

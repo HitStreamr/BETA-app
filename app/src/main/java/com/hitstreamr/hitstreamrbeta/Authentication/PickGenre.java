@@ -11,18 +11,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.hitstreamr.hitstreamrbeta.GenreRecyclerViewAdapter;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAdapter.ItemClickListener, View.OnClickListener{
 
@@ -35,6 +37,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
     HashMap<String, String> drawableToReadableNames;
     FirebaseUser user;
     Button skipButton, nextButton;
+    List<String> selectedGenres;
 
     private final int MIN_GENRE = 3;
 
@@ -68,6 +71,8 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
 
         nextButton = findViewById(R.id.nextButton);
         nextButton.setOnClickListener(this);
+
+        selectedGenres = new ArrayList<String>();
     }
 
     private HashMap<String, String> setStrings (){
@@ -134,6 +139,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
     public void onAddItemClick(CardView view, ImageView img, int position) {
         Log.d("Pick", "Content Added: " + img.getContentDescription());
         selectedItems.add(new Integer(position));
+        selectedGenres.add(img.getContentDescription().toString());
         checkButton();
 
     }
@@ -143,38 +149,9 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         Log.d("Pick", "Content Removed: " + img.getContentDescription());
         Log.d("Pick", "Content Added: " + img.getContentDescription());
         selectedItems.remove(Integer.valueOf(position));
+        selectedGenres.remove(img.getContentDescription().toString());
         Log.d("Pick", "Content Added: " + img.getContentDescription());
         checkButton();
-    }
-
-    private void saveGenre(){
-        Intent tempIntent = getIntent();
-
-        String[] temp = new String[selectedItems.size()];
-
-        for(int i = 0; i < selectedItems.size(); i++ ){
-            temp[i] = images[selectedItems.get(i)];
-        }
-
-        if (temp.length > 0 ) {
-            try {
-                FirebaseDatabase.getInstance().getReference().child("BasicAccounts/" + user.getUid() + "/genres").setValue(Arrays.asList(temp));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else{
-            try {
-                FirebaseDatabase.getInstance().getReference().child("BasicAccounts/" + user.getUid() + "/genres").setValue(Collections.EMPTY_LIST);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-        homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
-        homeIntent.putExtra("NUMBER_SELECTED", selectedItems);
-        homeIntent.putExtra("GENRES_SELECTED", temp);
-        startActivity(homeIntent);
     }
 
     //button onClick
@@ -192,7 +169,34 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         }
 
         if(v == nextButton){
-                saveGenre();
+
+            // Store selected genres to the database
+            FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("SelectedGenres")
+                    .child(current_user.getUid());
+
+            databaseReference.setValue(selectedGenres).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(PickGenre.this, "Genres are stored", Toast.LENGTH_LONG).show();
+                }
+            });
+
+            Intent tempIntent = getIntent();
+            if (tempIntent.getStringExtra("TYPE") != null){
+                String[] temp = new String[selectedItems.size()];
+
+                for(int i = 0; i < selectedItems.size(); i++ ){
+                    temp[i] = images[selectedItems.get(i)];
+                }
+
+                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                homeIntent.putExtra("TYPE", tempIntent.getStringExtra("TYPE"));
+                homeIntent.putExtra("NUMBER_SELECTED", selectedItems);
+                homeIntent.putExtra("GENRES_SELECTED", temp);
+                startActivity(homeIntent);
+            }
+
         }
     }
 
