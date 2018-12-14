@@ -50,13 +50,34 @@
                 android:layout_height="wrap_content"
                 android:text="Username"
                 android:textSize="10sp"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="12sp"
+                android:layout_height="12sp"
+                android:src="@drawable/ic_eye_black_24dp"
+                android:tint="@color/drkgryAccent" />
 
             <TextView
                 android:id="@+id/videoViews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0 Views"
-                android:textSize="10sp"/>
+                android:layout_marginStart="3dp"
+                android:textSize="12sp"
+                android:text="0 "
+                />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="Views"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"

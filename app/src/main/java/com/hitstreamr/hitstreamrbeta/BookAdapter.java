@@ -39,6 +39,11 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(bookList.get(position).getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(bookList.get(position).getDuration());
+        String viewCount = Long.toString(bookList.get(position).getViews());
+        String pubYear = Long.toString(bookList.get(position).getPubYear());
+        //Log.e(TAG, "view count is"+viewCount);
+        holder.viewsCount.setText(viewCount);
+        holder.publishedYear.setText(pubYear);
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +64,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         public ImageView thumbnail;
         public  TextView duration;
         public RelativeLayout parent;
+        public  TextView viewsCount;
+        public TextView publishedYear;
 
         public BookViewHolder(View view) {
             super(view);
@@ -67,6 +74,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             thumbnail = view.findViewById(R.id.watchLaterThumbnail);
             duration = view.findViewById(R.id.watchLaterDuration);
             parent = view.findViewById(R.id.parentRLayout);
+            viewsCount = itemView.findViewById(R.id.watchLaterViews);
+            publishedYear = itemView.findViewById(R.id.watchLaterPublished);
         }
     }
 }

@@ -99,6 +99,7 @@
                             android:textSize="12sp" />
 
                         <TextView
+                            android:id="@+id/watchLaterPublished"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="3dp"
@@ -125,6 +126,14 @@
                             android:layout_marginStart="3dp"
                             android:text="00"
                             android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="3dp"
+                            android:text="Views"
+                            android:textSize="12sp"/>
+
                     </LinearLayout>
 
 

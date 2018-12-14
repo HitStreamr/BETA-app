@@ -13,7 +13,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +45,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
     private RecyclerView recyclerView_watchLater, recyclerView_playlists;
+    private Button playlistBtn;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser current_user;
@@ -85,6 +88,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         recyclerView_watchLater = findViewById(R.id.recyclerView_watchLater);
         recyclerView_playlists = findViewById(R.id.recyclerView_playlists);
 
+        playlistBtn = findViewById(R.id.expandableButton_playlists);
+        playlistBtn.setVisibility(View.GONE);
+
         WatchLaterList = new ArrayList<>();
         Watch = new ArrayList<>();
         Play = new ArrayList<>();
@@ -101,9 +107,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                         }
                         else
                             CreditVal = "0";
-
                         // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -191,17 +195,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
     /**
-     * Drop Down - Playlist
-     *
-     * @param view view
-     */
-    public void expandableButton_playlists(View view) {
-        //expandableLayout_playlists = (ExpandableRelativeLayout) findViewById(R.id.expandableLayout_playlists);
-        //expandableLayout_playlists.toggle(); // toggle expand and collapse
-    }
-
-
-    /**
      * Handles back button on toolbar
      *
      * @return true if pressed
@@ -283,6 +276,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                             }
                             Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos());
                             Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlaylistname() + " " + Play.get(1).getPlayVideos());
+                        }
+                        if(Play.size()>0){
+                            playlistBtn.setVisibility(View.VISIBLE);
                         }
                         setUpPlaylistRecyclerView();
                     }

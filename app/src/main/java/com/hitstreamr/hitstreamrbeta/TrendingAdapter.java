@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAdapter.TrendingHolder> {
+    private static final String TAG = "TrendingAdapter";
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -32,6 +34,11 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(model.getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
+        String viewCount = Long.toString(model.getViews());
+        String pubYear = Long.toString(model.getPubYear());
+        holder.viewsCount.setText(viewCount);
+        holder.publishedYear.setText(pubYear);
+
 
     }
 
@@ -49,6 +56,9 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TextView author;
         public ImageView thumbnail;
         public  TextView duration;
+        public  TextView viewsCount;
+        public TextView publishedYear;
+
 
         public TrendingHolder(View itemView) {
             super(itemView);
@@ -56,6 +66,8 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
             author = itemView.findViewById(R.id.watchLaterAuthor);
             thumbnail = itemView.findViewById(R.id.watchLaterThumbnail);
             duration = itemView.findViewById(R.id.watchLaterDuration);
+            viewsCount = itemView.findViewById(R.id.watchLaterViews);
+            publishedYear = itemView.findViewById(R.id.watchLaterPublished);
         }
     }
 }

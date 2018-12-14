@@ -36,12 +36,9 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_playlist_videos);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
-
         playlistName = findViewById(R.id.playlist_Name);
-
         playlist = new Playlist();
         temp = getIntent().getExtras().getParcelable("PlaylistVideos");
-
         playlistName.setText(temp.getPlaylistname());
 
         FirebaseDatabase.getInstance().getReference("Credits")
@@ -56,9 +53,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                         }
                         else
                             CreditVal = "0";
-
                         // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -78,12 +73,9 @@ public class PlaylistVideosActivity extends AppCompatActivity {
             }
         };
 
-        //playlist.setPlayVideos(getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
         Log.e(TAG,  "Playlist Content activity" +getIntent().getStringExtra("PlaylistName") +getIntent().getExtras().getParcelableArrayList("PlaylistVideos") );
-
         recyclerView_PlaylistVideos = findViewById(R.id.recyclerView_singlePlaylistContent);
         setupRecyclerView();
-
 
     }
 
@@ -91,7 +83,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         if(temp.getPlayVideos().size()>0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             recyclerView_PlaylistVideos.setLayoutManager(layoutManager);
-            //playlistContent = new PlaylistContentAdapter(playlist.playVideos);
             playlistContent = new PlaylistContentAdapter(this, temp, mlistner);
             recyclerView_PlaylistVideos.setAdapter(playlistContent);
         }
