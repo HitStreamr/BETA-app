@@ -287,7 +287,8 @@ public class DiscoverResultPage extends AppCompatActivity {
 
                 // Query to Firebase
                 List<ArtistUser> artistList = new ArrayList<>(artistFireStoreList.size());
-                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList, getApplicationContext(), getIntent());
+                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList,
+                        getApplicationContext(), getIntent());
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
                 databaseReference.addChildEventListener(new ChildEventListener() {
