@@ -172,7 +172,7 @@ public class Video implements Parcelable {
 
     @Override
     public String toString() {
-        return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId + " " + username;
+        return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + thumbnailUrl + " " +userId + " " + username;
 
     }
     protected Video(Parcel in) {
