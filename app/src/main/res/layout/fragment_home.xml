@@ -7,17 +7,11 @@
     android:background="@color/colorAccent"
     android:fillViewport="true">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         >
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/featuredVideosFrame"
-            >
-
             <LinearLayout
                 android:id="@+id/featuredVideosLinLayout"
                 android:layout_width="match_parent"
@@ -50,17 +44,9 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/featuredVideosRCV"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
-        </FrameLayout>
-        <!--Fresh Releases-->
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/freshReleasesFrame"
-            android:layout_below="@+id/featuredVideosFrame">
-
-            <LinearLayout
+                android:layout_height="match_parent"
+                android:visibility="visible" />
+        <LinearLayout
                 android:id="@+id/freshReleasesLinLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -94,12 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/trendingNowFrame"
-            android:layout_below="@id/freshReleasesFrame">
+
             <!-- Trending Now-->
             <LinearLayout
                 android:id="@+id/trendingNowLinLayout"
@@ -135,13 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
-        </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/artistWatchFrame"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/trendingNowFrame">
             <!-- Artist to Watch -->
             <LinearLayout
                 android:id="@+id/artistWatchLinLayout"
@@ -177,12 +152,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
-        </FrameLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/popularUsersFrame"
-            android:layout_below="@+id/artistWatchFrame">
             <!-- Popular People -->
             <LinearLayout
                 android:id="@+id/popularUsersLinLayout"
@@ -218,7 +187,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"></android.support.v7.widget.RecyclerView>
-        </FrameLayout>
-    </RelativeLayout>
+
+    </LinearLayout>
 
 </ScrollView>

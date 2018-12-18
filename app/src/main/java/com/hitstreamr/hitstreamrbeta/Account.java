@@ -76,7 +76,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextBio;
     private EditText EditTextFirstName;
     private EditText EditTextLastName;
-    private EditText EditTextArtistName;
+    private EditText EditTextName;
     private EditText EditTextAddress;
     private EditText EditTextCity;
     private EditText EditTextZip;
@@ -84,7 +84,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextCountry;
     private TextView UserNameText;
     private TextView LabelNameText;
-    private TextView ArtistNameText;
+    private TextView NameText;
     private CircleImageView circleImageView;
 
     //Spinner
@@ -161,7 +161,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         //EditText
         EditTextUsername = findViewById(R.id.accountUsername);
         EditTextEmail = findViewById(R.id.accountEmail);
-        EditTextArtistName = findViewById(R.id.accountArtistName);
+        EditTextName = findViewById(R.id.name);
         EditTextBio = findViewById(R.id.Bio);
         EditTextFirstName = findViewById(R.id.accountFirstName);
         EditTextLastName = findViewById(R.id.accountLastName);
@@ -172,7 +172,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextCountry = findViewById(R.id.accountCountry);
         UserNameText = findViewById(R.id.UserNametext);
         LabelNameText = findViewById(R.id.Labeltext);
-        ArtistNameText = findViewById(R.id.ArtistNametext);
+        NameText = findViewById(R.id.nameTitle);
 
         //Spinners
         SpinnerState = findViewById(R.id.accountState);
@@ -206,7 +206,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         } else if (type.equals(getString(R.string.type_label))) {
             UserNameText.setVisibility(View.GONE);
-            ArtistNameText.setVisibility(View.GONE);
+            NameText.setVisibility(View.GONE);
             LabelNameText.setVisibility(View.VISIBLE);
             ArtistInfoLayout.setVisibility(View.VISIBLE);
             EditTextUsername.setEnabled(false);
@@ -265,7 +265,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
-        EditTextArtistName.setText(artist.getArtistname());
+        EditTextName.setText(artist.getArtistname());
         EditTextEmail.setText(artist.getEmail());
         EditTextUsername.setText(artist.getUsername());
         EditTextAddress.setText(artist.getAddress());
@@ -365,7 +365,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         Log.e(TAG, "Entered register artist firstname:::::" + firstname);
         final String lastname = EditTextLastName.getText().toString().trim();
         email = EditTextEmail.getText().toString().trim();
-        final String artistname = EditTextArtistName.getText().toString().trim();
+        final String artistname = EditTextName.getText().toString().trim();
         final String username = EditTextUsername.getText().toString().trim();
         final String address = EditTextAddress.getText().toString().trim();
         final String city = EditTextCity.getText().toString().trim();
@@ -597,7 +597,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
      */
     private boolean validateArtistName(String artistname) {
         if (artistname.isEmpty()) {
-            EditTextArtistName.setError("Field can't be empty");
+            EditTextName.setError("Field can't be empty");
             return false;
         } else if (artistname.length() <= 26) {
             if (!(checkAlphaNumericSymbol(artistname))) {
@@ -606,7 +606,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
             return true;
         } else {
-            EditTextArtistName.setError(null);
+            EditTextName.setError(null);
             return true;
         }
     }

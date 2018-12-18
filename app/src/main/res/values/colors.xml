@@ -6,5 +6,7 @@
     <color name="litgryAccent">#c1c1c1</color>
     <color name="drkgryAccent">#3d3d3d</color>
     <color name="colorAccent">#ffffff</color>
+    <color name="colorAccent1">#84ffffff</color>
+    <color name="colorAccent2">#00ffffff</color>
 
 </resources>
