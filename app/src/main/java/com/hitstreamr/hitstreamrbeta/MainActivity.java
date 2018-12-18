@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private String creditValue;
 
+    private static boolean hasRun = false;
+
     /**
      * Set up and initialize layouts and variables
      *
@@ -177,13 +179,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
-        //prevent from crashing due to setting the settings again
-        if (savedInstanceState == null) {
-            db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+        if(!hasRun){
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setTimestampsInSnapshotsEnabled(true)
                     .build();
             db.setFirestoreSettings(settings);
+            hasRun = true;
         }
 
         noRes = findViewById(R.id.emptyView);

@@ -11,15 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -44,15 +48,25 @@ public class HomeFragment extends Fragment {
         /**
          * Featured Artist Start
          */
+
+        DateFormat df2 = new SimpleDateFormat("MM/dd/yyyy");
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(dateToUTC(new java.util.Date()));
+        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        Date newDate = calendar.getTime();
          //Recycler View
          featuredArtistRCV = view.findViewById(R.id.featuredVideosRCV);
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("Videos")
-                .orderBy("views")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .whereLessThanOrEqualTo("timestamp", new Timestamp(new Date()))
+                .whereGreaterThan("timestamp", new Timestamp(calendar.getTime()))
+                .orderBy("views",Query.Direction.DESCENDING)
                 .whereEqualTo("privacy","Public (everyone can see)")
                 .limit(FEATURED_LOAD);
-
+        Log.d("DATE_AFTER", df2.format(new Timestamp(new Date()).toDate()));
+        Log.d("DATE_BEFORE",df2.format(new Timestamp(calendar.getTime()).toDate()) );
          //Options
         featuredArtistOptions = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(featuredVideosQuery, Video.class)
@@ -63,7 +77,9 @@ public class HomeFragment extends Fragment {
         FirestoreRecyclerAdapter minVideos = new FirestoreRecyclerAdapter<Video,FeaturedVideoViewHolder>(featuredArtistOptions) {
             @Override
             protected void onBindViewHolder(@NonNull FeaturedVideoViewHolder holder, int position, @NonNull Video model) {
-                Log.d("HOME", model.toString());
+                DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+                if (model.getTimestamp() != null)
+                    holder.publishDate.setText(df.format(model.getTimestamp().toDate()));
                 Glide.with(getContext())
                         .load(model.getThumbnailUrl())
                         .into(holder.thumbnail);
@@ -91,11 +107,14 @@ public class HomeFragment extends Fragment {
     public class  FeaturedVideoViewHolder extends RecyclerView.ViewHolder {
         private View view;
         ImageView thumbnail;
+        TextView publishDate;
+
 
         FeaturedVideoViewHolder(View itemView) {
             super(itemView);
             view = itemView;
-            thumbnail = view.findViewById(R.id.videoThumbnail);
+            thumbnail = view.findViewById(R.id.featuredVideoThumbnail);
+            publishDate = view.findViewById(R.id.publishDate);
         }
 
         void setUserName(final String userName) {
