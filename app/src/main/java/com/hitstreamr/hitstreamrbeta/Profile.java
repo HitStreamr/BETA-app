@@ -153,7 +153,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         mUnfollowBtn.setOnClickListener(this);
         mEditProfile.setOnClickListener(this);
 
-        getBackgroundImage();
+        // getBackgroundImage();
 
         getUserType();
         getUsername();
@@ -289,6 +289,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
+                        getBackgroundImage(current_user.getUid());
 
 
                         if (dataSnapshot.child("artistname").exists()) {
@@ -400,6 +401,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         getSupportActionBar().setTitle(username);
                         Log.e(TAG, "Got username :: " + username);
                         getUrlStorage();
+                        getBackgroundImage(userUserID);
 
                         if (dataSnapshot.child("artistname").exists()) {
                             String artist_name = dataSnapshot.child("artistname").getValue(String.class);
@@ -622,11 +624,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         Log.e(TAG, "Finished counting");
     }
 
-    private void getBackgroundImage(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+    private void getBackgroundImage(String idForBackground){
+        // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (idForBackground != null) {
             //Log.e(TAG, "Background Uri selected" +fileUri);
-            backgroundRef = mStorageRef.child("backgroundPictures").child(user.getUid());
+            backgroundRef = mStorageRef.child("backgroundPictures").child(idForBackground);
             backgroundRef.getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
