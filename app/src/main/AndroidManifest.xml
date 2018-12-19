@@ -70,7 +70,8 @@
         <activity android:name=".Library"></activity>
         <activity android:name=".CreditsPurchase"></activity>
         <activity android:name=".BillingManager" />
-
+        <activity android:name=".NewReleases" />
+        <activity android:name=".TrendingVideos" />
         <service android:name=".HitStreamrFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

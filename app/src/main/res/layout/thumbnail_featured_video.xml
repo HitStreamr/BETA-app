@@ -12,10 +12,12 @@
         android:padding="10dp">
 
         <RelativeLayout
+            android:id="@+id/mainBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/videoThumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="@drawable/round_outline"
@@ -29,19 +31,19 @@
                 android:src="@mipmap/ic_launcher" />
 
             <TextView
+                android:id="@+id/videoUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/scrollingTitle"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="5dp"
-                android:text="Artist Name Here"
                 android:textColor="@color/colorAccent"
                 android:textSize="10sp" />
 
             <TextView
+                android:id="@+id/videoTitle"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/scrollingTitle"
                 android:layout_marginStart="40dp"
                 android:layout_marginTop="15dp"
                 android:ellipsize="marquee"
@@ -51,12 +53,12 @@
 
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="Video Title Here"
                 android:textColor="@color/colorAccent"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
             <Button
+                android:id="@+id/moreMenu"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
@@ -66,13 +68,13 @@
                 android:backgroundTint="@color/colorAccent" />
 
             <TextView
+                android:id="@+id/duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="180dp"
                 android:background="@android:color/black"
-                android:text="00:00"
                 android:textColor="@color/colorAccent"
                 android:textSize="10sp"
                 android:paddingStart="2dp"
@@ -95,10 +97,10 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/videoYear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
-                android:text="00/00/000"
                 android:textSize="12sp" />
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -113,10 +115,10 @@
                     android:tint="@color/drkgryAccent" />
 
                 <TextView
+                    android:id="@+id/videoViews"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"
-                    android:text="00"
                     android:textSize="12sp" />
 
             </LinearLayout>

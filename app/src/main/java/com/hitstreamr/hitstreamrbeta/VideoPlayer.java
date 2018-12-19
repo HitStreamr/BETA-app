@@ -423,7 +423,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        TextViewDate.setText(df.format(vid.getTimestamp()));
+        TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
 
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
@@ -432,12 +432,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onCallback(ArrayList value) {
                if(value.size() > 0) {
-                   Log.e(TAG, "player before inside callback "+value);
+                  // Log.e(TAG, "player before inside callback "+value);
                    checkuploaded();
                 }
-             Log.e(TAG, "player before before if  "+uploadbyUser);
                 if (Integer.parseInt(currentCreditVal) > 0) {
-                    Log.e(TAG, "player before inside if ");
+                    //Log.e(TAG, "player before inside if ");
                    // Log.e(TAG, "player before initializePlayer success ");
                     initializePlayer();
                 }
