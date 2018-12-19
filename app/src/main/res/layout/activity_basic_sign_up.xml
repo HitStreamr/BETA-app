@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Authentication.BasicSignUp"
     android:background="@drawable/gradient1">
 
@@ -64,32 +65,42 @@
             tools:ignore="UseCompoundDrawables"
             android:layout_marginTop="20dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/basicProfilePhoto"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:layout_gravity="center_horizontal"
-                android:src="@drawable/fan"
-                android:contentDescription="@string/basic_account"
-                android:scaleType="centerCrop"
-                />
-            <!--<ImageView
-                android:id="@+id/basicProfilePhoto"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:src="@drawable/fan"
-                android:layout_gravity="center_horizontal"
-                android:contentDescription="@string/basic_account" />-->
-            <Button
-                android:id="@+id/basicUploadPhoto"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="20dp"
-                android:text="Upload Photo"
-                android:textStyle="bold"
-                android:textColor="@color/colorAccent"
-                android:background="@android:color/transparent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="15dp"/>
+                android:layout_marginBottom="30dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/basicProfilePhoto"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/com_facebook_profile_picture_blank_portrait"
+                    app:civ_border_color="@color/colorAccent"
+                    app:civ_border_width="2dp"/>
+                <!--<ImageView
+                    android:id="@+id/basicProfilePhoto"
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:src="@drawable/fan"
+                    android:layout_gravity="center_horizontal"
+                    android:contentDescription="@string/basic_account" />-->
+                <Button
+                    android:id="@+id/basicUploadPhoto"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="76dp"
+                    android:layout_marginStart="38dp"
+                    android:background="@drawable/ic_add_a_photo"
+                    android:backgroundTint="@color/colorAccent"
+                    />
+
+
+
+            </RelativeLayout>
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -100,6 +111,21 @@
             android:layout_marginTop="15dp"
             android:paddingStart="30dp"
             android:paddingEnd="30dp">
+
+            <EditText
+                android:id="@+id/fullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                android:hint="Name"
+                android:background="@drawable/button2"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:maxLength="15"
+                android:textCursorDrawable = "@null" />
 
             <EditText
                 android:id="@+id/Username"
@@ -170,18 +196,29 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"/>
+
+            <!--this is a comment. again -->
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="bottom">
 
             <TextView
                 android:id="@+id/textviewsignin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alreay have an account? SignIn here!"
+                android:text="Alreay have an account? Sign In here!"
                 android:textColor="@color/colorAccent"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="30dp"
                 />
 
-            <!--this is a comment. again -->
 
 
         </LinearLayout>

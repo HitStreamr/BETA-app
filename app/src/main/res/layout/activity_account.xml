@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".Account">
 
-    <include layout="@layout/toolbar"
+    <include layout="@layout/toolbar_account"
         android:id="@+id/toolbar"/>
 
     <ScrollView
@@ -53,31 +53,50 @@
                 <Button
                     android:id="@+id/accountChangePhoto"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:text="Change Photo"
                     android:textColor="@color/colorPrimary"
                     android:background="@android:color/transparent"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="3dp"/>
 
                 <Button
                     android:id="@+id/accountChangeBackground"
                     android:layout_width="wrap_content"
-                    android:layout_height="25dp"
+                    android:layout_height="35dp"
                     android:text="Change Background"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorPrimary"
-                    android:background="@drawable/button2"
-                    android:layout_gravity="center_horizontal"/>
+                    android:background="@android:color/transparent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"/>
 
 
-
+                <TextView
+                    android:id="@+id/nameTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"
+                    android:layout_marginTop="10dp"
+                    android:textSize="10dp"
+                    />
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Name"
+                    android:inputType="textPersonName"
+                    />
                 <TextView
                     android:id="@+id/UserNametext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Username"
-                    android:layout_marginTop="10dp"
-                    android:visibility="visible"/>
+                    android:layout_marginTop="15dp"
+                    android:visibility="visible"
+                    android:textSize="10dp"
+                    />
                 <TextView
                     android:id="@+id/Labeltext"
                     android:layout_width="wrap_content"
@@ -96,7 +115,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Email"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="15dp"
+                    android:textSize="10dp"
+                    />
                 <EditText
                     android:id="@+id/accountEmail"
                     android:layout_width="match_parent"
@@ -113,7 +134,8 @@
                     android:text="Change Password"
                     android:textColor="@color/colorPrimary"
                     android:background="@android:color/transparent"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -239,16 +261,16 @@
             </LinearLayout>
 
 
-            <Button
-                android:id="@+id/saveAccount"
-                android:layout_width="130dp"
-                android:layout_height="40dp"
-                android:background="@drawable/button1"
-                android:text="Save Changes"
-                android:textColor="@color/colorAccent"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                />
+            <!--<Button-->
+                <!--android:id="@+id/saveAccount"-->
+                <!--android:layout_width="130dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:background="@drawable/button1"-->
+                <!--android:text="Save Changes"-->
+                <!--android:textColor="@color/colorAccent"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--/>-->
 
         </LinearLayout>
 

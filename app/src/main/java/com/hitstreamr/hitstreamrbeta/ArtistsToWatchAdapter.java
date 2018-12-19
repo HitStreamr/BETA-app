@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,9 +11,20 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAdapter.TopArtistsHolder> {
 
@@ -44,11 +56,43 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
                 Intent artistProfile = new Intent(mContext, Profile.class);
                 artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                 artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
+                artistProfile.putExtra("SearchType", "ArtistAccounts");
                 mContext.startActivity(artistProfile);
             }
         });
 
-        // TODO: profile picture, followers count
+        String username = artistList.get(position).getUsername();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(username);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                    FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            if (uri != null) {
+                                Glide.with(mContext).load(uri).into(holder.profilePicture);
+                            }
+                        }
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // TODO: handle error
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        // TODO: followers count
     }
 
     @Override
@@ -67,12 +111,14 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
 
         public TextView artistName;
         public LinearLayout cardView;
+        public CircleImageView profilePicture;
 
         public TopArtistsHolder(View itemView) {
             super(itemView);
 
             artistName = itemView.findViewById(R.id.user_name);
             cardView = itemView.findViewById(R.id.userCardView);
+            profilePicture = itemView.findViewById(R.id.searchImage);
         }
     }
 }

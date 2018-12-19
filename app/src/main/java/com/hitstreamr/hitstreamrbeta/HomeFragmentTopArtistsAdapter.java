@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
@@ -58,50 +63,42 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
                 Intent artistProfile = new Intent(mContext, Profile.class);
                 artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                 artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
+                artistProfile.putExtra("SearchType", "ArtistAccounts");
                 mContext.startActivity(artistProfile);
             }
         });
 
-//        String username = artistList.get(position).getUsername();
-//        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId")
-//                .child(username);
-//        databaseReference.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                if (dataSnapshot.exists()) {
-//                    String userId = dataSnapshot.child("tempUserId").getValue(String.class);
-//                    FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
-//                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//                        @Override
-//                        public void onSuccess(Uri uri) {
-//                            if (uri != null) {
-//                                Glide.with(mContext).load(uri).into(holder.profilePicture);
-//                            }
-//                        }
-//                    });
-//                }
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
+        String username = artistList.get(position).getUsername();
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(username);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                    FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            if (uri != null) {
+                                Glide.with(mContext).load(uri).into(holder.profilePicture);
+                            }
+                        }
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // TODO: handle error
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         // TODO: followers count
     }
 

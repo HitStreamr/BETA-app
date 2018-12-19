@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="Authentication.ArtistSignUp"
     android:background="@drawable/gradient1">
 
@@ -82,7 +83,9 @@
                         android:layout_width="120dp"
                         android:layout_height="120dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/artist" />
+                        android:src="@drawable/com_facebook_profile_picture_blank_portrait"
+                        app:civ_border_color="@color/colorAccent"
+                        app:civ_border_width="2dp"/>
 
                     <Button
                         android:id="@+id/artistPicture"
@@ -147,6 +150,22 @@
                         android:textCursorDrawable="@null" />
 
                 </LinearLayout>
+
+
+                <EditText
+                    android:id="@+id/artistName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/button2"
+                    android:ems="10"
+                    android:hint="Artist/Band Name"
+                    android:inputType="textEmailAddress"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:textCursorDrawable="@null" />
+
 
                 <EditText
                     android:id="@+id/artistEmail"
@@ -307,7 +326,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="15dp"
-                    android:layout_marginBottom="20dp" />
+                    android:layout_marginBottom="20dp"
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/textviewsignin"
@@ -315,8 +335,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="60dp"
-                    android:text="Alreay have an account? SignIn here!"
-                    android:textColor="@color/colorAccent" />
+                    android:text="Already have an account? Sign In here!"
+                    android:textColor="@color/colorAccent"
+                    android:layout_marginTop="25dp"/>
 
             </LinearLayout>
         </ScrollView>

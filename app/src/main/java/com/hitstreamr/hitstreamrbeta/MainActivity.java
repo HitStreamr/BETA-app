@@ -963,6 +963,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     basicProfile.putExtra("artistUsername", userName);
+                    basicProfile.putExtra("SearchType", "BasicAccounts");
                     startActivity(basicProfile);
                 }
             });
@@ -1108,6 +1109,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
                     artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     artistProfile.putExtra("artistUsername", userName);
+                    artistProfile.putExtra("SearchType", "ArtistAccounts");
                     startActivity(artistProfile);
 
                 }

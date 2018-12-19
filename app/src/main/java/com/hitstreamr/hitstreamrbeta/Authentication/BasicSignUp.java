@@ -53,7 +53,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private Button signup, uploadPhotoBtn;
     private Button backbtn;
-    private EditText mEmailField, mPasswordField, mUsername;
+    private EditText mEmailField, mPasswordField, mUsername, mFullName;
     private TextView signintext;
     private RadioButton radiobtn;
     private ImageView mProfilePhoto;
@@ -87,6 +87,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         mStorageRef = storage.getReference();
 
         // Views
+        mFullName = findViewById(R.id.fullName);
         mUsername = findViewById(R.id.Username);
         mEmailField = findViewById(R.id.Email);
         mPasswordField = findViewById(R.id.Password);
@@ -103,6 +104,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         mProfilePhoto = findViewById(R.id.basicProfilePhoto);
 
         //Listeners
+        mFullName.setOnClickListener(this);
         mUsername.setOnClickListener(this);
         mEmailField.setOnClickListener(this);
         mPasswordField.setOnClickListener(this);
@@ -259,7 +261,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private boolean validateBrowseVideo() {
+    private boolean validateBrowsePhoto() {
         if (selectedImagePath != null) {
             return true;
         }
@@ -268,16 +270,18 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private void registerUser() {
+        final String fullName = mFullName.getText().toString().trim();
         final String username = mUsername.getText().toString().trim();
         final String email = mEmailField.getText().toString().trim();
         String password = mPasswordField.getText().toString().trim();
 
+        // TODO: validateFullName
         if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
-                | !validateToc() | !validateBrowseVideo())  {
+                | !validateToc() | !validateBrowsePhoto())  {
             return;
         }
 
-        validateUserNameFirebase(new User(username, email,null), password);
+        validateUserNameFirebase(new User(username, email, null, fullName, null), password);
 
     }
 

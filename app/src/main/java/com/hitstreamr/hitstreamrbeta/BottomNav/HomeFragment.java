@@ -81,53 +81,56 @@ public class HomeFragment extends Fragment {
                 }
 
                 // Query to Firebase
-                List<ArtistUser> artistList = new ArrayList<>(artistFirestoreList.size());
-                HomeFragmentTopArtistsAdapter homeFragmentTopArtistsAdapter =
-                        new HomeFragmentTopArtistsAdapter(artistList, getContext(), getActivity().getIntent());
+                if (getActivity() != null) {
 
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                databaseReference.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        String artistID = dataSnapshot.getKey();
+                    List<ArtistUser> artistList = new ArrayList<>(artistFirestoreList.size());
+                    HomeFragmentTopArtistsAdapter homeFragmentTopArtistsAdapter =
+                            new HomeFragmentTopArtistsAdapter(artistList, getContext(), getActivity().getIntent());
 
-                        // Initialize as many as it will hold
-                        while (artistList.size() < artistFirestoreList.size()) {
-                            artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
+                    databaseReference.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            String artistID = dataSnapshot.getKey();
+
+                            // Initialize as many as it will hold
+                            while (artistList.size() < artistFirestoreList.size()) {
+                                artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                            }
+
+                            // Replace the indexes with appropriate values
+                            // The indexes will match, and thus sorted
+                            if (artistFirestoreList.contains(artistID)) {
+                                int index = artistFirestoreList.indexOf(artistID);
+                                ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
+                                artistList.remove(index);
+                                artistList.add(index, artistUser);
+                                homeFragmentTopArtistsAdapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(homeFragmentTopArtistsAdapter);
+                            }
                         }
 
-                        // Replace the indexes with appropriate values
-                        // The indexes will match, and thus sorted
-                        if (artistFirestoreList.contains(artistID)) {
-                            int index = artistFirestoreList.indexOf(artistID);
-                            ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
-                            artistList.remove(index);
-                            artistList.add(index, artistUser);
-                            homeFragmentTopArtistsAdapter.notifyDataSetChanged();
-                            recyclerView.setAdapter(homeFragmentTopArtistsAdapter);
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
                         }
-                    }
 
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                        }
+                    });
+                }
             }
         });
     }

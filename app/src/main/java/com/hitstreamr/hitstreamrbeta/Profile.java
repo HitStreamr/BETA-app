@@ -62,11 +62,15 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private Button mfollowBtn;
     private Button mUnfollowBtn;
+    private Button mEditProfile;
 
     private TextView mfollowers;
     private TextView mfollowing;
+    private TextView mProfileName;
+    private TextView mBio;
 
     private ImageView ImageViewBackground;
+    private ImageView verifiedCheckMark;
 
     private long followerscount = 0;
     private long followingcount = 0;
@@ -80,6 +84,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     DatabaseReference myFollowersRef, myFollowingRef;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageTask mstorageTask;
     private StorageReference mStorageRef = storage.getReference();
     private StorageReference backgroundRef = null;
 
@@ -121,13 +126,18 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mfollowBtn = findViewById(R.id.followUser);
         mUnfollowBtn = findViewById(R.id.unFollowUser);
+        mEditProfile = findViewById(R.id.editUser);
 
         mfollowers = findViewById(R.id.usersFollowers);
         mfollowing = findViewById(R.id.usersFollowing);
+        mProfileName = findViewById(R.id.profileName);
+        mBio = findViewById(R.id.bioText);
 
         ImageViewBackground = findViewById(R.id.profileBackgroundImage);
+        verifiedCheckMark = findViewById(R.id.verified);
 
         mUnfollowBtn.setVisibility(View.GONE);
+        mEditProfile.setVisibility(View.VISIBLE);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,6 +151,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mfollowBtn.setOnClickListener(this);
         mUnfollowBtn.setOnClickListener(this);
+        mEditProfile.setOnClickListener(this);
 
         getBackgroundImage();
 
@@ -203,8 +214,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 });
         Log.e(TAG, "Profile credit val " + CreditVal);
 
-
-
         mListener = new ItemClickListener() {
             @Override
             public void onResultClick(Video video) {
@@ -218,6 +227,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             public void onOverflowClick(Video title, View v) { showOverflow(v);
             }
         };
+
+        // Set toolbar profile picture to always be the current user
+        if (current_user.getPhotoUrl() != null) {
+            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
     }
 
     public interface ItemClickListener {
@@ -239,11 +256,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             if (value.equals(current_user.getUid())) {
                                 mfollowBtn.setVisibility(View.GONE);
                                 mUnfollowBtn.setVisibility(View.VISIBLE);
+                                mEditProfile.setVisibility(View.GONE);
                             }
                         }
                         else{
                             mfollowBtn.setVisibility(View.VISIBLE);
                             mUnfollowBtn.setVisibility(View.GONE);
+                            mEditProfile.setVisibility(View.GONE);
                         }
                     }
 
@@ -256,6 +275,12 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void getCurrentProfile() {
         mfollowBtn.setVisibility(View.GONE);
+        mEditProfile.setVisibility(View.VISIBLE);
+
+        if (accountType.equals("BasicAccounts")) {
+            verifiedCheckMark.setVisibility(View.GONE);
+        }
+
         FirebaseDatabase.getInstance()
                 .getReference(accountType)
                 .child(current_user.getUid())
@@ -264,6 +289,22 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
+
+
+                        if (dataSnapshot.child("artistname").exists()) {
+                            String artist_name = dataSnapshot.child("artistname").getValue(String.class);
+                            mProfileName.setText(artist_name);
+                        }
+
+                        if (dataSnapshot.child("fullname").exists()) {
+                            String name = dataSnapshot.child("fullname").getValue(String.class);
+                            mProfileName.setText(name);
+                        }
+
+                        if (dataSnapshot.child("bio").exists()) {
+                            String bio = dataSnapshot.child("bio").getValue(String.class);
+                            mBio.setText(bio);
+                        }
                     }
 
                     @Override
@@ -272,15 +313,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     }
                 });
 
-        // Profile Picture
-        if (current_user.getPhotoUrl() != null) {
-            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-            circleImageView.setVisibility(View.VISIBLE);
-            CircleImageView profileImageView = findViewById(R.id.profileImage);
-            Uri photoURL = current_user.getPhotoUrl();
-            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-            Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
-        }
         //getFollowersCount();
         // Set up tab layout & items
         TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
@@ -335,14 +367,31 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             }
         });
 
+        // Profile Picture
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView profilePicture = findViewById(R.id.profileImage);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(profilePicture);
+        }
     }
 
     // Update the search results with the current search input when a different tab is selected
 
     private void getSearchProfile() {
         Log.e(TAG, "Entered searchprofile");
+
+        String searchType = getIntent().getStringExtra("SearchType");
+
+        if (searchType.equals("BasicAccounts")) {
+            verifiedCheckMark.setVisibility(View.GONE);
+
+            // Hide uploads for basic users
+            TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
+            mTabLayout.removeTabAt(1);
+        }
+
         FirebaseDatabase.getInstance()
-                .getReference(accountType)
+                .getReference(searchType)
                 .child(userUserID)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -351,6 +400,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         getSupportActionBar().setTitle(username);
                         Log.e(TAG, "Got username :: " + username);
                         getUrlStorage();
+
+                        if (dataSnapshot.child("artistname").exists()) {
+                            String artist_name = dataSnapshot.child("artistname").getValue(String.class);
+                            mProfileName.setText(artist_name);
+                        }
+
+                        if (dataSnapshot.child("fullname").exists()) {
+                            String name = dataSnapshot.child("fullname").getValue(String.class);
+                            mProfileName.setText(name);
+                        }
+
+                        if (dataSnapshot.child("bio").exists()) {
+                            String bio = dataSnapshot.child("bio").getValue(String.class);
+                            mBio.setText(bio);
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -370,11 +434,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         profilePictureDownloadUrl = uri;
                        // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
-                            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-                            circleImageView.setVisibility(View.VISIBLE);
                             CircleImageView profileImageView = findViewById(R.id.profileImage);
                             //Uri photoURL = current_user.getPhotoUrl();
-                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
                             Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
                             getFollowersCount();
                             //getFollowingCount();
@@ -739,6 +800,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }
         if (view == mUnfollowBtn) {
             cancelFollowers();
+        }
+        if (view == mEditProfile) {
+            Intent accountPage = new Intent(this, Account.class);
+            accountPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+            startActivity(accountPage);
         }
     }
 }
