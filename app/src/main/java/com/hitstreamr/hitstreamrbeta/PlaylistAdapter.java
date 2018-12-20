@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
     @Override
     public PlayListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.playtlist_list, parent, false);
+                .inflate(R.layout.playlist_list, parent, false);
         Log.e(TAG, "Playlists adapter holder entered ");
 
         return new PlayListHolder(itemView);
@@ -46,6 +47,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
             public void onClick(View view) {
                 Log.e("TAG", "Itemclicked and selcted");
                 Toast.makeText(mContext, Playlists.get(position) + "selected", Toast.LENGTH_SHORT).show();
+
+                for(int i = 0; i<Playlists.size(); i++){
+                    holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                }
+                holder.parentLayout.setBackgroundColor(Color.parseColor("#0000FF"));
+
+
                 mlistner.onResultClick(Playlists.get(position));
 
             }

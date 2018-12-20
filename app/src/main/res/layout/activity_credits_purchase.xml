@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".CreditsPurchase">
 
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
@@ -17,26 +18,26 @@
         android:textSize="20sp"
         android:textColor="@android:color/black" />
 
-    <!--<SeekBar-->
-        <!--android:id="@+id/seekBar_credits"-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentStart="true"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_marginTop="195dp"-->
-        <!--android:max="2000"-->
-        <!--android:padding="10dp"-->
-        <!--android:progress="100" />-->
+       <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Range seek bar"/>
 
-    <!--<com.warkiz.widget.IndicatorStayLayout-->
-        <!--android:id="@+id/seekLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content">-->
 
-    <com.warkiz.widget.IndicatorSeekBar
+    <!--<org.florescu.android.rangeseekbar.RangeSeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:singleThumb="true"
+        app:absoluteMinValue="0.99"
+        app:absoluteMaxValue="99.99"
+        app:textAboveThumbsColor="@color/colorPrimary" />-->
+
+
+     <com.warkiz.widget.IndicatorSeekBar
         android:id="@+id/seekBar_credits"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="200dp"
         android:paddingHorizontal="40dp"
         app:isb_seek_smoothly="true" />
@@ -54,7 +55,7 @@
         android:text="Cancel"
         android:background="@drawable/button2"
         android:textColor="@color/colorPrimary"
-        android:onClick="cancelPurchase"/>
+        android:onClick="cancelPurchase" />
 
     <Button
         android:id="@+id/confirm_credits_button"
@@ -65,8 +66,7 @@
         android:layout_marginEnd="60dp"
         android:text="Confirm"
         android:background="@drawable/button2"
-        android:textColor="@color/colorPrimary"
-        android:onClick="confirmPurchase"/>
+        android:textColor="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/credits_amount"

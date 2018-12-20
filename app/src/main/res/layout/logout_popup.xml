@@ -19,7 +19,7 @@
             android:layout_gravity="center"
             android:text="@string/clear_user_data"
             android:textAlignment="center"
-            android:textColor="@color/drkgryAccent"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
 
         <LinearLayout
