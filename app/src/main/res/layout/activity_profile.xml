@@ -22,8 +22,16 @@
             <ImageView
                 android:id="@+id/profileBackgroundImage"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
+                android:layout_height="210dp"
                 android:src="@color/drkgryAccent" />
+
+            <ImageView
+                android:id="@+id/backgroundImageOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="110dp"
+                android:src="@drawable/transparent_background_gradient"
+                android:layout_marginTop="100dp"
+                />
 
             <Button
                 android:id="@+id/button2"
@@ -33,12 +41,12 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginEnd="10dp"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/ic_star_border_black_24dp" />
+                android:background="@drawable/ic_notifications_none" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profileImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
                 android:layout_below="@+id/button2"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="0dp"
@@ -48,44 +56,64 @@
 
             <Button
                 android:id="@+id/followUser"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_width="130dp"
+                android:layout_height="30dp"
                 android:layout_below="@+id/profileImage"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button2"
                 android:elevation="4dp"
                 android:text="Follow"
-                android:textColor="@color/colorPrimary" />
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/colorPrimary"
+                />
 
             <Button
                 android:id="@+id/unFollowUser"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_below="@+id/followUser"
+                android:layout_width="130dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/profileImage"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button2"
                 android:elevation="4dp"
                 android:text="UNFollow"
-                android:textColor="@color/colorPrimary"
+                android:paddingHorizontal="10dp"
+                android:textColor="@android:color/black"
                 />
+
+            <Button
+                android:id="@+id/editUser"
+                android:layout_width="130dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/profileImage"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button2"
+                android:elevation="4dp"
+                android:text="Edit Profile"
+                android:textColor="@android:color/black"
+                android:paddingHorizontal="10dp"
+
+                />
+
 
         </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/followersLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:padding="10dp"
-                android:background="@color/litgryAccent">
+                android:padding="5dp"
+                android:background="@color/colorAccent">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_marginEnd="30dp">
+                    android:layout_marginEnd="50dp">
 
                     <TextView
                         android:id="@+id/usersFollowers"
@@ -114,7 +142,7 @@
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@color/drkgryAccent"
-                    android:layout_marginEnd="30dp"/>
+                    android:layout_marginEnd="50dp"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -143,6 +171,46 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/profileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name Here"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    />
+
+                <ImageView
+                    android:id="@+id/verified"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_verified_check_circle"
+                    android:tint="@android:color/holo_blue_bright"
+                    android:layout_marginStart="5dp"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/bioText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_marginTop="3dp"/>
+
+        </LinearLayout>
+
 
         <android.support.design.widget.TabLayout
             android:layout_width="match_parent"
