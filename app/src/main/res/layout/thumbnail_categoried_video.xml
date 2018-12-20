@@ -24,8 +24,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="180dp"
                     android:layout_height="110dp"
-                    android:background="@drawable/round_outline"
-                    android:outlineProvider="background"/>
+                    android:background="@color/litgryAccent" />
                 </LinearLayout>
 
                 <TextView
@@ -89,14 +88,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Published:"
-                        android:textSize="12sp" />
+                        android:textSize="10sp" />
 
                     <TextView
                         android:id="@+id/published"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="3dp"
-                        android:textSize="12sp" />
+                        android:textSize="8sp" />
                 </LinearLayout>
 
                 <LinearLayout

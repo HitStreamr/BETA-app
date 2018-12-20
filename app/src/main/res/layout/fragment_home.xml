@@ -33,7 +33,7 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:layout_width="wrap_content"
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:text="@string/more"
@@ -68,7 +68,7 @@
 
                     <Button
                         android:id="@+id/newReleaseMore"
-                        android:layout_width="wrap_content"
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:text="@string/more"
@@ -105,7 +105,7 @@
 
                     <Button
                         android:id="@+id/trendingMore"
-                        android:layout_width="wrap_content"
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:text="@string/more"
@@ -142,7 +142,7 @@
 
                     <Button
                         android:id="@+id/showMoreArtists"
-                        android:layout_width="wrap_content"
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:text="@string/more"
@@ -180,7 +180,7 @@
                     android:orientation="horizontal">
 
                     <Button
-                        android:layout_width="wrap_content"
+                        android:layout_width="60dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
                         android:text="@string/more"
