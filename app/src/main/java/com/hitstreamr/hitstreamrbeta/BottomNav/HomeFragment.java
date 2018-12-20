@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment {
         /* ARTISTS TO WATCH SECTION - START */
 
         // Populate the Artists To Watch recycler view
-        showArtiststoWatch(view);
+        showArtistsToWatch(view);
 
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
         showMoreArtists.setOnClickListener(new View.OnClickListener() {
@@ -62,9 +62,10 @@ public class HomeFragment extends Fragment {
     }
 
     /**
-     * Load popular artists
+     * Load popular artists.
+     * @param view view
      */
-    private void showArtiststoWatch(View view) {
+    private void showArtistsToWatch(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.artistWatchRCV);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
@@ -134,13 +135,4 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-
-//    /**
-//     * OnClick - Show More Artists
-//     * @param view view
-//     */
-//    public void showMoreArtists(View view) {
-//        Intent showMoreArtists = new Intent(getContext(), ArtistsToWatch.class);
-//        startActivity(showMoreArtists);
-//    }
 }
