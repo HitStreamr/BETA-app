@@ -24,7 +24,7 @@
                     android:scaleType="centerCrop"
                     android:layout_width="180dp"
                     android:layout_height="110dp"
-                    android:background="@color/litgryAccent" />
+                    android:background="@color/colorPrimary" />
                 </LinearLayout>
 
                 <TextView
