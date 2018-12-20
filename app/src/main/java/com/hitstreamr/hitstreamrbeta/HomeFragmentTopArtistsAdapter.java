@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -99,6 +100,18 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
 
             }
         });
+
+        holder.watch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent artistProfile = new Intent(mContext, Profile.class);
+                artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
+                artistProfile.putExtra("SearchType", "ArtistAccounts");
+                mContext.startActivity(artistProfile);
+            }
+        });
+
         // TODO: followers count
     }
 
@@ -119,6 +132,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
         public TextView artistName;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
+        public Button watch;
 
         public TopArtistsHolder(View itemView) {
             super(itemView);
@@ -126,6 +140,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             artistName = itemView.findViewById(R.id.topArtistName);
             cardView = itemView.findViewById(R.id.topArtistCardView);
             profilePicture = itemView.findViewById(R.id.topArtistImage);
+            watch = itemView.findViewById(R.id.watchArtistButton);
         }
     }
 }

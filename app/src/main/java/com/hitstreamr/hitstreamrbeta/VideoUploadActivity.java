@@ -598,23 +598,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
-
-                        // Creates like counts for artists if it does not exist yet
-                        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                        DocumentReference documentReference = firebaseFirestore.collection("ArtistsLikes")
-                                .document(CurrentUserID);
-
-                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot documentSnapshot = task.getResult();
-                                if (documentSnapshot == null) {
-                                    Map<String, Object> artistLikes = new HashMap<>();
-                                    artistLikes.put("likes", 0);
-                                    documentReference.set(artistLikes);
-                                }
-                            }
-                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
