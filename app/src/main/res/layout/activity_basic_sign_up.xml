@@ -94,11 +94,7 @@
                     android:layout_marginStart="38dp"
                     android:background="@drawable/ic_add_a_photo"
                     android:backgroundTint="@color/colorAccent"
-
-                    android:shadowDy="4"
-                    android:shadowDx="4"
-                    android:shadowColor="@color/drkgryAccent"
-                    android:shadowRadius="10"/>
+                    />
 
 
 
@@ -115,6 +111,21 @@
             android:layout_marginTop="15dp"
             android:paddingStart="30dp"
             android:paddingEnd="30dp">
+
+            <EditText
+                android:id="@+id/fullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textEmailAddress"
+                android:hint="Name"
+                android:background="@drawable/button2"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:paddingLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:maxLength="15"
+                android:textCursorDrawable = "@null" />
 
             <EditText
                 android:id="@+id/Username"
@@ -185,18 +196,29 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:visibility="gone"/>
+
+            <!--this is a comment. again -->
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="bottom">
 
             <TextView
                 android:id="@+id/textviewsignin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alreay have an account? SignIn here!"
+                android:text="Alreay have an account? Sign In here!"
                 android:textColor="@color/colorAccent"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="30dp"
                 />
 
-            <!--this is a comment. again -->
 
 
         </LinearLayout>

@@ -67,34 +67,36 @@
                     android:text="Change Background"
                     android:layout_marginTop="5dp"
                     android:textColor="@color/colorPrimary"
-                    android:background="@color/colorAccent"
+                    android:background="@android:color/transparent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="5dp"/>
 
 
-
                 <TextView
-                    android:id="@+id/ArtistNametext"
+                    android:id="@+id/nameTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Artist/Band Name"
+                    android:text="Name"
                     android:layout_marginTop="10dp"
-                    android:visibility="visible"/>
+                    android:textSize="10dp"
+                    />
                 <EditText
-                    android:id="@+id/accountArtistName"
+                    android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Artist/Band Name"
-                    android:inputType="textPersonName"/>
-
+                    android:hint="Name"
+                    android:inputType="textPersonName"
+                    />
                 <TextView
                     android:id="@+id/UserNametext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Username"
-                    android:layout_marginTop="10dp"
-                    android:visibility="visible"/>
+                    android:layout_marginTop="15dp"
+                    android:visibility="visible"
+                    android:textSize="10dp"
+                    />
                 <TextView
                     android:id="@+id/Labeltext"
                     android:layout_width="wrap_content"
@@ -113,7 +115,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Email"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="15dp"
+                    android:textSize="10dp"
+                    />
                 <EditText
                     android:id="@+id/accountEmail"
                     android:layout_width="match_parent"
@@ -130,7 +134,8 @@
                     android:text="Change Password"
                     android:textColor="@color/colorPrimary"
                     android:background="@android:color/transparent"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"

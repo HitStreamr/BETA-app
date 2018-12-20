@@ -57,22 +57,24 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private FirebaseUser current_user;
     private CircleImageView circleImageView;
     private String accountType;
+    private String userClicked;
+    private String userUserID;
 
     private Toolbar toolbar;
 
     private Button mfollowBtn;
     private Button mUnfollowBtn;
+    private Button mEditProfile;
 
     private TextView mfollowers;
     private TextView mfollowing;
+    private TextView mprofileName;
 
     private ImageView ImageViewBackground;
 
     private long followerscount = 0;
     private long followingcount = 0;
 
-    private String userClicked;
-    private String userUserID;
 
     private int tab_position;
 
@@ -121,13 +123,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mfollowBtn = findViewById(R.id.followUser);
         mUnfollowBtn = findViewById(R.id.unFollowUser);
+        mEditProfile = findViewById(R.id.editUser);
 
         mfollowers = findViewById(R.id.usersFollowers);
         mfollowing = findViewById(R.id.usersFollowing);
+        mprofileName = findViewById(R.id.profileName);
 
         ImageViewBackground = findViewById(R.id.profileBackgroundImage);
 
         mUnfollowBtn.setVisibility(View.GONE);
+        mEditProfile.setVisibility(View.VISIBLE);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,6 +146,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mfollowBtn.setOnClickListener(this);
         mUnfollowBtn.setOnClickListener(this);
+        mEditProfile.setOnClickListener(this);
 
         getBackgroundImage();
 
@@ -239,11 +245,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             if (value.equals(current_user.getUid())) {
                                 mfollowBtn.setVisibility(View.GONE);
                                 mUnfollowBtn.setVisibility(View.VISIBLE);
+                                mEditProfile.setVisibility(View.GONE);
                             }
                         }
                         else{
                             mfollowBtn.setVisibility(View.VISIBLE);
                             mUnfollowBtn.setVisibility(View.GONE);
+                            mEditProfile.setVisibility(View.GONE);
+
                         }
                     }
 
@@ -256,6 +265,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void getCurrentProfile() {
         mfollowBtn.setVisibility(View.GONE);
+        mEditProfile.setVisibility(View.VISIBLE);
         FirebaseDatabase.getInstance()
                 .getReference(accountType)
                 .child(current_user.getUid())
@@ -739,6 +749,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }
         if (view == mUnfollowBtn) {
             cancelFollowers();
+        }
+        if (view == mEditProfile) {
+            Intent accountPage = new Intent(this, Account.class);
+            accountPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+            startActivity(accountPage);
         }
     }
 }
