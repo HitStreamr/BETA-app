@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -139,15 +140,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
 
-        // Profile Picture
-        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-        if (current_user.getPhotoUrl() != null) {
-            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-            circleImageView.setVisibility(View.VISIBLE);
-            Uri photoURL = current_user.getPhotoUrl();
-            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-        }
-
         mStorageRef = storage.getReference();
         mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -181,7 +173,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         ImageViewPhoto = findViewById(R.id.accountPhoto);
 
         //Button
-        SaveAccountBtn = findViewById(R.id.saveAccount);
+        SaveAccountBtn = findViewById(R.id.update_account);
         SaveAccountBtn.setOnClickListener(this);
         ChangePhotoBtn = findViewById(R.id.accountChangePhoto);
         ChangeBackgroundBtn = findViewById(R.id.accountChangeBackground);
@@ -245,6 +237,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }*/
 
+        // Prevent keyboard from showing automatically
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     public void showArtistData(DataSnapshot dataSnapshot) {
@@ -261,7 +255,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, null);
+        String bio = "";
+        if (dataSnapshot.child("bio").exists()) {
+            bio = dataSnapshot.child("bio").getValue(String.class);
+        }
+
+        artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state,
+                country, phone, zip, bio/*, null*/);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -273,11 +273,12 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextZip.setText(artist.getZip());
         EditTextPhone.setText(artist.getPhone());
         EditTextCountry.setText(artist.getCountry());
+        EditTextBio.setText(artist.getBio());
         SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
         Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
 
-        getSupportActionBar().setTitle(artistname);
+        getSupportActionBar().setTitle(username);
     }
 
     private int getIndex(Spinner spinner, String myString) {
@@ -292,13 +293,24 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     public void showBasicData(DataSnapshot dataSnapshot) {
 
-        String email = dataSnapshot.child("email").getValue(String.class);
+        email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
         String userID = dataSnapshot.child("userID").getValue(String.class);
-        oldBasic = new User(username, email,userID);
+        String fullname = dataSnapshot.child("fullname").getValue(String.class);
+        String bio = "";
+
+        if (dataSnapshot.child("bio").exists()) {
+            bio = dataSnapshot.child("bio").getValue(String.class);
+        }
+
+        oldBasic = new User(username, email, userID, fullname, bio);
 
         EditTextEmail.setText(oldBasic.getEmail());
         EditTextUsername.setText(oldBasic.getUsername());
+        EditTextName.setText(oldBasic.getFullname());
+        EditTextBio.setText(oldBasic.getBio());
+
+        Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
 
         getSupportActionBar().setTitle(username);
     }
@@ -306,8 +318,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private void registerUser() {
         final String username = EditTextUsername.getText().toString().trim();
         final String email = EditTextEmail.getText().toString().trim();
+        final String name = EditTextName.getText().toString().trim();
+        final String bio = EditTextBio.getText().toString().trim();
 
-        if (!validateEmail(email) | !validateUsername(username)) {
+        // TODO: validate name
+        if (!validateEmail(email) | !validateUsername(username) | !validateBio(bio)) {
             return;
         }
         /*//If validations is ok we will first show progressbar
@@ -315,7 +330,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.setMessage("Registering New User...");*/
 
         //make sure the basic user has the write id
-        basicUser = new User(username, email, oldBasic.getUserID());
+        basicUser = new User(username, email, oldBasic.getUserID(), name, bio);
         oldBasic = basicUser;
 
         if(selectedBackgroundPath!= null){
@@ -373,15 +388,19 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String zip = EditTextZip.getText().toString().trim();
         final String country = EditTextCountry.getText().toString().trim();
         final String phone = EditTextPhone.getText().toString().trim();
+        final String bio = EditTextBio.getText().toString().trim();
 
-        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname) | !validateEmail(email) | !validateAddressLine(address)
-                | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip)) {
+        // TODO: validate bio
+        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname)
+                | !validateEmail(email) | !validateAddressLine(address) | !validateCity(city)
+                | !validateUsername(username) | !validatePhone(phone) | !validateZip(zip)
+                | !validateBio(bio)) {
 
             Log.e(TAG, "register Artist no validation" + type);
             return;
         }
-        artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, null);
+        artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city,
+                state, country, phone, zip, bio/*, null*/);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
@@ -430,26 +449,36 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     private void updateProfile() {
         if (user != null) {
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(artist_object.getUsername())
-                    .setPhotoUri(Uri.parse(downloadimageUri))
-                    .build();
+            UserProfileChangeRequest profileUpdates = null;
+            if (type.equals(getString(R.string.type_artist))) {
+                profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(artist_object.getUsername())
+                        .setPhotoUri(Uri.parse(downloadimageUri))
+                        .build();
+            }
+            else if (type.equals(getString(R.string.type_basic))) {
+                profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(basicUser.getUsername())
+                        .setPhotoUri(Uri.parse(downloadimageUri))
+                        .build();
+            }
 
-            user.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                if (type.equals(getString(R.string.type_artist))) {
-                                    registerArtistFirebase();
+            if (profileUpdates != null) {
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    if (type.equals(getString(R.string.type_artist))) {
+                                        registerArtistFirebase();
+                                    } else if (type.equals(getString(R.string.type_basic))) {
+                                        registerBasicFirebase();
+                                    }
+                                    Log.d(TAG, "User profile updated.");
                                 }
-                                else if (type.equals(getString(R.string.type_basic))) {
-                                    registerBasicFirebase();
-                                }
-                                Log.d(TAG, "User profile updated.");
                             }
-                        }
-                    });
+                        });
+            }
             // else block
             // ask to log in again(Invalid login)
         }
@@ -466,7 +495,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(Account.this, "Update Successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Account.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -724,6 +753,22 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             EditTextUsername.setError(null);
             return true;
         }
+    }
+
+    /**
+     * Only checks when bio is not empty if it is valid.
+     *
+     * @param bio profile's bio
+     * @return true if valid, otherwise false and display an error message
+     */
+    private boolean validateBio(String bio) {
+        if (!bio.isEmpty()) {
+            if (EditTextBio.length() >= 160) {
+                EditTextBio.setError("160 characters maximum.");
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

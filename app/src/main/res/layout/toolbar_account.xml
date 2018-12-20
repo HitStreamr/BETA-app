@@ -8,13 +8,15 @@
     app:popupTheme="@style/AppTheme"
     app:theme="@style/backArrowTheme" >
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/profilePictureToolbar"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="5dp"
-        android:src="@mipmap/ic_launcher_round"
+    <Button
+        android:id="@+id/update_account"
+        android:text="SAVE"
+        android:textColor="@color/colorAccent"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
         android:layout_gravity="end"
+        android:background="@color/colorAccent2"
         />
 
 </android.support.v7.widget.Toolbar>

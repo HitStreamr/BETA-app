@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".Account">
 
-    <include layout="@layout/toolbar"
+    <include layout="@layout/toolbar_account"
         android:id="@+id/toolbar"/>
 
     <ScrollView

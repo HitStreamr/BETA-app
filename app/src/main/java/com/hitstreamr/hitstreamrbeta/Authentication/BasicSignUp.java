@@ -51,8 +51,9 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private static final String TAG = "BasicSignUp";
 
-    private Button signup, backbtn, uploadPhotoBtn;
-    private EditText mEmailField, mPasswordField, mUsername;
+    private Button signup, uploadPhotoBtn;
+    private Button backbtn;
+    private EditText mEmailField, mPasswordField, mUsername, mFullName;
     private TextView signintext;
     private RadioButton radiobtn;
     private ImageView mProfilePhoto;
@@ -76,9 +77,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     User basicUser;
     UsernameUserIdPair usernameUserIdPair;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +87,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         mStorageRef = storage.getReference();
 
         // Views
+        mFullName = findViewById(R.id.fullName);
         mUsername = findViewById(R.id.Username);
         mEmailField = findViewById(R.id.Email);
         mPasswordField = findViewById(R.id.Password);
@@ -105,6 +104,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         mProfilePhoto = findViewById(R.id.basicProfilePhoto);
 
         //Listeners
+        mFullName.setOnClickListener(this);
         mUsername.setOnClickListener(this);
         mEmailField.setOnClickListener(this);
         mPasswordField.setOnClickListener(this);
@@ -206,7 +206,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private void validateUserNameFirebase(final User user, final String password){
+    private void validateUserNameFirebase(User user, String password){
         final boolean[] isTaken = {false};
         takenNames.addValueEventListener(new ValueEventListener() {
             @Override
@@ -261,7 +261,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private boolean validateBrowseVideo() {
+    private boolean validateBrowsePhoto() {
         if (selectedImagePath != null) {
             return true;
         }
@@ -270,16 +270,18 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     }
 
     private void registerUser() {
+        final String fullName = mFullName.getText().toString().trim();
         final String username = mUsername.getText().toString().trim();
         final String email = mEmailField.getText().toString().trim();
         String password = mPasswordField.getText().toString().trim();
 
+        // TODO: validateFullName
         if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
-                | !validateToc() | !validateBrowseVideo())  {
+                | !validateToc() | !validateBrowsePhoto())  {
             return;
         }
 
-        validateUserNameFirebase(new User(username, email,null), password);
+        validateUserNameFirebase(new User(username, email, null, fullName, null), password);
 
     }
 
@@ -326,7 +328,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                     }
                 });
     }
-
 
     private void registerFirebase() {
         //TODO make sure that newID is not being made when not needed

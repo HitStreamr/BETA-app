@@ -41,11 +41,11 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/featuredVideosRCV"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="visible" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/featuredVideosRCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible" />
         <LinearLayout
                 android:id="@+id/freshReleasesLinLayout"
                 android:layout_width="match_parent"
@@ -67,6 +67,7 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/newReleaseMore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -79,7 +80,7 @@
                 android:id="@+id/freshReleasesRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+                android:visibility="visible"></android.support.v7.widget.RecyclerView>
 
             <!-- Trending Now-->
             <LinearLayout
@@ -103,6 +104,7 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/trendingMore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -115,7 +117,7 @@
                 android:id="@+id/trendingNowRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+                android:visibility="visible"></android.support.v7.widget.RecyclerView>
 
             <!-- Artist to Watch -->
             <LinearLayout
@@ -139,6 +141,7 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/showMoreArtists"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -151,7 +154,10 @@
                 android:id="@+id/artistWatchRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"></android.support.v7.widget.RecyclerView>
+                android:visibility="visible">
+
+            </android.support.v7.widget.RecyclerView>
+
             <!-- Popular People -->
             <LinearLayout
                 android:id="@+id/popularUsersLinLayout"

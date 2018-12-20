@@ -130,6 +130,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //Video URI
     private Uri videoUri;
 
+    private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = false;
     FirebaseUser currentFirebaseUser;
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -145,10 +148,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private Long VideoViewCount;
     PlayerControlView controlView;
 
-
-    private long playbackPosition;
-    private int currentWindow;
-    private boolean playWhenReady = true;
 
     private boolean collapseVariable = true;
     private boolean uploadbyUser = false;
@@ -404,14 +403,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
                                if(contributorTextViews.size()>0) {
 
-                                   //remove extra ,0
-                                   TextView last = contributorTextViews.get(contributorTextViews.size() - 1);
-                                   last.setText(last.getText().toString().substring(0, last.getText().toString().length() - 2));
-                                   contributorTextViews.set(contributorTextViews.size() - 1, last);
+                               //remove extra ,0
+                                TextView last = contributorTextViews.get(contributorTextViews.size()-1);
+                                last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
+                                contributorTextViews.set(contributorTextViews.size()-1,last);
 
-                                   for (TextView tv : contributorTextViews) {
-                                       contributorView.addView(tv);
-                                   }
+                                for(TextView tv : contributorTextViews){
+                                    contributorView.addView(tv);
+                                }
                                }
 
 
@@ -424,7 +423,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        TextViewDate.setText(df.format(vid.getTimestamp()));
+        TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
 
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
@@ -433,12 +432,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onCallback(ArrayList value) {
                if(value.size() > 0) {
-                   Log.e(TAG, "player before inside callback "+value);
+                  // Log.e(TAG, "player before inside callback "+value);
                    checkuploaded();
                 }
-             Log.e(TAG, "player before before if  "+uploadbyUser);
                 if (Integer.parseInt(currentCreditVal) > 0) {
-                    Log.e(TAG, "player before inside if ");
+                    //Log.e(TAG, "player before inside if ");
                    // Log.e(TAG, "player before initializePlayer success ");
                     initializePlayer();
                 }

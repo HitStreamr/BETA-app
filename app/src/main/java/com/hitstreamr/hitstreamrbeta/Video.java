@@ -3,6 +3,8 @@ package com.hitstreamr.hitstreamrbeta;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.Timestamp;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -19,7 +21,7 @@ public class Video implements Parcelable {
     private String duration;
     private int pubYear;
     private String videoId;
-    private Date timestamp;
+    private Timestamp timestamp;
     private long views;
 
     private ArrayList<Contributor> contributors;
@@ -30,7 +32,7 @@ public class Video implements Parcelable {
     }
 
     public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String duration,
-                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Date timestamps,
+                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Timestamp timestamp,
                  long views) {
         this.title = title;
         this.description = description;
@@ -45,7 +47,7 @@ public class Video implements Parcelable {
         this.pubYear = pubYear;
         this.duration = duration;
         this.videoId = videoId;
-        this.timestamp=timestamps;
+        this.timestamp=timestamp;
         this.views = views;
     }
 
@@ -154,11 +156,11 @@ public class Video implements Parcelable {
         this.duration = duration;
     }
 
-    public Date getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -172,7 +174,7 @@ public class Video implements Parcelable {
 
     @Override
     public String toString() {
-        return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + " " +userId + " " + username;
+        return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + thumbnailUrl + " " +userId + " " + username;
 
     }
     protected Video(Parcel in) {
@@ -189,7 +191,7 @@ public class Video implements Parcelable {
         videoId = in.readString();
         duration = in.readString();
         long tmpDate = in.readLong();
-        timestamp = tmpDate == Long.MIN_VALUE ? null : new Date(tmpDate);
+        timestamp = tmpDate == Long.MIN_VALUE ? null : new Timestamp(new Date(tmpDate));
         views = in.readLong();
         if (in.readByte() == 0x01) {
             contributors = new ArrayList<Contributor>();
@@ -218,7 +220,7 @@ public class Video implements Parcelable {
         dest.writeInt(pubYear);
         dest.writeString(videoId);
         dest.writeString(duration);
-        dest.writeLong(timestamp != null ? timestamp.getTime() : Long.MIN_VALUE);
+        dest.writeLong(timestamp != null ? timestamp.toDate().getTime() : Long.MIN_VALUE);
         dest.writeLong(views);
         if (contributors == null) {
             dest.writeByte((byte) (0x00));
