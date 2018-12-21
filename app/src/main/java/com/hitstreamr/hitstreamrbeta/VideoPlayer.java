@@ -414,7 +414,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        TextViewDate.setText(df.format(vid.getTimestamp()));
+        TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
 
     }

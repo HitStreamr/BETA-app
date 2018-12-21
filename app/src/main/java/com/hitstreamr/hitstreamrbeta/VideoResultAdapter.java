@@ -73,7 +73,7 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onOverflowClick(vids.get(position), holder.moreMenu);
+                mListener.onOverflowClick(vids.get(position), holder.overflowMenu);
             }
         });
 
@@ -119,7 +119,6 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
         TextView videoViews;
         TextView videoYear;
         TextView videoTime;
-        ImageView moreMenu;
         LinearLayout mainSection;
         ImageView overflowMenu;
         MainActivity.ItemClickListener mListener;
@@ -132,7 +131,6 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
             videoViews = itemView.findViewById(R.id.videoViews);
             videoYear = itemView.findViewById(R.id.videoYear);
             videoTime = itemView.findViewById(R.id.videoTime);
-            moreMenu = itemView.findViewById(R.id.moreMenu);
             mainSection = itemView.findViewById(R.id.mainBody);
             overflowMenu = itemView.findViewById(R.id.moreMenu);
             this.mListener = mListener;

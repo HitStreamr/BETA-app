@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private String creditValue;
 
-    private static boolean hasRun = false;
+    //private static boolean hasRun = false;
 
     /**
      * Set up and initialize layouts and variables
@@ -180,12 +180,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         db = FirebaseFirestore.getInstance();
-        if(!hasRun){
+
+        //check if settings have already been changed
+        if(!db.getFirestoreSettings().areTimestampsInSnapshotsEnabled()){
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setTimestampsInSnapshotsEnabled(true)
                     .build();
             db.setFirestoreSettings(settings);
-            hasRun = true;
         }
 
         noRes = findViewById(R.id.emptyView);
@@ -207,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
-                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
+                //videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
             }
 
@@ -921,19 +922,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(acct);
-                break;
+                return true;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(prof);
-                break;
+                return true;
             case R.id.fave_result:
-                break;
+                return true;
             case R.id.addLibrary_result:
-                break;
+                return true;
+
 
         }
-        return true;
+        return false;
     }
 
     /**
@@ -1259,8 +1261,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public interface ItemClickListener {
         void onSuggestionClick(String title);
-        void onResultClick(Video title);
-        void onOverflowClick(Video title, View v);
+        void onResultClick(Video video);
+        void onOverflowClick(Video video, View v);
     }
 
     /**
@@ -1378,6 +1380,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
+                //bundle.putString("CREDITS",userCredits.getText().toString());
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
