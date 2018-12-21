@@ -2,11 +2,11 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +18,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,8 +26,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -119,21 +115,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
     private void setUpRecyclerView() {
-        Log.e(TAG, "Entered recycler view" + WatchLaterList.get(0));
-        /*bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    if (WatchLaterList.contains(document.getId())) {
-                        //Log.e(TAG, "entered    :::" + document.getId() + document.getData());
-                        Watch.add(document.toObject(Video.class));
-                    }
-                }
-                //Log.e(TAG, "objects :::" + Watch);
-                call();
-            }
-        });*/
-
         call();
     }
 
@@ -263,8 +244,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                                 }
                                 p.setPlayVideos(a);
                             }
-                            Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos());
-                            Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlaylistname() + " " + Play.get(1).getPlayVideos());
                         }
                         setUpPlaylistRecyclerView();
                     }

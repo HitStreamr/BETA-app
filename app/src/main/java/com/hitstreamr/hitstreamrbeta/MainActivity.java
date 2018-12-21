@@ -1380,6 +1380,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
+                bundle.putString("USER_ID",user.getUid() );
                 //bundle.putString("CREDITS",userCredits.getText().toString());
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);

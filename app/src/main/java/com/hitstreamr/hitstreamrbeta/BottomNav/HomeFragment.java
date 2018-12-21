@@ -14,12 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -50,6 +53,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private final int FEATURED_LOAD = 5;
     RequestManager glideRequests;
     String userCredits;
+    String userID;
     String type;
 
 
@@ -73,6 +77,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         if (bundle != null){
             //userCredits = bundle.getString("CREDITS", "0");
             type = bundle.getString("TYPE", "basic");
+            userID = bundle.getString("USER_ID");
         }
 
         featuredVideos = new ArrayList<>();
@@ -148,6 +153,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     }
 
     public void showOverflow(View v) {
+        //change to menu popup
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setOnMenuItemClickListener(this);
         popupMenu.inflate(R.menu.video_overflow_menu);
@@ -173,6 +179,27 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 return true;
         }
         return false;
+    }
+
+    private void registerWatchLater(Video vid) {
+        FirebaseDatabase.getInstance()
+                .getReference("WatchLater")
+                .child(userID)
+                .child(vid.getVideoId())
+                .setValue(vid)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Log.e(TAG, "Video is added to Watch Later ");
+                        finishedWatchLater();
+                    }
+                });
+    }
+
+    private void finishedWatchLater() {
+        Toast.makeText(getContext(), "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
+
     }
 
 }
