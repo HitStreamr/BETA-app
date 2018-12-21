@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta.Dashboard;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,7 +15,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.hitstreamr.hitstreamrbeta.R;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -40,6 +46,20 @@ public class Dashboard extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        // Set toolbar profile picture to always be the current user
+        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -52,16 +72,6 @@ public class Dashboard extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
     }
 
 
@@ -87,7 +97,15 @@ public class Dashboard extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    /**
+     * Handles toolbar's back button.
+     * @return true if pressed
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -116,10 +134,9 @@ public class Dashboard extends AppCompatActivity {
                     Subscribers tab4 = new Subscribers();
                     return tab4;
 
-                    default:
-                        return null;
+                default:
+                    return null;
             }
-
         }
 
         @Override

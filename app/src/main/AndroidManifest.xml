@@ -72,9 +72,6 @@
         <activity android:name=".BillingManager" />
         <activity android:name=".NewReleases" />
         <activity android:name=".TrendingVideos" />
-        <activity android:name=".CreateNewPlaylist" />
-        <activity android:name=".Library" />
-        <activity android:name=".CreditsPurchase" />
 
         <service android:name=".HitStreamrFirebaseMessagingService">
             <intent-filter>

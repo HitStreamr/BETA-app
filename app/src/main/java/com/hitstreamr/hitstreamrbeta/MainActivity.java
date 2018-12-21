@@ -65,7 +65,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
+import com.hitstreamr.hitstreamrbeta.Dashboard.Dashboard;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
@@ -1294,13 +1294,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.dashboard:
-                sideNavSetup();
-                bundle = new Bundle();
-                bundle.putString("TYPE", type);
-                DashboardFragment dashFrag = new DashboardFragment();
-                dashFrag.setArguments(bundle);
-                viewFragment(dashFrag,FRAG_OTHER);
-                drawer.closeDrawer(GravityCompat.START);
+                Intent dashIntent = new Intent(getApplicationContext(), Dashboard.class);
+                dashIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(dashIntent);
                 return true;
 
             case R.id.general_setting:

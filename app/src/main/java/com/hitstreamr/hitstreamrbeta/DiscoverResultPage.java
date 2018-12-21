@@ -51,7 +51,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class DiscoverResultPage extends AppCompatActivity {
 
     private FirestoreRecyclerAdapter<Video, DiscoverResultHolder> firestoreRecyclerAdapter_videos;
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistsToWatchHolder> firebaseRecyclerAdapter_artists;
     private String accountType;
 
     @Override
@@ -208,7 +207,8 @@ public class DiscoverResultPage extends AppCompatActivity {
                 holder.videoDuration.setText(model.getDuration());
 
                 // TODO adjust view/views + use K/M
-                holder.videoViews.setText(model.getViews() + " views");
+                String videoViews = model.getViews() + " views";
+                holder.videoViews.setText(videoViews);
 
                 // Set the video thumbnail
                 String URI = model.getThumbnailUrl();
@@ -367,20 +367,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             videoCard = view.findViewById(R.id.videoCard);
             videoViews = view.findViewById(R.id.videoViews);
             videoMenu = view.findViewById(R.id.moreMenu);
-        }
-    }
-
-    /**
-     * Artists To Watch Holder - Inner Class
-     */
-    public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
-
-        public TextView username;
-
-        public ArtistsToWatchHolder(View view) {
-            super(view);
-
-            username = view.findViewById(R.id.user_name);
         }
     }
 
