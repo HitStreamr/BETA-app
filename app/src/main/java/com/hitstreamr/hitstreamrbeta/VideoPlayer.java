@@ -3,6 +3,7 @@ package com.hitstreamr.hitstreamrbeta;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
@@ -116,6 +117,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView unfollow;
     private RelativeLayout MediaControlLayout;
 
+    private RelativeLayout MediaContolLayout;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -614,6 +616,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         // Checking the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
+            fullscreenExapndBtn.setVisibility(View.GONE);
+            fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+            hideSystemUi();
+
             hideFullLayout.setVisibility(View.GONE);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
@@ -623,6 +630,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             params.height = params.MATCH_PARENT;
             playerView.setLayoutParams(params);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            fullscreenExapndBtn.setVisibility(View.VISIBLE);
+            fullscreenShrinkBtn.setVisibility(View.GONE);
+
+            hideSystemUi();
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
             Log.e(TAG, "POTRAIT" + params.height);
@@ -641,7 +652,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
         fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
         fullscreenShrinkBtn.setVisibility(View.GONE);
-        MediaControlLayout = controlView.findViewById(R.id.playerControlLayout);
+        MediaContolLayout = controlView.findViewById(R.id.playerControlLayout);
 
         fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -660,8 +671,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
     private void closeFullscreenDialog() {
+
         fullscreenExapndBtn.setVisibility(View.VISIBLE);
         fullscreenShrinkBtn.setVisibility(View.GONE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                 playerView.getLayoutParams();
         Log.e(TAG, "POTRAIT" + params.height);
@@ -677,6 +690,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         fullscreenExapndBtn.setVisibility(View.GONE);
         fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+        hideSystemUi();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
 
         hideFullLayout.setVisibility(View.GONE);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
@@ -908,8 +925,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 .getReference("WatchLater")
                 .child(currentFirebaseUser.getUid())
                 .child(vid.getVideoId())
-                .child("VideoId")
-                .setValue(vid.getVideoId())
+                .setValue(vid)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -1197,7 +1213,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (view == addToPlaylistBtn) {
             Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
             Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
-            playListAct.putExtra("VideoId", vid.getVideoId());
+            playListAct.putExtra("VIDEO", vid);
+            //playListAct.putExtra("VideoId", vid.getVideoId());
             startActivity(playListAct);
         }
     }
