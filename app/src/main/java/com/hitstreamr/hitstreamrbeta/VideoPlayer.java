@@ -121,6 +121,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView follow;
     private TextView unfollow;
     private RelativeLayout MediaControlLayout;
+    private TextView showMore;
 
 
     //CircleImageView
@@ -132,7 +133,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private long playbackPosition;
     private int currentWindow;
-    private boolean playWhenReady = false;
+    private boolean playWhenReady = true;
     FirebaseUser currentFirebaseUser;
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -297,6 +298,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewRepostCount = findViewById(R.id.repostCount);
         TextViewDate = findViewById(R.id.publishDate);
         TextViewViewCount = findViewById(R.id.TextViewViewCount);
+        showMore = findViewById(R.id.showMoreLess);
 
         TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
@@ -1432,11 +1434,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 //TextViewVideoDescription.setVisibility(View.GONE);
                 DescLayout.setVisibility(View.GONE);
                 collapseDecriptionBtn.setBackground(getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+                showMore.setText("Show more");
                 collapseVariable = true;
             } else if (collapseVariable) {
                 //TextViewVideoDescription.setVisibility(View.VISIBLE);
                 collapseDecriptionBtn.setBackground(getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
                 DescLayout.setVisibility(View.VISIBLE);
+                showMore.setText("Show less");
                 collapseVariable = false;
             }
         }

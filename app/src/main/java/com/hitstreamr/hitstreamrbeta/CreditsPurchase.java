@@ -49,9 +49,11 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
+
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-        getWindow().setLayout((int) (width), (int) (height * .8));
+
+        getWindow().setLayout((int) (width * .8), (int) (height * .8));
 
         creditsAmount = findViewById(R.id.credits_amount);
 

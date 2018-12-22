@@ -96,10 +96,13 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="featured_videos">FEATURED VIDEOS</string>
+    <string name="featured_videos">FEATURED</string>
     <string name="more">MORE</string>
     <string name="fresh_releases">FRESH RELEASES</string>
     <string name="trending_now">TRENDING NOW</string>
     <string name="artists_to_watch">ARTISTS TO WATCH</string>
     <string name="popular_people">POPULAR PEOPLE</string>
+    <string name="watch_again">WATCH AGAIN</string>
+    <string name="get_verified">Get Verified</string>
+    <string name="feedback">Feedback</string>
 </resources>

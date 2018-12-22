@@ -39,7 +39,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
     @Override
     public TrendingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.watch_later_results, parent, false);
+                .inflate(R.layout.thumbnail_categoried_video, parent, false);
 
         return new TrendingHolder(itemView);
     }
@@ -53,9 +53,10 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TrendingHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.scrollingTitle);
-            author = itemView.findViewById(R.id.watchLaterAuthor);
-            thumbnail = itemView.findViewById(R.id.watchLaterThumbnail);
-            duration = itemView.findViewById(R.id.watchLaterDuration);
+            title.setSelected(true);
+            author = itemView.findViewById(R.id.videoUsername);
+            thumbnail = itemView.findViewById(R.id.videoThumbnail);
+            duration = itemView.findViewById(R.id.duration);
         }
     }
 }

@@ -24,7 +24,7 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:id="@+id/discovertext"
-            android:shadowColor="@color/drkgryAccent"
+            android:shadowColor="@color/litgryAccentOverlay"
             android:shadowDx="4"
             android:shadowDy="4"
             android:shadowRadius="4"

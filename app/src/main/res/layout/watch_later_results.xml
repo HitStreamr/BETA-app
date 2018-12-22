@@ -28,6 +28,7 @@
                     android:id="@+id/watchLaterThumbnail"
                     android:layout_width="180dp"
                     android:layout_height="110dp"
+                    android:scaleType="centerCrop"
                     android:background="@drawable/round_outline"
                     android:outlineProvider="background" />
 

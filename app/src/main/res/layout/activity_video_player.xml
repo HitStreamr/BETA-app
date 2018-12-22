@@ -38,33 +38,33 @@
                     android:id="@+id/Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
                     android:layout_marginTop="5dp"
-                    android:text="Video Title Here"
-                    android:textColor="@android:color/black"
-                    android:textSize="16dp"
-                    android:textStyle="bold"
-
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
-                    android:singleLine="true" />
+
+                    android:singleLine="true"
+                    android:text="Video Title Here"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/Artist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="Artist name Here" />
+                    android:text="Artist name Here"
+                    android:textAlignment="center" />
 
                 <View
                     android:id="@+id/divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/litgryAccent"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@color/litgryAccent" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -83,12 +83,22 @@
                         android:id="@+id/artistNameBold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Artist Username"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="5dp"
+                        android:text="Username"
                         android:textColor="@android:color/black"
                         android:textSize="16dp"
-                        android:textStyle="bold"
-                        android:layout_marginStart="5dp"
-                        android:layout_gravity="center_vertical"/>
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/verified"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_verified_check_circle"
+                        android:tint="@android:color/holo_blue_bright"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="3dp"
+                        android:visibility="visible"/>
 
                     <LinearLayout
                         android:layout_width="fill_parent"
@@ -122,8 +132,8 @@
                     android:id="@+id/divider2"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/litgryAccent"
-                    android:layout_marginTop="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:background="@color/litgryAccent" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -198,16 +208,16 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:gravity="center_horizontal">
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
                             <ImageButton
                                 android:id="@+id/fave"
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/ic_favorite_black_24dp"
-                                android:backgroundTint="@color/drkgryAccent"/>
+                                android:background="@drawable/ic_fave"
+                                android:backgroundTint="@color/drkgryAccent" />
 
                             <TextView
                                 android:id="@+id/videoLikes"
@@ -221,9 +231,9 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
+                            android:layout_marginStart="20dp"
                             android:gravity="center_horizontal"
-                            android:layout_marginStart="20dp">
+                            android:orientation="vertical">
 
                             <ImageButton
                                 android:id="@+id/rePostVideo"
@@ -231,7 +241,7 @@
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
                                 android:background="@drawable/ic_repost_black_24dp"
-                                android:backgroundTint="@color/drkgryAccent"/>
+                                android:backgroundTint="@color/drkgryAccent" />
 
                             <TextView
                                 android:id="@+id/repostCount"
@@ -245,27 +255,27 @@
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
                             android:layout_marginStart="20dp"
-                            android:gravity="center_horizontal">
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
                             <ImageButton
                                 android:id="@+id/addToPlaylist"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_gravity="center_vertical"
+                                android:background="@android:color/transparent"
                                 android:src="@drawable/ic_playlist_add_black_24dp"
-                                android:tint="@color/drkgryAccent"
-                                android:background="@android:color/transparent"/>
+                                android:tint="@color/drkgryAccent" />
 
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
                             android:layout_marginStart="15dp"
-                            android:gravity="center_horizontal">
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
 
                             <ImageView
                                 android:id="@+id/moreOptions"
@@ -285,8 +295,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone"
-                    android:padding="10dp">
+                    android:padding="10dp"
+                    android:visibility="gone">
 
                     <TextView
                         android:id="@+id/videoDescription"
@@ -299,8 +309,8 @@
                         android:id="@+id/descriptionDivider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginEnd="10dp"
                         android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
                         android:background="@color/litgryAccent" />
 
                     <TextView
@@ -314,83 +324,93 @@
                         android:id="@+id/contributorLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        />
+                        android:orientation="horizontal" />
 
 
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/showMoreLess"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="more"
+                    android:textSize="10dp"
+                    android:textAlignment="center"/>
 
                 <Button
                     android:id="@+id/collapseDescription"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_gravity="center_horizontal"
-                    android:background="@drawable/ic_keyboard_arrow_up_black_24dp"
+                    android:background="@drawable/ic_keyboard_arrow_down_black_24dp"
                     android:backgroundTint="@color/drkgryAccent" />
 
-                    <View
-                        android:id="@+id/descriptionDivider2"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/litgryAccent" />
+                <View
+                    android:id="@+id/descriptionDivider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/litgryAccent" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/recent_username"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:text="Username"
+                            android:textStyle="bold" />
 
-                            <TextView
-                                android:id="@+id/recent_username"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Username"
-                                android:textStyle="bold" />
-                            <TextView
-                                android:id="@+id/recent_comment"
-                                android:layout_width="fill_parent"
-                                android:layout_height="wrap_content"
-                                android:text="User Comment..."
-                                android:layout_marginStart="5dp"
-                                android:singleLine="true" />
-
-                        </LinearLayout>
-
-                        <!-- COMMENTS -->
-                        <LinearLayout
-                            android:id="@+id/viewAllComments_layout"
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:id="@+id/recent_comment"
+                            android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingStart="15dp"
-                            android:layout_marginTop="3dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="View all Comments ("
-                                android:textSize="10sp"
-                                android:onClick="viewAllComments"/>
-                            <TextView
-                                android:id="@+id/allComments_count"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0"
-                                android:textSize="10sp"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=")"
-                                android:textSize="10sp"
-                                android:onClick="viewAllComments"/>
-
-                        </LinearLayout>
+                            android:layout_marginStart="5dp"
+                            android:singleLine="true"
+                            android:text="User Comment..." />
 
                     </LinearLayout>
+
+                    <!-- COMMENTS -->
+                    <LinearLayout
+                        android:id="@+id/viewAllComments_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp"
+                        android:orientation="horizontal"
+                        android:paddingStart="15dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="viewAllComments"
+                            android:text="View all Comments ("
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:id="@+id/allComments_count"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="10sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="viewAllComments"
+                            android:text=")"
+                            android:textSize="10sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
 
                 <View
@@ -402,27 +422,27 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="10dp"
-                    android:gravity="center_vertical">
+                    android:padding="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="RELATED VIDEOS"
-                        android:textStyle="bold"
-                        android:textColor="@color/drkgryAccent"/>
+                        android:textColor="@color/drkgryAccent"
+                        android:textStyle="bold" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="end">
+                        android:gravity="end"
+                        android:orientation="horizontal">
 
                         <Switch
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Autoplay"/>
+                            android:text="Autoplay" />
 
                     </LinearLayout>
 

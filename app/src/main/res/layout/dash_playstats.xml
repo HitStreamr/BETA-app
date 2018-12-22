@@ -48,6 +48,7 @@
             android:layout_marginTop="25dp"/>
 
         <TextView
+            android:id="@+id/weekly_total_views"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
