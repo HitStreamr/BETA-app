@@ -1316,6 +1316,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(dashIntent);
                 return true;
 
+            case R.id.getVerified:
+                Intent verifiedIntent = new Intent(getApplicationContext(), GetVerifiedPopUp.class);
+                verifiedIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(verifiedIntent);
+                return true;
+
             case R.id.general_setting:
                 sideNavSetup();
                 bundle = new Bundle();

@@ -1,5 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -47,6 +49,7 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
 
         //Listners
         reportBtn.setOnClickListener(this);
+        cancelBtn.setOnClickListener(this);
 
 
 
@@ -54,6 +57,8 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
@@ -118,6 +123,9 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
         if (view == reportBtn) {
             //Log.e(TAG, "report video is clicked" + idx +selectedtext);
             registerReportVideo();
+        }
+        if (view == cancelBtn) {
+            finish();
         }
     }
 

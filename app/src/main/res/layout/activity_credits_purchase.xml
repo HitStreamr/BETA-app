@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="@drawable/round_outline_wht"
     android:outlineProvider="background"
-    android:gravity="center"
-    android:elevation="4dp"
+    android:layout_gravity="center"
+    android:elevation="10dp"
     >
 
     <LinearLayout
@@ -24,12 +24,19 @@
             android:text="ADD CREDITS"
             android:textSize="20sp"
             android:textColor="@android:color/black" />
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="Use the scroll bar to select the amount of credits you wish to purchase."
+             />
 
         <com.warkiz.widget.IndicatorSeekBar
             android:id="@+id/seekBar_credits"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="80dp"
             app:isb_seek_smoothly="true" />
 
         <TextView
@@ -46,8 +53,7 @@
             android:orientation="horizontal"
             android:gravity="center_horizontal"
             android:layout_marginTop="60dp"
-            android:layout_marginBottom="5dp"
-            android:paddingBottom="10dp">
+            android:layout_marginBottom="5dp">
 
             <Button
                 android:id="@+id/cancel_credits_button"
@@ -55,7 +61,7 @@
                 android:layout_height="40dp"
                 android:layout_marginEnd="60dp"
                 android:text="Cancel"
-                android:background="@drawable/button2"
+                android:background="@android:color/transparent"
                 android:textColor="@color/colorPrimary"
                 android:onClick="cancelPurchase"/>
 
@@ -64,7 +70,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Confirm"
-                android:background="@drawable/button2"
+                android:background="@android:color/transparent"
                 android:textColor="@color/colorPrimary"
                 android:onClick="confirmPurchase"/>
         </LinearLayout>

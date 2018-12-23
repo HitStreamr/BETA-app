@@ -159,7 +159,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"
-                    android:text="00"
+                    android:text="0"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="10dp"/>
+
+                <ImageView
+                    android:id="@+id/faveThumbnail"
+                    android:layout_width="12sp"
+                    android:layout_height="12sp"
+                    android:src="@drawable/ic_fave"
+                    android:tint="@color/drkgryAccent" />
+
+                <TextView
+                    android:id="@+id/faveAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="0"
+                    android:textSize="12sp"
+                    android:layout_marginEnd="10dp"/>
+                <ImageView
+                    android:id="@+id/repostThumbnail"
+                    android:layout_width="12sp"
+                    android:layout_height="12sp"
+                    android:src="@drawable/ic_repost_black_24dp"
+                    android:tint="@color/drkgryAccent" />
+
+                <TextView
+                    android:id="@+id/repostAmount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:text="0"
                     android:textSize="12sp" />
 
             </LinearLayout>

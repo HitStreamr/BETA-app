@@ -64,14 +64,19 @@
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
-        <activity android:name=".ReportVideoPopup" />
-        <activity android:name=".Comments" />
-        <activity android:name=".AddToPlaylsit" />
+        <activity android:name=".ReportVideoPopup"
+            android:theme="@style/AppTheme.PopUpMenu"/>
+        <activity android:name=".CommentPage" />
+        <activity android:name=".AddToPlaylsit"
+            android:theme="@style/AppTheme.PopUpMenu"/>
         <activity android:name=".Library" />
-        <activity android:name=".CreateNewPlaylist" />
+        <activity android:name=".CreateNewPlaylist"
+            android:theme="@style/AppTheme.PopUpMenu"/>
         <activity android:name=".CreditsPurchase" />
         <activity android:name=".BillingManager" />
         <activity android:name=".TrendingVideos" />
+        <activity android:name=".GetVerifiedPopUp"
+            android:theme="@style/AppTheme.PopUpMenu"/>
 
 
         <service android:name=".HitStreamrFirebaseMessagingService">
