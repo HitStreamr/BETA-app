@@ -5,8 +5,7 @@ import java.util.ArrayList;
 public class User {
     private String username, email, userID;
     private ArrayList<String> genres;
-    public User() {
-    }
+    public User() { }
 
     public User(String username, String email, String userID) {
         this.username = username;

@@ -478,6 +478,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 });
     }
 
+
+
+
+
     private void cancelFollowers() {
         FirebaseDatabase.getInstance()
                 .getReference("following")

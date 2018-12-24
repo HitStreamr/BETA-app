@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,6 +17,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
+                android:id="@+id/postThumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="@drawable/round_outline"
@@ -29,6 +31,7 @@
                 android:src="@mipmap/ic_launcher" />
 
             <TextView
+                android:id="@+id/postArtist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/scrollingTitle"
@@ -39,6 +42,7 @@
                 android:textSize="10sp" />
 
             <TextView
+                android:id="@+id/postTitle"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/scrollingTitle"
@@ -66,6 +70,7 @@
                 android:backgroundTint="@color/colorAccent" />
 
             <TextView
+                android:id="@+id/postDuration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -95,6 +100,7 @@
                 android:textSize="12sp" />
 
             <TextView
+                android:id="@+id/postPublished"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"
@@ -113,6 +119,7 @@
                     android:tint="@color/drkgryAccent" />
 
                 <TextView
+                    android:id="@+id/postViews"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="3dp"

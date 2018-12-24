@@ -255,7 +255,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -373,7 +373,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             Log.e(TAG, "register Artist no validation" + type);
             return;
         }
-        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
