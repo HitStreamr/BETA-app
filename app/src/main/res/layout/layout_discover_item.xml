@@ -1,32 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/discover_layout"
-    >
+    android:padding="10dp">
 
-        <ImageView
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:id="@+id/discoverimage"
-            android:src="@drawable/gradient1"
-            android:scaleType="centerCrop"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="149dp"
-            android:text="New Releases"
-            android:textColor="@color/colorAccent"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:id="@+id/discovertext"
-            android:shadowColor="@color/litgryAccentOverlay"
-            android:shadowDx="4"
-            android:shadowDy="4"
-            android:shadowRadius="4"
-            />
+            android:padding="10dp"
+            app:cardCornerRadius="10dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:id="@+id/discoverimage"
+                    android:scaleType="centerCrop"
+                    />
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:id="@+id/discoverimageOverlay"
+                    android:background="@color/litgryAccentOverlay"
+                    android:scaleType="centerCrop"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="149dp"
+                    android:text="New Releases"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:id="@+id/discovertext"
+                    android:shadowColor="@color/litgryAccentOverlay"
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="4"
+                    />
+        </android.support.v7.widget.CardView>
+
+
+
+
 </RelativeLayout>

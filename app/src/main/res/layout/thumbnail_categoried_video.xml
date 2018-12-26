@@ -59,6 +59,11 @@
                     android:layout_marginStart="11dp"
                     android:layout_marginTop="35dp"
 
+                    android:shadowDx="4"
+                    android:shadowDy="4"
+                    android:shadowRadius="4"
+                    android:shadowColor="@android:color/black"
+
 
                     android:ellipsize="marquee"
                     android:focusable="true"

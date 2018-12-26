@@ -39,7 +39,7 @@ public class GetVerifiedPopUp extends Activity implements View.OnClickListener {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int) (width * .8), (int) (height * .7));
+        getWindow().setLayout((int) (width * .8), (int) (height * .8));
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 

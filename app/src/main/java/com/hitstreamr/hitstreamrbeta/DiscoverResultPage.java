@@ -2,14 +2,15 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -35,6 +39,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
@@ -46,7 +51,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class DiscoverResultPage extends AppCompatActivity {
 
     private FirestoreRecyclerAdapter<Video, DiscoverResultHolder> firestoreRecyclerAdapter_videos;
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistsToWatchHolder> firebaseRecyclerAdapter_artists;
     private String accountType;
 
     @Override
@@ -153,10 +157,10 @@ public class DiscoverResultPage extends AppCompatActivity {
             category = "R&B/Soul";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
-        } else if (category.equals("World Music/beats")) {
-            category = "World Music/Beats";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+//        } else if (category.equals("World Music/beats")) {
+//            category = "World Music/Beats";
+//            getSupportActionBar().setTitle(category);
+//            query = query.whereEqualTo("genre", category);
         } else if (category.equals("Indie/rock")) {
             category = "Indie/Rock";
             getSupportActionBar().setTitle(category);
@@ -203,7 +207,8 @@ public class DiscoverResultPage extends AppCompatActivity {
                 holder.videoDuration.setText(model.getDuration());
 
                 // TODO adjust view/views + use K/M
-                holder.videoViews.setText(model.getViews() + " views");
+                String videoViews = model.getViews() + " views";
+                holder.videoViews.setText(videoViews);
 
                 // Set the video thumbnail
                 String URI = model.getThumbnailUrl();
@@ -269,7 +274,7 @@ public class DiscoverResultPage extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("ArtistsNumbers").orderBy("likes", Query.Direction.DESCENDING)
+        firebaseFirestore.collection("ArtistsLikes").orderBy("likes", Query.Direction.DESCENDING)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -282,7 +287,8 @@ public class DiscoverResultPage extends AppCompatActivity {
 
                 // Query to Firebase
                 List<ArtistUser> artistList = new ArrayList<>(artistFireStoreList.size());
-                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList);
+                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList,
+                        getApplicationContext(), getIntent());
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
                 databaseReference.addChildEventListener(new ChildEventListener() {
@@ -361,20 +367,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             videoCard = view.findViewById(R.id.videoCard);
             videoViews = view.findViewById(R.id.videoViews);
             videoMenu = view.findViewById(R.id.moreMenu);
-        }
-    }
-
-    /**
-     * Artists To Watch Holder - Inner Class
-     */
-    public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
-
-        public TextView username;
-
-        public ArtistsToWatchHolder(View view) {
-            super(view);
-
-            username = view.findViewById(R.id.user_name);
         }
     }
 

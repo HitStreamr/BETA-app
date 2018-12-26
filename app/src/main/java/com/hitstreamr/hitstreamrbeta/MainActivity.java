@@ -45,6 +45,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -161,7 +162,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        getSupportActionBar().setTitle("BETA");
+        getSupportActionBar().setTitle("Beta");
+        getSupportActionBar().setSubtitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);

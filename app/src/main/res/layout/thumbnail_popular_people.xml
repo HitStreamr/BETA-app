@@ -49,6 +49,8 @@
 
         </LinearLayout>
 
+
+
         <Button
             android:id="@+id/watchArtistButton"
             android:layout_width="wrap_content"
@@ -58,5 +60,14 @@
             android:textColor="@color/colorAccent"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/verified"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/ic_verified_check_circle"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="68dp"/>
 
 </RelativeLayout>
