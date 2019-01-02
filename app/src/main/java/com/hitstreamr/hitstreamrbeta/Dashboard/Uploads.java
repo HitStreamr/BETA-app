@@ -32,8 +32,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
+import com.hitstreamr.hitstreamrbeta.VideoDelete;
+import com.hitstreamr.hitstreamrbeta.VideoEdit;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 import com.hitstreamr.hitstreamrbeta.VideoUploadActivity;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class Uploads extends Fragment{
 
@@ -137,7 +141,17 @@ public class Uploads extends Fragment{
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
                                 switch (menuItem.getItemId()) {
-                                    // TODO: implement the video popup menu
+                                    // TODO: finish implementing the video popup menu
+                                    case R.id.editVideo:
+                                        Intent editVid = new Intent(getApplicationContext(), VideoEdit.class);
+                                        //editVid.putExtra("VideoId", vid.getVideoId());
+                                        startActivity(editVid);
+                                        break;
+
+                                    case R.id.deleteVideo:
+                                        Intent deleteVid = new Intent(getApplicationContext(), VideoDelete.class);
+                                        startActivity(deleteVid);
+                                        break;
                                 }
                                 return false;
                             }
