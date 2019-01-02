@@ -104,7 +104,9 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
         public newUploadHolder(View itemView, final HomeFragment.ItemClickListener mListener) {
             super(itemView);
             videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
+            videoThumbnail.setSelected(true);
             videoTitle = itemView.findViewById(R.id.scrollingTitle);
+            videoTitle.setSelected(true);
             videoUsername = itemView.findViewById(R.id.videoUsername);
             videoViews = itemView.findViewById(R.id.videoViews);
             videoYear = itemView.findViewById(R.id.published);

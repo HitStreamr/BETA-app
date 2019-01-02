@@ -210,16 +210,21 @@
                             android:id="@+id/ContributorPercentage"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
-                            android:layout_weight=".10"
+                            android:layout_weight=".15"
                             android:hint=" 0 "
-                            android:inputType="number" />
+                            android:inputType="number"
+                            android:maxLength="2"/>
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight=".10"
                             android:ems="20"
-                            android:text="" />
+                            android:text="%"
+                            android:textSize="20dp"
+                            android:textColor="@android:color/black"
+                            android:gravity="center_vertical"
+                            />
 
                         <Spinner
                             android:id="@+id/ContributorTypeSpinner"
@@ -233,9 +238,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.35"
-                            android:background="@drawable/button1"
-                            android:textColor="@color/colorAccent"
-                            android:text="- Cancel" />
+                            android:background="@android:color/transparent"
+                            android:textColor="@color/colorPrimary"
+                            android:text="Cancel" />
                     </LinearLayout>
 
                     <Button

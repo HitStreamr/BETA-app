@@ -17,7 +17,7 @@
             android:id="@+id/topArtistImage"
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:src="@mipmap/ic_hitstreamr_background"
+            android:src="@color/litgryAccent"
             />
 
         <TextView
@@ -49,7 +49,10 @@
 
         </LinearLayout>
 
+
+
         <Button
+            android:id="@+id/watchArtistButton"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:background="@drawable/button1"
@@ -57,5 +60,14 @@
             android:textColor="@color/colorAccent"/>
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/verified"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/ic_verified_check_circle"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="68dp"/>
 
 </RelativeLayout>

@@ -1,18 +1,16 @@
 package com.hitstreamr.hitstreamrbeta.UserTypes;
 
-import java.util.ArrayList;
-
 public class User {
-    private String username, email, userID;
-    private ArrayList<String> genres;
-    public User() {
-    }
+    private String username, email, userID, fullname, bio;
 
-    public User(String username, String email, String userID) {
+    public User() { }
+
+    public User(String username, String email, String userID, String fullname, String bio) {
         this.username = username;
         this.email = email;
         this.userID = userID;
-        this.genres = new ArrayList<>();
+        this.fullname = fullname;
+        this.bio = bio;
     }
 
     public String getUsername() {
@@ -39,11 +37,19 @@ public class User {
         this.userID = userID;
     }
 
-    public ArrayList<String> getGenres() {
-        return genres;
+    public String getFullname() {
+        return fullname;
     }
 
-    public void setGenres(ArrayList<String> genres) {
-        this.genres = genres;
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }

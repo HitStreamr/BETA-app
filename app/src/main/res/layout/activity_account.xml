@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".Account">
 
-    <include layout="@layout/toolbar"
+    <include layout="@layout/toolbar_account"
         android:id="@+id/toolbar"/>
 
     <ScrollView
@@ -148,7 +148,8 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Bio Here"
-                    android:inputType="textPersonName" />
+                    android:inputType="textMultiLine"
+                    android:maxLength="160"/>
 
             </LinearLayout>
 
@@ -270,6 +271,7 @@
                 android:textColor="@color/colorAccent"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
+                android:visibility="gone"
                 />
 
         </LinearLayout>

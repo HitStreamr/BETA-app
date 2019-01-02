@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -74,6 +75,8 @@ public class AddToPlaylsit extends AppCompatActivity implements View.OnClickList
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;

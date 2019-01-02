@@ -45,6 +45,7 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -65,7 +66,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
-import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.DashboardFragment;
+import com.hitstreamr.hitstreamrbeta.Dashboard.Dash;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
@@ -156,14 +157,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Adding toolbar to the home activity
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
         toolbar.setTitleTextColor(0xFFFFFFFF);
-        //toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        //getSupportActionBar().setTitle("BETA");
-        toolbar.setTitle("HitStreamr");
+        toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
+        getSupportActionBar().setTitle("Beta");
+        getSupportActionBar().setSubtitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
@@ -338,6 +338,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+
+   /* private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+            //type = getIntent().getStringExtra("TYPE");
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
+        Log.e(TAG, "account type selected :"+accountType);
+    }*/
+
     /**
      * A listener for the Add Credits button
      * @param view view
@@ -366,76 +384,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
                 //set up UI for following
-                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
-                    @Override
-                    public void onFollowChecked(boolean following) {
-                        if(following){
-                            //if following == true
-                            holder.followButton.setVisibility(View.GONE);
-                            holder.unfollowButton.setVisibility(View.VISIBLE);
-                        }else{
-                            //if following == false
-                            holder.followButton.setVisibility(View.VISIBLE);
-                            holder.unfollowButton.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onCheckUpdateFailed() {
-
-                    }
-                }, model.getUserID());
-
-                holder.followButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
-                            @Override
-                            public void onFollowChecked(boolean following) {
-                                if(following){
-                                    //if following == true
-                                    holder.followButton.setVisibility(View.GONE);
-                                    holder.unfollowButton.setVisibility(View.VISIBLE);
-                                }
-                            }
-
-                            @Override
-                            public void onCheckUpdateFailed() {
-
-                            }
-                        },model.getUserID());
-                    }
-                });
-
-                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
-                            @Override
-                            public void onFollowChecked(boolean following) {
-                                if(!following){
-                                    //if following == false
-                                    holder.followButton.setVisibility(View.VISIBLE);
-                                    holder.unfollowButton.setVisibility(View.GONE);
-
-                                }
-                            }
-
-                            @Override
-                            public void onCheckUpdateFailed() {
-
-                            }
-                        },model.getUserID());
-                    }
-                });
-
-
-                holder.updateFollowing(new FollowCountUpdateCallback() {
-                    @Override
-                    public void onUpdateCount(long count) {
-                        holder.count.setText(count+" Followers");
-                    }
-                },model.getUserID());
+//                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+//                    @Override
+//                    public void onFollowChecked(boolean following) {
+//                        if(following){
+//                            //if following == true
+//                            holder.followButton.setVisibility(View.GONE);
+//                            holder.unfollowButton.setVisibility(View.VISIBLE);
+//                        }else{
+//                            //if following == false
+//                            holder.followButton.setVisibility(View.VISIBLE);
+//                            holder.unfollowButton.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCheckUpdateFailed() {
+//
+//                    }
+//                }, model.getUserID());
+//
+//                holder.followButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+//                            @Override
+//                            public void onFollowChecked(boolean following) {
+//                                if(following){
+//                                    //if following == true
+//                                    holder.followButton.setVisibility(View.GONE);
+//                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCheckUpdateFailed() {
+//
+//                            }
+//                        },model.getUserID());
+//                    }
+//                });
+//
+//                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+//                            @Override
+//                            public void onFollowChecked(boolean following) {
+//                                if(!following){
+//                                    //if following == false
+//                                    holder.followButton.setVisibility(View.VISIBLE);
+//                                    holder.unfollowButton.setVisibility(View.GONE);
+//
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCheckUpdateFailed() {
+//
+//                            }
+//                        },model.getUserID());
+//                    }
+//                });
+//
+//
+//                holder.updateFollowing(new FollowCountUpdateCallback() {
+//                    @Override
+//                    public void onUpdateCount(long count) {
+//                        holder.count.setText(count+" Followers");
+//                    }
+//                }, model.getUserID());
             }
 
             @NonNull
@@ -454,6 +472,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      * @param querySearch the input typed by the user
      */
     private void searchArtistAccounts(String querySearch) {
+        // Send a query to the database
         FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
         myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
                 .endAt(querySearch + "\uf8ff");
@@ -466,75 +485,75 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setUserName(model.getUsername());
-                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
-                    @Override
-                    public void onFollowChecked(boolean following) {
-                        if(following){
-                            //if following == true
-                            holder.followButton.setVisibility(View.GONE);
-                            holder.unfollowButton.setVisibility(View.VISIBLE);
-                        }else{
-                            //if following == false
-                            holder.followButton.setVisibility(View.VISIBLE);
-                            holder.unfollowButton.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onCheckUpdateFailed() {
-
-                    }
-                }, model.getUserID());
-
-                holder.followButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
-                            @Override
-                            public void onFollowChecked(boolean following) {
-                                if(following){
-                                    //if following == true
-                                    holder.followButton.setVisibility(View.GONE);
-                                    holder.unfollowButton.setVisibility(View.VISIBLE);
-                                }
-                            }
-
-                            @Override
-                            public void onCheckUpdateFailed() {
-
-                            }
-                        },model.getUserID());
-                    }
-                });
-
-                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
-                            @Override
-                            public void onFollowChecked(boolean following) {
-                                if(!following){
-                                    //if following == false
-                                    holder.followButton.setVisibility(View.VISIBLE);
-                                    holder.unfollowButton.setVisibility(View.GONE);
-
-                                }
-                            }
-
-                            @Override
-                            public void onCheckUpdateFailed() {
-
-                            }
-                        },model.getUserID());
-                    }
-                });
-
-                holder.updateFollowing(new FollowCountUpdateCallback() {
-                    @Override
-                    public void onUpdateCount(long count) {
-                        holder.count.setText(count+" Followers");
-                    }
-                },model.getUserID());
+//                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+//                    @Override
+//                    public void onFollowChecked(boolean following) {
+//                        if(following){
+//                            //if following == true
+//                            holder.followButton.setVisibility(View.GONE);
+//                            holder.unfollowButton.setVisibility(View.VISIBLE);
+//                        }else{
+//                            //if following == false
+//                            holder.followButton.setVisibility(View.VISIBLE);
+//                            holder.unfollowButton.setVisibility(View.GONE);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCheckUpdateFailed() {
+//
+//                    }
+//                }, model.getUserID());
+//
+//                holder.followButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+//                            @Override
+//                            public void onFollowChecked(boolean following) {
+//                                if(following){
+//                                    //if following == true
+//                                    holder.followButton.setVisibility(View.GONE);
+//                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCheckUpdateFailed() {
+//
+//                            }
+//                        },model.getUserID());
+//                    }
+//                });
+//
+//                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+//                            @Override
+//                            public void onFollowChecked(boolean following) {
+//                                if(!following){
+//                                    //if following == false
+//                                    holder.followButton.setVisibility(View.VISIBLE);
+//                                    holder.unfollowButton.setVisibility(View.GONE);
+//
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCheckUpdateFailed() {
+//
+//                            }
+//                        },model.getUserID());
+//                    }
+//                });
+//
+//                holder.updateFollowing(new FollowCountUpdateCallback() {
+//                    @Override
+//                    public void onUpdateCount(long count) {
+//                        holder.count.setText(count+" Followers");
+//                    }
+//                },model.getUserID());
 
             }
 
@@ -963,6 +982,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     basicProfile.putExtra("artistUsername", userName);
+                    basicProfile.putExtra("SearchType", "BasicAccounts");
                     startActivity(basicProfile);
                 }
             });
@@ -1108,6 +1128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
                     artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     artistProfile.putExtra("artistUsername", userName);
+                    artistProfile.putExtra("SearchType", "ArtistAccounts");
                     startActivity(artistProfile);
 
                 }
@@ -1292,13 +1313,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.dashboard:
-                sideNavSetup();
-                bundle = new Bundle();
-                bundle.putString("TYPE", type);
-                DashboardFragment dashFrag = new DashboardFragment();
-                dashFrag.setArguments(bundle);
-                viewFragment(dashFrag,FRAG_OTHER);
-                drawer.closeDrawer(GravityCompat.START);
+                Intent dashIntent = new Intent(getApplicationContext(), Dash.class);
+                dashIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(dashIntent);
+                return true;
+
+            case R.id.getVerified:
+                Intent verifiedIntent = new Intent(getApplicationContext(), GetVerifiedPopUp.class);
+                verifiedIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(verifiedIntent);
                 return true;
 
             case R.id.general_setting:
