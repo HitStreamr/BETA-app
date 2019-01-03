@@ -28,7 +28,7 @@
                 android:textSize="14dp"/>
 
             <TextView
-                android:id="@+id/totalBalance"
+                android:id="@+id/playStats_totalViews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14dp"
@@ -48,7 +48,7 @@
             android:layout_marginTop="25dp"/>
 
         <TextView
-            android:id="@+id/weekly_total_views"
+            android:id="@+id/playStats_weeklyViews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
@@ -74,6 +74,7 @@
                 android:text="REPOSTS:"
                 android:textColor="@android:color/black"/>
             <TextView
+                android:id="@+id/playStats_reposts"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
@@ -97,6 +98,7 @@
                 android:text="FAVES:"
                 android:textColor="@android:color/black"/>
             <TextView
+                android:id="@+id/playStats_faves"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
@@ -120,6 +122,7 @@
                 android:text="COMMENTS:"
                 android:textColor="@android:color/black"/>
             <TextView
+                android:id="@+id/playStats_comments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
@@ -143,6 +146,7 @@
                 android:text="FOLLOWS:"
                 android:textColor="@android:color/black"/>
             <TextView
+                android:id="@+id/playStats_follows"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
