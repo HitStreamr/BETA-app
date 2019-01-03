@@ -13,6 +13,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
 public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAdapter.TrendingHolder> {
+    private static final String TAG = "TrendingAdapter";
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -32,6 +33,11 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(model.getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
+        String viewCount = Long.toString(model.getViews());
+        String pubYear = Long.toString(model.getPubYear());
+        holder.viewsCount.setText(viewCount);
+        holder.publishedYear.setText(pubYear);
+
 
     }
 
@@ -39,7 +45,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
     @Override
     public TrendingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.watch_later_results, parent, false);
+                .inflate(R.layout.thumbnail_categoried_video, parent, false);
 
         return new TrendingHolder(itemView);
     }
@@ -49,13 +55,19 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TextView author;
         public ImageView thumbnail;
         public  TextView duration;
+        public  TextView viewsCount;
+        public TextView publishedYear;
+
 
         public TrendingHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.scrollingTitle);
-            author = itemView.findViewById(R.id.watchLaterAuthor);
-            thumbnail = itemView.findViewById(R.id.watchLaterThumbnail);
-            duration = itemView.findViewById(R.id.watchLaterDuration);
+            title.setSelected(true);
+            author = itemView.findViewById(R.id.videoUsername);
+            thumbnail = itemView.findViewById(R.id.videoThumbnail);
+            duration = itemView.findViewById(R.id.duration);
+            viewsCount = itemView.findViewById(R.id.videoViews);
+            publishedYear = itemView.findViewById(R.id.published);
         }
     }
 }

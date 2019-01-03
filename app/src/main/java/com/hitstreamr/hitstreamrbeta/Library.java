@@ -107,7 +107,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
                 startActivity(videoPlayerIntent);
-        }
+            }
 
             @Override
             public void onPlaylistClick(Playlist selectedPlaylist) {

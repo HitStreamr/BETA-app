@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
-
+    tools:showIn="navigation_view"
+    >
 
     <group android:checkableBehavior="single">
 
@@ -27,13 +27,15 @@
         <item
             android:id="@+id/payment_pref"
             android:icon="@drawable/ic_payment_pref"
-            android:title="@string/payment_preferences" />
+            android:title="@string/payment_preferences"
+            android:visible="false"/>
 
 
         <item
             android:id="@+id/invite_a_friend"
             android:icon="@drawable/ic_invite_a_friend"
-            android:title="@string/invite_a_friend" />
+            android:title="@string/invite_a_friend"
+            android:visible="false"/>
 
 
         <item
@@ -41,10 +43,15 @@
             android:icon="@drawable/ic_help_outline_black_24dp"
             android:title="@string/help_center" />
 
+        <item
+            android:id="@+id/getVerified"
+            android:icon="@drawable/ic_verified_check_circle"
+            android:title="@string/get_verified" />
+
 
         <item
             android:id="@+id/legal_agreements"
-            android:icon="@drawable/ic_legal_agreements"
+            android:icon="@drawable/ic_business_center"
             android:title="@string/legal_agreements" />
 
 
@@ -52,6 +59,17 @@
             android:id="@+id/logout"
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />
+
+        <item
+            android:id="@+id/feedback"
+            android:title="@string/feedback"
+            />
+
+    </group>
+
+    <group>
+
+
 
     </group>
 

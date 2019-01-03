@@ -17,6 +17,7 @@
             android:id="@+id/videoThumbnail"
             android:layout_width="140dp"
             android:layout_height="80dp"
+            android:scaleType="centerCrop"
             android:background="@drawable/round_outline"
             android:outlineProvider="background" />
 

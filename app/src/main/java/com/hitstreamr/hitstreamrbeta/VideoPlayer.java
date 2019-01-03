@@ -3,10 +3,13 @@ package com.hitstreamr.hitstreamrbeta;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -37,10 +40,12 @@ import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -50,6 +55,7 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -66,6 +72,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -98,6 +105,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     //Layout
     private LinearLayout DescLayout;
     private LinearLayout hideFullLayout;
+    private LinearLayout hideToolbarLayout;
 
     //Button
     private Button collapseDecriptionBtn;
@@ -121,7 +129,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView follow;
     private TextView unfollow;
     private RelativeLayout MediaControlLayout;
+    private TextView showMore;
 
+    private RelativeLayout MediaContolLayout;
 
     //CircleImageView
     private CircleImageView artistProfPic;
@@ -132,7 +142,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private long playbackPosition;
     private int currentWindow;
-    private boolean playWhenReady = false;
+    private boolean playWhenReady = true;
     FirebaseUser currentFirebaseUser;
     FirebaseDatabase database;
     DatabaseReference myRef;
@@ -151,6 +161,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private boolean collapseVariable = true;
     private boolean uploadbyUser = false;
+
+    /*private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = true;*/
+
+
+
 
     Video vid;
 
@@ -186,10 +203,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_video_player);
 
         vid = getIntent().getParcelableExtra("VIDEO");
-
+        credit = getIntent().getStringExtra("CREDIT");
+        userUploadVideoList = new ArrayList<>();
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("VideoLikes");
+
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -220,6 +239,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         getUserType();
         getRecentComment();
+
 
         // Get current account's username
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
@@ -278,6 +298,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //Linear Layout
         DescLayout = findViewById(R.id.DescriptionLayout);
         hideFullLayout = findViewById(R.id.hideFullscreenLayount);
+        hideToolbarLayout = findViewById(R.id.toolbarLayout);
 
         //Profile Picture
         artistProfPic = findViewById(R.id.artistProfilePicture);
@@ -297,6 +318,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewRepostCount = findViewById(R.id.repostCount);
         TextViewDate = findViewById(R.id.publishDate);
         TextViewViewCount = findViewById(R.id.TextViewViewCount);
+        showMore = findViewById(R.id.showMoreLess);
 
         TextViewTitle = findViewById(R.id.Title);
         TextViewTitle.setText(vid.getTitle());
@@ -379,6 +401,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
 
+
+
                                for(HashMap<String,String> contributor : temp){
                                    Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
                                    TextView TVtemp = new TextView(context);
@@ -399,16 +423,19 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                    contributorTextViews.add(TVtemp);
                                }
 
-                               //remove extra ,0
-                                if (contributorTextViews.size() > 0) {
-                                    TextView last = contributorTextViews.get(contributorTextViews.size() - 1);
-                                    last.setText(last.getText().toString().substring(0, last.getText().toString().length() - 2));
-                                    contributorTextViews.set(contributorTextViews.size() - 1, last);
+                               if(contributorTextViews.size()>0) {
 
-                                    for (TextView tv : contributorTextViews) {
-                                        contributorView.addView(tv);
-                                    }
+                               //remove extra ,0
+                                TextView last = contributorTextViews.get(contributorTextViews.size()-1);
+                                last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
+                                contributorTextViews.set(contributorTextViews.size()-1,last);
+
+                                for(TextView tv : contributorTextViews){
+                                    contributorView.addView(tv);
                                 }
+                               }
+
+
                             }
                         } else {
                             Log.d(TAG, "Error getting documents: ", task.getException());
@@ -419,6 +446,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
+
 
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
         currentCreditVal = credit;
@@ -549,6 +577,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         int height = dm.heightPixels;
 
         getWindow().setLayout((int) (width * .8), (int) (height * .4));
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
     }
 
@@ -882,7 +912,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         // Checking the orientation of the screen
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
+            fullscreenExapndBtn.setVisibility(View.GONE);
+            fullscreenShrinkBtn.setVisibility(View.VISIBLE);
+
+
+            hideSystemUi();
+
             hideFullLayout.setVisibility(View.GONE);
+            hideToolbarLayout.setVisibility(View.GONE);
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
 
@@ -891,10 +928,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             params.height = params.MATCH_PARENT;
             playerView.setLayoutParams(params);
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            fullscreenExapndBtn.setVisibility(View.VISIBLE);
+            fullscreenShrinkBtn.setVisibility(View.GONE);
+
+            hideSystemUi();
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                     playerView.getLayoutParams();
             Log.e(TAG, "POTRAIT" + params.height);
             hideFullLayout.setVisibility(View.VISIBLE);
+            hideToolbarLayout.setVisibility(View.VISIBLE);
             //unhide your objects here.
             params.width = params.MATCH_PARENT;
             params.height = 575;
@@ -902,14 +944,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-
     private void initFullscreenButton() {
 
         controlView = playerView.findViewById(R.id.exo_controller);
         fullscreenExapndBtn = controlView.findViewById(R.id.fullscreen_expand);
         fullscreenShrinkBtn = controlView.findViewById(R.id.fullscreen_shrink);
         fullscreenShrinkBtn.setVisibility(View.GONE);
-        MediaControlLayout = controlView.findViewById(R.id.playerControlLayout);
+        MediaContolLayout = controlView.findViewById(R.id.playerControlLayout);
 
         fullscreenExapndBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -926,14 +967,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-
     private void closeFullscreenDialog() {
+
         fullscreenExapndBtn.setVisibility(View.VISIBLE);
         fullscreenShrinkBtn.setVisibility(View.GONE);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                 playerView.getLayoutParams();
         Log.e(TAG, "POTRAIT" + params.height);
         hideFullLayout.setVisibility(View.VISIBLE);
+        hideToolbarLayout.setVisibility(View.VISIBLE);
         //unhide your objects here.
         params.width = params.MATCH_PARENT;
         params.height = 575;
@@ -946,7 +989,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         fullscreenExapndBtn.setVisibility(View.GONE);
         fullscreenShrinkBtn.setVisibility(View.VISIBLE);
 
+
+        hideSystemUi();
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
         hideFullLayout.setVisibility(View.GONE);
+        hideToolbarLayout.setVisibility(View.GONE);
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)
                 playerView.getLayoutParams();
 
@@ -1426,11 +1475,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 //TextViewVideoDescription.setVisibility(View.GONE);
                 DescLayout.setVisibility(View.GONE);
                 collapseDecriptionBtn.setBackground(getDrawable(R.drawable.ic_keyboard_arrow_down_black_24dp));
+                showMore.setText("Show more");
                 collapseVariable = true;
             } else if (collapseVariable) {
                 //TextViewVideoDescription.setVisibility(View.VISIBLE);
                 collapseDecriptionBtn.setBackground(getDrawable(R.drawable.ic_keyboard_arrow_up_black_24dp));
                 DescLayout.setVisibility(View.VISIBLE);
+                showMore.setText("Show less");
                 collapseVariable = false;
             }
         }
