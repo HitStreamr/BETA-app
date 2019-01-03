@@ -384,7 +384,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         startActivityForResult(Intent.createChooser(intent, "Select your image"), IMG_REQUEST_CODE);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

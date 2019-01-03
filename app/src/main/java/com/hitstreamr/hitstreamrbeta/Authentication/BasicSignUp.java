@@ -77,9 +77,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     User basicUser;
     UsernameUserIdPair usernameUserIdPair;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -332,7 +329,6 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
-
     private void registerFirebase() {
         //TODO make sure that newID is not being made when not needed
         FirebaseDatabase.getInstance().getReference("BasicAccounts")
@@ -431,7 +427,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                             Toast.makeText(BasicSignUp.this, "Image Upload failed", Toast.LENGTH_SHORT).show();
                         }
                     });
-        }else if (fileUri == null){
+        } else if (fileUri == null) {
             Toast.makeText(BasicSignUp.this, "No image selected.", Toast.LENGTH_SHORT).show();
         }
 

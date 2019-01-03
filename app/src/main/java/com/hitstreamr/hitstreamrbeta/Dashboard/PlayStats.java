@@ -9,11 +9,10 @@ import android.widget.TextView;
 
 import com.hitstreamr.hitstreamrbeta.R;
 
-public class PlayStats extends Fragment{
+public class PlayStats extends Fragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.dash_playstats, container, false);
 
         return rootView;

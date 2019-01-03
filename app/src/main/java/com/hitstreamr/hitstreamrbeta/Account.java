@@ -238,14 +238,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        /*Profile Picture
-        if (user.getPhotoUrl() != null) {
-            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-            circleImageView.setVisibility(View.VISIBLE);
-            Uri photoURL = user.getPhotoUrl();
-            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-        }*/
-
         // Prevent keyboard from showing automatically
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
@@ -270,7 +262,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         }
 
         artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state,
-                country, phone, zip, bio/*, null*/);
+                country, phone, zip, bio, null);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -399,7 +391,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String phone = EditTextPhone.getText().toString().trim();
         final String bio = EditTextBio.getText().toString().trim();
 
-        // TODO: validate bio
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname)
                 | !validateEmail(email) | !validateAddressLine(address) | !validateCity(city)
                 | !validateUsername(username) | !validatePhone(phone) | !validateZip(zip)
@@ -409,7 +400,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return;
         }
         artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city,
-                state, country, phone, zip, bio/*, null*/);
+                state, country, phone, zip, bio, null);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
@@ -639,7 +630,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return false;
         } else if (artistname.length() <= 26) {
             if (!(checkAlphaNumericSymbol(artistname))) {
-                EditTextLastName.setError("Name must be less than 26 Characters");
+                EditTextName.setError("Name must be less than 26 Characters");
                 return false;
             }
             return true;

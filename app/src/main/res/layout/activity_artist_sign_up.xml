@@ -335,7 +335,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="60dp"
-                    android:text="Alreay have an account? Sign In here!"
+                    android:text="Already have an account? Sign In here!"
                     android:textColor="@color/colorAccent"
                     android:layout_marginTop="25dp"/>
 

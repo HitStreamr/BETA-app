@@ -53,7 +53,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
     public void onBindViewHolder(@NonNull ArtistsToWatchHolder holder, int position) {
         holder.username.setText(artistList.get(position).getUsername());
 
-        holder.layout.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // TODO open artist profile page
@@ -78,14 +78,14 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
     public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
 
         public TextView username;
-        public LinearLayout layout;
+        public LinearLayout cardView;
         public Button followButton;
 
         public ArtistsToWatchHolder(View view) {
             super(view);
 
             username = view.findViewById(R.id.user_name);
-            layout = view.findViewById(R.id.userResultLayout);
+            cardView = view.findViewById(R.id.userCardView);
             followButton = view.findViewById(R.id.follow_button);
         }
     }

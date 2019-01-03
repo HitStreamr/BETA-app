@@ -28,7 +28,7 @@
             android:gravity="center_horizontal"
             android:layout_marginTop="30dp">
 
-            <Button
+         <Button
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

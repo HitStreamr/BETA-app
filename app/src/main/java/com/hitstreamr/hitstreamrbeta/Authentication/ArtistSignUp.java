@@ -36,7 +36,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -206,7 +205,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address, city, state, country, phone, zip, null),password);
+        validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address,
+                city, state, country, phone, zip, null, null),password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -310,7 +310,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mFirstName.setError("Field can't be empty");
             return false;
         } else if (firstname.length() >= 26) {
-            mFirstName.setError("First name can only have 26 characters");
+            mFirstName.setError("First name is too long");
             return false;
         } else if (!(checkAlphabet(firstname))) {
             mFirstName.setError("First name must only have letters");
@@ -333,13 +333,14 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mLastName.setError("Field can't be empty");
             return false;
         } else if (lastname.length() >= 26) {
-            mLastName.setError("Last name can only have 26 characters");
+            mLastName.setError("Last name is too long");
             return false;
         } else if (!(checkAlphabet(lastname))) {
             mLastName.setError("Last name must only have letters");
             return false;
         } else {
             mLastName.setError(null);
+            Log.e(TAG, "2");
             return true;
         }
     }
@@ -528,7 +529,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     artist_object = artist;
 
                     //If validations are ok we will first show progressbar
-                    progressDialog.setMessage("Registering new Artist...");
+                    progressDialog.setMessage("Loading...");
                     progressDialog.show();
 
                     registerAuthentication(artist_object.getEmail(), password);
@@ -539,7 +540,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Connection Error. Please try again in some time.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Connection Error. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -728,7 +729,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             registerArtist();
         }
         if (view == goBack) {
-            //will open account type activity
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
         }

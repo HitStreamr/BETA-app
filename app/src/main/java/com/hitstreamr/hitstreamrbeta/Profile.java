@@ -154,7 +154,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         mUnfollowBtn.setOnClickListener(this);
         mEditProfile.setOnClickListener(this);
 
-        //getBackgroundImage();
+        // getBackgroundImage();
+
         getUserType();
         getUsername();
 
@@ -212,7 +213,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                     }
                 });
-       // Log.e(TAG, "Profile credit val " + CreditVal);
+        Log.e(TAG, "Profile credit val " + CreditVal);
+
+
 
         mListener = new ItemClickListener() {
             @Override
@@ -315,15 +318,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     }
                 });
 
-        // Profile Picture
-        if (current_user.getPhotoUrl() != null) {
-            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-            circleImageView.setVisibility(View.VISIBLE);
-            CircleImageView profileImageView = findViewById(R.id.profileImage);
-            Uri photoURL = current_user.getPhotoUrl();
-            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-            Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
-        }
         //getFollowersCount();
         setTabDetails();
     }
@@ -395,6 +389,12 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             }
         });
 
+        // Profile Picture
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView profilePicture = findViewById(R.id.profileImage);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(profilePicture);
+        }
     }
 
     // Update the search results with the current search input when a different tab is selected
@@ -457,11 +457,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         profilePictureDownloadUrl = uri;
                         // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
-                            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-                            circleImageView.setVisibility(View.VISIBLE);
                             CircleImageView profileImageView = findViewById(R.id.profileImage);
                             //Uri photoURL = current_user.getPhotoUrl();
-                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
                             Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
                             getFollowersCount();
                             //getFollowingCount();

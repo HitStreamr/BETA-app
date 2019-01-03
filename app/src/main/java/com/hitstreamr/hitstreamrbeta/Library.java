@@ -55,7 +55,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private BookAdapter bookAdapter_watchLater;
     private WatchPlaylistAdapter playlistAdapter_playlists;
 
-    private ArrayList<Video> WatchLaterList;
+    private Long WatchListCount;
+    private ArrayList<String> WatchLaterList;
     private ArrayList<Video> Watch;
     private ArrayList<Playlist> Play;
 
@@ -107,6 +108,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
                 startActivity(videoPlayerIntent);
+        }
+
+        mlistner = new ItemClickListener() {
+            @Override
+            public void onResultClick(Video selectedVideo) {
+                Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                startActivity(videoPlayerIntent);
             }
 
             @Override
@@ -131,6 +140,23 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
     private void setUpRecyclerView() {
+        Log.e(TAG, "Entered recycler view");
+        bookRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    if (WatchLaterList.contains(document.getId())) {
+                        //Log.e(TAG, "entered    :::" + document.getId() + document.getData());
+                        Watch.add(document.toObject(Video.class));
+                    }
+                }
+                //Log.e(TAG, "objects :::" + Watch);
+                call();
+            }
+        });
+    }
+
+    private void call(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView_watchLater.setLayoutManager(layoutManager);
         bookAdapter_watchLater = new BookAdapter(this,WatchLaterList, mlistner);

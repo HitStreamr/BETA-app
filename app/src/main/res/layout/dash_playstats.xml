@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Dashboard.Dash">
+    tools:context=".Dashboard.Dashboard">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,9 +57,6 @@
             android:textSize="60dp"
             android:layout_marginTop="25dp"
             android:layout_marginBottom="25dp"/>
-
-
-
 
         <View
             android:layout_width="match_parent"

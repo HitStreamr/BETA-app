@@ -34,10 +34,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
 
         holder.videoTitle.setText(model.getTitle());
         holder.videoUsername.setText(model.getUsername());
-        String viewCount = Long.toString(model.getViews());
-        String pubYear = Long.toString(model.getPubYear());
-        holder.videoViewsCount.setText(viewCount);
-        holder.videoPublishedYear.setText(pubYear);
+        //holder.videoViews.setText(playlist.getPlayVideos().get(position).getvideoViews);
         Glide.with(getApplicationContext()).load(Uri.parse((model.getThumbnailUrl()))).into(holder.videoThumbnail);
 
     }
@@ -54,18 +51,16 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
     class TrendingVideosHolder extends RecyclerView.ViewHolder{
         private TextView videoTitle;
         private TextView videoUsername;
+        private TextView videoViews;
         private ImageView videoThumbnail;
-        private  TextView videoViewsCount;
-        private TextView videoPublishedYear;
         private LinearLayout parentLayout;
 
         public TrendingVideosHolder(View itemView) {
             super(itemView);
             videoTitle = itemView.findViewById(R.id.videoTitle);
             videoUsername = itemView.findViewById(R.id.videoUsername);
+            videoViews = itemView.findViewById(R.id.videoViews);
             videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
-            videoViewsCount = itemView.findViewById(R.id.videoViews);
-            videoPublishedYear = itemView.findViewById(R.id.videoTime);
             parentLayout = itemView.findViewById(R.id.videoCard);
         }
     }

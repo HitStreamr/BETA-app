@@ -6,7 +6,7 @@ public class ArtistUser {
             phone, zip, userID, bio;
 
     public ArtistUser(String firstname, String lastname, String artistname, String email, String username, String address,
-                      String city, String state, String country, String phone, String zip, String bio/*, String userID*/){
+                      String city, String state, String country, String phone, String zip, String bio, String userID){
         this.firstname = firstname;
         this.lastname = lastname;
         this.artistname = artistname;
