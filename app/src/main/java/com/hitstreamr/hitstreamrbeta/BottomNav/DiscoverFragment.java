@@ -36,7 +36,7 @@ public class DiscoverFragment extends Fragment {
 
         initImageBitmaps();
 
-        discRecyclerAdapter = new DiscRecyclerView(mImageUrls, mText, getContext());
+        discRecyclerAdapter = new DiscRecyclerView(mImageUrls, mText, getContext(), getActivity().getIntent());
 
         recyclerView = view.findViewById(R.id.disc_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

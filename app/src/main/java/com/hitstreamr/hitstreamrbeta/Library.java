@@ -2,11 +2,11 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +18,8 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -51,7 +55,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private BookAdapter bookAdapter_watchLater;
     private WatchPlaylistAdapter playlistAdapter_playlists;
 
-    private Long WatchListCount;
     private ArrayList<Video> WatchLaterList;
     private ArrayList<Video> Watch;
     private ArrayList<Playlist> Play;
@@ -96,7 +99,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             //ImageView profileImageView = findViewById(R.id.profileImage);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-            //Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
         }
 
         mlistner = new ItemClickListener() {
@@ -106,19 +108,29 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
                 startActivity(videoPlayerIntent);
             }
+
+            @Override
+            public void onPlaylistClick(Playlist selectedPlaylist) {
+                Log.e(TAG, "on Playlist click" +selectedPlaylist.getPlayVideos());
+
+
+                Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
+                //PlaylistIntent.putExtra("PlaylistName", selectedPlaylist.playlistname);
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("PlaylistVideos", selectedPlaylist);
+                PlaylistIntent.putExtras(bundle);
+                //PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist.playVideos);
+                startActivity(PlaylistIntent);
+
+            }
         };
-
-
 
         getWatchLaterList();
         getPlaylistsList();
     }
 
     private void setUpRecyclerView() {
-        call();
-    }
-
-    private void call(){
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerView_watchLater.setLayoutManager(layoutManager);
         bookAdapter_watchLater = new BookAdapter(this,WatchLaterList, mlistner);
@@ -129,7 +141,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Log.e(TAG, "Entered setup playlist recycler view");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_playlists.setLayoutManager(layoutManager);
-        playlistAdapter_playlists = new WatchPlaylistAdapter(Play);
+        playlistAdapter_playlists = new WatchPlaylistAdapter(this, Play, mlistner);
         recyclerView_playlists.setAdapter(playlistAdapter_playlists);
     }
 
@@ -244,6 +256,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                                 }
                                 p.setPlayVideos(a);
                             }
+                            Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos());
+                            Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlaylistname() + " " + Play.get(1).getPlayVideos());
                         }
                         setUpPlaylistRecyclerView();
                     }
@@ -253,9 +267,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     }
                 });
     }
-
     public interface ItemClickListener {
         void onResultClick(Video selectedVideo);
+        void onPlaylistClick(Playlist selectedPlaylist);
     }
 
     /**

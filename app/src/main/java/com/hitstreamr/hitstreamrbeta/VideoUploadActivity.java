@@ -599,23 +599,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             }
                         }, SPLASH_TIME_OUT);
                         successMessage();
-
-                        // Creates like counts for artists if it does not exist yet
-                        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-                        DocumentReference documentReference = firebaseFirestore.collection("ArtistsNumbers")
-                                .document(CurrentUserID);
-
-                        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                DocumentSnapshot documentSnapshot = task.getResult();
-                                if (documentSnapshot == null) {
-                                    Map<String, Object> artistLikes = new HashMap<>();
-                                    artistLikes.put("likes", 0);
-                                    documentReference.set(artistLikes);
-                                }
-                            }
-                        });
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -626,6 +609,31 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
+
+        // Creates like counts for artists if it does not exist yet
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        DocumentReference documentReference = firebaseFirestore.collection("ArtistsLikes")
+                .document(CurrentUserID);
+
+        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (!documentSnapshot.exists()) {
+                    Map<String, Object> artistLikes = new HashMap<>();
+                    artistLikes.put("likes", 0);
+                    artistLikes.put("artist_id", CurrentUserID);
+                    firebaseFirestore.collection("ArtistsLikes").document(CurrentUserID)
+                            .set(artistLikes)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("SUCCESS", "SUCCESS");
+                                }
+                            });
+                }
+            }
+        });
     }
 
     private ArrayList<String> processTitle(String title){

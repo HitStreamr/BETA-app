@@ -30,7 +30,7 @@
             <EditText
                 android:id="@+id/commentMessage"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:hint="Leave a comment..."
                 android:paddingStart="15dp"
                 android:background="@drawable/text_fields"

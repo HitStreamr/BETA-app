@@ -32,7 +32,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
     @Override
     public PlayListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.playtlist_list, parent, false);
+                .inflate(R.layout.playlist_list, parent, false);
         Log.e(TAG, "Playlists adapter holder entered ");
 
         return new PlayListHolder(itemView);

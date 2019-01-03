@@ -62,11 +62,15 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private Button mfollowBtn;
     private Button mUnfollowBtn;
+    private Button mEditProfile;
 
     private TextView mfollowers;
     private TextView mfollowing;
+    private TextView mProfileName;
+    private TextView mBio;
 
     private ImageView ImageViewBackground;
+    private ImageView verifiedCheckMark;
 
     private long followerscount = 0;
     private long followingcount = 0;
@@ -80,6 +84,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     DatabaseReference myFollowersRef, myFollowingRef;
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageTask mstorageTask;
     private StorageReference mStorageRef = storage.getReference();
     private StorageReference backgroundRef = null;
 
@@ -105,6 +110,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private CollectionReference videoIdRef = db.collection("ArtistVideo");
 
     private String CreditVal;
+    private String FollowUserId;
 
 
     /**
@@ -121,13 +127,18 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mfollowBtn = findViewById(R.id.followUser);
         mUnfollowBtn = findViewById(R.id.unFollowUser);
+        mEditProfile = findViewById(R.id.editUser);
 
         mfollowers = findViewById(R.id.usersFollowers);
         mfollowing = findViewById(R.id.usersFollowing);
+        mProfileName = findViewById(R.id.profileName);
+        mBio = findViewById(R.id.bioText);
 
         ImageViewBackground = findViewById(R.id.profileBackgroundImage);
+        verifiedCheckMark = findViewById(R.id.verified);
 
         mUnfollowBtn.setVisibility(View.GONE);
+        mEditProfile.setVisibility(View.VISIBLE);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -141,11 +152,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mfollowBtn.setOnClickListener(this);
         mUnfollowBtn.setOnClickListener(this);
+        mEditProfile.setOnClickListener(this);
 
-        getBackgroundImage();
-
+        //getBackgroundImage();
         getUserType();
         getUsername();
+
+
 
         if (userClicked.equals("")) {
             Log.e(TAG, "Current user selected");
@@ -157,9 +170,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             getCurrentProfile();
             getFollowersCount();
             getFollowingCount();
+            getUserFeedDeatils(current_user.getUid());
+            getUserFeed(current_user.getUid());
         } else {
             getUserClickedUserId();
-
         }
 
         listView_UserFeed = findViewById(R.id.listView_Feed);
@@ -176,16 +190,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         UserUploadVideoId = new ArrayList<>();
         //UserUploadDetails = new ArrayList<>();
 
-        getUserFeedDeatils();
-        getUserFeed();
-
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                      if(!Strings.isNullOrEmpty(currentCredit)){
+                        if(!Strings.isNullOrEmpty(currentCredit)){
 
                             CreditVal = currentCredit;
                         }
@@ -201,9 +212,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                     }
                 });
-        Log.e(TAG, "Profile credit val " + CreditVal);
-
-
+       // Log.e(TAG, "Profile credit val " + CreditVal);
 
         mListener = new ItemClickListener() {
             @Override
@@ -218,6 +227,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             public void onOverflowClick(Video title, View v) { showOverflow(v);
             }
         };
+
+        // Set toolbar profile picture to always be the current user
+        if (current_user.getPhotoUrl() != null) {
+            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
     }
 
     public interface ItemClickListener {
@@ -239,11 +256,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             if (value.equals(current_user.getUid())) {
                                 mfollowBtn.setVisibility(View.GONE);
                                 mUnfollowBtn.setVisibility(View.VISIBLE);
+                                mEditProfile.setVisibility(View.GONE);
                             }
                         }
                         else{
                             mfollowBtn.setVisibility(View.VISIBLE);
                             mUnfollowBtn.setVisibility(View.GONE);
+                            mEditProfile.setVisibility(View.GONE);
                         }
                     }
 
@@ -256,6 +275,12 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void getCurrentProfile() {
         mfollowBtn.setVisibility(View.GONE);
+        mEditProfile.setVisibility(View.VISIBLE);
+
+        if (accountType.equals("BasicAccounts")) {
+            verifiedCheckMark.setVisibility(View.GONE);
+        }
+
         FirebaseDatabase.getInstance()
                 .getReference(accountType)
                 .child(current_user.getUid())
@@ -264,6 +289,24 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
+                        getBackgroundImage(current_user.getUid());
+
+
+
+                        if (dataSnapshot.child("artistname").exists()) {
+                            String artist_name = dataSnapshot.child("artistname").getValue(String.class);
+                            mProfileName.setText(artist_name);
+                        }
+
+                        if (dataSnapshot.child("fullname").exists()) {
+                            String name = dataSnapshot.child("fullname").getValue(String.class);
+                            mProfileName.setText(name);
+                        }
+
+                        if (dataSnapshot.child("bio").exists()) {
+                            String bio = dataSnapshot.child("bio").getValue(String.class);
+                            mBio.setText(bio);
+                        }
                     }
 
                     @Override
@@ -282,15 +325,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             Glide.with(getApplicationContext()).load(photoURL).into(profileImageView);
         }
         //getFollowersCount();
+        setTabDetails();
+    }
+
+    private void setTabDetails(){
         // Set up tab layout & items
         TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
         TabItem feed_tab = findViewById(R.id.feed_tab);
         TabItem uploads_tab = findViewById(R.id.uploads_tab);
         TabItem playlists_tab = findViewById(R.id.playlists_tab);
 
-        // Hide uploads for basic users
-        if (getIntent().getStringExtra("TYPE").equals("BASIC")) {
-            mTabLayout.removeTabAt(1);
+        if (Strings.isNullOrEmpty(userUserID)) {
+            // Hide uploads for basic users
+            if (getIntent().getStringExtra("TYPE").equals("BASIC")) {
+                mTabLayout.removeTabAt(1);
+            }
         }
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -303,19 +352,30 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     case 0:
                         listView_UserFeed.setVisibility(View.VISIBLE);
                         listView_UserUpload.setVisibility(View.GONE);
-                        getUserFeedDeatils();
-                        getUserFeed();
+                        if (!Strings.isNullOrEmpty(userUserID)) {
+                            getUserFeedDeatils(userUserID);
+                            getUserFeed(userUserID);
+                        }
+                        else{
+                            getUserFeedDeatils(current_user.getUid());
+                            getUserFeed(current_user.getUid());
+                        }
 
-                       break;
+                        break;
                     case 1:
                         listView_UserFeed.setVisibility(View.GONE);
                         listView_UserUpload.setVisibility(View.VISIBLE);
-                        getUserUploadVideoId();
+                        if (!Strings.isNullOrEmpty(userUserID)) {
+                            getUserUploadVideoId(userUserID);
+                        }
+                        else{
+                            getUserUploadVideoId(current_user.getUid());
+                        }
 
                         break;
 
                     case 2:
-                         break;
+                        break;
                 }
             }
 
@@ -340,17 +400,44 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     // Update the search results with the current search input when a different tab is selected
 
     private void getSearchProfile() {
-        Log.e(TAG, "Entered searchprofile");
+       // Log.e(TAG, "Entered searchprofile");
+
+        String searchType = getIntent().getStringExtra("SearchType");
+
+        if (searchType.equals("BasicAccounts")) {
+            verifiedCheckMark.setVisibility(View.GONE);
+
+            // Hide uploads for basic users
+            TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
+            mTabLayout.removeTabAt(1);
+        }
+
         FirebaseDatabase.getInstance()
-                .getReference(accountType)
+                .getReference(searchType)
                 .child(userUserID)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
+                        getBackgroundImage(userUserID);
                         Log.e(TAG, "Got username :: " + username);
                         getUrlStorage();
+
+                        if (dataSnapshot.child("artistname").exists()) {
+                            String artist_name = dataSnapshot.child("artistname").getValue(String.class);
+                            mProfileName.setText(artist_name);
+                        }
+
+                        if (dataSnapshot.child("fullname").exists()) {
+                            String name = dataSnapshot.child("fullname").getValue(String.class);
+                            mProfileName.setText(name);
+                        }
+
+                        if (dataSnapshot.child("bio").exists()) {
+                            String bio = dataSnapshot.child("bio").getValue(String.class);
+                            mBio.setText(bio);
+                        }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -359,7 +446,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
     private void getUrlStorage() {
-      //  Log.e(TAG, "Entered storage");
+        //  Log.e(TAG, "Entered storage");
         mStorageRef.child("profilePictures")
                 .child(userUserID)
                 .getDownloadUrl()
@@ -368,7 +455,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onSuccess(Uri uri) {
                         // Got the download URL for 'users/me/profile.png'
                         profilePictureDownloadUrl = uri;
-                       // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
+                        // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
                             circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
                             circleImageView.setVisibility(View.VISIBLE);
@@ -443,6 +530,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                         getSearchProfile();
                         setFollowButton();
+                        getUserFeedDeatils(userUserID);
+                        getUserFeed(userUserID);
+                        setTabDetails();
                     }
 
                     @Override
@@ -540,7 +630,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         myFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
+                // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
                 //Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildrenCount());
 
                 long followingcount = dataSnapshot.getChildrenCount();
@@ -561,11 +651,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         Log.e(TAG, "Finished counting");
     }
 
-    private void getBackgroundImage(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+    private void getBackgroundImage(String idForBackground){
+        // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (idForBackground != null) {
             //Log.e(TAG, "Background Uri selected" +fileUri);
-            backgroundRef = mStorageRef.child("backgroundPictures").child(user.getUid());
+            backgroundRef = mStorageRef.child("backgroundPictures").child(idForBackground);
             backgroundRef.getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -574,6 +664,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             ImageViewBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             Glide.with(getApplicationContext()).load(uri).into(ImageViewBackground);
                         }
+
                     });
         }
     }
@@ -600,10 +691,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
 
-    private void getUserFeed() {
+    private void getUserFeed(String cUserId) {
 
         FirebaseDatabase.getInstance().getReference("UserFeed")
-                .child(current_user.getUid())
+                .child(cUserId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -611,7 +702,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             for(DataSnapshot each : dataSnapshot.getChildren()){
                                 userVideoList.add(String.valueOf(each.getKey()));
                             }
-                           // Log.e(TAG, "Feed List : " + userVideoList);
+                            // Log.e(TAG, "Feed List : " + userVideoList);
                         }
                         setUpRecyclerView();
                     }
@@ -622,10 +713,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 });
     }
 
-    private void getUserFeedDeatils() {
+    private void getUserFeedDeatils(String cUserId) {
 
         FirebaseDatabase.getInstance().getReference("UserFeed")
-                .child(current_user.getUid())
+                .child(cUserId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -659,15 +750,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     }
 
-   private void getUserUploadVideoId(){
-        String cUser = current_user.getUid();
+    private void getUserUploadVideoId(String cUserId){
 
         videoIdRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    if (cUser.contains(document.getId())) {
-                       userUploadVideoList.add( document.get("videos").toString());
+                    if (cUserId.contains(document.getId())) {
+                        userUploadVideoList.add( document.get("videos").toString());
 
 
                     }
@@ -689,7 +779,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         }
                     }
                 }
-               // Log.e(TAG, "profile video ids list:: " +UserUploadVideoId);
+                // Log.e(TAG, "profile video ids list:: " +UserUploadVideoId);
                 callVideoAdapter();
             }
         });
@@ -739,6 +829,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         }
         if (view == mUnfollowBtn) {
             cancelFollowers();
+        }
+        if (view == mEditProfile) {
+            Intent accountPage = new Intent(this, Account.class);
+            accountPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+            startActivity(accountPage);
         }
     }
 }

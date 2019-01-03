@@ -20,26 +20,43 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
+import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
+import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
+import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
+import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
+import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
+
+import com.hitstreamr.hitstreamrbeta.TrendingAdapter;
+import com.hitstreamr.hitstreamrbeta.TrendingVideos;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoClickListener;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
 
+public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
-public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener{
-    private static final String TAG = "HomeFragment";
     private static final int MAX_PRELOAD = 10 ;
     //Featured Artist
     RecyclerView featuredArtistRCV;
@@ -51,22 +68,121 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     FirestoreRecyclerOptions<Video> featuredArtistOptions;
     private FeaturedVideoResultAdapter  resultAdapter;
     private final int FEATURED_LOAD = 5;
-    RequestManager glideRequests;
     String userCredits;
     String userID;
     String type;
 
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private FirebaseUser current_user;
+    private CollectionReference trendingNowRef = db.collection("Videos");
+    private TrendingAdapter adapter;
+    private RecyclerView recyclerView_Trending;
+    private Button trendingMoreBtn, newReleaseBtn;
+    public final String TAG = "HomePage";
+    private CollectionReference newReleaseRef = db.collection("Videos");
+    RequestManager glideRequests;
+    private NewReleaseAdapter newReleaseadapter;
+    private RecyclerView recyclerView_newRelease;
+    private ArrayList<String> userGenreList;
+    private ArrayList<Video> UserGenreVideos;
+    private ArrayList<Video> UserNewVideos;
+    private ItemClickListener mListener;
+    private String CreditVal;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         featuredVideosSetup(view);
+
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
+        userGenreList = new ArrayList<>();
+        UserGenreVideos = new ArrayList<>();
+        UserNewVideos = new ArrayList<>();
+
+        recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
+        trendingMoreBtn = view.findViewById(R.id.trendingMore);
+        setupRecyclerView();
+
+        trendingMoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent trending = new Intent(getContext(), TrendingVideos.class);
+                startActivity(trending);
+            }
+        });
+
+        // Populate the Artists To Watch recycler view
+        showArtiststoWatch(view);
+
+        Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
+        showMoreArtists.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent moreArtists = new Intent(getContext(), ArtistsToWatch.class);
+                moreArtists.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
+                startActivity(moreArtists);
+            }
+        });
+
+        glideRequests = Glide.with(this);
+        recyclerView_newRelease = (RecyclerView) view.findViewById(R.id.freshReleasesRCV);
+        newReleaseBtn = view.findViewById(R.id.newReleaseMore);
+        getUserGenre();
+
+        newReleaseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent newReleaseVideo = new Intent(getContext(), NewReleases.class);
+                newReleaseVideo.putExtra("TYPE", getArguments().getString("TYPE"));
+                startActivity(newReleaseVideo);
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            CreditVal = currentCredit;
+                        }
+                        else
+                            CreditVal = "0";
+
+                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        mListener = new ItemClickListener() {
+            @Override
+            public void onResultClick(Video video) {
+                Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
+                videoPlayerIntent.putExtra("TYPE", getArguments().getString("TYPE"));
+                videoPlayerIntent.putExtra("VIDEO", video);
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                startActivity(videoPlayerIntent);
+            }
+
+            @Override
+            public void onOverflowClick(Video title, View v) { showOverflow(v);
+            }
+        };
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_home, container, false);
+
     }
 
     public void featuredVideosSetup(View view){
@@ -152,53 +268,201 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
          */
     }
 
-    public void showOverflow(View v) {
-        //change to menu popup
-        PopupMenu popupMenu = new PopupMenu(getContext(), v);
-        popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
-        popupMenu.show();
-    }
-    /**
-     * Timestamp utility functions
-     */
-    public static Date dateFromUTC(Date date){
-        return new Date(date.getTime() + Calendar.getInstance().getTimeZone().getOffset(date.getTime()));
+
+
+
+
+    private void setupRecyclerView(){
+        Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING).limit(10);
+
+        FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
+                .setQuery(query, Video.class)
+                .build();
+
+        adapter = new TrendingAdapter(options);
+        recyclerView_Trending.hasFixedSize();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView_Trending.setLayoutManager(layoutManager);
+        recyclerView_Trending.setAdapter(adapter);
+
     }
 
-    public static Date dateToUTC(Date date){
-        return new Date(date.getTime() - Calendar.getInstance().getTimeZone().getOffset(date.getTime()));
+    @Override
+    public void onStart() {
+        super.onStart();
+        adapter.startListening();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.fave_result:
-                return true;
+                break;
             case R.id.addLibrary_result:
-                return true;
+                break;
+
         }
-        return false;
+        return true;
     }
 
-    private void registerWatchLater(Video vid) {
-        FirebaseDatabase.getInstance()
-                .getReference("WatchLater")
-                .child(userID)
-                .child(vid.getVideoId())
-                .setValue(vid)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+    public interface ItemClickListener {
+        void onResultClick(Video title);
+        void onOverflowClick(Video title, View v);
+    }
 
-                        Log.e(TAG, "Video is added to Watch Later ");
-                        finishedWatchLater();
+    public void showOverflow(View v) {
+        PopupMenu popupMenu = new PopupMenu(getContext(), v);
+        popupMenu.setOnMenuItemClickListener(this);
+        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.show();
+    }
+
+    private void showArtiststoWatch(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.artistWatchRCV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("ArtistsLikes").orderBy("likes", Query.Direction.DESCENDING)
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<String> artistFirestoreList = new ArrayList<>();
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                    String temp = documentSnapshot.getId();
+                    // Sorted based on highest likes
+                    artistFirestoreList.add(temp);
+                }
+
+                // Query to Firebase
+                if (getActivity() != null) {
+
+                    List<ArtistUser> artistList = new ArrayList<>(artistFirestoreList.size());
+                    HomeFragmentTopArtistsAdapter homeFragmentTopArtistsAdapter =
+                            new HomeFragmentTopArtistsAdapter(artistList, getContext(), getActivity().getIntent());
+
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
+                    databaseReference.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            String artistID = dataSnapshot.getKey();
+
+                            // Initialize as many as it will hold
+                            while (artistList.size() < artistFirestoreList.size()) {
+                                artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                            }
+
+                            // Replace the indexes with appropriate values
+                            // The indexes will match, and thus sorted
+                            if (artistFirestoreList.contains(artistID)) {
+                                int index = artistFirestoreList.indexOf(artistID);
+                                ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
+                                artistList.remove(index);
+                                artistList.add(index, artistUser);
+                                homeFragmentTopArtistsAdapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(homeFragmentTopArtistsAdapter);
+                            }
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    public void getUserGenre(){
+        FirebaseDatabase.getInstance().getReference("SelectedGenres")
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for(DataSnapshot each : dataSnapshot.getChildren()){
+                                userGenreList.add(String.valueOf(each.getValue()));
+
+                            }
+                            // Log.e(TAG, "Home genre List : " + userGenreList);
+                        }
+                        getFreshReleases();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
+
     }
 
-    private void finishedWatchLater() {
-        Toast.makeText(getContext(), "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
+    public void getFreshReleases(){
+
+        Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
+
+        queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    if (userGenreList.size() > 0) {
+                       for (int itr = 0; itr < userGenreList.size(); itr++) {
+                            if (userGenreList.get(itr).contains( document.get("genre").toString().toLowerCase())) {
+                                UserGenreVideos.add(document.toObject(Video.class));
+                            } else if (userGenreList.get(itr).contains(document.get("subGenre").toString().toLowerCase())) {
+                                UserGenreVideos.add(document.toObject(Video.class));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        UserGenreVideos.add(document.toObject(Video.class));
+                    }
+
+
+                }
+                callToAdapter();
+            }
+        });
+
+
+    }
+
+    private void callToAdapter(){
+
+        if(UserGenreVideos.size() > 10){
+            UserNewVideos = new ArrayList (UserGenreVideos.subList(0,10));
+        }
+        else
+        {
+            UserNewVideos = new ArrayList (UserGenreVideos);
+        }
+
+        recyclerView_newRelease.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        newReleaseadapter = new NewReleaseAdapter( R.layout.thumbnail_categoried_video, UserNewVideos, mListener, glideRequests);
+        newReleaseadapter.notifyDataSetChanged();
+        recyclerView_newRelease.setAdapter(newReleaseadapter);
 
     }
 

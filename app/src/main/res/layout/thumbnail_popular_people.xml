@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:layout_marginEnd="10dp">
+
+
+    <LinearLayout
+        android:id="@+id/topArtistCardView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/topArtistImage"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@color/litgryAccent"
+            />
+
+        <TextView
+            android:id="@+id/topArtistName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Artist Name" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="10sp"
+                android:layout_marginStart="5dp"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Followers"
+                android:textSize="10sp"
+                />
+
+        </LinearLayout>
+
+
+
+        <Button
+            android:id="@+id/watchArtistButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:background="@drawable/button1"
+            android:text="watch"
+            android:textColor="@color/colorAccent"/>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/verified"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:background="@drawable/ic_verified_check_circle"
+        android:backgroundTint="@android:color/holo_blue_light"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="68dp"/>
+
+</RelativeLayout>

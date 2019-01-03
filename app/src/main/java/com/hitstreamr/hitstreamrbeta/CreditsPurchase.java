@@ -1,5 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -49,9 +51,14 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-        getWindow().setLayout((int) (width), (int) (height * .8));
+
+        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         creditsAmount = findViewById(R.id.credits_amount);
 

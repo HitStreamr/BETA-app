@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -76,6 +77,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextBio;
     private EditText EditTextFirstName;
     private EditText EditTextLastName;
+    private EditText EditTextName;
     private EditText EditTextAddress;
     private EditText EditTextCity;
     private EditText EditTextZip;
@@ -83,6 +85,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private EditText EditTextCountry;
     private TextView UserNameText;
     private TextView LabelNameText;
+    private TextView NameText;
     private CircleImageView circleImageView;
 
     //Spinner
@@ -159,6 +162,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         //EditText
         EditTextUsername = findViewById(R.id.accountUsername);
         EditTextEmail = findViewById(R.id.accountEmail);
+        EditTextName = findViewById(R.id.name);
         EditTextBio = findViewById(R.id.Bio);
         EditTextFirstName = findViewById(R.id.accountFirstName);
         EditTextLastName = findViewById(R.id.accountLastName);
@@ -169,6 +173,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextCountry = findViewById(R.id.accountCountry);
         UserNameText = findViewById(R.id.UserNametext);
         LabelNameText = findViewById(R.id.Labeltext);
+        NameText = findViewById(R.id.nameTitle);
 
         //Spinners
         SpinnerState = findViewById(R.id.accountState);
@@ -177,7 +182,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         ImageViewPhoto = findViewById(R.id.accountPhoto);
 
         //Button
-        SaveAccountBtn = findViewById(R.id.saveAccount);
+        SaveAccountBtn = findViewById(R.id.update_account);
         SaveAccountBtn.setOnClickListener(this);
         ChangePhotoBtn = findViewById(R.id.accountChangePhoto);
         ChangeBackgroundBtn = findViewById(R.id.accountChangeBackground);
@@ -202,6 +207,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         } else if (type.equals(getString(R.string.type_label))) {
             UserNameText.setVisibility(View.GONE);
+            NameText.setVisibility(View.GONE);
             LabelNameText.setVisibility(View.VISIBLE);
             ArtistInfoLayout.setVisibility(View.VISIBLE);
             EditTextUsername.setEnabled(false);
@@ -232,7 +238,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        /*//Profile Picture
+        /*Profile Picture
         if (user.getPhotoUrl() != null) {
             circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
@@ -240,12 +246,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }*/
 
+        // Prevent keyboard from showing automatically
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     public void showArtistData(DataSnapshot dataSnapshot) {
 
         String firstname = dataSnapshot.child("firstname").getValue(String.class);
         String lastname = dataSnapshot.child("lastname").getValue(String.class);
+        String artistname = dataSnapshot.child("artistname").getValue(String.class);
         String email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
         String address = dataSnapshot.child("address").getValue(String.class);
@@ -255,10 +264,17 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
 
-        artist = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+        String bio = "";
+        if (dataSnapshot.child("bio").exists()) {
+            bio = dataSnapshot.child("bio").getValue(String.class);
+        }
+
+        artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state,
+                country, phone, zip, bio/*, null*/);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
+        EditTextName.setText(artist.getArtistname());
         EditTextEmail.setText(artist.getEmail());
         EditTextUsername.setText(artist.getUsername());
         EditTextAddress.setText(artist.getAddress());
@@ -266,6 +282,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         EditTextZip.setText(artist.getZip());
         EditTextPhone.setText(artist.getPhone());
         EditTextCountry.setText(artist.getCountry());
+        EditTextBio.setText(artist.getBio());
         SpinnerState.setSelection(getIndex(SpinnerState, artist.getState()));
 
         Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
@@ -285,13 +302,24 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     public void showBasicData(DataSnapshot dataSnapshot) {
 
-        String email = dataSnapshot.child("email").getValue(String.class);
+        email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
         String userID = dataSnapshot.child("userID").getValue(String.class);
-        oldBasic = new User(username, email,userID);
+        String fullname = dataSnapshot.child("fullname").getValue(String.class);
+        String bio = "";
+
+        if (dataSnapshot.child("bio").exists()) {
+            bio = dataSnapshot.child("bio").getValue(String.class);
+        }
+
+        oldBasic = new User(username, email, userID, fullname, bio);
 
         EditTextEmail.setText(oldBasic.getEmail());
         EditTextUsername.setText(oldBasic.getUsername());
+        EditTextName.setText(oldBasic.getFullname());
+        EditTextBio.setText(oldBasic.getBio());
+
+        Glide.with(getApplicationContext()).load(user.getPhotoUrl()).into(ImageViewPhoto);
 
         getSupportActionBar().setTitle(username);
     }
@@ -299,8 +327,11 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private void registerUser() {
         final String username = EditTextUsername.getText().toString().trim();
         final String email = EditTextEmail.getText().toString().trim();
+        final String name = EditTextName.getText().toString().trim();
+        final String bio = EditTextBio.getText().toString().trim();
 
-        if (!validateEmail(email) | !validateUsername(username)) {
+        // TODO: validate name
+        if (!validateEmail(email) | !validateUsername(username) | !validateBio(bio)) {
             return;
         }
         /*//If validations is ok we will first show progressbar
@@ -308,7 +339,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.setMessage("Registering New User...");*/
 
         //make sure the basic user has the write id
-        basicUser = new User(username, email, oldBasic.getUserID());
+        basicUser = new User(username, email, oldBasic.getUserID(), name, bio);
         oldBasic = basicUser;
 
         if(selectedBackgroundPath!= null){
@@ -358,6 +389,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         Log.e(TAG, "Entered register artist firstname:::::" + firstname);
         final String lastname = EditTextLastName.getText().toString().trim();
         email = EditTextEmail.getText().toString().trim();
+        final String artistname = EditTextName.getText().toString().trim();
         final String username = EditTextUsername.getText().toString().trim();
         final String address = EditTextAddress.getText().toString().trim();
         final String city = EditTextCity.getText().toString().trim();
@@ -365,15 +397,19 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String zip = EditTextZip.getText().toString().trim();
         final String country = EditTextCountry.getText().toString().trim();
         final String phone = EditTextPhone.getText().toString().trim();
+        final String bio = EditTextBio.getText().toString().trim();
 
-        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateEmail(email) | !validateAddressLine(address)
-                | !validateCity(city) | !validateUsername(username) | !validatePhone(phone)
-                | !validateZip(zip)) {
+        // TODO: validate bio
+        if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname)
+                | !validateEmail(email) | !validateAddressLine(address) | !validateCity(city)
+                | !validateUsername(username) | !validatePhone(phone) | !validateZip(zip)
+                | !validateBio(bio)) {
 
             Log.e(TAG, "register Artist no validation" + type);
             return;
         }
-        artist_object = new ArtistUser(firstname, lastname, email, username, address, city, state, country, phone, zip, null);
+        artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city,
+                state, country, phone, zip, bio/*, null*/);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
@@ -422,26 +458,36 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
     private void updateProfile() {
         if (user != null) {
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                    .setDisplayName(artist_object.getUsername())
-                    .setPhotoUri(Uri.parse(downloadimageUri))
-                    .build();
+            UserProfileChangeRequest profileUpdates = null;
+            if (type.equals(getString(R.string.type_artist))) {
+                profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(artist_object.getUsername())
+                        .setPhotoUri(Uri.parse(downloadimageUri))
+                        .build();
+            }
+            else if (type.equals(getString(R.string.type_basic))) {
+                profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(basicUser.getUsername())
+                        .setPhotoUri(Uri.parse(downloadimageUri))
+                        .build();
+            }
 
-            user.updateProfile(profileUpdates)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                if (type.equals(getString(R.string.type_artist))) {
-                                    registerArtistFirebase();
+            if (profileUpdates != null) {
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    if (type.equals(getString(R.string.type_artist))) {
+                                        registerArtistFirebase();
+                                    } else if (type.equals(getString(R.string.type_basic))) {
+                                        registerBasicFirebase();
+                                    }
+                                    Log.d(TAG, "User profile updated.");
                                 }
-                                else if (type.equals(getString(R.string.type_basic))) {
-                                    registerBasicFirebase();
-                                }
-                                Log.d(TAG, "User profile updated.");
                             }
-                        }
-                    });
+                        });
+            }
             // else block
             // ask to log in again(Invalid login)
         }
@@ -458,7 +504,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(Account.this, "Update Successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Account.this, "Updated Successfully", Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -582,6 +628,28 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     /**
+     * Check if last name input is valid.
+     *
+     * @param artistname artist name
+     * @return true if valid, otherwise false and display an error message
+     */
+    private boolean validateArtistName(String artistname) {
+        if (artistname.isEmpty()) {
+            EditTextName.setError("Field can't be empty");
+            return false;
+        } else if (artistname.length() <= 26) {
+            if (!(checkAlphaNumericSymbol(artistname))) {
+                EditTextLastName.setError("Name must be less than 26 Characters");
+                return false;
+            }
+            return true;
+        } else {
+            EditTextName.setError(null);
+            return true;
+        }
+    }
+
+    /**
      * Check if address input is valid.
      *
      * @param address address line
@@ -697,6 +765,22 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     }
 
     /**
+     * Only checks when bio is not empty if it is valid.
+     *
+     * @param bio profile's bio
+     * @return true if valid, otherwise false and display an error message
+     */
+    private boolean validateBio(String bio) {
+        if (!bio.isEmpty()) {
+            if (EditTextBio.length() >= 160) {
+                EditTextBio.setError("160 characters maximum.");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Method to validate whether the input string entered contains only
      * Alphabetical characters.
      * <p>
@@ -767,6 +851,27 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         for (int i = 0; i < s.length(); i++) {
             for (int count = 0; count < AlphaUsername.length(); count++) {
                 if (s.charAt(i) == AlphaUsername.charAt(count)) {
+                    value_for_each_comparison[i] = true;
+                    break;
+                } else {
+                    value_for_each_comparison[i] = false;
+                }
+            }
+        }
+        return checkStringCmpvalues(value_for_each_comparison);
+    }
+
+    /**
+     * Method to validate the Street Address of any unwanted characters
+     */
+    public boolean checkAlphaNumericSymbol(String s) {
+
+        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{}<>,./";
+        boolean[] value_for_each_comparison = new boolean[s.length()];
+
+        for (int i = 0; i < s.length(); i++) {
+            for (int count = 0; count < AlphaNumericSymbol.length(); count++) {
+                if (s.charAt(i) == AlphaNumericSymbol.charAt(count)) {
                     value_for_each_comparison[i] = true;
                     break;
                 } else {

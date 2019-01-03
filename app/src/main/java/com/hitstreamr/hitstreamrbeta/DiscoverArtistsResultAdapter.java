@@ -1,5 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,15 +15,21 @@ import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.util.List;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
+
 public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverArtistsResultAdapter.ArtistsToWatchHolder> {
 
     private List<ArtistUser> artistList;
+    private Context mContext;
+    private Intent mIntent;
 
     /**
      * Constructor
      */
-    public DiscoverArtistsResultAdapter(List<ArtistUser> artistList) {
+    public DiscoverArtistsResultAdapter(List<ArtistUser> artistList, Context mContext, Intent mIntent) {
         this.artistList = artistList;
+        this.mContext = mContext;
+        this.mIntent = mIntent;
     }
 
     @Override
@@ -49,6 +57,10 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             @Override
             public void onClick(View view) {
                 // TODO open artist profile page
+                Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
+                artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
+                mContext.startActivity(artistProfile);
             }
         });
 

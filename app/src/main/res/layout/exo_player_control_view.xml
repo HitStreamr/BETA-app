@@ -99,20 +99,22 @@
 
             <ImageView
                 android:id="@+id/fullscreen_expand"
-                android:layout_width="15dp"
-                android:layout_height="20dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_fullscreen_expand" />
+                android:src="@drawable/ic_fullscreen_expand"
+                android:tint="@color/colorAccent"/>
             <ImageView
                 android:id="@+id/fullscreen_shrink"
-                android:layout_width="15dp"
-                android:layout_height="20dp"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ic_fullscreen_skrink" />
+                android:src="@drawable/ic_fullscreen_shrink"
+                android:tint="@color/colorAccent"/>
 
 
 
