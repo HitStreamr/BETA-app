@@ -41,7 +41,7 @@ import java.util.List;
 public class ActivityFragment extends Fragment {
     private static final String TAG = "ActivityFragment";
 
-    FirebaseDatabase database;
+    private DatabaseReference database, myRef;
     private FirebaseFirestore db;
     private FirebaseUser current_user;
     DatabaseReference myFollowingRef, myArtistRef;
@@ -66,6 +66,8 @@ public class ActivityFragment extends Fragment {
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();
+        database = FirebaseDatabase.getInstance().getReference();
+        myRef = FirebaseDatabase.getInstance().getReference("ArtistVideo");
         myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
                 .child(current_user.getUid());
         myArtistRef = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
@@ -156,6 +158,25 @@ public class ActivityFragment extends Fragment {
 
 
     private void getArtistVideos() {
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "Value is: " + value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+
+
+
         db.collection("ArtistVideo")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
