@@ -161,10 +161,15 @@ public class ActivityFragment extends Fragment {
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-                Log.d(TAG, "Value is: " + value);
+                for( DataSnapshot snapshot : dataSnapshot.getChildren() ) {
+                    if (followingUsers.contains(snapshot.getKey())) {
+                        Log.e(TAG, "22222" +snapshot.getKey());
+                        for( DataSnapshot childSnapshot : snapshot.getChildren() )
+                        eachArtistVideos.add(childSnapshot.getKey());
+                    }
+                }
+                Log.e(TAG, "getArtistVideos: " + eachArtistVideos + eachArtistVideos.size());
+                getVideoFirestore();
             }
 
             @Override
@@ -172,34 +177,33 @@ public class ActivityFragment extends Fragment {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
+
+
         });
-
-
-
-
-        db.collection("ArtistVideo")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if (followingUsers.contains(document.getId())) {
-                                    //Log.e(TAG, "getArtistVideos: "+document.getId() + "id is :"+document.get("videos"));
-                                    eachArtistVideos.add(document.get("videos").toString());
-                                    //myListCollection.add(eachArtistVideos);
-                                }
-                            }
-                            //artistVideos.add(eachArtistVideos.indexOf(0));
-                        }
-                        Log.e(TAG, "getArtistVideos: " + eachArtistVideos.get(1) + eachArtistVideos.size());
-                       /* ArrayList<String> stringCollection = new ArrayList<String>();
-                        for (int i = 0; i < myListCollection.size(); ++i) {
-                            stringCollection.addAll(myListCollection.contains());
-                        }*/
-                        getVideoFirestore();
-                    }
-                });
+//
+//        db.collection("ArtistVideo")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (QueryDocumentSnapshot document : task.getResult()) {
+//                                if (followingUsers.contains(document.getId())) {
+//                                    //Log.e(TAG, "getArtistVideos: "+document.getId() + "id is :"+document.get("videos"));
+//                                    eachArtistVideos.add(document.get("videos").toString());
+//                                    //myListCollection.add(eachArtistVideos);
+//                                }
+//                            }
+//                            //artistVideos.add(eachArtistVideos.indexOf(0));
+//                        }
+//                        Log.e(TAG, "getArtistVideos: " + eachArtistVideos.get(1) + eachArtistVideos.size());
+//                       /* ArrayList<String> stringCollection = new ArrayList<String>();
+//                        for (int i = 0; i < myListCollection.size(); ++i) {
+//                            stringCollection.addAll(myListCollection.contains());
+//                        }*/
+//                        getVideoFirestore();
+//                    }
+//                });
     }
 
     public void getVideoFirestore() {
@@ -208,12 +212,10 @@ public class ActivityFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (eachArtistVideos.size() > 0) {
-                    for (int itr = 0; itr < eachArtistVideos.size(); itr++) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (eachArtistVideos.get(itr).contains(document.getId())) {
+                            if (eachArtistVideos.contains(document.getId())) {
                                 UserVideos.add(document.toObject(Video.class));
                             }
-                        }
                     }
                     callToAdapter();
                 }
