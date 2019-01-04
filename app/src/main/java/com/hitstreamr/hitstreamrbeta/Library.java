@@ -56,7 +56,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private WatchPlaylistAdapter playlistAdapter_playlists;
 
     private Long WatchListCount;
-    private ArrayList<String> WatchLaterList;
+    private ArrayList<Video> WatchLaterList;
     private ArrayList<Video> Watch;
     private ArrayList<Playlist> Play;
 
@@ -108,15 +108,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
                 startActivity(videoPlayerIntent);
-        }
-
-        mlistner = new ItemClickListener() {
-            @Override
-            public void onResultClick(Video selectedVideo) {
-                Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
-                videoPlayerIntent.putExtra("VIDEO", selectedVideo);
-                startActivity(videoPlayerIntent);
             }
+
 
             @Override
             public void onPlaylistClick(Playlist selectedPlaylist) {

@@ -133,13 +133,13 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
 
         public FeaturedVideoResultsHolder(View itemView, final VideoClickListener mListener) {
             super(itemView);
-            videoThumbnail = itemView.findViewById(R.id.featuredVideoThumbnail);
-            videoTitle = itemView.findViewById(R.id.title);
-            videoUsername = itemView.findViewById(R.id.artistName);
+            videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
+            videoTitle = itemView.findViewById(R.id.videoTitle);
+            videoUsername = itemView.findViewById(R.id.videoUsername);
             videoViews = itemView.findViewById(R.id.videoViews);
             videoPublish = itemView.findViewById(R.id.publishDate);
-            videoTime = itemView.findViewById(R.id.videoLength);
-            overflowMenu = itemView.findViewById(R.id.overflowButton);
+            videoTime = itemView.findViewById(R.id.duration);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
             artistProfPic = itemView.findViewById(R.id.artistProfilePicture);
             this.mListener = mListener;
         }

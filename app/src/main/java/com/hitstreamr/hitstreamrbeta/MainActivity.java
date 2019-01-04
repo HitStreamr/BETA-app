@@ -1295,7 +1295,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.dashboard:
-                Intent dashIntent = new Intent(getApplicationContext(), Dash.class);
+                Intent dashIntent = new Intent(getApplicationContext(), Dashboard.class);
                 dashIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(dashIntent);
                 return true;

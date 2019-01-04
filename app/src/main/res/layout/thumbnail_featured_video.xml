@@ -24,6 +24,7 @@
                 android:outlineProvider="background"/>
 
             <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/artistProfilePicture"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="5dp"
@@ -97,7 +98,7 @@
                 android:textSize="12sp" />
 
             <TextView
-                android:id="@+id/videoYear"
+                android:id="@+id/publishDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="3dp"

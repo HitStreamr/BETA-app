@@ -331,7 +331,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.setMessage("Registering New User...");*/
 
         //make sure the basic user has the write id
-        basicUser = new User(username, email, oldBasic.getUserID(), name, bio);
+        basicUser = new User(username, email, name, bio,oldBasic.getUserID());
         oldBasic = basicUser;
 
         if(selectedBackgroundPath!= null){

@@ -204,7 +204,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredArtistRCV = view.findViewById(R.id.featuredVideosRCV);
 
         //"More" Button
-        featuredMore = view.findViewById(R.id.featuredMore);
+        featuredMore = view.findViewById(R.id.featuredVideoMore);
         featuredMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

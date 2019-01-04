@@ -5,12 +5,10 @@ import java.util.ArrayList;
 public class User {
     private String username, email, userID, fullname, bio;
     private ArrayList<String> genres;
-    public User() {
-    }
 
-    public User() { }
+    public User() {     }
 
-    public User(String username, String email) {
+    public User(String username, String email, String fullname, String bio,String userID) {
         this.username = username;
         this.email = email;
         this.userID = userID;
