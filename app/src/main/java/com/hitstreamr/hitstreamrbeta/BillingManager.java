@@ -55,6 +55,7 @@ public class BillingManager extends AppCompatActivity implements View.OnClickLis
         getWindow().setLayout((int) (width * .8), (int) (height * .4));
 
 
+
         mAuth = FirebaseAuth.getInstance();
 
         user = FirebaseAuth.getInstance().getCurrentUser();

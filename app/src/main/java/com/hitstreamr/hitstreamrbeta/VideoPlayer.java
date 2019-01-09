@@ -682,7 +682,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         Calendar now = Calendar.getInstance();
         Calendar tmp = (Calendar) now.clone();
-        tmp.add(Calendar.HOUR_OF_DAY, 4);
+        tmp.add(Calendar.HOUR_OF_DAY, 24);
         SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String strDate = simpleFormat.format(tmp.getTime());
         Log.e(TAG, "Your video date format after" +strDate);
