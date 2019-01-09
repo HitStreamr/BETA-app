@@ -29,6 +29,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -51,7 +53,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class DiscoverResultPage extends AppCompatActivity {
 
     private FirestoreRecyclerAdapter<Video, DiscoverResultHolder> firestoreRecyclerAdapter_videos;
-    private String accountType;
+    private String accountType, creditValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,31 +103,29 @@ public class DiscoverResultPage extends AppCompatActivity {
             loadVideos(category);
         }
 
-//        if (category.equals("Newly Added")) {
-//            // TODO most recent videos
-//            loadMostRecentVideos();
-//        } else if (category.equals("Trending Now")) {
-//            // TODO most number of views
-//            loadTrendingVideos();
-//        } else if (category.equals("Popular Playlists")) {
-//            // TODO most popular playlist-ed(?)
-//
-//        } else if (category.equals("Hip-hop/r&b")) {
-//            category = "Hip-Hop/R&B";
-//            getSupportActionBar().setTitle(category);
-//            loadVideosBasedOnGenre(category);
-//        } else if (category.equals("R&b/soul")) {
-//            category = "R&B/Soul";
-//            getSupportActionBar().setTitle(category);
-//            loadVideosBasedOnGenre(category);
-//        } else if (category.equals("World Music/beats")) {
-//            category = "World Music/Beats";
-//            getSupportActionBar().setTitle(category);
-//            loadVideosBasedOnGenre(category);
-//        } else {
-//            // For all other genres
-//            loadVideosBasedOnGenre(category);
-//        }
+        // Get the current user's credit value
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+
+                            creditValue = currentCredit;
+                        }
+                        else
+                            creditValue = "0";
+
+                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     /**
@@ -145,10 +145,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             query = firebaseFirestore.collection("Videos").orderBy("timestamp", Query.Direction.DESCENDING);
         } else if (category.equals("Trending Now")) {
             query = firebaseFirestore.collection("Videos").orderBy("views", Query.Direction.DESCENDING);
-        } else if (category.equals("Popular Playlists")) {
-            // TODO most popular playlist-ed(?)
-            query = firebaseFirestore.collection("Videos");
-            // might need a different adapter/method
         } else if (category.equals("Hip-hop/rap")) {
             category = "Hip-Hop/Rap";
             getSupportActionBar().setTitle(category);
@@ -157,10 +153,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             category = "R&B/Soul";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
-//        } else if (category.equals("World Music/beats")) {
-//            category = "World Music/Beats";
-//            getSupportActionBar().setTitle(category);
-//            query = query.whereEqualTo("genre", category);
         } else if (category.equals("Indie/rock")) {
             category = "Indie/Rock";
             getSupportActionBar().setTitle(category);
@@ -220,6 +212,7 @@ public class DiscoverResultPage extends AppCompatActivity {
                         Intent videoPlayerPage = new Intent(DiscoverResultPage.this, VideoPlayer.class);
                         videoPlayerPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                         videoPlayerPage.putExtra("VIDEO", model);
+                        videoPlayerPage.putExtra("CREDIT", creditValue);
                         startActivity(videoPlayerPage);
                     }
                 });

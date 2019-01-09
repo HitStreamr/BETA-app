@@ -13,6 +13,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -67,6 +69,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -81,6 +84,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Timer;
@@ -475,8 +479,39 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 }
             }
         });
+
+        loadRelatedVideos();
     }
 
+    /**
+     * Load related videos to the current displayed one based on its genre, and sorted based on views.
+     */
+    private void loadRelatedVideos() {
+        RecyclerView recyclerView = findViewById(R.id.relatedVideos_RCV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        List<Video> videoList = new ArrayList<>();
+        RelatedVideosAdapter adapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Videos").orderBy("views",
+                com.google.firebase.firestore.Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            if (doc.get("genre").equals(vid.getGenre())) {
+                                if (!vid.getVideoId().equals(doc.getId())) {
+                                    videoList.add(doc.toObject(Video.class));
+                                    adapter.notifyDataSetChanged();
+                                    recyclerView.setAdapter(adapter);
+                                }
+                            }
+                        }
+                    }
+                });
+    }
 
     public interface MyCallback {
         void onCallback(ArrayList value);

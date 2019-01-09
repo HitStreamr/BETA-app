@@ -92,7 +92,40 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
 
             }
         });
-        // TODO: followers count
+
+        // Followers count
+        // TODO: add thousands/millions k/m feature
+        databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(username);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                    FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int follower = (int) dataSnapshot.getChildrenCount();
+                            if (follower > 1) {
+                                holder.followerCount.setText(follower + " Followers");
+                            } else {
+                                holder.followerCount.setText(follower + " Follower");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -109,7 +142,7 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
      */
     public class TopArtistsHolder extends RecyclerView.ViewHolder {
 
-        public TextView artistName;
+        public TextView artistName, followerCount;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
 
@@ -119,6 +152,7 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
             artistName = itemView.findViewById(R.id.user_name);
             cardView = itemView.findViewById(R.id.userCardView);
             profilePicture = itemView.findViewById(R.id.searchImage);
+            followerCount = itemView.findViewById(R.id.count);
         }
     }
 }
