@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.hitstreamr.hitstreamrbeta.R;
 
-public class Earnings extends Fragment{
+public class Earnings extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

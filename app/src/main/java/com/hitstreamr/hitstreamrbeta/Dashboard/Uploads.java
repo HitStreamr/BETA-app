@@ -1,6 +1,5 @@
 package com.hitstreamr.hitstreamrbeta.Dashboard;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -35,7 +34,7 @@ import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 import com.hitstreamr.hitstreamrbeta.VideoUploadActivity;
 
-public class Uploads extends Fragment{
+public class Uploads extends Fragment {
 
     private FirebaseUser current_user;
     private FirestoreRecyclerAdapter<Video, DashboardUploadsHolder> firestoreRecyclerAdapter_videos;

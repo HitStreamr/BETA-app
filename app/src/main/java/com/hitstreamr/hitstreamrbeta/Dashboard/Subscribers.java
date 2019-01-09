@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.hitstreamr.hitstreamrbeta.R;
 
-public class Subscribers extends Fragment{
+public class Subscribers extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
