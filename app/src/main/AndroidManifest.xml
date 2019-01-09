@@ -68,7 +68,8 @@
         <activity android:name=".Account" android:screenOrientation="portrait"/>
 
         <activity android:name=".VideoPlayer"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode" />
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/AppTheme.PopUpMenu"/>
 
         <activity android:name=".Profile" android:screenOrientation="portrait"/>
 
@@ -79,7 +80,8 @@
         <activity android:name=".ReportVideoPopup"
             android:theme="@style/AppTheme.PopUpMenu" android:screenOrientation="portrait"/>
 
-        <activity android:name=".CommentPage" android:screenOrientation="portrait"/>
+        <activity android:name=".CommentPage" android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu"/>
 
         <activity android:name=".AddToPlaylsit"
             android:theme="@style/AppTheme.PopUpMenu" android:screenOrientation="portrait"/>
@@ -105,7 +107,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Dashboard.Dash"
+        <activity android:name=".Dashboard.Dashboard"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme" android:screenOrientation="portrait"/>
 

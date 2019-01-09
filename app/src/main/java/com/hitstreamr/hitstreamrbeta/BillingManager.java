@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +53,7 @@ public class BillingManager extends AppCompatActivity implements View.OnClickLis
         int height = dm.heightPixels;
 
         getWindow().setLayout((int) (width * .8), (int) (height * .4));
+
 
 
         mAuth = FirebaseAuth.getInstance();

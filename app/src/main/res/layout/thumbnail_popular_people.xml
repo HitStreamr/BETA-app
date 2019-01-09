@@ -68,6 +68,6 @@
         android:background="@drawable/ic_verified_check_circle"
         android:backgroundTint="@android:color/holo_blue_light"
         android:layout_marginTop="70dp"
-        android:layout_marginStart="68dp"/>
+        android:layout_marginStart="71dp"/>
 
 </RelativeLayout>

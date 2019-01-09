@@ -5,7 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -13,42 +12,36 @@
         android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         >
-            <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
+            android:text="Recently Uploaded"
+            android:textStyle="bold"
+            android:textSize="10dp"
+            android:padding="10dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/artistsActivity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@color/colorAccent"
-                android:padding="10dp">
+                android:visibility="visible"
+                android:layout_marginBottom="10dp"
+                />
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/auRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+        </LinearLayout>
 
 
-                </android.support.v7.widget.RecyclerView>
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="end">
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:text="ALL"
-                        android:textColor="@color/colorPrimary" />
-                </LinearLayout>
-
-            </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/activityRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
+            android:layout_height="wrap_content">
 
         </android.support.v7.widget.RecyclerView>
 

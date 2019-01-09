@@ -13,13 +13,16 @@
         android:id="@+id/videoEditLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/toolbar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-56dp"
+        android:layout_marginEnd="0dp"
         android:orientation="vertical">
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_alignStart="@+id/videoEditLayout">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,9 +36,9 @@
                     <android.support.v7.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="10dp"
                         android:layout_margin="5dp"
-                        android:elevation="10dp">
+                        android:elevation="10dp"
+                        app:cardCornerRadius="10dp">
 
                         <ImageView
                             android:id="@+id/featuredVideoThumbnail"
@@ -133,106 +136,18 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Contributors"
-                    android:textStyle="bold"
-                    android:textSize="20dp"
-                    android:textColor="@android:color/black"
                     android:layout_marginTop="10dp"
                     android:paddingHorizontal="5dp"
-                    />
+                    android:text="Contributors"
+                    android:textColor="@android:color/black"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
 
                 <ListView
                     android:id="@+id/ContributorListView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-                <Button
-                    android:id="@+id/ContributorBtn"
-                    android:layout_width="140dp"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/button1"
-                    android:text="+ Contributor(s)"
-                    android:textColor="@color/colorAccent"
-                    android:layout_marginStart="10dp"/>
-
-
-                <LinearLayout
-                    android:id="@+id/add_contributor_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:orientation="vertical">
-
-                    <!--<EditText
-                            android:id="@+id/ContributorName"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="Contributor username/ email"
-                            android:inputType="textPersonName" />-->
-                    <AutoCompleteTextView
-                        android:id="@+id/ContributorName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Contributor username"
-                        android:inputType="textPersonName" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <EditText
-                            android:id="@+id/ContributorPercentage"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight=".15"
-                            android:hint=" 0 "
-                            android:inputType="number"
-                            android:maxLength="2"/>
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight=".10"
-                            android:ems="20"
-                            android:text="%"
-                            android:textSize="20dp"
-                            android:textColor="@android:color/black"
-                            android:gravity="center_vertical"
-                            />
-
-                        <Spinner
-                            android:id="@+id/ContributorTypeSpinner"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.40"
-                            android:entries="@array/ContributorType" />
-
-                        <Button
-                            android:id="@+id/ContributorCancel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.35"
-                            android:background="@android:color/transparent"
-                            android:textColor="@color/colorPrimary"
-                            android:text="Cancel" />
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/AddContributorButton"
-                        android:layout_width="140dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="0dp"
-                        android:background="@drawable/button1"
-                        android:text="+ ADD"
-                        android:textColor="@color/colorAccent" />
-
-
-                </LinearLayout>
+                
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -244,14 +159,13 @@
                     android:id="@+id/Privacy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:entries="@array/Privacy"
-                    android:layout_marginBottom="40dp"/>
+                    android:layout_marginBottom="40dp"
+                    android:entries="@array/Privacy" />
 
 
             </LinearLayout>
 
         </ScrollView>
-
 
 
     </LinearLayout>

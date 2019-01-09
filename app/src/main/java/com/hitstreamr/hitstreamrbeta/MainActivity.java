@@ -45,7 +45,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,7 +65,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
-import com.hitstreamr.hitstreamrbeta.Dashboard.Dash;
+import com.hitstreamr.hitstreamrbeta.Dashboard.Dashboard;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
@@ -160,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("Beta");
         getSupportActionBar().setSubtitle("HitStreamr");
@@ -259,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             type = getIntent().getStringExtra("TYPE");
 
             if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
-                //Hide Dash if Basic User & don't show floating action buttton
+                //Hide Dashboard if Basic User & don't show floating action buttton
 
                 Log.d("HIDE_DASH", getIntent().getStringExtra("TYPE"));
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
@@ -1313,7 +1311,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.dashboard:
-                Intent dashIntent = new Intent(getApplicationContext(), Dash.class);
+                Intent dashIntent = new Intent(getApplicationContext(), Dashboard.class);
                 dashIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(dashIntent);
                 return true;
