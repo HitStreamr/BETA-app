@@ -11,12 +11,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
@@ -87,14 +91,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.lang.Math.toIntExact;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener {
     private static final String TAG = "PlayerActivity";
 
     // bandwidth meter to measure and estimate bandwidth
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-
-
-
+    private static final String DEBUG_TAG = "DEBUG_DRAG";
 
     //ExoPlayer
     private ExoPlayer player;
@@ -188,6 +190,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private ArrayList<TextView> contributorTextViews;
     private LinearLayout contributorView;
     private Context context;
+
+    private GestureDetectorCompat mDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -441,7 +445,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
-        currentCreditVal = credit;
+        if (credit != null)
+            currentCreditVal = credit;
+        else
+            currentCreditVal = "0";
         readData(new MyCallback() {
             @Override
             public void onCallback(ArrayList value) {
@@ -467,6 +474,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 }
             }
         });
+
+        mDetector = new GestureDetectorCompat(this,this);
+
     }
 
 
@@ -1632,5 +1642,57 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     /**DRAG VIDEO **/
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onFling(MotionEvent event1, MotionEvent event2,
+                           float velocityX, float velocityY) {
+        Log.d(DEBUG_TAG, "onFling: " );
+        Intent intent = new Intent(this, MainActivity.class);
+        releasePlayer();
+        intent.putExtra("MINI_VISIBLE", true);
+        intent.putExtra("VIDEO", vid);
+        intent.putExtra("CREDIT", credit);
+        intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        intent.putExtra("Playback_Position",  playbackPosition);
+        intent.putExtra("CurrentWindow", currentWindow);
+        // Pass data object in the bundle and populate details activity.
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this, TextViewTitle, "title");
+        startActivity(intent, options.toBundle());
+        return true;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent event) {
+        Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
+    }
 
 }

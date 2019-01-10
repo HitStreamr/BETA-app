@@ -27,6 +27,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -35,6 +36,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +47,27 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioRendererEventListener;
+import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.text.Subtitle;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -91,6 +113,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String FRAG_OTHER = "other_fragment";
     private static final String FRAG_HOME = "home_fragment";
 
+    // bandwidth meter to measure and estimate bandwidth
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+
     private Button logout;
     private DrawerLayout drawer;
     private LinearLayout contentHolder;
@@ -100,6 +125,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private String type;
     private Activity main;
+
+    private RelativeLayout relBG;
+    private PlayerView relBGView;
+    private ExoPlayer player;
+    private TextView BGText;
+    private ComponentListener componentListener;
+    private int playerPos;
+    private int currPos;
 
 
     FloatingActionButton fab;
@@ -336,6 +369,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+        relBG = findViewById(R.id.BGRel);
+        relBGView = relBG.findViewById(R.id.background_video_player);
+        BGText = relBG.findViewById(R.id.songTitleBG);
+        //Setup Miniplayer
+        if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+            relBG.setVisibility(View.VISIBLE);
+            initMiniPlayer();
+            BGText.setText(((Video)getIntent().getParcelableExtra("VIDEO")).getTitle());
+        }
+    }
+
+    private void initMiniPlayer(){
+        if (player == null) {
+            componentListener = new ComponentListener();
+            // a factory to create an AdaptiveVideoTrackSelection
+            TrackSelection.Factory adaptiveTrackSelectionFactory =
+                    new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
+            // using a DefaultTrackSelector with an adaptive video selection factory
+            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this),
+                    new DefaultTrackSelector(adaptiveTrackSelectionFactory), new DefaultLoadControl());
+            player.addListener(componentListener);
+            //player.addVideoDebugListener(componentListener);
+            //player.addAudioDebugListener(componentListener);
+            relBGView.setPlayer(player);
+            player.setPlayWhenReady(true);
+            //classcast exception
+            Log.d(TAG, getIntent().getIntExtra("CurrentWindow", 0) + " " + getIntent().getIntExtra("Playback_Position", 0) );
+            player.seekTo(getIntent().getIntExtra("CurrentWindow", 0), getIntent().getIntExtra("Playback_Position", 0));
+        }
+        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
+        ExtractorMediaSource mediaSource1 = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(((Video)getIntent().getParcelableExtra("VIDEO")).getUrl()));
+//        ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 5_000_000, 15_000_000)
+        // ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 0, 15_000_000);
+        player.prepare(mediaSource1, true, false);
+        //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     }
 
     /**
@@ -1548,5 +1616,112 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent profilePage = new Intent(MainActivity.this, Profile.class);
         profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
         startActivity(profilePage);
+    }
+
+    private class ComponentListener extends Player.DefaultEventListener implements
+            VideoRendererEventListener, AudioRendererEventListener {
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            String stateString;
+            switch (playbackState) {
+                case Player.STATE_IDLE:
+                    stateString = "ExoPlayer.STATE_IDLE      -";
+                    break;
+                case Player.STATE_BUFFERING:
+                    stateString = "ExoPlayer.STATE_BUFFERING -";
+                    break;
+                case Player.STATE_READY:
+                    stateString = "ExoPlayer.STATE_READY     -";
+                    if (!(player.equals(""))) {
+                        if (player.getCurrentPosition() == 0) {
+                            //timerCounter();
+                        }
+                    }
+
+                    break;
+                case Player.STATE_ENDED:
+                    stateString = "ExoPlayer.STATE_ENDED     -";
+                   // if (!(Integer.parseInt(currentCreditVal) > 0)) {
+                        //callPurchase();
+                    //}
+
+                    break;
+                default:
+                    stateString = "UNKNOWN_STATE             -";
+                    break;
+            }
+            Log.d(TAG, "changed state to " + stateString + " playWhenReady: " + playWhenReady);
+        }
+
+        // Implementing VideoRendererEventListener.
+
+        @Override
+        public void onVideoEnabled(DecoderCounters counters) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onVideoInputFormatChanged(Format format) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onDroppedFrames(int count, long elapsedMs) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onRenderedFirstFrame(Surface surface) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onVideoDisabled(DecoderCounters counters) {
+            // Do nothing.
+        }
+
+        // Implementing AudioRendererEventListener.
+
+        @Override
+        public void onAudioEnabled(DecoderCounters counters) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAudioSessionId(int audioSessionId) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAudioInputFormatChanged(Format format) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
+            // Do nothing.
+        }
+
+        @Override
+        public void onAudioDisabled(DecoderCounters counters) {
+            // Do nothing.
+        }
+
     }
 }

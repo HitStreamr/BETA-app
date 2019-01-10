@@ -51,9 +51,9 @@
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
-
                     android:singleLine="true"
                     android:text="Video Title Here"
+                    android:transitionName="title"
                     android:textAlignment="center"
                     android:textColor="@android:color/black"
                     android:textSize="16dp"
@@ -468,6 +468,7 @@
     </LinearLayout>
 
     <!--Min View -->
-    
+
+
 
 </LinearLayout>
