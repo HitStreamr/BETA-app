@@ -10,12 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,26 +24,24 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.hitstreamr.hitstreamrbeta.FeedData;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
-
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
 
 public class ActivityFragment extends Fragment {
     private static final String TAG = "ActivityFragment";
 
-    private DatabaseReference database, myRef;
+    private DatabaseReference database, myRef, myFeedRef;
     private FirebaseFirestore db;
     private FirebaseUser current_user;
     DatabaseReference myFollowingRef, myArtistRef;
-    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos;
+    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoFeed, typeFeed;
     ArrayList<Object> artistVideos;
-    private CollectionReference videosCollectionRef;
+    ArrayList<FeedData> feeddocs;
+    private CollectionReference videosCollectionRef, feedDataCollectionRef;
     private ArrayList<Video> UserVideos;
     //private  ArrayList<Video> myListCollection;
     private RecyclerView activityRecyclerView;
@@ -68,19 +62,26 @@ public class ActivityFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         database = FirebaseDatabase.getInstance().getReference();
         myRef = FirebaseDatabase.getInstance().getReference("ArtistVideo");
+        myFeedRef = FirebaseDatabase.getInstance().getReference("FeedData");
         myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
                 .child(current_user.getUid());
         myArtistRef = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
         videosCollectionRef = db.collection("Videos");
+        feedDataCollectionRef = db.collection("FeedData");
         followingUsers = new ArrayList<>();
+        feeddocs = new ArrayList<>();
         artistfollowing = new ArrayList<>();
         artistVideos = new ArrayList<>();
         eachArtistVideos = new ArrayList<>();
+        videoFeed = new ArrayList<>();
+        typeFeed = new ArrayList<>();
         UserVideos = new ArrayList<>();
         //myListCollection = new ArrayList<Object>();
         activityRecyclerView = view.findViewById(R.id.activityRecyclerView);
         Log.e(TAG, "Entered On create activity");
-        getArtistUsers();
+        //getArtistUsers();
+        getFollowing();
+
     }
 
     private void getFollowing() {
@@ -92,13 +93,14 @@ public class ActivityFragment extends Fragment {
                 if (dataSnapshot.exists()) {
                     Log.e(TAG, "Entered datasnapshot exists");
                     for (DataSnapshot each : dataSnapshot.getChildren()) {
-                        if (artistfollowing.contains(each.getKey())) {
-                            followingUsers.add(each.getKey());
-                        }
+                        //if (artistfollowing.contains(each.getKey())) {
+                        followingUsers.add(each.getKey());
+                        //}
                     }
                 }
                 Log.e(TAG, "following arraylist values" + followingUsers);
-                getArtistVideos();
+                //getArtistVideos();
+                getFeedData();
             }
 
             @Override
@@ -129,33 +131,35 @@ public class ActivityFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError error) {
-                // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
     }
 
-    /*private void getPostResults(){
-        com.google.firebase.firestore.Query allVideos = db.collection("Videos");
-
-        for (int i = 0; i < followingUsers.size(); i++) {
-            allVideos = allVideos.whereEqualTo("UserId" , followingUsers.get(i));
-    }
-
-        Task<QuerySnapshot> allVideosTask = allVideos.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
-
-        //allResultsRetrieved is only successful, when all are successful
-        Task<List<QuerySnapshot>> allVideosRetrieved = Tasks.whenAllSuccess(allVideosTask);
-
-        allVideosRetrieved.addOnSuccessListener(new OnSuccessListener<List<QuerySnapshot>>() {
+    private void getFeedData(){
+        Query queryRef = feedDataCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(List<QuerySnapshot> querySnapshots) {
-
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (followingUsers.size() > 0) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.e(TAG, "userId is :" +document.get("userId"));
+                        if(document.get("userId") != null) {
+                            if (followingUsers.contains(document.get("userId"))) {
+                                feeddocs.add(document.toObject(FeedData.class));
+                                if(!(videoFeed.contains(document.get("videoId")))) {
+                                    videoFeed.add(document.get("videoId").toString());
+                                    typeFeed.add(document.get("type").toString());
+                                }
+                            }
+                        }
+                    }
+                }
+                getVideoFirestore();
+               Log.e(TAG, "feed object is :"+feeddocs.size() +"    "  + feeddocs.get(0));
             }
-        });/*
-
-    }*/
-
+        });
+    }
 
     private void getArtistVideos() {
         myRef.addValueEventListener(new ValueEventListener() {
@@ -165,7 +169,7 @@ public class ActivityFragment extends Fragment {
                     if (followingUsers.contains(snapshot.getKey())) {
                         Log.e(TAG, "22222" +snapshot.getKey());
                         for( DataSnapshot childSnapshot : snapshot.getChildren() )
-                        eachArtistVideos.add(childSnapshot.getKey());
+                            eachArtistVideos.add(childSnapshot.getKey());
                     }
                 }
                 Log.e(TAG, "getArtistVideos: " + eachArtistVideos + eachArtistVideos.size());
@@ -180,30 +184,6 @@ public class ActivityFragment extends Fragment {
 
 
         });
-//
-//        db.collection("ArtistVideo")
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            for (QueryDocumentSnapshot document : task.getResult()) {
-//                                if (followingUsers.contains(document.getId())) {
-//                                    //Log.e(TAG, "getArtistVideos: "+document.getId() + "id is :"+document.get("videos"));
-//                                    eachArtistVideos.add(document.get("videos").toString());
-//                                    //myListCollection.add(eachArtistVideos);
-//                                }
-//                            }
-//                            //artistVideos.add(eachArtistVideos.indexOf(0));
-//                        }
-//                        Log.e(TAG, "getArtistVideos: " + eachArtistVideos.get(1) + eachArtistVideos.size());
-//                       /* ArrayList<String> stringCollection = new ArrayList<String>();
-//                        for (int i = 0; i < myListCollection.size(); ++i) {
-//                            stringCollection.addAll(myListCollection.contains());
-//                        }*/
-//                        getVideoFirestore();
-//                    }
-//                });
     }
 
     public void getVideoFirestore() {
@@ -211,11 +191,11 @@ public class ActivityFragment extends Fragment {
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (eachArtistVideos.size() > 0) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            if (eachArtistVideos.contains(document.getId())) {
-                                UserVideos.add(document.toObject(Video.class));
-                            }
+                if (videoFeed.size() > 0) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (videoFeed.contains(document.getId())) {
+                            UserVideos.add(document.toObject(Video.class));
+                        }
                     }
                     callToAdapter();
                 }
@@ -228,12 +208,10 @@ public class ActivityFragment extends Fragment {
     private void callToAdapter(){
 
         activityRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new PostVideoFeedAdapter(UserVideos);
+        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed);
         adapter.notifyDataSetChanged();
         activityRecyclerView.setAdapter(adapter);
     }
-
-
 
 
 }

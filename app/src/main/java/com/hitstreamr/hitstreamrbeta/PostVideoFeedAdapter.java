@@ -1,6 +1,5 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,29 +8,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import org.joda.time.Interval;
-
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdapter.VideoPostHolder> {
     private static final String TAG = "PostVideoFeedAdapter";
     private ArrayList<Video> postVideoFeed ;
+    private ArrayList<String> postTypeFeed ;
 
-    public PostVideoFeedAdapter(ArrayList<Video> postVideoFeed) {
+    public PostVideoFeedAdapter(ArrayList<Video> postVideoFeed, ArrayList<String> postTypeFeed) {
         this.postVideoFeed = postVideoFeed;
+        this.postTypeFeed = postTypeFeed;
         Log.e(TAG, "Post Video Feed constructor entered ");
     }
 
@@ -53,7 +42,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         holder.username.setText(postVideoFeed.get(position).getUsername());
         holder.duration.setText(postVideoFeed.get(position).getDuration());
         holder.title.setText(postVideoFeed.get(position).getTitle());
-        holder.activity.setText("posted a video");
+        holder.activity.setText(postTypeFeed.get(position) + " a video");
 
         /*//Timestamp ts = postVideoFeed.get(position).getTimestamp();
         Timestamp now = new Timestamp(System.currentTimeMillis());
