@@ -148,32 +148,11 @@ public class ActivityFragment extends Fragment {
                         if(document.get("userId") != null) {
                             if (followingUsers.contains(document.get("userId"))) {
                                 feeddocs.add(document.toObject(FeedData.class));
-
                                 if(!(videoTypeFeed.contains(document.get("videoId") + " " + document.get("type").toString()) )){
                                     videoTypeFeed.add(document.get("videoId").toString()+ " " + document.get("type").toString());
                                     videoFeed.add(document.get("videoId").toString());
                                     typeFeed.add(document.get("type").toString());
                                 }
-                               /* else {
-                                    if(document.get("type").equals("post")) {
-                                        videoFeed.add(document.get("videoId").toString());
-                                        typeFeed.add(document.get("type").toString());
-                                    }
-                                    else{
-                                        int inde = videoFeed.indexOf(document.get("videoId"));
-                                        if(typeFeed.get(inde).equals(document.get("type"))) {
-                                    }
-                                        *//*
-                                    for(int i=0; i<videoFeed.size(); i++){
-                                        if(!(videoFeed.get(i).equals(document.get("videoId")))){
-                                            if(!(typeFeed.get(i).equals(document.get("videoId")))) {
-                                                videoFeed.add(document.get("videoId").toString());
-                                                typeFeed.add(document.get("type").toString());
-                                            }*//*
-                                        }
-                                    }
-
-                                }*/
                             }
                         }
                     }
