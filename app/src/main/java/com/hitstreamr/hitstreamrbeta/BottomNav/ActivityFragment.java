@@ -38,7 +38,7 @@ public class ActivityFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseUser current_user;
     DatabaseReference myFollowingRef, myArtistRef;
-    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoFeed, typeFeed;
+    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoTypeFeed, videoFeed, typeFeed;
     ArrayList<Object> artistVideos;
     ArrayList<FeedData> feeddocs;
     private CollectionReference videosCollectionRef, feedDataCollectionRef;
@@ -72,6 +72,7 @@ public class ActivityFragment extends Fragment {
         feeddocs = new ArrayList<>();
         artistfollowing = new ArrayList<>();
         artistVideos = new ArrayList<>();
+        videoTypeFeed = new ArrayList<>();
         eachArtistVideos = new ArrayList<>();
         videoFeed = new ArrayList<>();
         typeFeed = new ArrayList<>();
@@ -147,16 +148,38 @@ public class ActivityFragment extends Fragment {
                         if(document.get("userId") != null) {
                             if (followingUsers.contains(document.get("userId"))) {
                                 feeddocs.add(document.toObject(FeedData.class));
-                                if(!(videoFeed.contains(document.get("videoId")))) {
+
+                                if(!(videoTypeFeed.contains(document.get("videoId") + " " + document.get("type").toString()) )){
+                                    videoTypeFeed.add(document.get("videoId").toString()+ " " + document.get("type").toString());
                                     videoFeed.add(document.get("videoId").toString());
                                     typeFeed.add(document.get("type").toString());
                                 }
+                               /* else {
+                                    if(document.get("type").equals("post")) {
+                                        videoFeed.add(document.get("videoId").toString());
+                                        typeFeed.add(document.get("type").toString());
+                                    }
+                                    else{
+                                        int inde = videoFeed.indexOf(document.get("videoId"));
+                                        if(typeFeed.get(inde).equals(document.get("type"))) {
+                                    }
+                                        *//*
+                                    for(int i=0; i<videoFeed.size(); i++){
+                                        if(!(videoFeed.get(i).equals(document.get("videoId")))){
+                                            if(!(typeFeed.get(i).equals(document.get("videoId")))) {
+                                                videoFeed.add(document.get("videoId").toString());
+                                                typeFeed.add(document.get("type").toString());
+                                            }*//*
+                                        }
+                                    }
+
+                                }*/
                             }
                         }
                     }
                 }
                 getVideoFirestore();
-               Log.e(TAG, "feed object is :"+feeddocs.size() +"    "  + feeddocs.get(0));
+               Log.e(TAG, "feed object is :"+ videoFeed + videoTypeFeed + videoFeed.size() + videoTypeFeed.size());
             }
         });
     }
@@ -187,7 +210,7 @@ public class ActivityFragment extends Fragment {
     }
 
     public void getVideoFirestore() {
-        Query queryRef = videosCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = videosCollectionRef;
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -195,6 +218,7 @@ public class ActivityFragment extends Fragment {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         if (videoFeed.contains(document.getId())) {
                             UserVideos.add(document.toObject(Video.class));
+                            Log.e(TAG,"video Ids are "+document.getId());
                         }
                     }
                     callToAdapter();
