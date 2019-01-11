@@ -63,15 +63,22 @@
         <activity android:name=".Profile" />
         <activity android:name=".Authentication.ResetPassword" />
         <activity android:name=".ChangePassword" />
-        <activity android:name=".ReportVideoPopup" />
+        <activity android:name=".ReportVideoPopup"
+            android:theme="@style/AppTheme.PopUpMenu"/>
         <activity android:name=".CommentPage" />
-        <activity android:name=".AddToPlaylsit" />
-        <activity android:name=".CreateNewPlaylist"></activity>
-        <activity android:name=".Library"></activity>
-        <activity android:name=".CreditsPurchase"></activity>
+        <activity android:name=".AddToPlaylsit"
+            android:theme="@style/AppTheme.PopUpMenu"/>
+        <activity android:name=".Library" />
+        <activity android:name=".CreateNewPlaylist"
+            android:theme="@style/AppTheme.PopUpMenu"/>
+        <activity android:name=".CreditsPurchase" />
         <activity android:name=".BillingManager" />
         <activity android:name=".NewReleases" />
         <activity android:name=".TrendingVideos" />
+        <activity android:name=".GetVerifiedPopUp"
+            android:theme="@style/AppTheme.PopUpMenu"/>
+
+
         <service android:name=".HitStreamrFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -81,8 +88,13 @@
             android:name=".Dashboard.Dashboard"
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme" />
-        <activity android:name=".DiscoverResultPage"></activity>
-        <activity android:name=".ArtistsToWatch"></activity>
+
+        <activity android:name=".DiscoverResultPage" />
+            <activity android:name=".Onboarding" />
+        <activity android:name=".ArtistsToWatch" />
+        <activity android:name=".VideoEdit" android:screenOrientation="portrait"/>
+        <activity android:name=".VideoDelete" android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu"/>
     </application>
 
 </manifest>
