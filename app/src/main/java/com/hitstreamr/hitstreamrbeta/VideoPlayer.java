@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -174,7 +175,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private DatabaseReference myRefview;
 
     private boolean runCheck = false;
-    private boolean wholeVideo = false;
     private String currentCreditVal;
 
     private String credit;
@@ -193,8 +193,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private LinearLayout contributorView;
     private Context context;
 
+    // Related videos & auto-play
     private RelatedVideosAdapter relatedVideosAdapter;
     private boolean autoplay_switchState = false;
+    private boolean wholeVideo = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -440,25 +442,22 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onCallback(ArrayList value) {
                if (value.size() > 0) {
-                  // Log.e(TAG, "player before inside callback "+value);
+                   // Log.e(TAG, "player before inside callback "+value);
                    checkuploaded();
-                }
-                if (Integer.parseInt(currentCreditVal) > 0) {
+               }
+               if (Integer.parseInt(currentCreditVal) > 0) {
                     //Log.e(TAG, "player before inside if ");
                    // Log.e(TAG, "player before initializePlayer success ");
                     wholeVideo = true;
                     initializePlayer();
                 }
-                else if (uploadbyUser)
-                {
+                else if (uploadbyUser) {
                     //Log.e(TAG, "player before inside else if  "+uploadbyUser);
                     initializePlayer();
                 }
-                else
-                {
+                else {
                     initializePlayer1();
                     runCheck = true;
-
                 }
             }
         });
@@ -471,6 +470,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         autoplay_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    autoplay_switchState = true;
+                } else {
+                    autoplay_switchState = false;
+                }
                 SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("autoplay_switch", b);
@@ -1319,12 +1323,22 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         }
                     }
                     break;
+
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
                     if (!(Integer.parseInt(currentCreditVal) > 0)) {
                         callPurchase();
-                    } else if (wholeVideo) {
-                        autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
+                    }
+
+                    // Play the next video ONLY IF we have finished playing the whole video
+                    // and the auto-play switch is turned on
+                    else if (wholeVideo & autoplay_switchState) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
+                            }
+                        }, 1500);
                     }
                     break;
                 default:
