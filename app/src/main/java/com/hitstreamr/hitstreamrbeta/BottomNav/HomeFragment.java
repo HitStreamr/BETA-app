@@ -267,11 +267,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
          */
     }
 
-
-
-
-
-    private void setupRecyclerView(){
+    /**
+     * Set up the recycler view for trending videos.
+     */
+    private void setupRecyclerView() {
         Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING).limit(10);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()

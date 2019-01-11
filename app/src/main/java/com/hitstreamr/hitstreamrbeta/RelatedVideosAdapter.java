@@ -111,6 +111,14 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     }
 
     /**
+     * Get the first video on the list.
+     * @return video
+     */
+    public Video getFirstFromList() {
+        return videoList.get(0);
+    }
+
+    /**
      * Related Videos Holder - Inner Class
      */
     public class RelatedVideosHolder extends RecyclerView.ViewHolder {

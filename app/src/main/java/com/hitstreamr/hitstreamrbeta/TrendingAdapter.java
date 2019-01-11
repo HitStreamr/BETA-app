@@ -54,8 +54,8 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TextView title;
         public TextView author;
         public ImageView thumbnail;
-        public  TextView duration;
-        public  TextView viewsCount;
+        public TextView duration;
+        public TextView viewsCount;
         public TextView publishedYear;
 
 

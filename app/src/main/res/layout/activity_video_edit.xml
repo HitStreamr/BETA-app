@@ -22,7 +22,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignStart="@+id/videoEditLayout">
+            android:layout_alignStart="@id/videoEditLayout">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -41,7 +41,7 @@
                         app:cardCornerRadius="10dp">
 
                         <ImageView
-                            android:id="@+id/featuredVideoThumbnail"
+                            android:id="@+id/videoThumbnail_editVideo"
                             android:layout_width="match_parent"
                             android:layout_height="200dp"
                             android:layout_alignParentStart="true"
@@ -59,7 +59,7 @@
                     app:counterMaxLength="100">
 
                     <EditText
-                        android:id="@+id/Title"
+                        android:id="@+id/title_editVideo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -76,7 +76,7 @@
                     app:counterMaxLength="1000">
 
                     <EditText
-                        android:id="@+id/Description"
+                        android:id="@+id/description_editVideo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="15dp"
@@ -104,7 +104,7 @@
                             android:text="Genre" />
 
                         <Spinner
-                            android:id="@+id/Genre"
+                            android:id="@+id/genre_editVideo"
                             android:layout_width="160dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
@@ -123,7 +123,7 @@
                             android:text="Sub Genre" />
 
                         <Spinner
-                            android:id="@+id/SubGenre"
+                            android:id="@+id/subGenre_editVideo"
                             android:layout_width="160dp"
                             android:layout_height="wrap_content"
                             android:entries="@array/Genre" />
@@ -143,10 +143,12 @@
                     android:textSize="20dp"
                     android:textStyle="bold" />
 
-                <ListView
-                    android:id="@+id/ContributorListView"
+                <LinearLayout
+                    android:id="@+id/contributor_editVideo"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingStart="10dp"/>
                 
 
                 <TextView
@@ -156,17 +158,15 @@
                     android:text="Privacy" />
 
                 <Spinner
-                    android:id="@+id/Privacy"
+                    android:id="@+id/privacy_editVideo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="40dp"
                     android:entries="@array/Privacy" />
 
-
             </LinearLayout>
 
         </ScrollView>
-
 
     </LinearLayout>
 

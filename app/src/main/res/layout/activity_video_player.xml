@@ -454,9 +454,11 @@
                             android:orientation="horizontal">
 
                             <Switch
+                                android:id="@+id/autoPlay_videoPlayer"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Autoplay" />
+                                android:text="Autoplay"
+                                android:theme="@style/SwitchTheme"/>
 
                         </LinearLayout>
 

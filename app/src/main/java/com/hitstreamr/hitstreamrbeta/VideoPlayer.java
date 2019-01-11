@@ -3,13 +3,13 @@ package com.hitstreamr.hitstreamrbeta;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +23,13 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,12 +44,10 @@ import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -57,7 +57,6 @@ import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -75,7 +74,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -166,13 +164,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private boolean collapseVariable = true;
     private boolean uploadbyUser = false;
 
-    /*private long playbackPosition;
-    private int currentWindow;
-    private boolean playWhenReady = true;*/
-
-
-
-
     Video vid;
 
     private String creditValue="";
@@ -183,12 +174,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private DatabaseReference myRefview;
 
     private boolean runCheck = false;
+    private boolean wholeVideo = false;
     private String currentCreditVal;
 
     private String credit;
     private String sTimeStamp = "";
 
-    //Comment stuff
+    // Comment stuff
     private String accountType;
     private String username;
     private FirebaseUser current_user;
@@ -200,6 +192,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private ArrayList<TextView> contributorTextViews;
     private LinearLayout contributorView;
     private Context context;
+
+    private RelatedVideosAdapter relatedVideosAdapter;
+    private boolean autoplay_switchState = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,18 +227,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             //Glide.with(getApplicationContext()).load(photoURL).into(circleImageView_comment);
         }
 
-        vid = getIntent().getParcelableExtra("VIDEO");
-
-        credit = getIntent().getStringExtra("CREDIT");
-        userUploadVideoList = new ArrayList<>();
-
-        currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        database = FirebaseDatabase.getInstance();
-        myRef = database.getReference("VideoLikes");
-
         getUserType();
         getRecentComment();
-
 
         // Get current account's username
         DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child(accountType)
@@ -392,7 +377,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         context = this;
 
-
         contributorTextViews = new ArrayList<>();
 
         FirebaseFirestore.getInstance().collection("Videos")
@@ -404,8 +388,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
-
-
 
                                for(HashMap<String,String> contributor : temp){
                                    Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
@@ -457,13 +439,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         readData(new MyCallback() {
             @Override
             public void onCallback(ArrayList value) {
-               if(value.size() > 0) {
+               if (value.size() > 0) {
                   // Log.e(TAG, "player before inside callback "+value);
                    checkuploaded();
                 }
                 if (Integer.parseInt(currentCreditVal) > 0) {
                     //Log.e(TAG, "player before inside if ");
                    // Log.e(TAG, "player before initializePlayer success ");
+                    wholeVideo = true;
                     initializePlayer();
                 }
                 else if (uploadbyUser)
@@ -480,7 +463,24 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         });
 
+        // Populate the recycler view with videos of same genre based on views
         loadRelatedVideos();
+
+        // Save auto-play switch state for users
+        Switch autoplay_switch = findViewById(R.id.autoPlay_videoPlayer);
+        autoplay_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("autoplay_switch", b);
+                editor.apply();
+            }
+        });
+
+        SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
+        boolean autoplay_state = preferences.getBoolean("autoplay_switch", false);
+        autoplay_switch.setChecked(autoplay_state);
     }
 
     /**
@@ -491,7 +491,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Video> videoList = new ArrayList<>();
-        RelatedVideosAdapter adapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
+        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos").orderBy("views",
@@ -504,8 +504,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                             if (doc.get("genre").equals(vid.getGenre())) {
                                 if (!vid.getVideoId().equals(doc.getId())) {
                                     videoList.add(doc.toObject(Video.class));
-                                    adapter.notifyDataSetChanged();
-                                    recyclerView.setAdapter(adapter);
+                                    relatedVideosAdapter.notifyDataSetChanged();
+                                    recyclerView.setAdapter(relatedVideosAdapter);
                                 }
                             }
                         }
@@ -513,25 +513,21 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    /**
+     * Play the next video on the list.
+     * @param nextVideo next video
+     */
+    private void autoPlayNextVideo(Video nextVideo) {
+        Intent nextVideoPage = new Intent(getApplicationContext(), VideoPlayer.class);
+        nextVideoPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        nextVideoPage.putExtra("VIDEO", nextVideo);
+        nextVideoPage.putExtra("CREDIT", currentCreditVal);
+        startActivity(nextVideoPage);
+    }
+
     public interface MyCallback {
         void onCallback(ArrayList value);
     }
-
-    /*public void readData(MyCallback myCallback) {
-        FirebaseDatabase.getInstance().getReference("Credits")
-                .child(currentFirebaseUser.getUid()).child("creditvalue")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        creditValue = dataSnapshot.getValue(String.class);
-                        myCallback.onCallback(creditValue);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
-    }*/
-
 
 // This method is to check the player position every second and after 15 seconds initiate the DB call
     private Timer timer;
@@ -592,7 +588,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     // After watching 15 sec clipped video user is prompted to purchase credits on confirmation redirected to purchase credits page
-    private void callPurchase(){
+    private void callPurchase() {
 
         setContentView(R.layout.activity_confirm);
         //Button
@@ -613,8 +609,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         getWindow().setLayout((int) (width * .8), (int) (height * .4));
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
     }
 
     //This method is called after 15 secs for users with credits watch to check if they watched the video before
@@ -1324,14 +1318,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                             timerCounter();
                         }
                     }
-
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
                     if (!(Integer.parseInt(currentCreditVal) > 0)) {
                         callPurchase();
+                    } else if (wholeVideo) {
+                        autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
                     }
-
                     break;
                 default:
                     stateString = "UNKNOWN_STATE             -";
@@ -1560,7 +1554,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         if (view == addToPlaylistBtn) {
             Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
-            Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
+            Intent playListAct = new Intent(getApplicationContext(), AddToPlaylist.class);
             playListAct.putExtra("VideoId", vid.getVideoId());
             startActivity(playListAct);
         }
