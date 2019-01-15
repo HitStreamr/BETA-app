@@ -395,14 +395,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             relBGView.setPlayer(player);
             player.setPlayWhenReady(true);
             //classcast exception
-            Log.d(TAG, getIntent().getIntExtra("CurrentWindow", 0) + " " + getIntent().getIntExtra("Playback_Position", 0) );
-            player.seekTo(getIntent().getIntExtra("CurrentWindow", 0), getIntent().getIntExtra("Playback_Position", 0));
+            Log.d(TAG, getIntent().getIntExtra("CurrentWindow", 0) + " " + getIntent().getLongExtra("Playback_Position", 0) );
+            player.seekTo(getIntent().getIntExtra("CurrentWindow", 0), getIntent().getLongExtra("Playback_Position", 0));
         }
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
         ExtractorMediaSource mediaSource1 = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(((Video)getIntent().getParcelableExtra("VIDEO")).getUrl()));
 //        ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 5_000_000, 15_000_000)
         // ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 0, 15_000_000);
-        player.prepare(mediaSource1, true, false);
+        player.prepare(mediaSource1, false, false);
         //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     }
 
@@ -1642,7 +1642,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
-                   // if (!(Integer.parseInt(currentCreditVal) > 0)) {
+                    //if (!(Integer.parseInt(currentCreditVal) > 0)) {
                         //callPurchase();
                     //}
 
