@@ -87,6 +87,7 @@
                     android:ems="10"
                     android:hint="Name"
                     android:inputType="textPersonName"
+                    android:textCursorDrawable="@null"
                     />
                 <TextView
                     android:id="@+id/UserNametext"
@@ -110,7 +111,9 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Username"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:textCursorDrawable="@null"
+                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -125,7 +128,8 @@
                     android:ems="10"
                     android:hint="user@email.com"
                     android:inputType="textEmailAddress"
-                    android:enabled="true"/>
+                    android:enabled="true"
+                    android:textCursorDrawable="@null"/>
 
                 <Button
                     android:id="@+id/ChangePassword"
@@ -148,7 +152,9 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Bio Here"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textCursorDrawable="@null"
+                    />
 
             </LinearLayout>
 
@@ -184,14 +190,18 @@
                         android:ems="10"
                         android:hint="First"
                         android:inputType="textPersonName"
-                        android:layout_marginEnd="10dp"/>
+                        android:layout_marginEnd="10dp"
+                        android:textCursorDrawable="@null"
+                        />
                     <EditText
                         android:id="@+id/accountLastName"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:hint="Last"
-                        android:inputType="textPersonName" />
+                        android:inputType="textPersonName"
+                        android:textCursorDrawable="@null"
+                        />
                 </LinearLayout>
 
                 <TextView
@@ -205,7 +215,8 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="123456789"
-                    android:inputType="phone" />
+                    android:inputType="phone"
+                    android:textCursorDrawable="@null" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -218,14 +229,16 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Address line 1"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textCursorDrawable="@null" />
                 <EditText
                     android:id="@+id/accountCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="City"
-                    android:inputType="textPersonName" />
+                    android:inputType="textPersonName"
+                    android:textCursorDrawable="@null" />
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -247,7 +260,8 @@
                         android:layout_height="wrap_content"
                         android:ems="10"
                         android:hint="Zip"
-                        android:inputType="number" />
+                        android:inputType="number"
+                        android:textCursorDrawable="@null" />
                 </LinearLayout>
                 <EditText
                     android:id="@+id/accountCountry"
@@ -255,7 +269,8 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Country"
-                    android:inputType="textPersonName"/>
+                    android:inputType="textPersonName"
+                    android:textCursorDrawable="@null" />
 
 
             </LinearLayout>

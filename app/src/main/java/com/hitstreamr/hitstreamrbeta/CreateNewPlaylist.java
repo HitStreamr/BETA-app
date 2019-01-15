@@ -79,6 +79,7 @@ public class CreateNewPlaylist extends AppCompatActivity implements View.OnClick
             registerPlaylist();
         }
         if (view == cancelBtn) {
+            finish();
             Log.e(TAG, "Cancel Creating new Playlist");
         }
     }

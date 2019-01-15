@@ -66,7 +66,8 @@
                         android:ems="10"
                         android:hint="Title"
                         android:inputType="textMultiLine"
-                        android:maxLength="100" />
+                        android:maxLength="100"
+                        android:textCursorDrawable="@null" />
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -83,7 +84,8 @@
                         android:ems="10"
                         android:hint="Description"
                         android:inputType="textMultiLine"
-                        android:maxLength="1000" />
+                        android:maxLength="1000"
+                        android:textCursorDrawable="@null" />
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout

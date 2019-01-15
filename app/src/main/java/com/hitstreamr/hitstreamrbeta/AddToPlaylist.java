@@ -35,7 +35,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
 
     private ItemClickListener mlistner;
 
-    //Video vid;
+    Video vid;
 
     String videoId;
 
@@ -47,7 +47,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_to_playlsit);
+        setContentView(R.layout.activity_add_to_playlist);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -60,7 +60,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             }
         };
 
-        videoId = getIntent().getStringExtra("VideoId");
+        vid = getIntent().getParcelableExtra("VIDEO");
+
         Log.e(TAG, "Video id is :" +videoId);
 
         cancel = (Button) findViewById(R.id.cancel);
@@ -123,8 +124,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
                 .getReference("PlaylistVideos")
                 .child(current_user.getUid())
                 .child(playlistSelected)
-                .child(videoId)
-                .setValue(videoId)
+                .child(vid.getVideoId())
+                .setValue(vid)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -144,15 +145,16 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             case R.id.cancel:
                 finish();
                 break;
+
             case R.id.confirm:
                 registerVideoToPlaylist();
-                Toast.makeText(this, "video added to "+playlistSelected, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
                 finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
+
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
+                break;
         }
     }
 }
-//

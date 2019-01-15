@@ -1520,9 +1520,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //TODO on which screen should the floating action bar be accessible
             case R.id.home:
 
-                if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
+                if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
                     bottomNavSetUp(true);
-                }else{
+                } else {
                     bottomNavSetUp(false);
                 }
                 bundle = new Bundle();

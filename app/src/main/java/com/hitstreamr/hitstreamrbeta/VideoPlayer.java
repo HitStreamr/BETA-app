@@ -1569,7 +1569,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (view == addToPlaylistBtn) {
             Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
             Intent playListAct = new Intent(getApplicationContext(), AddToPlaylist.class);
-            playListAct.putExtra("VideoId", vid.getVideoId());
+            playListAct.putExtra("VIDEO", vid);
+            playListAct.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
             startActivity(playListAct);
         }
     }
