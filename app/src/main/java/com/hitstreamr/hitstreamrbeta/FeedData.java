@@ -4,13 +4,24 @@ import com.google.firebase.Timestamp;
 
 public class FeedData {
     public String userId, videoId, type;
-    Timestamp time;
+    Timestamp timestamp;
 
-    public FeedData(String userId, String videoId, String type, Timestamp time) {
+    public FeedData() {
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public FeedData(String userId, String videoId, String type, Timestamp timestamp) {
         this.userId = userId;
         this.videoId = videoId;
         this.type = type;
-        this.time = time;
+        this.timestamp = timestamp;
     }
 
 

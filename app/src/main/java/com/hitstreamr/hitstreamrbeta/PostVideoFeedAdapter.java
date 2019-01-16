@@ -51,8 +51,8 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
             holder.activity.setText(" and " + postLikeFeed.get(position) + " others " + postTypeFeed.get(position) + "ed  a video");
         }
 
-        String sdate = postVideoFeed.get(position).getTimestamp().toString();
-        holder.published.setText(sdate);
+        //String sdate = postVideoFeed.get(position).getTimestamp().toString();
+        //holder.published.setText(postVideoFeed.get(position).getTimestamp().toString());
 
         /*//Timestamp ts = postVideoFeed.get(position).getTimestamp();
         Timestamp now = new Timestamp(System.currentTimeMillis());
