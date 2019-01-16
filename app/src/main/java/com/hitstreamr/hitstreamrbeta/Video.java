@@ -191,7 +191,7 @@ public class Video implements Parcelable {
         videoId = in.readString();
         duration = in.readString();
         long tmpDate = in.readLong();
-        timestamp = tmpDate == Long.MIN_VALUE ? null : new Timestamp(new Date(tmpDate));
+        timestamp = in.readParcelable(Timestamp.class.getClassLoader());
         views = in.readLong();
         if (in.readByte() == 0x01) {
             contributors = new ArrayList<Contributor>();
@@ -220,7 +220,7 @@ public class Video implements Parcelable {
         dest.writeInt(pubYear);
         dest.writeString(videoId);
         dest.writeString(duration);
-        dest.writeLong(timestamp != null ? timestamp.toDate().getTime() : Long.MIN_VALUE);
+        dest.writeParcelable(timestamp, 0);
         dest.writeLong(views);
         if (contributors == null) {
             dest.writeByte((byte) (0x00));

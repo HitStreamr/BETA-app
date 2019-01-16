@@ -52,7 +52,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         }
 
         //String sdate = postVideoFeed.get(position).getTimestamp().toString();
-        //holder.published.setText(postVideoFeed.get(position).getTimestamp().toString());
+        //holder.published.setText(postVideoFeed.get(position).getTimestamp().toDate().getTime());
 
         /*//Timestamp ts = postVideoFeed.get(position).getTimestamp();
         Timestamp now = new Timestamp(System.currentTimeMillis());
