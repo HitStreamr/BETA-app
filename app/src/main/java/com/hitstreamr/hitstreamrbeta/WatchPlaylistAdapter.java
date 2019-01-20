@@ -42,12 +42,9 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     @Override
     public void onBindViewHolder(@NonNull WatchPlaylistViewHolder holder, int position) {
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
-        holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()));
-        holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideos().size()) + " videos");
-        holder.username.setText(Playlist.get(position).getPlayVideos().get(0).getUsername());
-        Video object = Playlist.get(position).getPlayVideos().get(0);
-        Log.e(TAG, "Object of playlist" + object.getThumbnailUrl());
-        Glide.with(getApplicationContext()).load(Uri.parse(object.getThumbnailUrl())).into(holder.thumbnailPlaylist);
+        holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()));
+        holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()) + " videos");
+        Glide.with(getApplicationContext()).load(Uri.parse(Playlist.get(position).getPlayThumbnails())).into(holder.thumbnailPlaylist);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override

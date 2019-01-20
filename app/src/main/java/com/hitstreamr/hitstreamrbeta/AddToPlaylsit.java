@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,8 @@ public class AddToPlaylsit extends AppCompatActivity implements View.OnClickList
 
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
@@ -122,7 +125,7 @@ public class AddToPlaylsit extends AppCompatActivity implements View.OnClickList
                 .child(current_user.getUid())
                 .child(playlistSelected)
                 .child(vid.getVideoId())
-                .setValue(vid)
+                .setValue(vid.getVideoId())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -142,15 +145,16 @@ public class AddToPlaylsit extends AppCompatActivity implements View.OnClickList
             case R.id.cancel:
                 finish();
                 break;
+
             case R.id.confirm:
                 registerVideoToPlaylist();
-                Toast.makeText(this, "video added to "+playlistSelected, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
                 finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
+
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
+                break;
         }
     }
 }
-//

@@ -1273,7 +1273,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 .getReference("WatchLater")
                 .child(currentFirebaseUser.getUid())
                 .child(vid.getVideoId())
-                .setValue(vid)
+                .setValue(vid.getVideoId())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -1576,6 +1576,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             Log.e(TAG, "add to Playlist clicked" + vid.getVideoId());
             Intent playListAct = new Intent(getApplicationContext(), AddToPlaylsit.class);
             playListAct.putExtra("VIDEO", vid);
+            playListAct.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
             startActivity(playListAct);
         }
     }
