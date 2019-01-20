@@ -63,7 +63,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     private ArrayList<Video> WatchList;
     private ArrayList<String> WatchLaterList;
-    private ArrayList<Video> Watch;
     private ArrayList<Playlist> Play;
 
     private ItemClickListener mlistner;
@@ -107,7 +106,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
         WatchLaterList = new ArrayList<>();
         WatchList = new ArrayList<>();
-        Watch = new ArrayList<>();
         Play = new ArrayList<>();
 
         FirebaseDatabase.getInstance().getReference("Credits")
