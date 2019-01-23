@@ -309,8 +309,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                                 p.setPlayVideoIds(a);
                                 Play.add(p);
                             }
-                            Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos() + " " + Play.get(0).getPlayVideoIds());
-                            Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlayVideoIds() + " " + Play.get(1).getPlaylistname());
+                            //Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos() + " " + Play.get(0).getPlayVideoIds());
+                            //Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlayVideoIds() + " " + Play.get(1).getPlaylistname());
                             //Log.e(TAG, "Playlist List 2 : " + Play.get(2).getPlayVideoIds() + " " +Play.get(2).getPlaylistname());
 
                         }

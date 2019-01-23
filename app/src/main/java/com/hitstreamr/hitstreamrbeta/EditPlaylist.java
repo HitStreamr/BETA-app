@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,6 +38,7 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference videosCollectionRef;
     private Button updateBtn;
+    ArrayList<Integer> drag, targ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,8 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
         current_user = FirebaseAuth.getInstance().getCurrentUser();
         playlistName.setText(p.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
+        drag = new ArrayList<>();
+        targ = new ArrayList<>();
 
         getPlayVideos();
 
@@ -62,7 +67,11 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder dragged, RecyclerView.ViewHolder target) {
                 int position_dragged = dragged.getAdapterPosition();
                 int position_target = target.getAdapterPosition();
-                Collections.swap(p.playVideos, position_dragged, position_target);
+
+                drag.add(dragged.getAdapterPosition());
+                targ.add(target.getAdapterPosition());
+
+                Collections.swap(p.playVideos , position_dragged, position_target);
                 playlistContent.notifyItemMoved(position_dragged, position_target);
                 return false;
             }
@@ -110,12 +119,29 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private  void savePlaylist() {
+        if (drag.size() > 0) {
+            for (int i = 0; i < drag.size(); i++) {
+                FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                        .child(current_user.getUid()).child(p.playlistname)
+                        .child(String.valueOf(drag.get(i)))
+                        .setValue(p.getPlayVideoIds().get(targ.get(i)));
+
+                FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                        .child(current_user.getUid()).child(p.playlistname)
+                        .child(String.valueOf(targ.get(i)))
+                        .setValue(p.getPlayVideoIds().get(drag.get(i)));
+            }
+        }
+        startActivity(new Intent(getApplicationContext(), Library.class));
+    }
+
 
     @Override
     public void onClick(View view) {
         if(view == updateBtn){
-            Log.e(TAG, "on update btn" +p.getPlayVideos().get(0).getVideoId() +  p.getPlayVideos().get(1).getVideoId()
-            + p.getPlayVideos().get(2).getVideoId());
+            savePlaylist();
+            Log.e(TAG, "update btn clicked");
         }
     }
 }
