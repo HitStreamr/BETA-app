@@ -25,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class AddToPlaylsit extends AppCompatActivity implements View.OnClickListener {
+public class AddToPlaylist extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "AddToPlayList";
 
     private Button cancel, ok;

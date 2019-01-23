@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorAccent">
 
@@ -11,6 +13,13 @@
         android:orientation="horizontal"
         android:baselineAligned="false"
         android:padding="10dp">
+
+    <LinearLayout
+        android:id="@+id/videoCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -62,7 +71,7 @@
 
             <TextView
                 android:id="@+id/playlistTitle"
-                android:layout_width="170dp"
+                android:layout_width="190dp"
                 android:layout_height="wrap_content"
                 android:text="Title Of Playlist"
                 android:textColor="@android:color/black"
@@ -92,6 +101,7 @@
 
 
         </LinearLayout>
+    </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"

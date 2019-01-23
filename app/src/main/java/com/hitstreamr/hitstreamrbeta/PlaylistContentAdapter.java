@@ -65,9 +65,10 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
         private TextView videoTitle;
         private TextView videoUsername;
         private ImageView videoThumbnail;
-        private  TextView videoViewsCount;
+        private TextView videoViewsCount;
         private TextView videoPublishedYear;
         private LinearLayout parentLayout;
+        private ImageView videoMoreBtn;
 
         public PlaylistContentViewHolder(View view) {
             super(view);
@@ -78,6 +79,7 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
             videoViewsCount = itemView.findViewById(R.id.videoViews);
             videoPublishedYear = itemView.findViewById(R.id.videoTime);
             parentLayout = view.findViewById(R.id.videoCard);
+            videoMoreBtn = view.findViewById(R.id.moreMenu);
         }
     }
 

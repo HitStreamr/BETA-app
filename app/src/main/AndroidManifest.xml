@@ -84,10 +84,11 @@
             android:label="@string/title_activity_dashboard"
             android:theme="@style/AppTheme" />
         <activity android:name=".DiscoverResultPage" />
-        <activity android:name=".AddToPlaylsit" />
+        <activity android:name=".AddToPlaylist" />
         <activity android:name=".CreateNewPlaylist" />
         <activity android:name=".Library" />
-        <activity android:name=".TrendingVideos"></activity>
+        <activity android:name=".TrendingVideos" />
+        <activity android:name=".EditPlaylist"/>
     </application>
 
 </manifest>

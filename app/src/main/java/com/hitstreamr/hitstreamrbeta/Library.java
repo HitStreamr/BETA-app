@@ -172,21 +172,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         getPlaylistsList();
     }
 
-    /*private void getVideos() {
-        videosCollectionRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                videosDatasnapshot = dataSnapshot;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-    }*/
-
     private void setUpRecyclerView() {
         if (WatchLaterList.size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);

@@ -7,7 +7,7 @@
     android:outlineProvider="background"
     android:gravity="center"
     android:elevation="4dp"
-    tools:context=".AddToPlaylsit">
+    tools:context=".AddToPlaylist">
 
     <LinearLayout
         android:layout_width="wrap_content"

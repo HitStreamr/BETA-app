@@ -1,16 +1,20 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import java.util.ArrayList;
@@ -53,8 +57,35 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
             }
         });
 
-    }
+        holder.MoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(mContext, view);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.editPlaylist:
+                                Log.e(TAG, "selected " +Playlist.get(position));
+                                Intent editPlaylistIntent = new Intent(mContext, EditPlaylist.class);
+                                editPlaylistIntent.putExtra("playlist", Playlist.get(position));
+                                mContext.startActivity(editPlaylistIntent);
+                                break;
+                            case R.id.deletePlaylist:
+                                Toast.makeText(mContext, "delete playlist", Toast.LENGTH_SHORT).show();
+                                break;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.inflate(R.menu.playlist_menu);
+                popupMenu.show();
+            }
+        });
 
+    }
     @Override
     public int getItemCount() {
         return Playlist.size();
@@ -67,6 +98,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
         public TextView videoCount;
         public TextView username;
         public ImageView thumbnailPlaylist;
+        private ImageView MoreBtn;
 
         public WatchPlaylistViewHolder(View view) {
             super(view);
@@ -76,6 +108,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
             videoCount = view.findViewById(R.id.videoPViews);
             username = view.findViewById(R.id.videoUsername);
             thumbnailPlaylist = view.findViewById(R.id.videoThumbnail);
+            MoreBtn = view.findViewById(R.id.moreMenu);
         }
     }
 }

@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -52,6 +55,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         playlistName.setText(temp.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
 
+
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
                 .addValueEventListener(new ValueEventListener() {
@@ -90,6 +94,8 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         getPlayVideos();
         //setupRecyclerView();
     }
+
+
 
     private void getPlayVideos() {
         //Log.e(TAG, "Entered onsuceess" +Play);
