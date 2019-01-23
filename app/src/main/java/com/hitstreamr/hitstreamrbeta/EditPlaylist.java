@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,20 +121,30 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
     }
 
     private  void savePlaylist() {
+        ArrayList<Task<Void>> queryy = new ArrayList<>();
         if (drag.size() > 0) {
+
             for (int i = 0; i < drag.size(); i++) {
-                FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                queryy.add(FirebaseDatabase.getInstance().getReference("PlaylistVideos")
                         .child(current_user.getUid()).child(p.playlistname)
                         .child(String.valueOf(drag.get(i)))
-                        .setValue(p.getPlayVideoIds().get(targ.get(i)));
+                        .setValue(p.getPlayVideoIds().get(targ.get(i))));
 
-                FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                queryy.add(FirebaseDatabase.getInstance().getReference("PlaylistVideos")
                         .child(current_user.getUid()).child(p.playlistname)
                         .child(String.valueOf(targ.get(i)))
-                        .setValue(p.getPlayVideoIds().get(drag.get(i)));
+                        .setValue(p.getPlayVideoIds().get(drag.get(i))));
+                Collections.swap(p.playVideoIds , drag.get(i), targ.get(i));
             }
         }
-        startActivity(new Intent(getApplicationContext(), Library.class));
+        Task<List<Void>> task = Tasks.whenAllSuccess(queryy);
+        task.addOnCompleteListener(new OnCompleteListener<List<Void>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<Void>> task) {
+                startActivity(new Intent(getApplicationContext(), Library.class));
+            }
+        });
+
     }
 
 

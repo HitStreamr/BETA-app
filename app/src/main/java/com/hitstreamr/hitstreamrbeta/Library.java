@@ -316,9 +316,11 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                         }
                         if (Play.size() > 0) {
                             playlistBtn.setVisibility(View.VISIBLE);
+                            getaaaPlayVideos();
+
                         }
                         //setUpPlaylistRecyclerView();
-                        getaaaPlayVideos();
+
                     }
 
                     @Override
