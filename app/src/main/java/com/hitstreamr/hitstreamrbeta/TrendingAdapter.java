@@ -7,14 +7,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
 public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAdapter.TrendingHolder> {
     private static final String TAG = "TrendingAdapter";
+
+    private HomeFragment.TrendingItemClickListener listner;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -22,8 +27,10 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
      *
      * @param options
      */
-    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Video> options) {
+    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Video> options, HomeFragment.TrendingItemClickListener tlistner) {
         super(options);
+        this.listner = tlistner;
+        Log.e(TAG, "listner value "+tlistner);
     }
 
     @Override
@@ -39,7 +46,13 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         holder.viewsCount.setText(viewCount);
         holder.publishedYear.setText(pubYear);
 
-
+        holder.parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "on click trending :" +model);
+                listner.onTrendingVideoClick(model);
+            }
+        });
     }
 
     @NonNull
@@ -58,6 +71,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public  TextView duration;
         public  TextView viewsCount;
         public TextView publishedYear;
+        public LinearLayout parent;
 
 
         public TrendingHolder(View itemView) {
@@ -68,6 +82,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
             duration = itemView.findViewById(R.id.watchLaterDuration);
             viewsCount = itemView.findViewById(R.id.watchLaterViews);
             publishedYear = itemView.findViewById(R.id.watchLaterPublished);
+            parent = itemView.findViewById(R.id.parentLayout);
         }
     }
 }

@@ -36,6 +36,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -347,7 +348,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                         //bb = docume.toObject(Video.class).getThumbnailUrl();
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
                     }
-                    Log.e(TAG, "Entered onsuceess" +Play.get(x).getPlayThumbnails());
+                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
                 setUpPlaylistRecyclerView();
@@ -355,11 +356,12 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         });
     }
 
-/**
-* Handles fragment items
-* @param item menu item
-* @return true to show fragments
-*/
+    /**
+     * Handles fragment items
+     *
+     * @param item menu item
+     * @return true to show fragments
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FragmentTransaction transaction;
@@ -392,11 +394,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         return true;
     }
 
-public interface ItemClickListener {
-    void onResultClick(Video selectedVideo);
-
-    void onPlaylistClick(Playlist selectedPlaylist);
-
-}
+    public interface ItemClickListener {
+        void onResultClick(Video selectedVideo);
+        void onPlaylistClick(Playlist selectedPlaylist);
+    }
 
 }
