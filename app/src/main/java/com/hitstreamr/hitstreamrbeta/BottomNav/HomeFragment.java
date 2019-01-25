@@ -191,7 +191,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
          */
         Bundle bundle = this.getArguments();
         if (bundle != null){
-            //userCredits = bundle.getString("CREDITS", "0");
+            userCredits = bundle.getString("CREDITS", "0");
             type = bundle.getString("TYPE", "basic");
             userID = bundle.getString("USER_ID");
         }
@@ -211,13 +211,14 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(getActivity(), FeaturedVideoRCV.class);
                 videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
-                //videoPlayerIntent.putExtra("CREDIT", userCredits);
+                videoPlayerIntent.putExtra("CREDIT", userCredits);
                 startActivity(videoPlayerIntent);
             }
         });
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
+                //.orderBy("privacy")
                 .orderBy("views", Query.Direction.DESCENDING )
                 .whereEqualTo("privacy","Public (everyone can see)")
                 .limit(FEATURED_LOAD);
@@ -242,7 +243,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                     videoPlayerIntent.putExtra("VIDEO", video);
                     videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
-                    //videoPlayerIntent.putExtra("CREDIT", userCredits);
+                    videoPlayerIntent.putExtra("CREDIT", userCredits);
                     startActivity(videoPlayerIntent);
 
                 }

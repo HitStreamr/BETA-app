@@ -1,14 +1,22 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -48,6 +56,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -91,17 +100,25 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.lang.Math.toIntExact;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener {
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback {
     private static final String TAG = "PlayerActivity";
 
     // bandwidth meter to measure and estimate bandwidth
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     private static final String DEBUG_TAG = "DEBUG_DRAG";
+    private static final String CHANNEL_ID = "HS_VIDEO_PLAYER";
+    private static final int CHANNEL_NAME = 987654321;
+    private static final int NOTIFICATION_ID = 1023456789;
 
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection;
+
+    private VideoPlayerService mService;
+    private boolean mBound;
     //ExoPlayer
-    private ExoPlayer player;
+    //private ExoPlayer player;
     private PlayerView playerView;
-    private ComponentListener componentListener;
+    //private ComponentListener componentListener;
 
     //Layout
     private LinearLayout DescLayout;
@@ -193,6 +210,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private GestureDetectorCompat mDetector;
 
+    private Intent serviceIntent;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,9 +244,36 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             //Glide.with(getApplicationContext()).load(photoURL).into(circleImageView_comment);
         }
 
-        vid = getIntent().getParcelableExtra("VIDEO");
+        if(getIntent().getBooleanExtra("RETURN", false)){
+            mConnection = new ServiceConnection() {
+
+                @Override
+                public void onServiceConnected(ComponentName className,
+                                               IBinder service) {
+                    // We've bound to LocalService, cast the IBinder and get LocalService instance
+                    VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
+                    mService = binder.getService();
+                    mService.setCallbacks(VideoPlayer.this);
+                    mBound = true;
+                    mService.resetPlayer();
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName arg0) {
+                    mBound = false;
+                    mService = null;
+
+                }
+            };
+        }else {
+            restartConnection();
+        }
 
         credit = getIntent().getStringExtra("CREDIT");
+        serviceIntent = new Intent(this, VideoPlayerService.class);
+        serviceIntent.putExtra("CREDITS",credit);
+        startService(serviceIntent);
+        (new Handler()).postDelayed(this::binder, 500);
         userUploadVideoList = new ArrayList<>();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -288,7 +335,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         };
         databaseReference_replies.addListenerForSingleValueEvent(eventListener_replies);
 
-        componentListener = new ComponentListener();
+        //componentListener = new ComponentListener();
         playerView = findViewById(R.id.artistVideoPlayer);
 
         //Linear Layout
@@ -444,39 +491,71 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
 
+        Log.e(TAG, "CREDITS: " + credit);
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
         if (credit != null)
             currentCreditVal = credit;
         else
             currentCreditVal = "0";
-        readData(new MyCallback() {
-            @Override
-            public void onCallback(ArrayList value) {
-               if(value.size() > 0) {
-                  // Log.e(TAG, "player before inside callback "+value);
-                   checkuploaded();
-                }
-                if (Integer.parseInt(currentCreditVal) > 0) {
-                    //Log.e(TAG, "player before inside if ");
-                   // Log.e(TAG, "player before initializePlayer success ");
-                    initializePlayer();
-                }
-                else if (uploadbyUser)
-                {
-                    //Log.e(TAG, "player before inside else if  "+uploadbyUser);
-                    initializePlayer();
-                }
-                else
-                {
-                    initializePlayer1();
-                    runCheck = true;
-
-                }
-            }
-        });
 
         mDetector = new GestureDetectorCompat(this,this);
 
+    }
+
+    private void restartConnection(){
+        /* Video Player Service */
+        mConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
+                mService = binder.getService();
+                mService.setCallbacks(VideoPlayer.this);
+                mBound = true;
+
+                readData(new MyCallback() {
+                    @Override
+                    public void onCallback(ArrayList value) {
+                        if (value.size() > 0) {
+                            // Log.e(TAG, "player before inside callback "+value);
+                            checkuploaded();
+                        }
+                        if (Integer.parseInt(currentCreditVal) > 0) {
+                            //Log.e(TAG, "player before inside if ");
+                            // Log.e(TAG, "player before initializePlayer success ");
+                            mService.setPlayer(vid, false, currentCreditVal);
+                        } else if (uploadbyUser) {
+                            //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+                            Log.d(TAG, "Service" + (mService != null) + "");
+                            mService.setPlayer(vid, false, currentCreditVal);
+                        } else {
+                            Log.d(TAG, "Service" + (mService != null) + "");
+                            runCheck = true;
+                            mService.setPlayer(vid, true, currentCreditVal);
+                        }
+                    }
+                });
+
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+                mService = null;
+
+            }
+        };
+    }
+
+    @Override
+    public void setPlayerView() {
+        //ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 0, 15_000_000);
+        //player.prepare(clippingSource, true, false);
+        Log.d(TAG, "Set PlayerView");
+        playerView.setPlayer(VideoPlayerService.player);
+        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     }
 
 
@@ -502,7 +581,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 // This method is to check the player position every second and after 15 seconds initiate the DB call
     private Timer timer;
-    private void timerCounter(){
+   public void timerCounter(){
         if (!runCheck) {
             timer = new Timer();
             Log.e(TAG, "Video player inside if statetime counter ");
@@ -512,8 +591,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (!(player == null) ) {
-                                long current = player.getCurrentPosition();
+                            if (!(VideoPlayerService.player == null) ) {
+                                long current = VideoPlayerService.player.getCurrentPosition();
                                 if (current > 15000) {
                                     Log.e(TAG, "Video player inside if state" + current);
                                     timer.cancel();
@@ -534,32 +613,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    // Original video is clipped for 15 sec for users with 0 credits
-    private void initializePlayer1() {
-        if (player == null) {
-            // a factory to create an AdaptiveVideoTrackSelection
-            TrackSelection.Factory adaptiveTrackSelectionFactory =
-                    new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
-            // using a DefaultTrackSelector with an adaptive video selection factory
-            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this),
-                    new DefaultTrackSelector(adaptiveTrackSelectionFactory), new DefaultLoadControl());
-            player.addListener(componentListener);
-            //player.addVideoDebugListener(componentListener);
-            //player.addAudioDebugListener(componentListener);
-            playerView.setPlayer(player);
-            player.setPlayWhenReady(playWhenReady);
-            player.seekTo(currentWindow, playbackPosition);
-        }
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
-        ExtractorMediaSource mediaSource1 = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri);
-//        ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 5_000_000, 15_000_000);
-        ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 0, 15_000_000);
-        player.prepare(clippingSource, true, false);
-        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+
+    private void binder(){
+        Log.d(TAG, "Bind Service");
+        bindService(serviceIntent,mConnection, 0);
     }
 
     // After watching 15 sec clipped video user is prompted to purchase credits on confirmation redirected to purchase credits page
-    private void callPurchase(){
+    public void callPurchase(){
 
         setContentView(R.layout.activity_confirm);
         //Button
@@ -580,8 +641,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         getWindow().setLayout((int) (width * .8), (int) (height * .4));
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
 
-
+    @Override
+    public void updateCreditText(String credit) {
+        Log.d(TAG, "Credits Decresed:  " + credit);
     }
 
     //This method is called after 15 secs for users with credits watch to check if they watched the video before
@@ -882,29 +946,54 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        if (mBound) {
+            mService.setCallbacks(null);
+            unbindService(mConnection);
+            mBound = false;
+        }
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-        hideSystemUi();
-        if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer();
-        }
+        restartConnection();
+        binder();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (Util.SDK_INT <= 23) {
-            releasePlayer();
-        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        releasePlayer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (Util.SDK_INT > 23) {
-            releasePlayer();
+      //  if (Util.SDK_INT > 23) {
+        //    releasePlayer();
+        //}
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
+    }
+
+    private void releasePlayer(){
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService = null;
+            mService.stopVideoService();
         }
     }
 
@@ -1006,32 +1095,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         playerView.setLayoutParams(params);
     }
 
-
-    private void initializePlayer() {
-        if (player == null) {
-            // a factory to create an AdaptiveVideoTrackSelection
-            TrackSelection.Factory adaptiveTrackSelectionFactory =
-                    new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
-            // using a DefaultTrackSelector with an adaptive video selection factory
-            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(this),
-                    new DefaultTrackSelector(adaptiveTrackSelectionFactory), new DefaultLoadControl());
-            player.addListener(componentListener);
-            //player.addVideoDebugListener(componentListener);
-            //player.addAudioDebugListener(componentListener);
-            playerView.setPlayer(player);
-            player.setPlayWhenReady(playWhenReady);
-            player.seekTo(currentWindow, playbackPosition);
-        }
-        DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
-        ExtractorMediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(videoUri);
-        //MediaSource mediaSource = buildMediaSource(Uri.parse(getString(R.string.media_url_dash)));
-        player.prepare(mediaSource, true, false);
-        playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-        //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT);
-        //player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-    }
-
-    private void releasePlayer() {
+    /*private void releasePlayer() {
         if (player != null) {
             playbackPosition = player.getCurrentPosition();
             currentWindow = player.getCurrentWindowIndex();
@@ -1042,7 +1106,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             player.release();
             player = null;
         }
-    }
+    }*/
 
     @SuppressLint("InlinedApi")
     private void hideSystemUi() {
@@ -1270,7 +1334,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    private class ComponentListener extends Player.DefaultEventListener implements
+   /*private class ComponentListener extends Player.DefaultEventListener implements
             VideoRendererEventListener, AudioRendererEventListener {
 
         @Override
@@ -1285,15 +1349,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     break;
                 case Player.STATE_READY:
                     stateString = "ExoPlayer.STATE_READY     -";
-                    if (!(player.equals(""))) {
+                  *//*  if (!(player.equals(""))) {
                         if (player.getCurrentPosition() == 0) {
                             timerCounter();
                         }
-                    }
+                    }*//*
 
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
+                    //Won't this trigger after every video?
                     if (!(Integer.parseInt(currentCreditVal) > 0)) {
                         callPurchase();
                     }
@@ -1375,7 +1440,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             // Do nothing.
         }
 
-    }
+    }*/
 
     /* Following Code
         Save Following - the former saves the user id to the artist they are following
@@ -1572,7 +1637,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      */
     private void getUserType() {
         Bundle extras = getIntent().getExtras();
-
+        Log.e(TAG, "TYPE EXISTS: " + (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null));
         if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
             //type = getIntent().getStringExtra("TYPE");
 
@@ -1656,13 +1721,18 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                            float velocityX, float velocityY) {
         Log.d(DEBUG_TAG, "onFling: " );
         Intent intent = new Intent(this, MainActivity.class);
-        releasePlayer();
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
         intent.putExtra("MINI_VISIBLE", true);
         intent.putExtra("VIDEO", vid);
         intent.putExtra("CREDIT", credit);
         intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-        intent.putExtra("Playback_Position",  playbackPosition);
-        intent.putExtra("CurrentWindow", currentWindow);
+        //intent.putExtra("Playback_Position",  playbackPosition);
+        //intent.putExtra("CurrentWindow", currentWindow);
         // Pass data object in the bundle and populate details activity.
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, TextViewTitle, "title");

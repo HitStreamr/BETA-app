@@ -81,6 +81,12 @@
                 app:backgroundTint="@color/colorPrimary"
                 app:fabSize="normal" />
 
+            <include
+                android:id="@+id/BGRel"
+                layout="@layout/background_video_player"
+                android:visibility = "gone"
+                />
+
             <android.support.design.widget.BottomNavigationView
                 android:id="@+id/bottomNav"
                 android:layout_width="match_parent"
@@ -122,11 +128,6 @@
             </android.support.design.widget.TabLayout>
 
         </RelativeLayout>
-
-        <include
-            android:id="@+id/BGRel"
-            layout="@layout/background_video_player"
-             />
 
     </FrameLayout>
 

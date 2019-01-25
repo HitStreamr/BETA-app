@@ -108,4 +108,5 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="verification2">A verified account has a check that appears next to a HitStreamr account\'s name to indicate that the account is the authentic. Submit all requests to verify@hitstreamr.com.</string>
     <string name="verification3">Submitting a request for verification does not guarantee that your account will be verified.</string>
     <string name="verification4">-Username \n-Full Legal Name \n-Known As \n-Photo ID front and back</string>
+    <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
 </resources>
