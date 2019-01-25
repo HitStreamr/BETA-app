@@ -7,14 +7,12 @@ public class Comment {
     /**
      * Constructor #1
      */
-    public Comment(String username, String message, String userID, String timePosted, String commentID,
-                   String photoURI) {
+    public Comment(String username, String message, String userID, String timePosted, String commentID) {
         this.username = username;
         this.message = message;
         this.userID = userID;
         this.timePosted = timePosted;
         this.commentID = commentID;
-        this.photoURI = photoURI;
     }
 
     /**
@@ -49,10 +47,6 @@ public class Comment {
     public String getTimePosted() { return timePosted; }
 
     public void setTimePosted(String timePosted) { this.timePosted = timePosted; }
-
-    public String getPhotoURI() { return photoURI; }
-
-    public void setPhotoURI(String photoURI) { this.photoURI = photoURI; }
 
     @Override
     public String toString() {

@@ -154,7 +154,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         };
 
         getWatchLaterList();
-        getPlaylistsList();
+        //getPlaylistsList();
     }
 
     private void setUpRecyclerView() {

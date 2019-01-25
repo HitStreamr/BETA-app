@@ -1105,7 +1105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                    basicProfile.putExtra("artistUsername", userName);
+                    basicProfile.putExtra("basicUsername", userName);
                     basicProfile.putExtra("SearchType", "BasicAccounts");
                     startActivity(basicProfile);
                 }

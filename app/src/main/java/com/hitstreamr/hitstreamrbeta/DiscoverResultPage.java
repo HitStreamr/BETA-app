@@ -186,6 +186,10 @@ public class DiscoverResultPage extends AppCompatActivity {
             query = query.whereEqualTo("genre", category);
         }
 
+        // Filter the query for soft-deleted and private videos
+        query = query.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
+
         FirestoreRecyclerOptions<Video> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)
                 .build();
@@ -240,7 +244,10 @@ public class DiscoverResultPage extends AppCompatActivity {
                                         return true;
 
                                     case R.id.report_videoMenu:
-                                        return true;
+                                        Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                        reportVideo.putExtra("VideoId", model.getVideoId());
+                                        startActivity(reportVideo);
+                                        break;
                                 }
                                 return false;
                             }
@@ -279,53 +286,29 @@ public class DiscoverResultPage extends AppCompatActivity {
                 }
 
                 // Query to Firebase
-                List<ArtistUser> artistList = new ArrayList<>(artistFireStoreList.size());
-                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList,
-                        getApplicationContext(), getIntent());
+                List<ArtistUser> artistList = new ArrayList<>();
+                DiscoverArtistsResultAdapter discoverArtistsResultAdapter =
+                        new DiscoverArtistsResultAdapter(artistList,getApplicationContext(), getIntent());
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                databaseReference.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        String artistID = dataSnapshot.getKey();
-
-                        // Initialize as many as it will hold
-                        while (artistList.size() < artistFireStoreList.size()) {
-                            artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                for (String artistID : artistFireStoreList) {
+                    databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
+                                artistList.add(artist_user);
+                                discoverArtistsResultAdapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(discoverArtistsResultAdapter);
+                            }
                         }
 
-                        // Replace the indexes with appropriate values
-                        // The indexes will match, and thus sorted
-                        if (artistFireStoreList.contains(artistID)) {
-                            int index = artistFireStoreList.indexOf(artistID);
-                            ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
-                            artistList.remove(index);
-                            artistList.add(index, artistUser);
-                            artistAdapter.notifyDataSetChanged();
-                            recyclerView.setAdapter(artistAdapter);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
             }
         });
     }

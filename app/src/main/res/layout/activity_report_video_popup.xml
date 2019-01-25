@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:background="@android:color/white">
 
         <TextView
             android:layout_width="wrap_content"
@@ -40,49 +41,56 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sexual Content"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
             <RadioButton
                 android:id="@+id/vorRadioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Violent or repulsive content"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
             <RadioButton
                 android:id="@+id/hoaspamRadioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Hateful or abusive content"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
             <RadioButton
                 android:id="@+id/caRadioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Child abuse"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
             <RadioButton
                 android:id="@+id/imrRadioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Infringes my rights"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
             <RadioButton
                 android:id="@+id/ptRadioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Promotes terrorism"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
             <RadioButton
                 android:id="@+id/spamRadioBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Spam or misleading"
-                android:textSize="12sp"/>
+                android:textSize="12sp"
+                android:buttonTint="@color/drkgryAccent"/>
 
         </RadioGroup>
 
@@ -119,7 +127,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:text="Report"
-                android:textColor="@color/litgryAccent"
+                android:textColor="@color/drkgryAccent"
                 android:background="@android:color/transparent"/>
 
         </LinearLayout>

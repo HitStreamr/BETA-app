@@ -1,5 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,12 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +59,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentH
 
     @Override
     public void onBindViewHolder(@NonNull CommentAdapter.CommentHolder holder, int position) {
+        // Get the username
         holder.username.setText(commentList.get(position).getUsername());
+
+        // Get the message
         holder.message.setText(commentList.get(position).getMessage());
 
         // Set the timestamp difference
@@ -68,8 +75,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentH
         }
 
         // Set the profile picture
-        String URI = commentList.get(position).getPhotoURI();
-        Glide.with(holder.circleImageView.getContext()).load(URI).into(holder.circleImageView);
+        FirebaseStorage.getInstance().getReference("profilePictures").child(commentList.get(position).getUserID())
+                .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                if (uri != null) {
+                    Glide.with(holder.circleImageView.getContext()).load(uri).into(holder.circleImageView);
+                }
+            }
+        });
 
         holder.replyButton.setOnClickListener(new View.OnClickListener() {
             @Override

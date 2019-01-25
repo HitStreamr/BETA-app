@@ -121,7 +121,7 @@ public class CommentPage extends AppCompatActivity {
     }
 
     /**
-     *
+     * Check if it is a new comment/reply.
      * @param view view
      */
     public void onPostingCommentReply(View view) {
@@ -154,7 +154,7 @@ public class CommentPage extends AppCompatActivity {
         String commentID = databaseReference.push().getKey();
 
         // Create the comment object to store
-        Comment comment_object = new Comment(username, commentMessage, userID, getTimestamp(), commentID, photoURI);
+        Comment comment_object = new Comment(username, commentMessage, userID, getTimestamp(), commentID);
 
         // Add to the database
         databaseReference.child(commentID).setValue(comment_object).addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -260,7 +260,7 @@ public class CommentPage extends AppCompatActivity {
         String commentID = databaseReference.push().getKey();
 
         // Create the comment object to store
-        Comment comment_object = new Comment(username, commentMessage, userID, getTimestamp(), commentID, photoURI);
+        Comment comment_object = new Comment(username, commentMessage, userID, getTimestamp(), commentID);
 
         // Add to the database
         databaseReference.child(commentID).setValue(comment_object).addOnSuccessListener(new OnSuccessListener<Void>() {

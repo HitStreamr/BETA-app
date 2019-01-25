@@ -94,6 +94,7 @@ public class Uploads extends Fragment {
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         Query query = firebaseFirestore.collection("Videos").whereEqualTo("userId", current_user.getUid())
+                .whereEqualTo("delete", "N")
                 .orderBy("timestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Video> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Video>()

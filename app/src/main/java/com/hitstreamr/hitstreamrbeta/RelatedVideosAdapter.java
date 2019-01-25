@@ -101,7 +101,10 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
                                 return true;
 
                             case R.id.report_videoMenu:
-                                return true;
+                                Intent reportVideo = new Intent(mContext, ReportVideoPopup.class);
+                                reportVideo.putExtra("VideoId", videoList.get(position).getVideoId());
+                                mContext.startActivity(reportVideo);
+                                break;
                         }
                         return false;
                     }

@@ -3,10 +3,11 @@ package com.hitstreamr.hitstreamrbeta.UserTypes;
 public class ArtistUser {
 
     private String firstname, lastname, artistname, email, username, address, city, state, country,
-            phone, zip, userID, bio;
+            phone, zip, userID, bio, verified;
 
-    public ArtistUser(String firstname, String lastname, String artistname, String email, String username, String address,
-                      String city, String state, String country, String phone, String zip, String bio/*, String userID*/){
+    public ArtistUser(String firstname, String lastname, String artistname, String email, String username,
+                      String address, String city, String state, String country, String phone, String zip,
+                      String bio/*, String userID, String verified*/) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.artistname = artistname;
@@ -20,6 +21,7 @@ public class ArtistUser {
         this.country = country;
         this.bio = bio;
 //        this.userID = userID;
+//        this.verified = verified;
     }
 
     public ArtistUser() {}
@@ -112,14 +114,13 @@ public class ArtistUser {
         this.zip = zip;
     }
 
-//    public String getUserID() {
-//        return userID;
-//    }
-//
-//    public void setUserID(String userID) {
-//        this.userID = userID;
-//    }
+    public String getUserID() {
+        return userID;
+    }
 
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
     public String getBio() {
         return bio;
@@ -127,5 +128,13 @@ public class ArtistUser {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public String getVerified() {
+        return verified;
+    }
+
+    public void setVerified(String verified) {
+        this.verified = verified;
     }
 }

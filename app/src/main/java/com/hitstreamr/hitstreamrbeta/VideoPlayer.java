@@ -753,7 +753,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     public void showVideoPlayerOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_player_overflow_menu);
         popupMenu.show();
     }
 
@@ -862,28 +862,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    /**
+     * Get the video's view count.
+     */
     private void checkViewCount() {
-        FirebaseDatabase.getInstance().getReference("VideoViews")
-                .child(vid.getVideoId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            VideoViewCount = dataSnapshot.getChildrenCount();
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "View Count : " + temp);
-                            TextViewViewCount.setText(temp);
-                        }else{
-                            VideoViewCount = 0l;
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "Video Count reposts : " + temp);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+        TextViewViewCount.setText(vid.getViews() + "");
     }
 
 
@@ -1576,8 +1559,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    /*
-        Provides interface for the callback for Async call to Firebase
+    /**
+     * Provides interface for the callback for Async call to Firebase
      */
     public interface OnDataReceiveCallback {
         /*

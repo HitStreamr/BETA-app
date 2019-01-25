@@ -226,7 +226,6 @@
                 android:background="@color/colorAccent"
                 android:orientation="horizontal"
                 android:padding="10dp"
-                android:layout_marginBottom="100dp"
                 >
 
                 <TextView
@@ -244,6 +243,7 @@
                     android:orientation="horizontal">
 
                     <Button
+                        android:id="@+id/morePopularPeople"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
                         android:background="@android:color/transparent"
@@ -256,7 +256,7 @@
                 android:id="@+id/popularUsersRCV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_marginBottom="10dp">
 
             </android.support.v7.widget.RecyclerView>

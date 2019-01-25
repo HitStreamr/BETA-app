@@ -34,7 +34,8 @@
                 android:hint="Leave a comment..."
                 android:paddingStart="15dp"
                 android:background="@drawable/text_fields"
-                android:textSize="14sp"/>
+                android:textSize="14sp"
+                android:textCursorDrawable="@android:color/black" />
         </LinearLayout>
 
         <Button
