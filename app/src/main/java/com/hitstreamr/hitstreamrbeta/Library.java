@@ -153,22 +153,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             public void onPlaylistClick(Playlist selectedPlaylist) {
                 Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
 
-
                 Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
                 //PlaylistIntent.putExtra("PlaylistName", selectedPlaylist.playlistname);
                 Log.e(TAG, "playlist value " + selectedPlaylist.getPlayVideoIds());
 
-
-
-                /*Bundle bundle = new Bundle();
-                bundle.putParcelable("PlaylistVideos", selectedPlaylist);*/
                 PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);
-                //PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist.playVideos);
                 startActivity(PlaylistIntent);
-
             }
         };
-
         getWatchLaterList();
         getPlaylistsList();
     }

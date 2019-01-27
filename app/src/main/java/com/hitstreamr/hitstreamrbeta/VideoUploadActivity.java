@@ -52,6 +52,7 @@ import com.transloadit.sdk.response.AssemblyResponse;
 import org.json.JSONException;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -592,6 +593,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                //feedPost();
                                 finish();
                                 Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                                 homeIntent.putExtra("TYPE", getString(R.string.type_artist));
@@ -627,6 +629,28 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     }
                 });
     }
+
+    /*private void feedPost() {
+        Calendar now = Calendar.getInstance();
+        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        String strDate = simpleFormat.format(now.getTime());
+        FeedData feed = new FeedData(currentFirebaseUser.getUid(), null, "post", null);
+
+        db.collection("FeedData")
+                .add(feed)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+    }*/
 
     private ArrayList<String> processTitle(String title){
         // ArrayList of characters to remove
