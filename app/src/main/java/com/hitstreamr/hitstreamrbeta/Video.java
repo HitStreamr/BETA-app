@@ -23,6 +23,7 @@ public class Video implements Parcelable {
     private String videoId;
     private Timestamp timestamp;
     private long views;
+    private String delete;
 
     private ArrayList<Contributor> contributors;
 
@@ -33,7 +34,7 @@ public class Video implements Parcelable {
 
     public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String duration,
                  String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Timestamp timestamp,
-                 long views) {
+                 long views, String delete) {
         this.title = title;
         this.description = description;
         this.genre = genre;
@@ -49,6 +50,7 @@ public class Video implements Parcelable {
         this.videoId = videoId;
         this.timestamp=timestamp;
         this.views = views;
+        this.delete= delete;
     }
 
     public String getTitle() {
@@ -172,6 +174,14 @@ public class Video implements Parcelable {
         this.views = views;
     }
 
+    public String getDelete() {
+        return delete;
+    }
+
+    public void setDelete(String delete) {
+        this.delete = delete;
+    }
+
     @Override
     public String toString() {
         return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + thumbnailUrl + " " +userId + " " + username;
@@ -199,6 +209,7 @@ public class Video implements Parcelable {
         } else {
             contributors = null;
         }
+        delete = in.readString();
     }
 
     @Override
@@ -228,6 +239,7 @@ public class Video implements Parcelable {
             dest.writeByte((byte) (0x01));
             dest.writeList(contributors);
         }
+        dest.writeString(delete);
     }
 
     @SuppressWarnings("unused")

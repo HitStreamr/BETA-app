@@ -149,6 +149,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference videoIdRef = db.collection("ArtistVideo");
+    private CollectionReference videocontributorRef = db.collection("Videos");
+
+
     private ArrayList<String> userUploadVideoList;
 
     private Boolean VideoLiked = false;
@@ -161,6 +164,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private boolean collapseVariable = true;
     private boolean uploadbyUser = false;
+    private boolean iscontributor = false;
+    private ArrayList<String> userContributor;
 
     /*private long playbackPosition;
     private int currentWindow;
@@ -388,8 +393,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         context = this;
 
-
         contributorTextViews = new ArrayList<>();
+        userContributor = new ArrayList<>();
 
         FirebaseFirestore.getInstance().collection("Videos")
                 .whereEqualTo("videoId", vid.getVideoId())
@@ -406,6 +411,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                for(HashMap<String,String> contributor : temp){
                                    Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
                                    TextView TVtemp = new TextView(context);
+                                   userContributor.add(contributor.get("contributorName"));
                                    TVtemp.setText(contributor.get("contributorName") + "(" +  contributor.get("type") + ")"+", ");
                                    TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                                            LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -453,18 +459,30 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         readData(new MyCallback() {
             @Override
             public void onCallback(ArrayList value) {
-               if(value.size() > 0) {
+
+
+                iscontributor = userContributor.contains(username);
+                Log.e(TAG,"player user contributor name "+userContributor.size() +" user "+username);
+                Log.e(TAG,"player user contributor iscontributor "+iscontributor);
+
+                if(value.size() > 0) {
                   // Log.e(TAG, "player before inside callback "+value);
                    checkuploaded();
+                   //checkforContributor();
                 }
-                if (Integer.parseInt(currentCreditVal) > 0) {
-                    //Log.e(TAG, "player before inside if ");
-                   // Log.e(TAG, "player before initializePlayer success ");
-                    initializePlayer();
-                }
-                else if (uploadbyUser)
+                if (uploadbyUser)
                 {
                     //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+                    initializePlayer();
+                }
+                else if (iscontributor)
+                {
+                    Log.e(TAG, "player before inside else if  contributor"+iscontributor);
+                    initializePlayer();
+                }
+                else  if (Integer.parseInt(currentCreditVal) > 0) {
+                    //Log.e(TAG, "player before inside if ");
+                    // Log.e(TAG, "player before initializePlayer success ");
                     initializePlayer();
                 }
                 else
@@ -481,21 +499,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     public interface MyCallback {
         void onCallback(ArrayList value);
     }
-
-    /*public void readData(MyCallback myCallback) {
-        FirebaseDatabase.getInstance().getReference("Credits")
-                .child(currentFirebaseUser.getUid()).child("creditvalue")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        creditValue = dataSnapshot.getValue(String.class);
-                        myCallback.onCallback(creditValue);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {}
-                });
-    }*/
 
 
 // This method is to check the player position every second and after 15 seconds initiate the DB call
@@ -647,7 +650,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         Calendar now = Calendar.getInstance();
         Calendar tmp = (Calendar) now.clone();
-        tmp.add(Calendar.HOUR_OF_DAY, 4);
+        tmp.add(Calendar.HOUR_OF_DAY, 24);
         SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         String strDate = simpleFormat.format(tmp.getTime());
         Log.e(TAG, "Your video date format after" +strDate);
@@ -667,7 +670,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //To reduce 1 user credit for watching a video
     private void updateCreditValue(){
-        if(!uploadbyUser) {
+        if(!uploadbyUser && !(iscontributor)) {
             if (!Strings.isNullOrEmpty(currentCreditVal)) {
                 int creditval = Integer.parseInt(currentCreditVal);
                 creditval = creditval - 1;
@@ -698,9 +701,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 myCallback.onCallback(userUploadVideoList);
             }
         });
-       // Log.e(TAG, "player user uploaded userUploadVideoList "+userUploadVideoList);
 
-        //checkuploaded();
     }
 
     public void checkuploaded(){
@@ -708,7 +709,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (userUploadVideoList.get(0).contains(vid.getVideoId())) {
             uploadbyUser = true;
             Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
+
         }
+
         else{
             uploadbyUser = false;
             Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
@@ -1286,7 +1289,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     stateString = "ExoPlayer.STATE_READY     -";
                     if (!(player.equals(""))) {
                         if (player.getCurrentPosition() == 0) {
-                            timerCounter();
+                            if (!(uploadbyUser) && !iscontributor){
+                                timerCounter();
+                            }
                         }
                     }
 

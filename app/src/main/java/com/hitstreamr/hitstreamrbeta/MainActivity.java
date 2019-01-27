@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,7 +46,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.exoplayer2.text.Subtitle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -66,7 +66,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
-import com.hitstreamr.hitstreamrbeta.Dashboard.Dash;
+import com.hitstreamr.hitstreamrbeta.Dashboard.Dashboard;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.GeneralSettingsFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.HelpCenterFragment;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // Database Purposes
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
+    private com.google.firebase.database.Query myRefforName; // for Firebase Database
     private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>  firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
 
@@ -259,7 +260,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             type = getIntent().getStringExtra("TYPE");
 
             if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
-                //Hide Dash if Basic User & don't show floating action buttton
+                //Hide Dashboard if Basic User & don't show floating action buttton
 
                 Log.d("HIDE_DASH", getIntent().getStringExtra("TYPE"));
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
@@ -474,17 +475,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void searchArtistAccounts(String querySearch) {
         // Send a query to the database
         FirebaseDatabase database_artist = FirebaseDatabase.getInstance();
-        myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
+        FirebaseRecyclerOptions<ArtistUser> firebaseRecyclerOptions;
+
+        myRefforName = database_artist.getReference().child("ArtistAccounts").orderByChild("artistname").startAt(querySearch)
                 .endAt(querySearch + "\uf8ff");
 
-        FirebaseRecyclerOptions<ArtistUser> firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<ArtistUser>()
-                .setQuery(myRef, ArtistUser.class)
+        firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<ArtistUser>()
+                .setQuery(myRefforName, ArtistUser.class)
                 .build();
+
+       /* if (firebaseRecyclerOptions == null) {
+            myRef = database_artist.getReference().child("ArtistAccounts").orderByChild("username").startAt(querySearch)
+                    .endAt(querySearch + "\uf8ff");
+
+            firebaseRecyclerOptions = new FirebaseRecyclerOptions.Builder<ArtistUser>()
+                    .setQuery(myRef, ArtistUser.class)
+                    .build();
+
+
+        }*/
+
 
         firebaseRecyclerAdapter_artist = new FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>(firebaseRecyclerOptions) {
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
-                holder.setUserName(model.getUsername());
+                holder.setArtistName(model.getArtistname());
+
+                //holder.setUserName(model.getUsername());
 //                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
 //                    @Override
 //                    public void onFollowChecked(boolean following) {
@@ -958,7 +975,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
-        private TextView name;
+        private TextView name, artistName;
         private TextView count;
         private Button followButton;
         private Button unfollowButton;
@@ -970,6 +987,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
+            artistName =view.findViewById(R.id.artist_name);
+            artistName.setVisibility(View.GONE);
         }
 
         void setUserName(final String userName) {
@@ -1104,7 +1123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      */
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
-        private TextView name;
+        private TextView name, artistname;
         private TextView count;
         private Button followButton;
         private Button unfollowButton;
@@ -1113,9 +1132,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             super(itemView);
             view = itemView;
             name = view.findViewById(R.id.user_name);
+            artistname = view.findViewById(R.id.artist_name);
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
+        }
+
+        void setArtistName(final String artistName) {
+            artistname.setText(artistName);
+            getArtistUserName(artistName);
         }
 
         void setUserName(final String userName) {
@@ -1135,6 +1160,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
 
         }
+
+        private void getArtistUserName(String artistName){
+            FirebaseDatabase.getInstance().getReference().child("ArtistAccounts").orderByChild("artistname").equalTo(artistName)
+                    .addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()){
+                        for(DataSnapshot each : dataSnapshot.getChildren()) {
+                            setUserName( each.child("username").getValue().toString());
+                        }
+                    }else{
+                        Log.e(TAG, "user name of artist not found");
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
 
         private void checkFollowing(VideoPlayer.OnDataReceiveCallback callback,String followingId){
             //get where the following state would be
@@ -1313,7 +1362,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.dashboard:
-                Intent dashIntent = new Intent(getApplicationContext(), Dash.class);
+                Intent dashIntent = new Intent(getApplicationContext(), Dashboard.class);
                 dashIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(dashIntent);
                 return true;

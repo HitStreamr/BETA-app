@@ -12,13 +12,15 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar">
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="-49dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_below="@+id/toolbar">
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -35,18 +37,17 @@
                     android:id="@+id/backgroundImageOverlay"
                     android:layout_width="match_parent"
                     android:layout_height="110dp"
-                    android:src="@drawable/transparent_background_gradient"
                     android:layout_marginTop="100dp"
-                    />
+                    android:src="@drawable/transparent_background_gradient" />
 
                 <Button
                     android:id="@+id/button2"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginEnd="10dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/ic_notifications_none" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
@@ -57,8 +58,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="0dp"
                     android:src="@mipmap/ic_launcher_round"
-                    app:civ_border_width="2dp"
-                    app:civ_border_color="@color/colorAccent"/>
+                    app:civ_border_color="@color/colorAccent"
+                    app:civ_border_width="2dp" />
 
                 <Button
                     android:id="@+id/followUser"
@@ -69,10 +70,9 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/button2"
                     android:elevation="4dp"
-                    android:text="Follow"
                     android:paddingHorizontal="10dp"
-                    android:textColor="@color/colorPrimary"
-                    />
+                    android:text="Follow"
+                    android:textColor="@color/colorPrimary" />
 
                 <Button
                     android:id="@+id/unFollowUser"
@@ -83,10 +83,9 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/button2"
                     android:elevation="4dp"
-                    android:text="UNFollow"
                     android:paddingHorizontal="10dp"
-                    android:textColor="@android:color/black"
-                    />
+                    android:text="UNFollow"
+                    android:textColor="@android:color/black" />
 
                 <Button
                     android:id="@+id/editUser"
@@ -97,9 +96,9 @@
                     android:layout_marginTop="10dp"
                     android:background="@drawable/button2"
                     android:elevation="4dp"
+                    android:paddingHorizontal="10dp"
                     android:text="Edit Profile"
                     android:textColor="@android:color/black"
-                    android:paddingHorizontal="10dp"
 
                     />
 
@@ -111,34 +110,33 @@
                 android:id="@+id/followersLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:background="@color/colorAccent"
                 android:gravity="center"
-                android:padding="5dp"
-                android:background="@color/colorAccent">
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginEnd="50dp">
+                    android:layout_marginEnd="50dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/usersFollowers"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="20dp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
                         android:layout_gravity="center_horizontal"
-                        />
+                        android:text="0"
+                        android:textColor="@android:color/black"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FOLLOWERS"
-                        android:textColor="@color/colorPrimary"
                         android:layout_gravity="center_horizontal"
-                        />
+                        android:text="FOLLOWERS"
+                        android:textColor="@color/colorPrimary" />
 
 
                 </LinearLayout>
@@ -148,8 +146,8 @@
                     android:id="@+id/followDivider"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@color/drkgryAccent"
-                    android:layout_marginEnd="50dp"/>
+                    android:layout_marginEnd="50dp"
+                    android:background="@color/drkgryAccent" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -160,19 +158,18 @@
                         android:id="@+id/usersFollowing"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0"
-                        android:textSize="20dp"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
                         android:layout_gravity="center_horizontal"
-                        />
+                        android:text="0"
+                        android:textColor="@android:color/black"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FOLLOWING"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="@color/colorPrimary"
-                        />
+                        android:text="FOLLOWING"
+                        android:textColor="@color/colorPrimary" />
 
 
                 </LinearLayout>
@@ -196,16 +193,15 @@
                         android:layout_height="wrap_content"
                         android:text="Name Here"
                         android:textColor="@android:color/black"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                     <ImageView
                         android:id="@+id/verified"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:layout_marginStart="5dp"
                         android:src="@drawable/ic_verified_check_circle"
-                        android:tint="@android:color/holo_blue_bright"
-                        android:layout_marginStart="5dp"/>
+                        android:tint="@android:color/holo_blue_bright" />
 
                 </LinearLayout>
 
@@ -213,34 +209,34 @@
                     android:id="@+id/bioText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:layout_marginTop="3dp"/>
+                    android:layout_marginTop="3dp"
+                    android:text="" />
 
             </LinearLayout>
 
 
             <android.support.design.widget.TabLayout
+                android:id="@+id/tabLayout_profile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tabLayout_profile">
+                android:layout_height="wrap_content">
 
                 <android.support.design.widget.TabItem
+                    android:id="@+id/feed_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="FEED"
-                    android:id="@+id/feed_tab"/>
+                    android:text="FEED" />
 
                 <android.support.design.widget.TabItem
+                    android:id="@+id/uploads_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="UPLOADS"
-                    android:id="@+id/uploads_tab"/>
+                    android:text="UPLOADS" />
 
                 <android.support.design.widget.TabItem
+                    android:id="@+id/playlists_tab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PLAYLISTS"
-                    android:id="@+id/playlists_tab"/>
+                    android:text="PLAYLISTS" />
 
                 <!--<android.support.design.widget.TabItem-->
                 <!--android:layout_width="wrap_content"-->
@@ -256,10 +252,13 @@
                 android:id="@+id/profile_recyclerView">
 
             </android.support.v7.widget.RecyclerView>-->
-            <ListView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/listView_Feed"
                 android:layout_width="match_parent"
-                android:layout_height="400dp" />
+                android:layout_height="400dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:visibility="visible"/>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/listView_Upload"
@@ -267,7 +266,7 @@
                 android:layout_height="400dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:visibility="visible"/>
+                android:visibility="visible" />
 
         </LinearLayout>
 

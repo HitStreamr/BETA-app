@@ -26,11 +26,14 @@ public class Earnings extends Fragment{
 
     private FirebaseUser current_user;
     private Long viewCount = new Long(0);
-    private Double earn = new Double(0);
+    private Double totalEarn = new Double(0);
     private Double artistbal = new Double(0);
+    private Double myEarnings = new Double(0);
+    private Double myContribution = new Double(0);
+
 
     public final String TAG = "Earnings";
-    private TextView videoViewCount,artistEarnings, artistBalance;
+    private TextView videoViewCount,artistEarnings, artistBalance, artistSongs,artistContribution;
     private String artistuser;
 
     @Override
@@ -47,6 +50,8 @@ public class Earnings extends Fragment{
         videoViewCount = view.findViewById(R.id.viewCount);
         artistEarnings = view.findViewById(R.id.earnings);
         artistBalance = view.findViewById(R.id.totalBalance);
+        artistSongs = view.findViewById(R.id.mySongs);
+        artistContribution = view.findViewById(R.id.myContribution);
         artistuser = current_user.getUid();
 
         calculateEarnings();
@@ -66,14 +71,20 @@ public class Earnings extends Fragment{
                     if(document.exists()) {
                         if (artistuser.contains(document.getId())) {
                             viewCount = new Long(document.get("views").toString());
-                            earn = new Double(document.get("earnings").toString());
+                            totalEarn = new Double(document.get("totearnings").toString());
                             artistbal = new Double(document.get("balance").toString());
+                            myEarnings = new Double(document.get("myearnings").toString());
+                            myContribution = new Double(document.get("myContributions").toString());
+
                         }
                     }
                 }
                 videoViewCount.setText(String.valueOf(viewCount));
-                artistEarnings.setText(String.valueOf(earn));
+                totalEarn = Math.round(totalEarn*100)/100.00;
+                artistEarnings.setText(String.valueOf(totalEarn));
                 artistBalance.setText(String.valueOf(artistbal));
+                artistSongs.setText(String.valueOf(myEarnings));
+                artistContribution.setText(String.valueOf(myContribution));
             }
         });
     }

@@ -41,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -79,6 +80,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
     private static final String VIDEO_DURATION = "duration";
+    private static final String VIDEO_DELETE = "delete";
 
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
@@ -572,6 +574,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_TIME_STAMP, null);
         artistVideo.put(VIDEO_ID,null);
         artistVideo.put(VIDEO_VIEWS,0l);
+        artistVideo.put(VIDEO_DELETE,"N");
+
 
         Map<String, Boolean> terms = new HashMap<>();
         ArrayList<String> res = processTitle(title);
@@ -634,6 +638,22 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 }
             }
         });
+
+        // Create view counts for artists if it does not exist yet
+        firebaseFirestore.collection("ArtistsViews").document(CurrentUserID).get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        if (!documentSnapshot.exists()) {
+                            Map<String, Object> artistViews = new HashMap<>();
+                            artistViews.put("views", 0);
+                            artistViews.put("artist_id", CurrentUserID);
+                            firebaseFirestore.collection("ArtistsViews").document(CurrentUserID)
+                                    .set(artistViews);
+                        }
+                    }
+                });
     }
 
     private ArrayList<String> processTitle(String title){
@@ -712,7 +732,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         } else if (description.length() >= 1000) {
             EdittextTittle.setError("Description length has crossed 1000 characters");
         } else if (!(checkAlphaNumeric(description))) {
-            EdittextTittle.setError("Title must only have letters and numbers");
+            EdittextTittle.setError("Description must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);
@@ -965,7 +985,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private String millisecondsToString(long duration){
         long minutes = (duration / 1000) / 60;
         long seconds = (duration / 1000) % 60;
-        return minutes + ":" + seconds;
+        return String.format("%d:%02d", minutes, seconds);
     }
 
 

@@ -38,7 +38,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -47,6 +49,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -93,13 +96,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private UserFeedAdapter userAdapter;
     private ArrayList<String> userVideoList;
     private ArrayList<Video> UserVideoId;
-    private ListView listView_UserFeed;
+    private RecyclerView view_UserFeed;
     private ArrayList<Feed> UserFeedDetails;
 
     private UserUploadVideoAdapter userVideoAdapter;
     private ArrayList<String> userUploadVideoList;
     private ArrayList<Video> UserUploadVideoId;
-    private RecyclerView listView_UserUpload;
+    private RecyclerView view_UserUpload;
     private final int MAX_PRELOAD = 10;
     RequestManager glideRequests;
     private ItemClickListener mListener;
@@ -154,7 +157,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         mUnfollowBtn.setOnClickListener(this);
         mEditProfile.setOnClickListener(this);
 
-        getBackgroundImage();
+        //getBackgroundImage();
         getUserType();
         getUsername();
 
@@ -176,10 +179,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             getUserClickedUserId();
         }
 
-        listView_UserFeed = findViewById(R.id.listView_Feed);
-        listView_UserUpload = (RecyclerView) findViewById(R.id.listView_Upload);
-        listView_UserUpload = (RecyclerView) findViewById(R.id.listView_Upload);
-        listView_UserUpload.setLayoutManager(new LinearLayoutManager(this));
+        view_UserFeed = (RecyclerView) findViewById(R.id.listView_Feed);
+        view_UserFeed.setLayoutManager(new LinearLayoutManager(this));
+
+        view_UserUpload = (RecyclerView) findViewById(R.id.listView_Upload);
+        view_UserUpload.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
 
         userVideoList = new ArrayList<>();
@@ -289,6 +293,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
+                        getBackgroundImage(current_user.getUid());
+
 
 
                         if (dataSnapshot.child("artistname").exists()) {
@@ -348,8 +354,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                 switch (tab_position) {
                     case 0:
-                        listView_UserFeed.setVisibility(View.VISIBLE);
-                        listView_UserUpload.setVisibility(View.GONE);
+                        view_UserFeed.setVisibility(View.VISIBLE);
+                        view_UserUpload.setVisibility(View.GONE);
                         if (!Strings.isNullOrEmpty(userUserID)) {
                             getUserFeedDeatils(userUserID);
                             getUserFeed(userUserID);
@@ -361,8 +367,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                         break;
                     case 1:
-                        listView_UserFeed.setVisibility(View.GONE);
-                        listView_UserUpload.setVisibility(View.VISIBLE);
+                        view_UserFeed.setVisibility(View.GONE);
+                        view_UserUpload.setVisibility(View.VISIBLE);
                         if (!Strings.isNullOrEmpty(userUserID)) {
                             getUserUploadVideoId(userUserID);
                         }
@@ -398,9 +404,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     // Update the search results with the current search input when a different tab is selected
 
     private void getSearchProfile() {
-       // Log.e(TAG, "Entered searchprofile");
-
-        String searchType = getIntent().getStringExtra("SearchType");
+       String searchType = getIntent().getStringExtra("SearchType");
 
         if (searchType.equals("BasicAccounts")) {
             verifiedCheckMark.setVisibility(View.GONE);
@@ -418,6 +422,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
+                        getBackgroundImage(userUserID);
                         Log.e(TAG, "Got username :: " + username);
                         getUrlStorage();
 
@@ -497,7 +502,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         if (extras.containsKey("artistUsername") && getIntent().getStringExtra("artistUsername") != null) {
             userClicked = getIntent().getStringExtra("artistUsername");
-            Log.e(TAG, "username clicked is:::" + userClicked);
+            //Log.e(TAG, "username clicked is:::" + userClicked);
         } else if (extras.containsKey("basicUsername") && getIntent().getStringExtra("basicUsername") != null) {
             userClicked = getIntent().getStringExtra("basicUsername");
         } else {
@@ -648,11 +653,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         Log.e(TAG, "Finished counting");
     }
 
-    private void getBackgroundImage(){
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+    private void getBackgroundImage(String idForBackground){
+        // FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (idForBackground != null) {
             //Log.e(TAG, "Background Uri selected" +fileUri);
-            backgroundRef = mStorageRef.child("backgroundPictures").child(user.getUid());
+            backgroundRef = mStorageRef.child("backgroundPictures").child(idForBackground);
             backgroundRef.getDownloadUrl()
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -661,19 +666,33 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             ImageViewBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             Glide.with(getApplicationContext()).load(uri).into(ImageViewBackground);
                         }
+
                     });
         }
     }
 
     private void call(){
-        userAdapter = new UserFeedAdapter(this, R.layout.profile_feed_layout, UserVideoId, UserFeedDetails, mListener);
-        listView_UserFeed.setAdapter(userAdapter);
+        userAdapter = new UserFeedAdapter(UserVideoId, UserFeedDetails, mListener, glideRequests);
+        view_UserFeed.setAdapter(userAdapter);
         userAdapter.notifyDataSetChanged();
     }
 
 
     private void setUpRecyclerView(){
-        feedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        /*feedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    if (userVideoList.contains(document.getId())) {
+                        UserVideoId.add(document.toObject(Video.class));
+                    }
+                }
+                call();
+            }
+        });*/
+        Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+
+        queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
@@ -684,6 +703,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 call();
             }
         });
+
     }
 
 
@@ -698,7 +718,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             for(DataSnapshot each : dataSnapshot.getChildren()){
                                 userVideoList.add(String.valueOf(each.getKey()));
                             }
-                           // Log.e(TAG, "Feed List : " + userVideoList);
                         }
                         setUpRecyclerView();
                     }
@@ -765,17 +784,20 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
     private void setUpRecyclerViewUpload(){
-        feedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+
+     Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if(userUploadVideoList.size() > 0) {
                         if (userUploadVideoList.get(0).contains(document.getId())) {
                             UserUploadVideoId.add(document.toObject(Video.class));
+                            //Log.e(TAG,"video uploaded by user desc 3: "+ UserUploadVideoId);
                         }
                     }
+
                 }
-               // Log.e(TAG, "profile video ids list:: " +UserUploadVideoId);
                 callVideoAdapter();
             }
         });
@@ -785,7 +807,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         userVideoAdapter = new UserUploadVideoAdapter(UserUploadVideoId, mListener, glideRequests);
         userVideoAdapter.notifyDataSetChanged();
-        listView_UserUpload.setAdapter(userVideoAdapter);
+        view_UserUpload.setAdapter(userVideoAdapter);
     }
 
     public void showOverflow(View v) {
