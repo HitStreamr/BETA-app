@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ContributorType">
+        <item>Select</item>
+        <item>Songwriter</item>
+        <item>Producer</item>
+        <item>Engineer</item>
+        <item>Videographer</item>
+        <item>Vocalist</item>
+    </string-array>
+</resources>

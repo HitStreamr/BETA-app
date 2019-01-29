@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Library">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbar"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNav"
+        android:layout_below="@+id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/bottomNav"
+            android:layout_below="@+id/toolbar">
+
+            <!-- HISTORY -->
+            <Button
+                android:id="@+id/expandableButton_history"
+                android:layout_width="fill_parent"
+                android:layout_height="32dp"
+                android:background="@android:color/transparent"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:onClick="expandableButton_history"
+                android:paddingRight="10dp"
+                android:text="HISTORY" />
+
+            <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                android:id="@+id/expandableLayout_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/expandableButton_history"
+                android:layout_alignParentStart="true"
+                android:background="@android:color/white"
+                android:padding="16dp"
+                app:ael_duration="400"
+                app:ael_expanded="false"
+                app:ael_interpolator="bounce"
+                app:ael_orientation="vertical">
+
+                <HorizontalScrollView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal" >
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button1" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button2" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button3" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button4" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button5" />
+
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Button6" />
+
+                    </LinearLayout>
+
+
+                </HorizontalScrollView>
+
+            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+            <!-- WATCH LATER -->
+            <Button
+                android:id="@+id/expandableButton_watchLater"
+                android:layout_width="fill_parent"
+                android:layout_height="32dp"
+                android:layout_below="@+id/expandableLayout_history"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="6dp"
+                android:background="@android:color/transparent"
+                android:drawableRight="@android:drawable/arrow_down_float"
+                android:onClick="expandableButton_watchLater"
+                android:paddingRight="10dp"
+                android:text="WATCH LATER" />
+
+            <com.github.aakira.expandablelayout.ExpandableRelativeLayout
+                android:id="@+id/expandableLayout_watchLater"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/expandableButton_watchLater"
+                android:layout_alignParentStart="true"
+                android:background="@android:color/white"
+                android:padding="16dp"
+                app:ael_duration="400"
+                app:ael_expanded="false"
+                app:ael_interpolator="bounce"
+                app:ael_orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView_watchLater"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scrollbars="horizontal">
+
+                </android.support.v7.widget.RecyclerView>
+
+            </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
+
+            <!-- PLAYLISTS -->
+            <Button
+                android:id="@+id/expandableButton_playlists"
+                android:layout_width="fill_parent"
+                android:layout_height="32dp"
+                android:layout_below="@+id/expandableLayout_watchLater"
+                android:background="@android:color/transparent"
+                android:paddingRight="10dp"
+                android:text="PLAYLISTS" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:layout_below="@+id/expandableButton_playlists"
+                        android:id="@+id/recyclerView_playlists"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="vertical">
+
+                    </android.support.v7.widget.RecyclerView>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <android.support.design.widget.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:background="@color/colorAccent"
+        app:menu="@menu/bottom_nav_items">
+    </android.support.design.widget.BottomNavigationView>
+
+</RelativeLayout>

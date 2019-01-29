@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="stateAbbrev" >
+        <item>Select State</item>
+        <item>ALABAMA	AL</item>
+        <item>ALASKA	AK</item>
+        <item> ARIZONA	AZ</item>
+        <item>ARKANSAS	AR</item>
+        <item>CALIFORNIA	CA</item>
+        <item>COLORADO	CO</item>
+        <item>CONNECTICUT	CT</item>
+        <item>DELAWARE	DE</item>
+        <item>FLORIDA	FL</item>
+        <item>GEORGIA	GA</item>
+        <item>HAWAII	HI</item>
+        <item>IDAHO	ID</item>
+        <item>ILLINOIS	IL</item>
+        <item>INDIANA	IN</item>
+        <item>IOWA	IA</item>
+        <item>KANSAS	KS</item>
+        <item>KENTUCKY	KY</item>
+        <item>LOUISIANA	LA</item>
+        <item>MAINE	ME</item>
+        <item>MARYLAND	MD</item>
+        <item>MASSACHUSETTS	MA</item>
+        <item>MICHIGAN	MI</item>
+        <item>MINNESOTA	MN</item>
+        <item>MISSISSIPPI	MS</item>
+        <item>MISSOURI	MO</item>
+        <item>MONTANA	MT</item>
+        <item>NEBRASKA	NE</item>
+        <item>NEVADA	NV</item>
+        <item>NEW HAMPSHIRE	NH</item>
+        <item>NEW JERSEY	NJ</item>
+        <item>NEW MEXICO	NM</item>
+        <item>NEW YORK	NY</item>
+        <item>NORTH CAROLINA	NC</item>
+        <item>NORTH DAKOTA	ND</item>
+        <item>OHIO	OH</item>
+        <item>OKLAHOMA	OK</item>
+        <item>OREGON	OR</item>
+        <item>PENNSYLVANIA	PA</item>
+        <item>RHODE ISLAND	RI</item>
+        <item>SOUTH CAROLINA	SC</item>
+        <item>SOUTH DAKOTA	SD</item>
+        <item>TENNESSEE	TN</item>
+        <item>TEXAS	TX</item>
+        <item>UTAH	UT</item>
+        <item>VERMONT	VT</item>
+        <item>VIRGINIA	VA</item>
+        <item>WASHINGTON	WA</item>
+        <item>WEST VIRGINIA	WV</item>
+        <item>WISCONSIN	WI</item>
+        <item>WYOMING	WY</item>
+        <item>GUAM	GU</item>
+        <item>PUERTO RICO	PR</item>
+        <item>VIRGIN ISLANDS	VI</item>
+    </string-array>
+</resources>

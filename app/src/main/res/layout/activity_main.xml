@@ -1,11 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/drawer_layout"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<include layout="@layout/toolbar"-->
+            <!--android:id="@+id/toolbar"/>-->
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar"
+            android:background="@drawable/gradient1"
+            android:theme="@style/backArrowTheme"
+            />
+
+        <LinearLayout
+            android:id="@+id/content_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="?attr/actionBarSize">
+
+            <FrameLayout
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
 
-</android.support.constraint.ConstraintLayout>
+                <ProgressBar
+                    android:id="@+id/loadingSearch"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foregroundTint="@color/colorPrimary"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                   />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="416dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="96dp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/emptyView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_results"
+                    android:textSize="20sp"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="17dp"
+            android:layout_marginBottom="67dp"
+            android:src="@drawable/ic_upload"
+            app:backgroundTint="@color/colorPrimary"
+            app:fabSize="normal" />
+
+            <include
+                android:id="@+id/BGRel"
+                layout="@layout/background_video_player"
+                android:visibility = "gone"
+                />
+
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/bottomNav"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:background="@color/colorAccent"
+                app:menu="@menu/bottom_nav_items">
+            </android.support.design.widget.BottomNavigationView>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/search_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/toolbar"
+            android:background="@drawable/gradient1"
+            app:showAsAction="always|collapseActionView"
+            app:tabTextColor="@android:color/white"
+            app:tabSelectedTextColor="@android:color/white">
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tab_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Videos" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tab_artists"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Artists" />
+
+            <android.support.design.widget.TabItem
+                android:id="@+id/tab_listeners"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Listeners" />
+        </android.support.design.widget.TabLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.NavigationView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:id="@+id/nav_view"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu" />
+
+</android.support.v4.widget.DrawerLayout>

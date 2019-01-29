@@ -3,15 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Splash"
-    android:background="@drawable/gradient1">
+    tools:context=".Authentication.Splash"
+    android:background="@drawable/gradient2">
 
     <ImageView
         android:id="@+id/logo_wht"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="65dp"
         android:layout_centerInParent="true"
         android:contentDescription="@string/logo_white"
-        android:src="@drawable/hitstreamr_h_logo_wht_w_text" />
+        android:src="@drawable/new_hitstreamr_h_logo_wht"
+         />
 
 </RelativeLayout>

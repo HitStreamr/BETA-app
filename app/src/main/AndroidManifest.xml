@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <application
         android:allowBackup="true"
@@ -13,48 +14,150 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Splash">
+        <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Welcome" />
-        <activity android:name=".AccountType" />
-        <activity android:name=".BasicSignUp" />
         <activity
-            android:name=".HomeActivity"
+            android:name=".Authentication.Welcome"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Authentication.AccountType"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Authentication.BasicSignUp"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MainActivity" />
-        <activity android:name=".Pop"
+        <activity
+            android:name=".Pop"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
-        <activity android:name=".VideoUploadActivity" />
+        <activity
+            android:name=".VideoUploadActivity"
+            android:screenOrientation="portrait" />
 
-        <meta-data android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id"/>
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
 
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name" />
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Authentication.SignInActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Authentication.ArtistSignUp"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Authentication.LabelSignUp"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LabelDashboard" />
+        <activity
+            android:name=".Authentication.PickGenre"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Account"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VideoPlayer"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".Profile"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Authentication.ResetPassword"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ChangePassword"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReportVideoPopup"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".CommentPage"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".AddToPlaylist"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".Library"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CreateNewPlaylist"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".CreditsPurchase"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".BillingManager"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TrendingVideos"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".GetVerifiedPopUp"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
 
+        <service android:name=".HitStreamrFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
-        <service
-            android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService"
-            android:enabled="true" />
-
-        <activity android:name=".SignInActivity"></activity>
+        <activity
+            android:name=".Dashboard.Dashboard"
+            android:label="@string/title_activity_dashboard"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".DiscoverResultPage"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Onboarding"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ArtistsToWatch"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NewReleases"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VideoEdit"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".VideoDelete"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity android:name=".EditPlaylist"></activity>
+        activity android:name=".MorePopularPeople" />
+        <activity android:name=".ReportSubmission"></activity>
     </application>
 
 </manifest>

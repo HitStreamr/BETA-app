@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/gradient1"
+    android:elevation="4dp"
+    app:popupTheme="@style/AppTheme"
+    app:theme="@style/backArrowTheme" >
+
+    <Button
+        android:id="@+id/update_account"
+        android:text="SAVE"
+        android:textColor="@color/colorAccent"
+        android:layout_width="40dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_gravity="end"
+        android:background="@color/colorAccent2"
+        />
+
+</android.support.v7.widget.Toolbar>

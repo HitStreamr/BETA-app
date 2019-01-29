@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="Genre">
+        <item>--Select--</item>
+        <item>Alternative</item>
+        <item>Afro</item>
+        <item>Blues</item>
+        <item>Classical</item>
+        <item>Country</item>
+        <item>Easy Listening</item>
+        <item>EDM</item>
+        <item>Folk</item>
+        <item>Funk</item>
+        <item>Gospel</item>
+        <item>Hip-Hop/Rap</item>
+        <item>Indie</item>
+        <item>Jazz</item>
+        <item>Asian Pop</item>
+        <item>Latin</item>
+        <item>Metal</item>
+        <item>New Age</item>
+        <item>Opera</item>
+        <item>Pop</item>
+        <item>Punk</item>
+        <item>R&amp;B/Soul</item>
+        <item>Reggae</item>
+        <item>Rock</item>
+        <item>Trap</item>
+        <item>World Music/Beats</item>
+    </string-array>
+
+
+
+</resources>
