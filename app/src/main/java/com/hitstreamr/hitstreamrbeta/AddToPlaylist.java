@@ -35,7 +35,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
 
     private ItemClickListener mlistner;
 
-    Video vid;
+    //Video vid;
 
     String videoId;
 
@@ -60,8 +60,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             }
         };
 
-        vid = getIntent().getParcelableExtra("VIDEO");
-
+        videoId = getIntent().getStringExtra("VideoId");
         Log.e(TAG, "Video id is :" +videoId);
 
         cancel = (Button) findViewById(R.id.cancel);
@@ -124,8 +123,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
                 .getReference("PlaylistVideos")
                 .child(current_user.getUid())
                 .child(playlistSelected)
-                .child(vid.getVideoId())
-                .setValue(vid)
+                .child(videoId)
+                .setValue(videoId)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

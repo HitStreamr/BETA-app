@@ -14,12 +14,15 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.Tasks;
+
 
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableRelativeLayout;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -28,13 +31,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class Library extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener{
+public class Library extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "LibraryActivity";
     private final String HOME = "home";
@@ -54,8 +62,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private BookAdapter bookAdapter_watchLater;
     private WatchPlaylistAdapter playlistAdapter_playlists;
 
-    private ArrayList<Video> WatchLaterList;
-    private ArrayList<Video> Watch;
+    private ArrayList<Video> WatchList;
+    private ArrayList<String> WatchLaterList;
     private ArrayList<Playlist> Play;
 
     private ItemClickListener mlistner;
@@ -63,11 +71,17 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     private String CreditVal;
 
+    private CollectionReference videosCollectionRef;
+    private DataSnapshot videosDatasnapshot;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_library);
+
+        videosCollectionRef = db.collection("Videos");
+        //getVideos();
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -92,7 +106,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         playlistBtn.setVisibility(View.GONE);
 
         WatchLaterList = new ArrayList<>();
-        Watch = new ArrayList<>();
+        WatchList = new ArrayList<>();
         Play = new ArrayList<>();
 
         FirebaseDatabase.getInstance().getReference("Credits")
@@ -101,11 +115,10 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                        if(!Strings.isNullOrEmpty(currentCredit)){
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
 
                             CreditVal = currentCredit;
-                        }
-                        else
+                        } else
                             CreditVal = "0";
                         // Log.e(TAG, "Profile credit val inside change" + CreditVal);
                     }
@@ -138,30 +151,25 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
             @Override
             public void onPlaylistClick(Playlist selectedPlaylist) {
-                Log.e(TAG, "on Playlist click" +selectedPlaylist.getPlayVideos());
-
+                Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
 
                 Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
                 //PlaylistIntent.putExtra("PlaylistName", selectedPlaylist.playlistname);
+                Log.e(TAG, "playlist value " + selectedPlaylist.getPlayVideoIds());
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("PlaylistVideos", selectedPlaylist);
-                PlaylistIntent.putExtras(bundle);
-                //PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist.playVideos);
+                PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);
                 startActivity(PlaylistIntent);
-
             }
         };
-
         getWatchLaterList();
-        //getPlaylistsList();
+        getPlaylistsList();
     }
 
     private void setUpRecyclerView() {
-        if(WatchLaterList.size()>0) {
+        if (WatchLaterList.size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerView_watchLater.setLayoutManager(layoutManager);
-            bookAdapter_watchLater = new BookAdapter(this, WatchLaterList, mlistner);
+            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner);
             recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
         }
     }
@@ -226,7 +234,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
 
-
     /**
      * RecyclerView Test
      */
@@ -239,12 +246,11 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot each : dataSnapshot.getChildren()) {
-                                //temp = each.getValue().toString();
-                                WatchLaterList.add(each.getValue(Video.class));
+                                WatchLaterList.add(each.getKey());
                             }
                             Log.e(TAG, "Watch Later List : " + WatchLaterList);
                         }
-                        setUpRecyclerView();
+                        getWatchLaterVideos();
                     }
 
                     @Override
@@ -253,8 +259,30 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 });
     }
 
-    private void getPlaylistsList() {
+    private void getWatchLaterVideos() {
+        if (WatchLaterList.size() > 0) {
+            for (int i = 0; i < WatchLaterList.size(); i++) {
+                Query query = videosCollectionRef.whereEqualTo("videoId", WatchLaterList.get(i));
+                query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            WatchList.add(document.toObject(Video.class));
+                            //Log.e(TAG, "Watch Later Video List : " + document.toObject(Video.class).getThumbnailUrl());
+                        }
+                    }
+                });
+            }
+        }
+        //Log.e(TAG, "Watch Later Video List : " + WatchList);
+        setUpRecyclerView();
+    }
 
+    //ArrayList<String> a = new ArrayList<>();
+    //Playlist p = new Playlist();
+    DataSnapshot playDatasnapshot;
+
+    private void getPlaylistsList() {
         FirebaseDatabase.getInstance().getReference("PlaylistVideos")
                 .child(current_user.getUid())
                 .addValueEventListener(new ValueEventListener() {
@@ -262,25 +290,30 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot each : dataSnapshot.getChildren()) {
+                                //playDatasnapshot = dataSnapshot;
                                 Playlist p = new Playlist();
                                 p.setPlaylistname(String.valueOf(each.getKey()));
-                                Play.add(p);
-                                Log.e(TAG, "each children"+each.getChildren());
-                                ArrayList<Video> a = new ArrayList<>();
-                                for(DataSnapshot eachplaylist : each.getChildren()){
-                                    a.add(eachplaylist.getValue(Video.class));
-                                    //eachplaylist.getValue();
-                                    Log.e(TAG, "videos in playlist"+eachplaylist.getValue());
+                                Log.e(TAG, "each children" + each.getChildren());
+                                ArrayList<String> a = new ArrayList<>();
+                                for (DataSnapshot eachplaylist : each.getChildren()) {
+                                    a.add(eachplaylist.getValue(String.class));
                                 }
-                                p.setPlayVideos(a);
+                                //getPlayVideos();
+                                p.setPlayVideoIds(a);
+                                Play.add(p);
                             }
-                            Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos());
-                            Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlaylistname() + " " + Play.get(1).getPlayVideos());
+                            //Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos() + " " + Play.get(0).getPlayVideoIds());
+                            //Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlayVideoIds() + " " + Play.get(1).getPlaylistname());
+                            //Log.e(TAG, "Playlist List 2 : " + Play.get(2).getPlayVideoIds() + " " +Play.get(2).getPlaylistname());
+
                         }
-                        if(Play.size()>0){
+                        if (Play.size() > 0) {
                             playlistBtn.setVisibility(View.VISIBLE);
+                            getaaaPlayVideos();
+
                         }
-                        setUpPlaylistRecyclerView();
+                        //setUpPlaylistRecyclerView();
+
                     }
 
                     @Override
@@ -289,13 +322,35 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 });
     }
 
-    public interface ItemClickListener {
-        void onResultClick(Video selectedVideo);
-        void onPlaylistClick(Playlist selectedPlaylist);
+    private void getaaaPlayVideos() {
+        //Log.e(TAG, "Entered onsuceess" +Play);
+        ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
+        for (int j = 0; j < Play.size(); j++) {
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0)).get());
+        }
+
+        Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
+        task.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
+                int x = 0;
+                for (QuerySnapshot document : task.getResult()) {
+                    for (DocumentSnapshot docume : document.getDocuments()) {
+                        Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        //bb = docume.toObject(Video.class).getThumbnailUrl();
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                    }
+                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
+                    x++;
+                }
+                setUpPlaylistRecyclerView();
+            }
+        });
     }
 
     /**
      * Handles fragment items
+     *
      * @param item menu item
      * @return true to show fragments
      */
@@ -331,7 +386,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         return true;
     }
 
-
-
+    public interface ItemClickListener {
+        void onResultClick(Video selectedVideo);
+        void onPlaylistClick(Playlist selectedPlaylist);
+    }
 
 }

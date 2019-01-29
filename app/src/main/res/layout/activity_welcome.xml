@@ -95,7 +95,7 @@
                         android:text="CREATE AN ACCOUNT"
                         android:layout_gravity="center"
                         android:textColor="@color/colorAccent"/>
-                    
+
                     <ProgressBar
                         android:id="@+id/prog1"
                         android:layout_width="36dp"
@@ -152,14 +152,14 @@
 
 
     </LinearLayout>
-    
+
     <!--<View
         android:id="@+id/reveal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorAccent"
-        android:visibility="invisible"/>
--->
+        android:visibility="invisible"/>-->
+
 
 
 

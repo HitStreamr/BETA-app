@@ -389,6 +389,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
+        Log.e(TAG, "4");
         return true;
     }
 
@@ -397,6 +398,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
+        Log.e(TAG, "5");
         return true;
     }
 
@@ -414,6 +416,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mEmail.setError("Email is not valid!");
             return false;
         } else {
+            Log.e(TAG, "6");
             mEmail.setError(null);
             return true;
         }
@@ -433,6 +436,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
         } else {
+            Log.e(TAG, "7");
             mPhone.setError(null);
             return true;
         }
@@ -449,6 +453,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mCity.setError("Field can't be empty");
             return false;
         } else {
+            Log.e(TAG, "8");
             mCity.setError(null);
             return true;
         }
@@ -468,6 +473,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mZipcode.setError("Zip is invalid");
             return false;
         } else {
+            Log.e(TAG, "9");
             mZipcode.setError(null);
             return true;
         }
@@ -487,6 +493,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPassword.setError("Password too weak");
             return false;
         } else {
+            Log.e(TAG, "10");
             mPassword.setError(null);
             return true;
         }
@@ -576,6 +583,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
             return false;
         } else {
+            Log.e(TAG, "13");
             termsCond.setError(null);
             return true;
         }
@@ -726,6 +734,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         if (view == signup) {
+            Log.e(TAG, "Click entered");
             registerArtist();
         }
         if (view == goBack) {

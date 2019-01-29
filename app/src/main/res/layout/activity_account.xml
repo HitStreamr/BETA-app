@@ -85,7 +85,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Artist/Band Name"
+                    android:hint="Name"
                     android:inputType="textPersonName"
                     android:textCursorDrawable="@android:color/black"
                     />
@@ -105,15 +105,15 @@
                     android:text="Labelname"
                     android:layout_marginTop="10dp"
                     android:visibility="gone"/>
-                <EditText
+                <TextView
                     android:id="@+id/accountUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Username"
+                    android:text="Username"
                     android:inputType="textPersonName"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -121,16 +121,17 @@
                     android:layout_marginTop="15dp"
                     android:textSize="10dp"
                     />
-                <EditText
+                <TextView
                     android:id="@+id/accountEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="user@email.com"
+                    android:text="user@email.com"
                     android:inputType="textEmailAddress"
                     android:enabled="true"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp"/>
+
                 <Button
                     android:id="@+id/ChangePassword"
                     android:layout_width="wrap_content"
@@ -152,9 +153,9 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:hint="Bio Here"
-                    android:inputType="textPersonName"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:inputType="textMultiLine"
+                    android:maxLength="160"
+                    android:textCursorDrawable="@android:color/black"/>
 
             </LinearLayout>
 
