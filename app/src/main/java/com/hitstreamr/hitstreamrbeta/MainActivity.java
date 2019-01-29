@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -206,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView returnPlayerView;
     ImageView closeMini;
     //private Button confirmBtn;
+
 
     /**
      * Set up and initialize layouts and variables
@@ -539,6 +542,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
+
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                        .child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                                    .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    if (uri != null) {
+                                        Glide.with(getApplicationContext()).load(uri).into(holder.profilePicture);
+                                    }
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // TODO: handle error
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // Followers count
+                // TODO: add thousands/millions k/m feature
+                db = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseDatabase db = FirebaseDatabase.getInstance();
+                            db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int follower = (int) dataSnapshot.getChildrenCount();
+                                    if (follower > 1) {
+                                        holder.count.setText(follower + " Followers");
+                                    } else {
+                                        holder.count.setText(follower + " Follower");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            holder.count.setText("0 Follower");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 //set up UI for following
 //                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
 //                    @Override
@@ -655,6 +726,73 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setArtistName(model.getArtistname());
+
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                        .child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                                    .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    if (uri != null) {
+                                        Glide.with(getApplicationContext()).load(uri).into(holder.profilePicture);
+                                    }
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // TODO: handle error
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // Followers count
+                // TODO: add thousands/millions k/m feature
+                db = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseDatabase db = FirebaseDatabase.getInstance();
+                            db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int follower = (int) dataSnapshot.getChildrenCount();
+                                    if (follower > 1) {
+                                        holder.count.setText(follower + " Followers");
+                                    } else {
+                                        holder.count.setText(follower + " Follower");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            holder.count.setText("0 Follower");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 //holder.setUserName(model.getUsername());
 //                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
@@ -1131,9 +1269,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name, artistName;
-        private TextView count;
         private Button followButton;
         private Button unfollowButton;
+
+        public TextView count;
+        public CircleImageView profilePicture;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
@@ -1143,6 +1283,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
             artistName =view.findViewById(R.id.artist_name);
+            profilePicture = view.findViewById(R.id.searchImage);
             artistName.setVisibility(View.GONE);
         }
 
@@ -1279,9 +1420,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name, artistname;
-        private TextView count;
         private Button followButton;
         private Button unfollowButton;
+
+        public TextView count;
+        public CircleImageView profilePicture;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
@@ -1291,6 +1434,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
+            profilePicture = view.findViewById(R.id.searchImage);
         }
 
         void setArtistName(final String artistName) {

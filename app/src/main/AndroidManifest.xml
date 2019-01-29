@@ -158,6 +158,11 @@
         <activity android:name=".EditPlaylist"></activity>
         activity android:name=".MorePopularPeople" />
         <activity android:name=".ReportSubmission"></activity>
+
+        <service
+            android:name=".VideoPlayerService"
+            android:enabled="true"
+            android:exported="false"></service>
     </application>
 
 </manifest>

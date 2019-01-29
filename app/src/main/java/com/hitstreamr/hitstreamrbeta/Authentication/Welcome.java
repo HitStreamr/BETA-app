@@ -41,19 +41,19 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         setContentView(R.layout.activity_welcome);
 
         sign_in = (Button) findViewById(R.id.signin_button);
-//        create_account = (Button) findViewById(R.id.create_account_button);
+        create_account = (Button) findViewById(R.id.create_account_button);
         terms = findViewById(R.id.terms);
         privacy = findViewById(R.id.privacyPolicy);
 
         //BUTTON ANIMATIION
-        create_account_ = findViewById(R.id.create_account_button_);
-        progressBar = findViewById(R.id.prog1);
-        reveal = findViewById(R.id.reveal);
-        text = (TextView) findViewById(R.id.textCA);
+//        create_account_ = findViewById(R.id.create_account_button_);
+//        progressBar = findViewById(R.id.prog1);
+//        reveal = findViewById(R.id.reveal);
+//        text = (TextView) findViewById(R.id.textCA);
 
 
         sign_in.setOnClickListener(this);
-//       create_account.setOnClickListener(this);
+       create_account.setOnClickListener(this);
        terms.setOnClickListener(this);
        privacy.setOnClickListener(this);
 
@@ -69,10 +69,10 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
                 startActivity(openAuthenticator);
                 break;
 
-//            case R.id.create_account_button:
-//                Intent openCreateAcct = new Intent(this, AccountType.class);
-//                startActivity(openCreateAcct);
-//                break;
+            case R.id.create_account_button:
+                Intent openCreateAcct = new Intent(this, AccountType.class);
+                startActivity(openCreateAcct);
+                break;
 
             case R.id.terms:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.hitstreamr.com/terms-of-service"));
@@ -91,7 +91,7 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
     // Animated 'Create Account' Button ----------------------------------------------------------
     //--------------------------------------------------------------------------------------------
 
-    public void createAccount(View view) {
+    /*public void createAccount(View view) {
         animateButtonWidth();
 
         fadeTextLoadProgBar();
@@ -197,5 +197,5 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
 
     private int getFabWidth(){
         return (int) 0d;
-    }
+    }*/
 }
