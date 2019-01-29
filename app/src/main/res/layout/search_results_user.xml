@@ -35,21 +35,47 @@
                     app:civ_border_width="2dp"/>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="200dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:layout_marginStart="5dp"
                     android:gravity="center_vertical"
-                    android:paddingEnd="10dp">
+                    android:paddingEnd="30dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Username"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/black"
+                            android:id="@+id/user_name"
+                            android:layout_marginEnd="3dp"/>
+
+                        <ImageView
+                            android:id="@+id/verified"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="5dp"
+                            android:src="@drawable/ic_verified_check_circle"
+                            android:tint="@android:color/holo_blue_bright"/>
+
+
+                    </LinearLayout>
+
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Username"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"
-                        android:textSize="14sp"
-                        android:id="@+id/user_name"/>
+                        android:text="Artist Name"
+                        android:id="@+id/artist_name"
+                        android:visibility="visible"
+                        android:textSize="10sp"/>
+
 
                     <TextView
                         android:id="@+id/count"

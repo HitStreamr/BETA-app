@@ -109,4 +109,6 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="verification3">Submitting a request for verification does not guarantee that your account will be verified.</string>
     <string name="verification4">-Email/Username \n-First/Last Name \n-Known As \n-Photo ID front and back</string>
     <string name="delete_vid_confirmation">Wait! \n \n Are you sure you want to delete this video?</string>
+    <string name="sponsored">SPONSORED</string>
+    <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
 </resources>

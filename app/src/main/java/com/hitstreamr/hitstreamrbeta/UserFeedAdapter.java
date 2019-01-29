@@ -2,8 +2,10 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,58 +16,46 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.RequestManager;
 
 import java.util.ArrayList;
 
-public class UserFeedAdapter extends ArrayAdapter<Video> {
+public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFeedHolder> {
     private Context mContext;
     private int mResource;
     private ArrayList<Video> objects1 = new ArrayList<>();
     private ArrayList<Feed> objects2 = new ArrayList<>();
     LinearLayout FeedLikes, FeedRepost;
     Profile.ItemClickListener mListener;
+    RequestBuilder<Drawable> requestBuilder;
+    String userLike;
+    String UserRepost;
 
-    public UserFeedAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Video> objects, @NonNull ArrayList<Feed> UserFeedDtls, Profile.ItemClickListener mListener) {
-        super(context, resource, objects);
-        this.mContext =  context;
-        this.mResource = resource;
+    public UserFeedAdapter(@NonNull ArrayList<Video> objects, @NonNull ArrayList<Feed> UserFeedDtls, Profile.ItemClickListener mListener, RequestManager gRequests) {
         this.objects1 = objects;
         this.objects2 = UserFeedDtls;
         this.mListener = mListener;
-    }
-
-    public interface ItemClickListener {
-        void onResultClick(Video title);
+        requestBuilder = gRequests.asDrawable();
     }
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public UserFeedHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        String userLike;
-        String UserRepost;
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        convertView = inflater.inflate(mResource, parent, false);
-        Video currentVideo = objects1.get(position);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.profile_feed_layout, parent, false);
 
-        Feed feedDtls = objects2.get(position);
+        return new UserFeedHolder(view, mListener);
+    }
 
-        TextView title = convertView.findViewById(R.id.videoTitle);
-        TextView userName = convertView.findViewById(R.id.videoUsername);
-        ImageView thumbnail = convertView.findViewById(R.id.videoThumbnail);
-
-        LinearLayout mainSection = convertView.findViewById(R.id.mainBody);
-
-        title.setText(currentVideo.getTitle());
-        userName.setText(currentVideo.getUsername());
-        thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(mContext).load(currentVideo.getThumbnailUrl()).into(thumbnail);
-
-        FeedLikes =convertView.findViewById(R.id.Like);
-        FeedRepost = convertView.findViewById(R.id.Repost);
-
-        userLike = feedDtls.getFeedLike();
-        UserRepost = feedDtls.getFeedRepost();
+    @Override
+    public void onBindViewHolder(@NonNull UserFeedHolder holder, int position) {
+        requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        holder.videoTitle.setText(objects1.get(position).getTitle());
+        holder.videoUsername.setText(objects1.get(position).getUsername());
+        userLike = objects2.get(position).getFeedLike();
+        UserRepost = objects2.get(position).getFeedRepost();
 
         if(userLike.equals("Y"))
         {
@@ -75,15 +65,43 @@ public class UserFeedAdapter extends ArrayAdapter<Video> {
         {
             FeedRepost.setVisibility(View.VISIBLE);
         }
-
-        mainSection.setOnClickListener(new View.OnClickListener() {
+        holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onResultClick(objects1.get(position));
             }
         });
 
-        return convertView;
+
+    }
+
+    @Override
+    public int getItemCount() {
+        return objects1.size();
+    }
+
+    public void clear() {
+        final int size = objects1.size();
+        objects1.clear();
+        notifyItemRangeRemoved(0, size);
+    }
+
+    class UserFeedHolder extends RecyclerView.ViewHolder {
+        ImageView videoThumbnail;
+        TextView videoTitle;
+        TextView videoUsername;
+        LinearLayout mainSection;
+        Profile.ItemClickListener mListener;
+
+        public UserFeedHolder(View itemView, final Profile.ItemClickListener mListener) {
+            super(itemView);
+            videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
+            videoTitle = itemView.findViewById(R.id.videoTitle);
+            videoUsername = itemView.findViewById(R.id.videoUsername);
+            FeedLikes =itemView.findViewById(R.id.Like);
+            FeedRepost = itemView.findViewById(R.id.Repost);
+            mainSection = itemView.findViewById(R.id.mainBody);
+        }
     }
 
 }

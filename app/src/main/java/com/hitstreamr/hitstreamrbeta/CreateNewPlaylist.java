@@ -1,15 +1,14 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,14 +32,6 @@ public class CreateNewPlaylist extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_playlist);
 
-        // Define the dimension
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width = dm.widthPixels;
-        int height = dm.heightPixels;
-        getWindow().setLayout((int) (width), (int) (height * .8));
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
 
         playListTitle = findViewById(R.id.createPlayListTitle);
@@ -56,13 +47,20 @@ public class CreateNewPlaylist extends AppCompatActivity implements View.OnClick
     private void registerPlaylist() {
         //Log.e(TAG, "Your video Id is:" + vid.getVideoId());
         //Toast.makeText(VideoPlayer.this, "You liked" + vid.getVideoId(), Toast.LENGTH_SHORT).show();
-        String ttt = "true";
+        String temp = "true";
+
+        if(playlistPrivacy.getSelectedItemPosition() == 0){
+            temp = "public";
+        }
+        else{
+            temp = "private";
+        }
 
         FirebaseDatabase.getInstance()
                 .getReference("Playlists")
                 .child(currentFirebaseUser.getUid())
                 .child(playListTitle.getText().toString().trim())
-                .setValue(true)
+                .setValue(temp)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -72,11 +70,34 @@ public class CreateNewPlaylist extends AppCompatActivity implements View.OnClick
                 });
     }
 
+    private boolean validatePlaylistName(String playlistName) {
+        if (playlistName.isEmpty()) {
+            playListTitle.setError("Playlist Name can't be empty");
+            return false;
+        } else if (playlistName.length() >= 30) {
+            playListTitle.setError("Playlist can only have 30 characters");
+            return false;
+        }
+        else {
+            playListTitle.setError(null);
+            return true;
+        }
+    }
+
+    private void validatePlaylist(){
+        if ( !validatePlaylistName((playListTitle.getText().toString().trim()))){
+            Toast.makeText(getApplicationContext(), "Please fix indicated errors.", Toast.LENGTH_LONG).show();
+        }
+        else{
+            registerPlaylist();
+        }
+    }
+
     @Override
     public void onClick(View view) {
         if (view == okBtn) {
             Log.e(TAG, "Creating new Playlist");
-            registerPlaylist();
+            validatePlaylist();
         }
         if (view == cancelBtn) {
             Log.e(TAG, "Cancel Creating new Playlist");

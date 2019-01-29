@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -34,8 +37,15 @@ public class CommentReplyAdapter extends RecyclerView.Adapter<CommentReplyAdapte
         holder.message.setText(replyList.get(position).getMessage());
 
         // Set the profile picture
-        String URI = replyList.get(position).getPhotoURI();
-        Glide.with(holder.circleImageView.getContext()).load(URI).into(holder.circleImageView);
+        FirebaseStorage.getInstance().getReference("profilePictures").child(replyList.get(position).getUserID())
+                .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                if (uri != null) {
+                    Glide.with(holder.circleImageView.getContext()).load(uri).into(holder.circleImageView);
+                }
+            }
+        });
 
         // Set the timestamp difference
         String timestampDifference = getTimestampDifference(replyList.get(position));

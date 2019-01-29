@@ -16,6 +16,7 @@
         android:layout_below="@+id/toolbar">
 
         <EditText
+            android:id="@+id/editPlaylistTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Playlist Title Here"
@@ -23,6 +24,7 @@
             android:layout_marginTop="10dp"/>
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/editPlaylistRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

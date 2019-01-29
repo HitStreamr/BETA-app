@@ -39,7 +39,7 @@ import com.hitstreamr.hitstreamrbeta.VideoUploadActivity;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class Uploads extends Fragment{
+public class Uploads extends Fragment {
 
     private FirebaseUser current_user;
     private FirestoreRecyclerAdapter<Video, DashboardUploadsHolder> firestoreRecyclerAdapter_videos;
@@ -95,6 +95,7 @@ public class Uploads extends Fragment{
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         Query query = firebaseFirestore.collection("Videos").whereEqualTo("userId", current_user.getUid())
+                .whereEqualTo("delete", "N")
                 .orderBy("timestamp", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Video> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Video>()
@@ -143,15 +144,18 @@ public class Uploads extends Fragment{
                                 switch (menuItem.getItemId()) {
                                     // TODO: finish implementing the video popup menu
                                     case R.id.editVideo:
-                                        Intent editVid = new Intent(getApplicationContext(), VideoEdit.class);
-                                        //editVid.putExtra("VideoId", vid.getVideoId());
-                                        startActivity(editVid);
+                                        Intent editVideo = new Intent(getApplicationContext(), VideoEdit.class);
+                                        editVideo.putExtra("VIDEO", model);
+                                        startActivity(editVideo);
                                         break;
 
                                     case R.id.deleteVideo:
-                                        Intent deleteVid = new Intent(getApplicationContext(), VideoDelete.class);
-                                        startActivity(deleteVid);
+                                        Intent deleteVideo = new Intent(getApplicationContext(), VideoDelete.class);
+                                        startActivity(deleteVideo);
                                         break;
+
+                                   // case R.id.addToPlaylist_dashboardUploads:
+                                   //     break;
                                 }
                                 return false;
                             }

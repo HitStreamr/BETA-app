@@ -33,7 +33,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="120dp"
                 android:contentDescription="@string/text_logo_wht"
-                android:src="@drawable/round_hitstreamr_logo_wht" />
+                android:src="@drawable/round_hitstreamr_logo_wht"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -71,6 +72,37 @@
                     android:paddingRight="15dp"
                     android:layout_marginEnd="15dp"
                     tools:ignore="ButtonStyle" />
+
+
+                <!--Animated 'Create Account' Btn-->
+
+                <!--<FrameLayout
+                    android:id="@+id/create_account_button_"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/button1"
+                    android:clickable="true"
+                    android:elevation="4dp"
+                    android:paddingHorizontal="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:foreground="?selectableItemBackground"
+                    android:onClick="createAccount">
+
+                    <TextView
+                        android:id="@+id/textCA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CREATE AN ACCOUNT"
+                        android:layout_gravity="center"
+                        android:textColor="@color/colorAccent"/>
+                    
+                    <ProgressBar
+                        android:id="@+id/prog1"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:visibility="invisible"/>
+                </FrameLayout>-->
 
                 <Button android:id="@+id/signin_button"
                     android:layout_width="120dp"
@@ -120,7 +152,14 @@
 
 
     </LinearLayout>
-
+    
+    <!--<View
+        android:id="@+id/reveal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:visibility="invisible"/>
+-->
 
 
 

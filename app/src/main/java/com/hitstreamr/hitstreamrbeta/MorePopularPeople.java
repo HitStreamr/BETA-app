@@ -1,14 +1,12 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,55 +16,53 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArtistsToWatch extends AppCompatActivity {
+public class MorePopularPeople extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_artists_to_watch);
+        setContentView(R.layout.activity_more_popular_people);
 
-        showMoreArtistsToWatch();
+        morePopularPeople();
     }
 
     /**
-     * Show a full list of artists to watch.
+     * Show a full list of popular people.
      */
-    private void showMoreArtistsToWatch() {
-        RecyclerView recyclerView = findViewById(R.id.moreArtistsToWatchRCV);
+    private void morePopularPeople() {
+        RecyclerView recyclerView = findViewById(R.id.morePopularPeopleRCV);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("ArtistsLikes").orderBy("likes", Query.Direction.DESCENDING)
+        firebaseFirestore.collection("PopularPeople").orderBy("followers", Query.Direction.DESCENDING)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<String> artistFirestoreList = new ArrayList<>();
-                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                    String temp = documentSnapshot.getId();
-                    // Sorted based on highest likes
-                    artistFirestoreList.add(temp);
+                List<String> userFirestoreList = new ArrayList<>();
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    userFirestoreList.add(documentSnapshot.getId());
                 }
 
                 // Query to Firebase
-                List<ArtistUser> artistList = new ArrayList<>();
-                ArtistsToWatchAdapter artistsToWatchAdapter = new ArtistsToWatchAdapter(artistList,
-                        getApplicationContext(), getIntent());
+                List<User> userList = new ArrayList<>();
+                MorePopularPeopleAdapter morePopularPeopleAdapter =
+                        new MorePopularPeopleAdapter(userList, getApplicationContext(), getIntent());
 
-                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                for (String artistID : artistFirestoreList) {
-                    databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BasicAccounts");
+                for (String userID : userFirestoreList) {
+                    databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
-                                artistList.add(artist_user);
-                                artistsToWatchAdapter.notifyDataSetChanged();
-                                recyclerView.setAdapter(artistsToWatchAdapter);
+                                User basic_user = dataSnapshot.getValue(User.class);
+                                userList.add(basic_user);
+                                morePopularPeopleAdapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(morePopularPeopleAdapter);
                             }
                         }
 

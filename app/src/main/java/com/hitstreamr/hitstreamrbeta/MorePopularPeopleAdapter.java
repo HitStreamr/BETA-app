@@ -20,48 +20,52 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAdapter.TopArtistsHolder> {
+public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPeopleAdapter.MorePopularPeopleHolder> {
 
-    private List<ArtistUser> artistList;
+    private List<User> userList;
     private Context mContext;
     private Intent mIntent;
 
-    public ArtistsToWatchAdapter(List<ArtistUser> artistList, Context mContext, Intent mIntent) {
-        this.artistList = artistList;
+    /**
+     * Constructor
+     */
+    public MorePopularPeopleAdapter(List<User> userList, Context mContext, Intent mIntent) {
+        this.userList = userList;
         this.mContext = mContext;
         this.mIntent = mIntent;
     }
 
     @NonNull
     @Override
-    public TopArtistsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MorePopularPeopleHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.search_results_user, parent, false);
-        return new TopArtistsHolder(itemView);
+        return new MorePopularPeopleHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TopArtistsHolder holder, int position) {
-        holder.artistName.setText(artistList.get(position).getUsername());
+    public void onBindViewHolder(@NonNull MorePopularPeopleHolder holder, int position) {
+        holder.userName.setText(userList.get(position).getUsername());
 
+        // Listener for the whole user card view
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO open artist profile page
-                Intent artistProfile = new Intent(mContext, Profile.class);
-                artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
-                artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
-                artistProfile.putExtra("SearchType", "ArtistAccounts");
-                mContext.startActivity(artistProfile);
+                Intent userProfile = new Intent(mContext, Profile.class);
+                userProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                userProfile.putExtra("basicUsername", userList.get(position).getUsername());
+                userProfile.putExtra("SearchType", "BasicAccounts");
+                mContext.startActivity(userProfile);
             }
         });
 
-        String username = artistList.get(position).getUsername();
+        // Get users' profile pictures
+        String username = userList.get(position).getUsername();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId")
                 .child(username);
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -94,7 +98,6 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
         });
 
         // Followers count
-        // TODO: add thousands/millions k/m feature
         databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(username);
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -130,26 +133,26 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
 
     @Override
     public int getItemCount() {
-        if (artistList != null) {
-            return artistList.size();
+        if (userList != null) {
+            return userList.size();
         } else {
             return 0;
         }
     }
 
     /**
-     * Inner Class - Top Artists Holder
+     * Inner Class - Popular People Holder
      */
-    public class TopArtistsHolder extends RecyclerView.ViewHolder {
+    public class MorePopularPeopleHolder extends RecyclerView.ViewHolder {
 
-        public TextView artistName, followerCount;
+        public TextView userName, followerCount;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
 
-        public TopArtistsHolder(View itemView) {
+        public MorePopularPeopleHolder(View itemView) {
             super(itemView);
 
-            artistName = itemView.findViewById(R.id.user_name);
+            userName = itemView.findViewById(R.id.user_name);
             cardView = itemView.findViewById(R.id.userCardView);
             profilePicture = itemView.findViewById(R.id.searchImage);
             followerCount = itemView.findViewById(R.id.count);

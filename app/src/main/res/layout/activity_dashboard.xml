@@ -9,9 +9,8 @@
     android:orientation="vertical"
     tools:context=".Dashboard.Dashboard">
 
-
-        <include layout="@layout/toolbar"/>
-
+        <include layout="@layout/toolbar"
+            android:id="@+id/toolbar" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"

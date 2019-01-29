@@ -100,7 +100,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
-            android:name=".AddToPlaylsit"
+            android:name=".AddToPlaylist"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
@@ -156,6 +156,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity android:name=".EditPlaylist"></activity>
+        activity android:name=".MorePopularPeople" />
+        <activity android:name=".ReportSubmission"></activity>
     </application>
 
 </manifest>

@@ -46,19 +46,19 @@ public class Dashboard extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-//        getSupportActionBar().setDisplayShowTitleEnabled(true);
-//        toolbar.setTitleTextColor(0xFFFFFFFF);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
 
         // Set toolbar profile picture to always be the current user
-//        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (current_user.getPhotoUrl() != null) {
-//            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-//            circleImageView.setVisibility(View.VISIBLE);
-//            Uri photoURL = current_user.getPhotoUrl();
-//            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-//        }
+        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -78,7 +78,6 @@ public class Dashboard extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_dashboard, menu);
         return true;
     }
 
