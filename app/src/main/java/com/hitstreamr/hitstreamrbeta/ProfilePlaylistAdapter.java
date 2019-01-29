@@ -17,16 +17,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdapter.WatchPlaylistViewHolder> {
+public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylistAdapter.ProfilePlaylistViewHolder> {
     private static final String TAG = "WatchPlayListAdapter";
     private ArrayList<Playlist> Playlist;
     private Context mContext;
-    private Library.ItemClickListener mlistner;
+    private Profile.ItemClickListener mlistner;
 
-    public WatchPlaylistAdapter(Context context, ArrayList<Playlist> playlist, Library.ItemClickListener mlistner) {
+    public ProfilePlaylistAdapter(Context context, ArrayList<Playlist> playlist, Profile.ItemClickListener mlistner) {
         Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
         this.Playlist = playlist;
         this.mContext = context;
@@ -35,16 +37,16 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
 
     @NonNull
     @Override
-    public WatchPlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ProfilePlaylistAdapter.ProfilePlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.playlist_layout, parent, false);
         Log.e(TAG, "Watch Playlists adapter holder entered ");
 
-        return new WatchPlaylistAdapter.WatchPlaylistViewHolder(itemView);
+        return new ProfilePlaylistAdapter.ProfilePlaylistViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull WatchPlaylistViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProfilePlaylistAdapter.ProfilePlaylistViewHolder holder, int position) {
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
         holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()));
         holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()) + " videos");
@@ -56,40 +58,23 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
                 mlistner.onPlaylistClick(Playlist.get(position));
             }
         });
-
-        holder.MoreBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(mContext, view);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.editPlaylist:
-                                Log.e(TAG, "selected " +Playlist.get(position));
-                                Intent editPlaylistIntent = new Intent(mContext, EditPlaylist.class);
-                                editPlaylistIntent.putExtra("playlist", Playlist.get(position));
-                                mContext.startActivity(editPlaylistIntent);
-                                break;
-
-                            default:
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                popupMenu.inflate(R.menu.playlist_menu);
-                popupMenu.show();
-            }
-        });
-
     }
     @Override
     public int getItemCount() {
         return Playlist.size();
     }
 
-    public class WatchPlaylistViewHolder extends RecyclerView.ViewHolder {
+    public void clear(){
+        final int size = Playlist.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                Playlist.remove(0);
+            }
+            notifyItemRangeRemoved(0, size);
+        }
+    }
+
+    public class ProfilePlaylistViewHolder extends RecyclerView.ViewHolder {
         public TextView singlePlaylist;
         public LinearLayout parentLayout;
         public TextView videoCountPlaylist;
@@ -98,7 +83,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
         public ImageView thumbnailPlaylist;
         private ImageView MoreBtn;
 
-        public WatchPlaylistViewHolder(View view) {
+        public ProfilePlaylistViewHolder(View view) {
             super(view);
             singlePlaylist = view.findViewById(R.id.playlistTitle);
             parentLayout = view.findViewById(R.id.playlistCard);
@@ -110,5 +95,3 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
         }
     }
 }
-
-

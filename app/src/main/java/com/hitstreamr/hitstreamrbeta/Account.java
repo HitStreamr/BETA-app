@@ -72,8 +72,8 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private LinearLayout ArtistInfoLayout;
 
     //EditText
-    private EditText EditTextUsername;
-    private EditText EditTextEmail;
+    private TextView EditTextUsername;
+    private TextView EditTextEmail;
     private EditText EditTextBio;
     private EditText EditTextFirstName;
     private EditText EditTextLastName;

@@ -9,10 +9,14 @@ import java.util.ArrayList;
 public class Playlist implements Parcelable {
     public String playlistname;
     public ArrayList<Video> playVideos;
+    public ArrayList<String> playVideoIds;
+    public String playThumbnails;
 
-    public Playlist(String playlistname, ArrayList<Video> playVideos) {
+    public Playlist(String playlistname, ArrayList<Video> playVideos, ArrayList<String> playVideoIds,String playThumbnails) {
         this.playlistname = playlistname;
         this.playVideos = playVideos;
+        this.playVideoIds = playVideoIds;
+        this.playThumbnails = playThumbnails;
     }
 
     public Playlist() {
@@ -30,6 +34,15 @@ public class Playlist implements Parcelable {
         }
     };
 
+
+    public String getPlayThumbnails() {
+        return playThumbnails;
+    }
+
+    public void setPlayThumbnails(String playThumbnails) {
+        this.playThumbnails = playThumbnails;
+    }
+
     public String getPlaylistname() {
         return playlistname;
     }
@@ -46,14 +59,31 @@ public class Playlist implements Parcelable {
         this.playVideos = playVideos;
     }
 
+    public ArrayList<String> getPlayVideoIds() {
+        return playVideoIds;
+    }
+
+    public void setPlayVideoIds(ArrayList<String> playVideoIds) {
+        this.playVideoIds = playVideoIds;
+    }
+
     protected Playlist(Parcel in) {
         playlistname = in.readString();
+
         if (in.readByte() == 0x01) {
             playVideos = new ArrayList<Video>();
             in.readList(playVideos, Video.class.getClassLoader());
         } else {
             playVideos = null;
         }
+        if (in.readByte() == 0x01) {
+            playVideoIds = new ArrayList<String>();
+            in.readList(playVideoIds, String.class.getClassLoader());
+        } else {
+            playVideoIds = null;
+        }
+
+        playThumbnails = in.readString();
     }
 
     @Override
@@ -71,5 +101,15 @@ public class Playlist implements Parcelable {
             dest.writeList(playVideos);
         }
 
+        if (playVideoIds == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(playVideoIds);
+        }
+
+        dest.writeString(playThumbnails);
+
     }
+
 }

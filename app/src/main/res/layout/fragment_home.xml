@@ -50,6 +50,47 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             android:layout_marginBottom="10dp"/>
+
+
+       <!-- <LinearLayout
+            android:id="@+id/sponsordedVideosLinLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sponsored"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:textColor="@android:color/black"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:gravity="end"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/sponsoredMore"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="@string/more"
+                    android:textColor="@color/colorPrimary" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/sponsoredVideosRCV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            android:layout_marginBottom="10dp"/>-->
+
         <LinearLayout
                 android:id="@+id/freshReleasesLinLayout"
                 android:layout_width="match_parent"
