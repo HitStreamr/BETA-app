@@ -1,9 +1,11 @@
 package com.hitstreamr.hitstreamrbeta.BottomNav;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -53,6 +55,8 @@ public class ActivityFragment extends Fragment {
     private RecyclerView activityRecyclerView;
     private PostVideoFeedAdapter adapter;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Nullable
     @Override
@@ -63,6 +67,19 @@ public class ActivityFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
         db = FirebaseFirestore.getInstance();

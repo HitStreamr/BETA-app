@@ -630,7 +630,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return false;
         } else if (artistname.length() <= 26) {
             if (!(checkAlphaNumericSymbol(artistname))) {
-                EditTextLastName.setError("Name must be less than 26 Characters");
+                EditTextName.setError("Name must be less than 26 Characters");
                 return false;
             }
             return true;

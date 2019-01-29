@@ -2,9 +2,11 @@ package com.hitstreamr.hitstreamrbeta.BottomNav;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -93,6 +95,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private ItemClickListener mListener;
     private String CreditVal;
 
+    SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -107,6 +111,19 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
         setupRecyclerView();
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
 
         trendingMoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
