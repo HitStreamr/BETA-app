@@ -11,3 +11,5 @@
 .externalNativeBuild
 /functions
 /function
+.firebaserc
+firebase.json
