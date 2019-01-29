@@ -152,12 +152,16 @@
             android:name=".VideoEdit"
             android:screenOrientation="portrait" />
         <activity
+        android:name=".PlaylistVideosActivity"/>
+
+        <activity
             android:name=".VideoDelete"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity android:name=".EditPlaylist"></activity>
         activity android:name=".MorePopularPeople" />
         <activity android:name=".ReportSubmission"></activity>
+
     </application>
 
 </manifest>
