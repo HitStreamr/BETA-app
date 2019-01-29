@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent">
 
     <LinearLayout
@@ -13,10 +14,12 @@
         android:baselineAligned="false"
         android:padding="10dp">
 
-        <android.support.v7.widget.CardView
+        <LinearLayout
+            android:id="@+id/videoCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="8dp">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -27,7 +30,8 @@
                     android:layout_width="140dp"
                     android:layout_height="80dp"
                     android:background="@drawable/round_outline"
-                    android:outlineProvider="background" />
+                    android:outlineProvider="background"
+                    android:scaleType="centerCrop"/>
 
                 <ImageView
                     android:id="@+id/playlist"
@@ -58,50 +62,46 @@
             </RelativeLayout>
 
 
-        </android.support.v7.widget.CardView>
 
-
-
-
-
-        <LinearLayout
-            android:id="@+id/mainBody"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="5dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/playlistTitle"
-                android:layout_width="170dp"
-                android:layout_height="wrap_content"
-                android:text="Title Of Playlist"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:textStyle="bold"
-
-                android:ellipsize="marquee"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:marqueeRepeatLimit="2"
-                android:scrollHorizontally="true"
-                android:singleLine="true"/>
-
-            <TextView
-                android:id="@+id/videoUsername"
+            <LinearLayout
+                android:id="@+id/mainBody"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textSize="10sp"/>
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/videoPViews"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 videos"
-                android:textSize="10sp"/>
+                <TextView
+                    android:id="@+id/playlistTitle"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:text="Title Of Playlist"
+                    android:textColor="@android:color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="2"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"/>
+
+                <TextView
+                    android:id="@+id/videoUsername"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textSize="10sp"/>
+
+                <TextView
+                    android:id="@+id/videoPViews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 videos"
+                    android:textSize="10sp"/>
 
 
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -111,7 +111,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/playlistMenu"
+                android:id="@+id/moreMenu"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/ic_more_vert" />
