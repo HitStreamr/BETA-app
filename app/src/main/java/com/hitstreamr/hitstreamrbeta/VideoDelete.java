@@ -65,8 +65,8 @@ public class VideoDelete extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finish();
-                       // onBackPressed();
-                       Toast.makeText(VideoDelete.this, "Video will be Deleted in few minutes", Toast.LENGTH_SHORT).show();
+                        // onBackPressed();
+                        Toast.makeText(VideoDelete.this, "Video will be Deleted in few minutes", Toast.LENGTH_SHORT).show();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override

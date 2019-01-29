@@ -78,7 +78,6 @@ public class Dashboard extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_dashboard, menu);
         return true;
     }
 
@@ -134,8 +133,8 @@ public class Dashboard extends AppCompatActivity {
                     Subscribers tab4 = new Subscribers();
                     return tab4;
 
-                    default:
-                        return null;
+                default:
+                    return null;
             }
         }
 

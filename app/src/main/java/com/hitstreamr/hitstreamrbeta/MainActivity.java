@@ -1,12 +1,16 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.media.Image;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
@@ -23,19 +27,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +54,28 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.audio.AudioRendererEventListener;
+import com.google.android.exoplayer2.decoder.DecoderCounters;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.text.Subtitle;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.PlayerControlView;
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -62,7 +92,9 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.DiscoverFragment;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
@@ -76,20 +108,29 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, PlayerServiceCallback{
     private final String HOME = "home";
     private final String DISCOVER = "discover";
     private final String ACTIVITY = "activity";
     private static final String FRAG_OTHER = "other_fragment";
     private static final String FRAG_HOME = "home_fragment";
+
+    // bandwidth meter to measure and estimate bandwidth
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
     private Button logout;
     private DrawerLayout drawer;
@@ -100,6 +141,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Toolbar toolbar;
     private String type;
     private Activity main;
+
+    private RelativeLayout relBG;
+    private PlayerView relBGView;
+    private ExoPlayer player;
+    private TextView BGText;
+    private int playerPos;
+    private int currPos;
 
 
     FloatingActionButton fab;
@@ -142,6 +190,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String search_input, accountType;
 
     private String creditValue;
+    private ServiceConnection mConnection;
+    private VideoPlayerService mService;
+    private boolean runCheck;
+    private boolean mBound;
+    private ArrayList userUploadVideoList;
+
+    //ExoPlayer
+    //private ExoPlayer player;
+    private PlayerView playerView;
+    private Button confirmBtn;
+    private Button cancelBtn;
+    private TextView messgText;
+    private PlayerControlView controls;
+    ImageView returnPlayerView;
+    ImageView closeMini;
+    //private Button confirmBtn;
 
     /**
      * Set up and initialize layouts and variables
@@ -161,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("Beta");
         getSupportActionBar().setSubtitle("HitStreamr");
@@ -260,7 +323,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             type = getIntent().getStringExtra("TYPE");
 
             if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
-                //Hide Dashboard if Basic User & don't show floating action buttton
+                //Hide Dash if Basic User & don't show floating action buttton
 
                 Log.d("HIDE_DASH", getIntent().getStringExtra("TYPE"));
                 //nav_Menu.findItem(R.id.dashboard).setVisible(false);
@@ -285,26 +348,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         bottomNavView.setOnNavigationItemSelectedListener(this);
 
-        //setting the fragments
-        if(getIntent().hasExtra("OPTIONAL_FRAG"))
-        {
-            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
-            switch(frag){
-                case HOME:
-                    bottomNavView.setSelectedItemId(R.id.home);
-                    break;
-                case DISCOVER:
-                    bottomNavView.setSelectedItemId(R.id.discover);
-                    break;
-                case ACTIVITY:
-                    bottomNavView.setSelectedItemId(R.id.activity);
-                    break;
-            }
-        }else{
-            //FRAG not set; default to home
-            bottomNavView.setSelectedItemId(R.id.home);
-        }
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
@@ -321,12 +364,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
                         Log.e(TAG, "Main activity credit val " + currentCredit);
-                        if(!Strings.isNullOrEmpty(currentCredit)){
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
 
                             userCredits.setText(currentCredit);
-                        }
-                        else
+                        } else {
                             userCredits.setText("0");
+                        }
+
+                        //Make sure credits actually has a value
+                        //setting the fragments
+                        if(getIntent().hasExtra("OPTIONAL_FRAG"))
+                        {
+                            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
+                            switch(frag){
+                                case HOME:
+                                    bottomNavView.setSelectedItemId(R.id.home);
+                                    break;
+                                case DISCOVER:
+                                    bottomNavView.setSelectedItemId(R.id.discover);
+                                    break;
+                                case ACTIVITY:
+                                    bottomNavView.setSelectedItemId(R.id.activity);
+                                    break;
+                            }
+                        }else{
+                            //FRAG not set; default to home
+                            bottomNavView.setSelectedItemId(R.id.home);
+                        }
                     }
 
                     @Override
@@ -337,25 +401,116 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
 
+
+
+        relBG = findViewById(R.id.BGRel);
+        relBGView = relBG.findViewById(R.id.background_video_player);
+        BGText = relBG.findViewById(R.id.songTitleBG);
+        playerView = relBG.findViewById(R.id.background_video_player);
+        controls = findViewById(R.id.controls);
+        returnPlayerView = relBG.findViewById(R.id.return_to_full);
+        closeMini = findViewById(R.id.closeMini);
+        //Setup Miniplayer
+        if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+            relBG.setVisibility(View.VISIBLE);
+            initMiniPlayer();
+            BGText.setText(((Video)getIntent().getParcelableExtra("VIDEO")).getTitle());
+            binder();
+        }
     }
 
+    private void initMiniPlayer(){
+        mConnection = new ServiceConnection() {
 
-   /* private void getUserType() {
-        Bundle extras = getIntent().getExtras();
-
-        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
-            //type = getIntent().getStringExtra("TYPE");
-
-            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
-                accountType = "BasicAccounts";
-            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
-                accountType = "ArtistAccounts";
-            } else {
-                accountType = "LabelAccounts";
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
+                mService = binder.getService();
+                mService.setCallbacks(MainActivity.this);
+                mBound = true;
+                mService.resetPlayer();
             }
-        }
-        Log.e(TAG, "account type selected :"+accountType);
-    }*/
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+                mService = null;
+
+            }
+        };
+
+        returnPlayerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent fullscreen = new Intent(MainActivity.this, VideoPlayer.class);
+                fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("RETURN", true);
+                fullscreen.putExtra("CREDIT", creditValue);
+                startActivity(fullscreen);
+            }
+        });
+
+        closeMini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relBG.setVisibility(View.GONE);
+                releasePlayer();
+            }
+        });
+    }
+
+    private void binder(){
+        Log.d(TAG, "Bind Service");
+        bindService(new Intent(MainActivity.this, VideoPlayerService.class),mConnection, 0);
+    }
+
+    @Override
+    public void updateCreditText(String creditValue) {
+        userCredits.setText(creditValue);
+    }
+
+    @Override
+    public void setPlayerView() {
+        playerView.setPlayer(VideoPlayerService.player);
+        controls.setPlayer(VideoPlayerService.player);
+    }
+
+    @Override
+    public void callPurchase() {
+        Log.d(TAG, "Call Purchase");
+        setContentView(R.layout.activity_confirm);
+        //Button
+        confirmBtn = findViewById(R.id.confirm);
+        confirmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(new Intent(getApplicationContext(), CreditsPurchase.class));
+            }
+        });
+
+        cancelBtn = findViewById(R.id.cancel);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        messgText = findViewById(R.id.MessageText);
+        messgText.setText("Please purchase credits to watch videos");
+
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+
+        getWindow().setLayout((int) (width * .8), (int) (height * .4));
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
 
     /**
      * A listener for the Add Credits button
@@ -1441,13 +1596,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //TODO on which screen should the floating action bar be accessible
             case R.id.home:
 
-                if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))){
+                if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist)) && !getIntent().getBooleanExtra("MINI_VISIBLE",false)){
                     bottomNavSetUp(true);
                 }else{
                     bottomNavSetUp(false);
                 }
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
+                bundle.putString("CREDITS", userCredits.getText().toString());
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
@@ -1561,7 +1717,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
         stopAdapters();
+    }
+
+    private void releasePlayer(){
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.stopVideoService();
+            mService = null;
+        }
     }
 
     /**

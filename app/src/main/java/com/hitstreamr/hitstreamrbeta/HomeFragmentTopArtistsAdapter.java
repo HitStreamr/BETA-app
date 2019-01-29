@@ -58,6 +58,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
     public void onBindViewHolder(@NonNull TopArtistsHolder holder, int position) {
         holder.artistName.setText(artistList.get(position).getUsername());
 
+        // Listener for the whole artist card view
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -69,6 +70,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             }
         });
 
+        // Get artists' profile pictures
         String username = artistList.get(position).getUsername();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId")
                 .child(username);
@@ -101,6 +103,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             }
         });
 
+        // Listener for watch button
         holder.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,7 +115,38 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             }
         });
 
-        // TODO: followers count
+        // Followers count
+        databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(username);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                    FirebaseDatabase db = FirebaseDatabase.getInstance();
+                    db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            int follower = (int) dataSnapshot.getChildrenCount();
+                            if (follower > 1) {
+                                holder.followerCount.setText(follower + " Followers");
+                            } else {
+                                holder.followerCount.setText(follower + " Follower");
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -129,7 +163,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
      */
     public class TopArtistsHolder extends RecyclerView.ViewHolder {
 
-        public TextView artistName;
+        public TextView artistName, followerCount;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
         public Button watch;
@@ -141,6 +175,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             cardView = itemView.findViewById(R.id.topArtistCardView);
             profilePicture = itemView.findViewById(R.id.topArtistImage);
             watch = itemView.findViewById(R.id.watchArtistButton);
+            followerCount = itemView.findViewById(R.id.topArtistFollowerCount);
         }
     }
 }

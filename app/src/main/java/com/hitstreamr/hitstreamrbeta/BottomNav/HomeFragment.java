@@ -39,21 +39,25 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
+import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
+import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
-
 import com.hitstreamr.hitstreamrbeta.TrendingAdapter;
 import com.hitstreamr.hitstreamrbeta.TrendingVideos;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
+import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoClickListener;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
@@ -113,8 +117,12 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         });
 
         // Populate the Artists To Watch recycler view
-        showArtiststoWatch(view);
+        showArtistsToWatch(view);
 
+        // Populate the Popular People recycler view
+        loadPopularPeople(view);
+
+        // More top artists
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
         showMoreArtists.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +130,17 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 Intent moreArtists = new Intent(getContext(), ArtistsToWatch.class);
                 moreArtists.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
                 startActivity(moreArtists);
+            }
+        });
+
+        // More popular people
+        Button showMorePopularPeople = view.findViewById(R.id.morePopularPeople);
+        showMorePopularPeople.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent morePopularPeople = new Intent(getContext(), MorePopularPeople.class);
+                morePopularPeople.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
+                startActivity(morePopularPeople);
             }
         });
 
@@ -191,7 +210,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
          */
         Bundle bundle = this.getArguments();
         if (bundle != null){
-            //userCredits = bundle.getString("CREDITS", "0");
+            userCredits = bundle.getString("CREDITS", "0");
             type = bundle.getString("TYPE", "basic");
             userID = bundle.getString("USER_ID");
         }
@@ -211,13 +230,14 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 //Open Video Player for song
                 Intent videoPlayerIntent = new Intent(getActivity(), FeaturedVideoRCV.class);
                 videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
-                //videoPlayerIntent.putExtra("CREDIT", userCredits);
+                videoPlayerIntent.putExtra("CREDIT", userCredits);
                 startActivity(videoPlayerIntent);
             }
         });
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
+                //.orderBy("privacy")
                 .orderBy("views", Query.Direction.DESCENDING )
                 .whereEqualTo("privacy","Public (everyone can see)")
                 .limit(FEATURED_LOAD);
@@ -242,7 +262,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                     videoPlayerIntent.putExtra("VIDEO", video);
                     videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
-                    //videoPlayerIntent.putExtra("CREDIT", userCredits);
+                    videoPlayerIntent.putExtra("CREDIT", userCredits);
                     startActivity(videoPlayerIntent);
 
                 }
@@ -268,11 +288,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
          */
     }
 
-
-
-
-
-    private void setupRecyclerView(){
+    /**
+     * Set up the recycler view for trending videos.
+     */
+    private void setupRecyclerView() {
         Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING).limit(10);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
@@ -324,13 +343,17 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         popupMenu.show();
     }
 
-    private void showArtiststoWatch(View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.artistWatchRCV);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+    /**
+     * Load top artists.
+     * @param view view
+     */
+    private void showArtistsToWatch(View view) {
+        RecyclerView recyclerView_topArtists = view.findViewById(R.id.artistWatchRCV);
+        recyclerView_topArtists.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("ArtistsLikes").orderBy("likes", Query.Direction.DESCENDING)
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .limit(20).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 List<String> artistFirestoreList = new ArrayList<>();
@@ -343,59 +366,87 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 // Query to Firebase
                 if (getActivity() != null) {
 
-                    List<ArtistUser> artistList = new ArrayList<>(artistFirestoreList.size());
+                    List<ArtistUser> artistList = new ArrayList<>();
                     HomeFragmentTopArtistsAdapter homeFragmentTopArtistsAdapter =
                             new HomeFragmentTopArtistsAdapter(artistList, getContext(), getActivity().getIntent());
 
                     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                    databaseReference.addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            String artistID = dataSnapshot.getKey();
-
-                            // Initialize as many as it will hold
-                            while (artistList.size() < artistFirestoreList.size()) {
-                                artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                    for (String artistID : artistFirestoreList) {
+                        databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
+                                    artistList.add(artist_user);
+                                    homeFragmentTopArtistsAdapter.notifyDataSetChanged();
+                                    recyclerView_topArtists.setAdapter(homeFragmentTopArtistsAdapter);
+                                }
                             }
 
-                            // Replace the indexes with appropriate values
-                            // The indexes will match, and thus sorted
-                            if (artistFirestoreList.contains(artistID)) {
-                                int index = artistFirestoreList.indexOf(artistID);
-                                ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
-                                artistList.remove(index);
-                                artistList.add(index, artistUser);
-                                homeFragmentTopArtistsAdapter.notifyDataSetChanged();
-                                recyclerView.setAdapter(homeFragmentTopArtistsAdapter);
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
                             }
-                        }
-
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
     }
 
-    public void getUserGenre(){
+    /**
+     * Load popular people.
+     * @param view view
+     */
+    private void loadPopularPeople(View view) {
+        RecyclerView recyclerView_popularPeople = view.findViewById(R.id.popularUsersRCV);
+        recyclerView_popularPeople.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("PopularPeople").orderBy("followers", Query.Direction.DESCENDING)
+                .limit(15).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                List<String> userFirestoreList = new ArrayList<>();
+                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                    userFirestoreList.add(documentSnapshot.getId());
+                }
+
+                // Query to Firebase
+                if (getActivity() != null) {
+
+                    List<User> userList = new ArrayList<>();
+                    HomeFragmentPopularPeopleAdapter homeFragmentPopularPeopleAdapter =
+                            new HomeFragmentPopularPeopleAdapter(userList, getContext(), getActivity().getIntent());
+
+                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BasicAccounts");
+                    for (String userID : userFirestoreList) {
+                        databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    User basic_user = dataSnapshot.getValue(User.class);
+                                    userList.add(basic_user);
+                                    homeFragmentPopularPeopleAdapter.notifyDataSetChanged();
+                                    recyclerView_popularPeople.setAdapter(homeFragmentPopularPeopleAdapter);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Get the user's preferred genres.
+     */
+    public void getUserGenre() {
         FirebaseDatabase.getInstance().getReference("SelectedGenres")
                 .child(current_user.getUid())
                 .addValueEventListener(new ValueEventListener() {
@@ -418,7 +469,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     }
 
-    public void getFreshReleases(){
+    public void getFreshReleases() {
 
         Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
 

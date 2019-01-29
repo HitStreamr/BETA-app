@@ -17,7 +17,7 @@
             android:id="@+id/topArtistImage"
             android:layout_width="90dp"
             android:layout_height="90dp"
-            android:src="@color/litgryAccent"
+            android:src="@mipmap/ic_hitstreamr_background"
             />
 
         <TextView
@@ -33,23 +33,22 @@
             android:gravity="center">
 
             <TextView
+                android:id="@+id/topArtistFollowerCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
+                android:text="0 Follower"
                 android:textSize="10sp"
                 android:layout_marginStart="5dp"
                 />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Followers"
-                android:textSize="10sp"
-                />
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Followers"-->
+                <!--android:textSize="10sp"-->
+                <!--/>-->
 
         </LinearLayout>
-
-
 
         <Button
             android:id="@+id/watchArtistButton"
@@ -60,14 +59,5 @@
             android:textColor="@color/colorAccent"/>
 
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/verified"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/ic_verified_check_circle"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:layout_marginTop="70dp"
-        android:layout_marginStart="68dp"/>
 
 </RelativeLayout>

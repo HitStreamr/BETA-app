@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,19 +29,24 @@ import com.hitstreamr.hitstreamrbeta.FeedData;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
+
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 
 
 public class ActivityFragment extends Fragment {
     private static final String TAG = "ActivityFragment";
 
-    private DatabaseReference database, myRef, myFeedRef;
+    private DatabaseReference database, myRef, myFeedRef, myVideosRef;
     private FirebaseFirestore db;
     private FirebaseUser current_user;
-    DatabaseReference myFollowingRef, myArtistRef;
-    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoFeed, typeFeed;
+    DatabaseReference myFollowingRef, myArtistRef, myLikesRef, myRepostRef;
+    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoTypeFeed, videoFeed, typeFeed, likesCount;
     ArrayList<Object> artistVideos;
     ArrayList<FeedData> feeddocs;
+    DataSnapshot likesDatasnapshot, repostDatasnapshot, videoDatasnapshot;
     private CollectionReference videosCollectionRef, feedDataCollectionRef;
     private ArrayList<Video> UserVideos;
     //private  ArrayList<Video> myListCollection;
@@ -65,22 +71,61 @@ public class ActivityFragment extends Fragment {
         myFeedRef = FirebaseDatabase.getInstance().getReference("FeedData");
         myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
                 .child(current_user.getUid());
+        myLikesRef = FirebaseDatabase.getInstance().getReference("VideoLikes");
+        myRepostRef = FirebaseDatabase.getInstance().getReference("Repost");
         myArtistRef = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
         videosCollectionRef = db.collection("Videos");
         feedDataCollectionRef = db.collection("FeedData");
+        myVideosRef = FirebaseDatabase.getInstance().getReference("Videos");
         followingUsers = new ArrayList<>();
         feeddocs = new ArrayList<>();
         artistfollowing = new ArrayList<>();
         artistVideos = new ArrayList<>();
+        videoTypeFeed = new ArrayList<>();
         eachArtistVideos = new ArrayList<>();
         videoFeed = new ArrayList<>();
         typeFeed = new ArrayList<>();
         UserVideos = new ArrayList<>();
+        likesCount = new ArrayList<>();
         //myListCollection = new ArrayList<Object>();
         activityRecyclerView = view.findViewById(R.id.activityRecyclerView);
         Log.e(TAG, "Entered On create activity");
         //getArtistUsers();
         getFollowing();
+        getVideoLikes();
+        getVideoReposted();
+        //getVideos();
+    }
+
+    private void getVideoLikes() {
+        myLikesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                likesDatasnapshot = dataSnapshot;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+    }
+
+    private void getVideoReposted() {
+        myRepostRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                repostDatasnapshot = dataSnapshot;
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
 
     }
 
@@ -94,7 +139,7 @@ public class ActivityFragment extends Fragment {
                     Log.e(TAG, "Entered datasnapshot exists");
                     for (DataSnapshot each : dataSnapshot.getChildren()) {
                         //if (artistfollowing.contains(each.getKey())) {
-                            followingUsers.add(each.getKey());
+                        followingUsers.add(each.getKey());
                         //}
                     }
                 }
@@ -111,108 +156,125 @@ public class ActivityFragment extends Fragment {
         });
     }
 
-    private void getArtistUsers() {
-        Log.e(TAG, "Entered getArtistUsers method");
-        myArtistRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e(TAG, "Entered getArtistUsers onDataChange");
-                if (dataSnapshot.exists()) {
-                    Log.e(TAG, "Entered getArtistUsers datasnapshot exists");
-                    for (DataSnapshot each : dataSnapshot.getChildren()) {
-                        Log.e(TAG, "Entered getArtistUsers for loop" + each);
 
-                        artistfollowing.add(each.getKey());
-                    }
-                }
-                Log.e(TAG, "getArtistUsers arraylist values" + artistfollowing);
-                getFollowing();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-    }
-
-    private void getFeedData(){
+    private void getFeedData() {
         Query queryRef = feedDataCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING);
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (followingUsers.size() > 0) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
-                        Log.e(TAG, "userId is :" +document.get("userId"));
-                        if(document.get("userId") != null) {
+                        Log.e(TAG, "userId is :" + document.get("userId"));
+                        if (document.get("userId") != null) {
                             if (followingUsers.contains(document.get("userId"))) {
                                 feeddocs.add(document.toObject(FeedData.class));
-                                if(!(videoFeed.contains(document.get("videoId")))) {
+                                if (!(videoTypeFeed.contains(document.get("videoId") + " " + document.get("type").toString()))) {
+                                    videoTypeFeed.add(document.get("videoId").toString() + " " + document.get("type").toString());
                                     videoFeed.add(document.get("videoId").toString());
                                     typeFeed.add(document.get("type").toString());
                                 }
                             }
                         }
                     }
-            }
-                getVideoFirestore();
-               Log.e(TAG, "feed object is :"+feeddocs.size() +"    "  + feeddocs.get(0));
-            }
-        });
-    }
-
-    private void getArtistVideos() {
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for( DataSnapshot snapshot : dataSnapshot.getChildren() ) {
-                    if (followingUsers.contains(snapshot.getKey())) {
-                        Log.e(TAG, "22222" +snapshot.getKey());
-                        for( DataSnapshot childSnapshot : snapshot.getChildren() )
-                        eachArtistVideos.add(childSnapshot.getKey());
-                    }
                 }
-                Log.e(TAG, "getArtistVideos: " + eachArtistVideos + eachArtistVideos.size());
                 getVideoFirestore();
+                Log.e(TAG, "feed object is :" + videoFeed + videoTypeFeed + videoFeed.size() + videoTypeFeed.size());
+            }
+        });
+    }
+
+    public void getVideos() {
+        myVideosRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                videoDatasnapshot = dataSnapshot;
             }
 
             @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
-
-
         });
     }
+
+    /*public void getVideoFirestore() {
+        if (videoFeed.size() > 0) {
+            for (int i = 0; i < videoFeed.size(); i++) {
+                videoDatasnapshot.child(videoFeed.get(i)).getValue();
+                UserVideos.add(videoDatasnapshot.child(videoFeed.get(i)).getValue(Video.class));
+                long VideoLikesCount = likesDatasnapshot.child(videoFeed.get(i)).getChildrenCount();
+                String temp = formatt(VideoLikesCount);
+                likesCount.add(temp);
+                Log.e(TAG, "Video Count likes : " + likesCount);
+            }
+        }
+        callToAdapter();
+    }*/
 
     public void getVideoFirestore() {
-        Query queryRef = videosCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = videosCollectionRef;
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (videoFeed.size() > 0) {
+                    for (int i = 0; i < videoFeed.size(); i++) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
-                            //for(int i=0;i< videoFeed.size(); i++) {
-                              //  String video = videoFeed.get(i).toString();
-                              //  Log.e(TAG,"Video objects are" +video);
-                                if (videoFeed.contains(document.getId())) {
-                                    UserVideos.add(document.toObject(Video.class));
+                            //if (videoFeed.contains(document.getId())) {
+                            if ((videoFeed.get(i)).contains(document.getId())) {
+                                UserVideos.add(document.toObject(Video.class));
+                                Log.e(TAG, "video Ids are " + document.getId());
+
+                                long VideoLikesCount = likesDatasnapshot.child(videoFeed.get(i)).getChildrenCount();
+                                String temp;
+                                if(VideoLikesCount == 0){
+                                    temp = formatt(VideoLikesCount);
                                 }
-                            //}
+                                else {
+                                    temp = formatt(VideoLikesCount-1);
+                                }
+                                likesCount.add(temp);
+                                Log.e(TAG, "Video Count likes : " + likesCount);
+                            }
+                        }
                     }
                     callToAdapter();
                 }
-                Log.e(TAG,"Video objects are" +UserVideos+UserVideos.size());
+                Log.e(TAG, "Video objects are" + UserVideos);
 
             }
         });
     }
 
-    private void callToAdapter(){
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
+
+    public static String formatt(long value) {
+        //Long.MIN_VALUE == -Long.MIN_VALUE so we need an adjustment here
+        if (value == Long.MIN_VALUE) return formatt(Long.MIN_VALUE + 1);
+        if (value < 0) return "-" + formatt(-value);
+        if (value < 1000) return Long.toString(value); //deal with easy case
+
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+
+        long truncated = value / (divideBy / 10); //the number part of the output times 10
+        boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
+        return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
+    }
+
+    private void callToAdapter() {
 
         activityRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed);
+        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount);
         adapter.notifyDataSetChanged();
         activityRecyclerView.setAdapter(adapter);
     }

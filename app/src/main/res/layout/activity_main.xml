@@ -81,15 +81,21 @@
             app:backgroundTint="@color/colorPrimary"
             app:fabSize="normal" />
 
-        <android.support.design.widget.BottomNavigationView
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:background="@color/colorAccent"
-            app:menu="@menu/bottom_nav_items">
-        </android.support.design.widget.BottomNavigationView>
+            <include
+                android:id="@+id/BGRel"
+                layout="@layout/background_video_player"
+                android:visibility = "gone"
+                />
+
+            <android.support.design.widget.BottomNavigationView
+                android:id="@+id/bottomNav"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentStart="true"
+                android:background="@color/colorAccent"
+                app:menu="@menu/bottom_nav_items">
+            </android.support.design.widget.BottomNavigationView>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/search_tabs"

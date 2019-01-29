@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,6 +51,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -111,6 +113,12 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private CollectionReference feedRef = db.collection("Videos");
 
     private CollectionReference videoIdRef = db.collection("ArtistVideo");
+    private CollectionReference videosCollectionRef;
+    private ArrayList<String> a;
+    private ArrayList<Playlist> Play;
+    private RecyclerView recyclerView_PublicPlaylists;
+    private ProfilePlaylistAdapter playlistAdapter_playlists;
+
 
     private String CreditVal;
     private String FollowUserId;
@@ -127,6 +135,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         setContentView(R.layout.activity_profile);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
+        videosCollectionRef = db.collection("Videos");
 
         mfollowBtn = findViewById(R.id.followUser);
         mUnfollowBtn = findViewById(R.id.unFollowUser);
@@ -142,6 +151,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mUnfollowBtn.setVisibility(View.GONE);
         mEditProfile.setVisibility(View.VISIBLE);
+
+        a = new ArrayList<>();
+        Play = new ArrayList<>();
+        recyclerView_PublicPlaylists = findViewById(R.id.playlist_RC);
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -200,14 +213,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                      if(!Strings.isNullOrEmpty(currentCredit)){
+                        if(!Strings.isNullOrEmpty(currentCredit)){
 
                             CreditVal = currentCredit;
                         }
                         else
                             CreditVal = "0";
 
-                       // Log.e(TAG, "Profile credit val inside change" + CreditVal);
+                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
 
                     }
 
@@ -216,7 +229,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                     }
                 });
-       // Log.e(TAG, "Profile credit val " + CreditVal);
+        // Log.e(TAG, "Profile credit val " + CreditVal);
 
         mListener = new ItemClickListener() {
             @Override
@@ -229,6 +242,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
             @Override
             public void onOverflowClick(Video title, View v) { showOverflow(v);
+            }
+
+            @Override
+            public void onPlaylistClick(Playlist selectedPlaylist) {
+                Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
+                Intent PlaylistIntent = new Intent(Profile.this, PlaylistVideosActivity.class);
+                PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);
+                startActivity(PlaylistIntent);
             }
         };
 
@@ -244,6 +265,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     public interface ItemClickListener {
         void onResultClick(Video title);
         void onOverflowClick(Video title, View v);
+        void onPlaylistClick(Playlist selectedPlaylist);
     }
 
     String value;
@@ -332,6 +354,102 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         setTabDetails();
     }
 
+    private void getPublicPlaylistsList() {
+        FirebaseDatabase.getInstance().getReference("Playlists")
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot each : dataSnapshot.getChildren()) {
+                                //Log.e(TAG, "each children" + each.getChildren());
+                                if(Objects.equals(each.getValue(String.class), "public")){
+                                    a.add(String.valueOf(each.getKey()));
+                                }
+                            }
+                        }
+                        Log.e(TAG, "each children" + a);
+                        getPlaylistsList();
+
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void getPlaylistsList() {
+        FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                .child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot each : dataSnapshot.getChildren()) {
+                                if(a.contains(String.valueOf(each.getKey()))){
+                                    Playlist p = new Playlist();
+                                    p.setPlaylistname(String.valueOf(each.getKey()));
+                                    Log.e(TAG, "each children" + each.getChildren());
+                                    ArrayList<String> a = new ArrayList<>();
+                                    for (DataSnapshot eachplaylist : each.getChildren()) {
+                                        a.add(eachplaylist.getValue(String.class));
+                                    }
+                                    p.setPlayVideoIds(a);
+                                    Play.add(p);
+                                }
+                            }
+                        }
+                        if (Play.size() > 0) {
+                            getaaaPlayVideos();
+
+                        }
+                        //setUpPlaylistRecyclerView();
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+    }
+
+    private void getaaaPlayVideos() {
+        //Log.e(TAG, "Entered onsuceess" +Play);
+        ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
+        for (int j = 0; j < Play.size(); j++) {
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0)).get());
+        }
+
+        Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
+        task.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
+                int x = 0;
+                for (QuerySnapshot document : task.getResult()) {
+                    for (DocumentSnapshot docume : document.getDocuments()) {
+                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        //bb = docume.toObject(Video.class).getThumbnailUrl();
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                    }
+                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
+                    x++;
+                }
+                setUpPlaylistRecyclerView();
+            }
+        });
+    }
+
+
+
+    private void setUpPlaylistRecyclerView() {
+        Log.e(TAG, "Entered setup playlist recycler view");
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView_PublicPlaylists.setLayoutManager(layoutManager);
+        playlistAdapter_playlists = new ProfilePlaylistAdapter(this, Play, mListener);
+        recyclerView_PublicPlaylists.setAdapter(playlistAdapter_playlists);
+    }
+
+
     private void setTabDetails(){
         // Set up tab layout & items
         TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
@@ -369,6 +487,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     case 1:
                         view_UserFeed.setVisibility(View.GONE);
                         view_UserUpload.setVisibility(View.VISIBLE);
+                        recyclerView_PublicPlaylists.setVisibility(View.GONE);
                         if (!Strings.isNullOrEmpty(userUserID)) {
                             getUserUploadVideoId(userUserID);
                         }
@@ -379,6 +498,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         break;
 
                     case 2:
+                        view_UserFeed.setVisibility(View.GONE);
+                        view_UserUpload.setVisibility(View.GONE);
+                        recyclerView_PublicPlaylists.setVisibility(View.VISIBLE);
+                        getPublicPlaylistsList();
                         break;
                 }
             }
@@ -391,6 +514,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 }
                 tab_position = mTabLayout.getSelectedTabPosition();
 
+                if (playlistAdapter_playlists != null) {
+                    playlistAdapter_playlists.clear();
+                }
             }
 
             @Override
@@ -404,7 +530,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     // Update the search results with the current search input when a different tab is selected
 
     private void getSearchProfile() {
-       String searchType = getIntent().getStringExtra("SearchType");
+        String searchType = getIntent().getStringExtra("SearchType");
 
         if (searchType.equals("BasicAccounts")) {
             verifiedCheckMark.setVisibility(View.GONE);
@@ -448,7 +574,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
     private void getUrlStorage() {
-      //  Log.e(TAG, "Entered storage");
+        //  Log.e(TAG, "Entered storage");
         mStorageRef.child("profilePictures")
                 .child(userUserID)
                 .getDownloadUrl()
@@ -457,7 +583,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     public void onSuccess(Uri uri) {
                         // Got the download URL for 'users/me/profile.png'
                         profilePictureDownloadUrl = uri;
-                       // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
+                        // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
                             circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
                             circleImageView.setVisibility(View.VISIBLE);
@@ -632,7 +758,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         myFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
+                // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
                 //Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildrenCount());
 
                 long followingcount = dataSnapshot.getChildrenCount();
@@ -765,14 +891,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     }
 
-   private void getUserUploadVideoId(String cUserId){
+    private void getUserUploadVideoId(String cUserId){
 
         videoIdRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (cUserId.contains(document.getId())) {
-                       userUploadVideoList.add( document.get("videos").toString());
+                        userUploadVideoList.add( document.get("videos").toString());
 
 
                     }
@@ -785,7 +911,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void setUpRecyclerViewUpload(){
 
-     Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

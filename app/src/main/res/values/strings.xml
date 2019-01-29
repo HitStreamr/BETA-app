@@ -8,8 +8,8 @@
     <string name="sign_in">SIGN IN</string>
     <string name="create_an_account">CREATE AN ACCOUNT</string>
     <string name="text_logo_wht">text_logo_wht</string>
-    <string name="basic_account">BASIC ACCOUNT</string>
-    <string name="artist_account">ARTIST ACCOUNT</string>
+    <string name="basic_account">LISTENER</string>
+    <string name="artist_account">ARTIST / BAND</string>
     <string name="are_you_a_label_click_here">Are you a Label? CLICK HERE.</string>
     <string name="sidebar">sidebar</string>
     <string name="title_activity_authenticator">AuthenticatorActivity</string>
@@ -109,4 +109,6 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="verification3">Submitting a request for verification does not guarantee that your account will be verified.</string>
     <string name="verification4">-Email/Username \n-First/Last Name \n-Known As \n-Photo ID front and back</string>
     <string name="delete_vid_confirmation">Wait! \n \n Are you sure you want to delete this video?</string>
+    <string name="sponsored">SPONSORED</string>
+    <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
 </resources>

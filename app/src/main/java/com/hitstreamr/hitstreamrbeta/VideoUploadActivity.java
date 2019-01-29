@@ -613,47 +613,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        // Creates like counts for artists if it does not exist yet
-        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        DocumentReference documentReference = firebaseFirestore.collection("ArtistsLikes")
-                .document(CurrentUserID);
-
-        documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot documentSnapshot = task.getResult();
-                if (!documentSnapshot.exists()) {
-                    Map<String, Object> artistLikes = new HashMap<>();
-                    artistLikes.put("likes", 0);
-                    artistLikes.put("artist_id", CurrentUserID);
-                    firebaseFirestore.collection("ArtistsLikes").document(CurrentUserID)
-                            .set(artistLikes)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("SUCCESS", "SUCCESS");
-                                }
-                            });
-                }
-            }
-        });
-
-        // Create view counts for artists if it does not exist yet
-        firebaseFirestore.collection("ArtistsViews").document(CurrentUserID).get()
-                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        DocumentSnapshot documentSnapshot = task.getResult();
-                        if (!documentSnapshot.exists()) {
-                            Map<String, Object> artistViews = new HashMap<>();
-                            artistViews.put("views", 0);
-                            artistViews.put("artist_id", CurrentUserID);
-                            firebaseFirestore.collection("ArtistsViews").document(CurrentUserID)
-                                    .set(artistViews);
-                        }
-                    }
-                });
+        
     }
 
     private ArrayList<String> processTitle(String title){
@@ -732,7 +692,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         } else if (description.length() >= 1000) {
             EdittextTittle.setError("Description length has crossed 1000 characters");
         } else if (!(checkAlphaNumeric(description))) {
-            EdittextTittle.setError("Description must only have letters and numbers");
+            EdittextTittle.setError("Title must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);

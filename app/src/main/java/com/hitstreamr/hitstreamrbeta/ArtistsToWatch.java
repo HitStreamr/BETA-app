@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -52,52 +53,29 @@ public class ArtistsToWatch extends AppCompatActivity {
                 }
 
                 // Query to Firebase
-                List<ArtistUser> artistList = new ArrayList<>(artistFirestoreList.size());
-                ArtistsToWatchAdapter artistsToWatchAdapter = new ArtistsToWatchAdapter(artistList, getApplicationContext(), getIntent());
+                List<ArtistUser> artistList = new ArrayList<>();
+                ArtistsToWatchAdapter artistsToWatchAdapter = new ArtistsToWatchAdapter(artistList,
+                        getApplicationContext(), getIntent());
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                databaseReference.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        String artistID = dataSnapshot.getKey();
-
-                        // Initialize as many as it will hold
-                        while (artistList.size() < artistFirestoreList.size()) {
-                            artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                for (String artistID : artistFirestoreList) {
+                    databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
+                                artistList.add(artist_user);
+                                artistsToWatchAdapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(artistsToWatchAdapter);
+                            }
                         }
 
-                        // Replace the indexes with appropriate values
-                        // The indexes will match, and thus sorted
-                        if (artistFirestoreList.contains(artistID)) {
-                            int index = artistFirestoreList.indexOf(artistID);
-                            ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
-                            artistList.remove(index);
-                            artistList.add(index, artistUser);
-                            artistsToWatchAdapter.notifyDataSetChanged();
-                            recyclerView.setAdapter(artistsToWatchAdapter);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
             }
         });
     }

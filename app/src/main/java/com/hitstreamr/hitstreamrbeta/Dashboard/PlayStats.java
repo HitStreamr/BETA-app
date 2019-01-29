@@ -20,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.R;
 
-public class PlayStats extends Fragment{
+public class PlayStats extends Fragment {
 
     private FirebaseUser current_user;
 
@@ -50,7 +50,9 @@ public class PlayStats extends Fragment{
         comments.setText("0");
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -102,7 +104,9 @@ public class PlayStats extends Fragment{
         faves.setText("0");
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -161,7 +165,9 @@ public class PlayStats extends Fragment{
         reposts.setText("0");
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -198,7 +204,9 @@ public class PlayStats extends Fragment{
         totalViews.setText("0");
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
@@ -229,8 +237,8 @@ public class PlayStats extends Fragment{
                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                         if (documentSnapshot.exists()) {
                             weeklyViews.setText(documentSnapshot.get("views").toString());
-    }
-}
+                        }
+                    }
                 });
     }
 }

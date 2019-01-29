@@ -17,10 +17,12 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
     private static final String TAG = "PostVideoFeedAdapter";
     private ArrayList<Video> postVideoFeed ;
     private ArrayList<String> postTypeFeed ;
+    private ArrayList<String> postLikeFeed;
 
-    public PostVideoFeedAdapter(ArrayList<Video> postVideoFeed, ArrayList<String> postTypeFeed) {
+    public PostVideoFeedAdapter(ArrayList<Video> postVideoFeed, ArrayList<String> postTypeFeed, ArrayList<String> postLikeCountFeed) {
         this.postVideoFeed = postVideoFeed;
         this.postTypeFeed = postTypeFeed;
+        this.postLikeFeed = postLikeCountFeed;
         Log.e(TAG, "Post Video Feed constructor entered ");
     }
 
@@ -42,7 +44,15 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         holder.username.setText(postVideoFeed.get(position).getUsername());
         holder.duration.setText(postVideoFeed.get(position).getDuration());
         holder.title.setText(postVideoFeed.get(position).getTitle());
-        holder.activity.setText(postTypeFeed.get(position) + " a video");
+        if(postLikeFeed.get(position).equals("0")){
+            holder.activity.setText(postTypeFeed.get(position) + "  a video");
+        }
+        else {
+            holder.activity.setText(" and " + postLikeFeed.get(position) + " others " + postTypeFeed.get(position) + "ed  a video");
+        }
+
+        //String sdate = postVideoFeed.get(position).getTimestamp().toString();
+        //holder.published.setText(postVideoFeed.get(position).getTimestamp().toDate().getTime());
 
         /*//Timestamp ts = postVideoFeed.get(position).getTimestamp();
         Timestamp now = new Timestamp(System.currentTimeMillis());
