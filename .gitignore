@@ -9,3 +9,6 @@
 /build
 /captures
 .externalNativeBuild
+.firebaserc
+/functions
+firebase.json
