@@ -613,7 +613,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
-        
+
     }
 
     private ArrayList<String> processTitle(String title){
