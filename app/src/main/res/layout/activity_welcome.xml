@@ -62,7 +62,7 @@
                 android:gravity="center"
                 android:layout_marginTop="60dp">
 
-                <Button android:id="@+id/create_account_button"
+                <!--<Button android:id="@+id/create_account_button"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:text="@string/create_an_account"
@@ -71,12 +71,12 @@
                     android:paddingLeft="15dp"
                     android:paddingRight="15dp"
                     android:layout_marginEnd="15dp"
-                    tools:ignore="ButtonStyle" />
+                    tools:ignore="ButtonStyle" />-->
 
 
                 <!--Animated 'Create Account' Btn-->
 
-                <!--<FrameLayout
+                <FrameLayout
                     android:id="@+id/create_account_button_"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -102,7 +102,7 @@
                         android:layout_height="36dp"
                         android:layout_gravity="center"
                         android:visibility="invisible"/>
-                </FrameLayout>-->
+                </FrameLayout>
 
                 <Button android:id="@+id/signin_button"
                     android:layout_width="120dp"
@@ -153,13 +153,13 @@
 
     </LinearLayout>
     
-    <!--<View
+    <View
         android:id="@+id/reveal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorAccent"
         android:visibility="invisible"/>
--->
+
 
 
 
