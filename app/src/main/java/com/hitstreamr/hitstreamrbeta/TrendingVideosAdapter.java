@@ -18,6 +18,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, TrendingVideosAdapter.TrendingVideosHolder> {
+    public TrendingVideos.ItemClickListener listner;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -25,8 +26,9 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
      *
      * @param options
      */
-    public TrendingVideosAdapter(@NonNull FirestoreRecyclerOptions<Video> options) {
+    public TrendingVideosAdapter(@NonNull FirestoreRecyclerOptions<Video> options, TrendingVideos.ItemClickListener mListner) {
         super(options);
+        listner = mListner;
     }
 
     @Override
@@ -39,6 +41,12 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         holder.videoViewsCount.setText(viewCount);
         holder.videoPublishedYear.setText(pubYear);
         Glide.with(getApplicationContext()).load(Uri.parse((model.getThumbnailUrl()))).into(holder.videoThumbnail);
+        holder.parentLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listner.onTrendingMoreClick(model);
+            }
+        });
 
     }
 

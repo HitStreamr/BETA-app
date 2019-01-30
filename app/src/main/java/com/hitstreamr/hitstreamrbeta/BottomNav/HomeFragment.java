@@ -155,9 +155,12 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             @Override
             public void onClick(View view) {
                 Intent trending = new Intent(getContext(), TrendingVideos.class);
+                trending.putExtra("TYPE", getArguments().getString("TYPE"));
                 startActivity(trending);
             }
         });
+
+
 
         // Populate the Artists To Watch recycler view
         showArtistsToWatch(view);
