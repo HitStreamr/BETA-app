@@ -42,6 +42,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private FirebaseUser current_user;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference videosCollectionRef;
+    private String accountType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         temp = getIntent().getParcelableExtra("PlaylistVideos");
         playlistName.setText(temp.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
-
 
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
@@ -79,12 +79,14 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
         Log.e(TAG, "temp value is " + temp.getPlayVideoIds());
 
+        getUserType();
+
         mlistner = new ItemClickListener() {
             @Override
             public void onPlaylistVideoClick(Video selectVideo) {
                 Intent videoPlayerIntent = new Intent(PlaylistVideosActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectVideo);
-                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("Account"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }
@@ -133,5 +135,22 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
     public interface ItemClickListener {
         void onPlaylistVideoClick(Video selectVideo);
+    }
+
+    private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+            //type = getIntent().getStringExtra("TYPE");
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                // sth
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
     }
 }
