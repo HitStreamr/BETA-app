@@ -126,7 +126,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private VideoPlayerService mService;
     private boolean mBound;
     //ExoPlayer
-    private ExoPlayer player;
+    //private ExoPlayer player;
     private PlayerView playerView;
     //private ComponentListener componentListener;
 
@@ -238,6 +238,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private GestureDetectorCompat mDetector;
 
     private Intent serviceIntent;
+    private ImageView minimizeButton;
 
 
     @Override
@@ -590,13 +591,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         }
                         if (uploadbyUser) {
                             //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+                            wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else if (iscontributor) {
                             Log.e(TAG, "player before inside else if  contributor" + iscontributor);
+                            wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else if (Integer.parseInt(currentCreditVal) > 0) {
                             //Log.e(TAG, "player before inside if ");
                             // Log.e(TAG, "player before initializePlayer success ");
+                            wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else {
                             mService.setPlayer(vid, true, currentCreditVal);
@@ -624,9 +628,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         playerView.setPlayer(VideoPlayerService.player);
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     }
-
-
-
+    
     /**
      * Load related videos to the current displayed one based on its genre, and sorted based on views.
      */
@@ -655,6 +657,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         }
                     }
                 });
+    }
+
+    //plays the next video when the Service signals
+    public void autoPlayNext(){
+        autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
     }
 
     /**
@@ -689,41 +696,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }*/
 
 
-// This method is to check the player position every second and after 15 seconds initiate the DB call
-    private Timer timer;
-    private void timerCounter(){
-        if (!runCheck) {
-            timer = new Timer();
-            Log.e(TAG, "Video player inside if statetime counter ");
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!(player == null) ) {
-                                long current = player.getCurrentPosition();
-                                if (current > 15000) {
-                                    Log.e(TAG, "Video player inside if state" + current);
-                                    timer.cancel();
-                                    runCheck = true;
-                                    try {
-                                        checkViewTime();
-                                    } catch (ParseException e) {
-                                        e.printStackTrace();
-                                    }
-                                    Log.e(TAG, "Video player inside if cancel timer & runcheck " + runCheck);
-                                }
-                            }
-                        }
-                    });
-                }
-            };
-            timer.schedule(task, 0, 1000);
-        }
-    }
-
-
     private void binder(){
         Log.d(TAG, "Bind Service");
         bindService(serviceIntent,mConnection, 0);
@@ -756,41 +728,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void updateCreditText(String credit) {
         Log.d(TAG, "Credits Decresed:  " + credit);
-    }
-
-    //This method is called after 15 secs for users with credits watch to check if they watched the video before
-    private void checkViewTime() throws ParseException {
-
-        FirebaseDatabase.getInstance().getReference("VideoViews")
-                .child(vid.getVideoId()).child(currentFirebaseUser.getUid()).child("TimeLimit")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        sTimeStamp = dataSnapshot.getValue(String.class);
-                        Log.e(TAG, "Your video date from db check view time " + sTimeStamp);
-                        if(!Strings.isNullOrEmpty(sTimeStamp)) {
-                            try {
-                                checkTimeStamp();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        else
-                        {
-                            try {
-                                updatevideoview();
-                                updateCreditValue();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     // This method is to compare the current time with 4 hrs specified time limit for particular user
@@ -1834,20 +1771,17 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    /**DRAG VIDEO **/
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
+    private void initMiniButton(){
+        minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
+        minimizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeMiniPlayer();
+            }
+        });
     }
 
-    @Override
-    public boolean onFling(MotionEvent event1, MotionEvent event2,
-                           float velocityX, float velocityY) {
-        Log.d(DEBUG_TAG, "onFling: " );
+    public void makeMiniPlayer(){
         Intent intent = new Intent(this, MainActivity.class);
         if (mConnection != null && mBound){
             unbindService(mConnection);
@@ -1865,6 +1799,23 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, TextViewTitle, "title");
         startActivity(intent, options.toBundle());
+    }
+
+
+    /**DRAG VIDEO **/
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onFling(MotionEvent event1, MotionEvent event2,
+                           float velocityX, float velocityY) {
+        Log.d(DEBUG_TAG, "onFling: " );
+        makeMiniPlayer();
         return true;
     }
 
