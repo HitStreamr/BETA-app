@@ -1,5 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -46,13 +48,13 @@ public class BillingManager extends AppCompatActivity implements View.OnClickLis
         cancelBtn = findViewById(R.id.cancel);
         cancelBtn.setOnClickListener(this);
 
+        // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-
-        getWindow().setLayout((int) (width * .8), (int) (height * .4));
+        getWindow().setLayout((int) (width), (int) (height * .8));
+//        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
 
 
