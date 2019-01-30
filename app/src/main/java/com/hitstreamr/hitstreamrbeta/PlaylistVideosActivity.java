@@ -84,6 +84,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
             public void onPlaylistVideoClick(Video selectVideo) {
                 Intent videoPlayerIntent = new Intent(PlaylistVideosActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectVideo);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }

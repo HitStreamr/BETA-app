@@ -2,18 +2,24 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
 public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAdapter.TrendingHolder> {
     private static final String TAG = "TrendingAdapter";
+
+    private HomeFragment.TrendingItemClickListener listner;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -21,8 +27,10 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
      *
      * @param options
      */
-    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Video> options) {
+    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Video> options, HomeFragment.TrendingItemClickListener tlistner) {
         super(options);
+        this.listner = tlistner;
+        Log.e(TAG, "listner value "+tlistner);
     }
 
     @Override
@@ -36,16 +44,21 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         String viewCount = Long.toString(model.getViews());
         String pubYear = Long.toString(model.getPubYear());
         holder.viewsCount.setText(viewCount);
-        holder.publishedYear.setText(pubYear);
 
-
+        holder.parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "on click trending :" +model);
+                listner.onTrendingVideoClick(model);
+            }
+        });
     }
 
     @NonNull
     @Override
     public TrendingHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.thumbnail_categoried_video, parent, false);
+                .inflate(R.layout.watch_later_results, parent, false);
 
         return new TrendingHolder(itemView);
     }
@@ -56,18 +69,17 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public ImageView thumbnail;
         public  TextView duration;
         public  TextView viewsCount;
-        public TextView publishedYear;
+        public LinearLayout parent;
 
 
         public TrendingHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.scrollingTitle);
-            title.setSelected(true);
-            author = itemView.findViewById(R.id.videoUsername);
-            thumbnail = itemView.findViewById(R.id.videoThumbnail);
-            duration = itemView.findViewById(R.id.duration);
-            viewsCount = itemView.findViewById(R.id.videoViews);
-            publishedYear = itemView.findViewById(R.id.published);
+            author = itemView.findViewById(R.id.watchLaterAuthor);
+            thumbnail = itemView.findViewById(R.id.watchLaterThumbnail);
+            duration = itemView.findViewById(R.id.watchLaterDuration);
+            viewsCount = itemView.findViewById(R.id.watchLaterViews);
+            parent = itemView.findViewById(R.id.parent);
         }
     }
 }
