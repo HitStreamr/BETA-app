@@ -93,6 +93,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private ArrayList<Video> UserGenreVideos;
     private ArrayList<Video> UserNewVideos;
     private ItemClickListener mListener;
+    private TrendingItemClickListener tlistner;
     private String CreditVal;
 
     SwipeRefreshLayout swipeRefreshLayout;
@@ -110,7 +111,45 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
-        setupRecyclerView();
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+                            CreditVal = currentCredit;
+                        }
+                        else
+                            CreditVal = "0";
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
+        tlistner = selectedVideo -> {
+            Log.e(TAG,"entered video trenf=ding" + selectedVideo.getVideoId());
+            Intent videoPlayerIntent = new Intent(getContext(), VideoPlayer.class);
+            videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+            videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+            videoPlayerIntent.putExtra("CREDIT", CreditVal);
+            startActivity(videoPlayerIntent);
+        };
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -129,9 +168,12 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             @Override
             public void onClick(View view) {
                 Intent trending = new Intent(getContext(), TrendingVideos.class);
+                trending.putExtra("TYPE", getArguments().getString("TYPE"));
                 startActivity(trending);
             }
         });
+
+
 
         // Populate the Artists To Watch recycler view
         showArtistsToWatch(view);
@@ -212,6 +254,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             public void onOverflowClick(Video title, View v) { showOverflow(v);
             }
         };
+
+        setupRecyclerView();
+
+
     }
 
     @Nullable
@@ -315,7 +361,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        adapter = new TrendingAdapter(options);
+        adapter = new TrendingAdapter(options, tlistner);
         recyclerView_Trending.hasFixedSize();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView_Trending.setLayoutManager(layoutManager);
@@ -532,6 +578,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         newReleaseadapter.notifyDataSetChanged();
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
+    }
+
+    public interface TrendingItemClickListener {
+        void onTrendingVideoClick(Video selectedVideo);
     }
 
 }
