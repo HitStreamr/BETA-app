@@ -727,6 +727,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setArtistName(model.getArtistname());
 
+                // Check if artist is verified
+                holder.verified.setVisibility(View.VISIBLE);
+
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
                         .child(model.getUsername());
                 db.addValueEventListener(new ValueEventListener() {
@@ -1090,8 +1093,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
         //Query where the videos are in the correct range and not private
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff")
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query)
+                .whereLessThan("title", query + "\uf8ff")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
     }
 
     /**
@@ -1133,7 +1138,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
         final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query)
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //Stop using the old adapter
         stopAdapters();
@@ -1145,7 +1152,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
-        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //allResultsRetrieved is only successful, when all are successful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
@@ -1274,6 +1283,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         public TextView count;
         public CircleImageView profilePicture;
+        public ImageView verified;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
@@ -1282,9 +1292,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
-            artistName =view.findViewById(R.id.artist_name);
+            artistName = view.findViewById(R.id.artist_name);
             profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
+
             artistName.setVisibility(View.GONE);
+            verified.setVisibility(View.GONE);
         }
 
         void setUserName(final String userName) {
@@ -1425,6 +1438,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         public TextView count;
         public CircleImageView profilePicture;
+        public ImageView verified;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
@@ -1435,6 +1449,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
             profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
         }
 
         void setArtistName(final String artistName) {

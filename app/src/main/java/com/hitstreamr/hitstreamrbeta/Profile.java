@@ -170,10 +170,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         mUnfollowBtn.setOnClickListener(this);
         mEditProfile.setOnClickListener(this);
 
-        // getBackgroundImage();
-
+        //getBackgroundImage();
         getUserType();
         getUsername();
+
+
 
         if (userClicked.equals("")) {
             Log.e(TAG, "Current user selected");
@@ -315,6 +316,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         String username = dataSnapshot.child("username").getValue(String.class);
                         getSupportActionBar().setTitle(username);
                         getBackgroundImage(current_user.getUid());
+
+
 
                         if (dataSnapshot.child("artistname").exists()) {
                             String artist_name = dataSnapshot.child("artistname").getValue(String.class);
@@ -752,7 +755,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         myFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
+                // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
                 //Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildrenCount());
 
                 long followingcount = dataSnapshot.getChildrenCount();
@@ -786,6 +789,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             ImageViewBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             Glide.with(getApplicationContext()).load(uri).into(ImageViewBackground);
                         }
+
                     });
         }
     }
@@ -904,7 +908,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void setUpRecyclerViewUpload(){
 
-        Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.whereEqualTo("delete", "N")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

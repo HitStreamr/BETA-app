@@ -1107,8 +1107,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService = null;
             mService.stopVideoService();
+            mService = null;
         }
     }
 

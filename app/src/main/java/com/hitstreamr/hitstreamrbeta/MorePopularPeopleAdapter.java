@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,6 +52,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
     @Override
     public void onBindViewHolder(@NonNull MorePopularPeopleHolder holder, int position) {
         holder.userName.setText(userList.get(position).getUsername());
+        holder.verified.setVisibility(View.GONE);
 
         // Listener for the whole user card view
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -148,6 +150,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
         public TextView userName, followerCount;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
+        public ImageView verified;
 
         public MorePopularPeopleHolder(View itemView) {
             super(itemView);
@@ -156,6 +159,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             cardView = itemView.findViewById(R.id.userCardView);
             profilePicture = itemView.findViewById(R.id.searchImage);
             followerCount = itemView.findViewById(R.id.count);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }
