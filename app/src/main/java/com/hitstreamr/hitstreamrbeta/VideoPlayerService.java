@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -85,6 +86,7 @@ public class VideoPlayerService extends Service {
     private boolean clipped;
     private FirebaseUser currentFirebaseUser;
     private boolean uploadbyUser;
+    private boolean autoplay_switchState;
 
 
     /**
@@ -290,12 +292,7 @@ public class VideoPlayerService extends Service {
                 serviceCallback.callPurchase();
             }
         }
-
-
     }
-
-
-
 
     //This method is called after 15 secs for users with credits watch to check if they watched the video before
     public void checkViewTime(Video vid, FirebaseUser currentFirebaseUser) throws ParseException {
@@ -379,6 +376,13 @@ public class VideoPlayerService extends Service {
                 });
     }
 
+    public void checkAutoplay(){
+        SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
+        if (preferences.contains("autoplay_switch")){
+            autoplay_switchState = preferences.getBoolean("autoplay_switch", false);
+        }
+    }
+
     //To reduce 1 user credit for watching a video
     private void updateCreditValue(FirebaseUser currentFirebaseUser) {
         if (!uploadbyUser) {
@@ -423,6 +427,20 @@ public class VideoPlayerService extends Service {
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
+                    // Play the next video ONLY IF we have finished playing the whole video
+                    // and the auto-play switch is turned on
+                    if (!clipped & autoplay_switchState) {
+                        Log.e(TAG, "AUTOPLAY entering IF");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (serviceCallback != null){
+                                Log.e(TAG, "AUTOPLAY CALLED");
+                                serviceCallback.autoPlayNext();
+                            }
+                        }
+                    }, 1500);
+                }
                     break;
                 default:
                     stateString = "UNKNOWN_STATE             -";

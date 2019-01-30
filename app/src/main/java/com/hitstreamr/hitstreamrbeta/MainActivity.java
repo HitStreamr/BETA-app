@@ -472,6 +472,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void autoPlayNext() {
+
+    }
+
+    @Override
     public void setPlayerView() {
         playerView.setPlayer(VideoPlayerService.player);
         controls.setPlayer(VideoPlayerService.player);
