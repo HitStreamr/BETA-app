@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -51,6 +53,7 @@ public class HomeFragmentPopularPeopleAdapter extends RecyclerView.Adapter<HomeF
     @Override
     public void onBindViewHolder(@NonNull PopularPeopleHolder holder, int position) {
         holder.userName.setText(userList.get(position).getUsername());
+        holder.verified.setVisibility(View.GONE);
 
         // Listener for the whole user card view
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +132,18 @@ public class HomeFragmentPopularPeopleAdapter extends RecyclerView.Adapter<HomeF
 
             }
         });
+
+        // Listener for view profile button
+        holder.watch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent artistProfile = new Intent(mContext, Profile.class);
+                artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                artistProfile.putExtra("basicUsername", userList.get(position).getUsername());
+                artistProfile.putExtra("SearchType", "BasicAccounts");
+                mContext.startActivity(artistProfile);
+            }
+        });
     }
 
     @Override
@@ -148,6 +163,8 @@ public class HomeFragmentPopularPeopleAdapter extends RecyclerView.Adapter<HomeF
         public TextView userName, followerCount;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
+        public Button watch;
+        public ImageView verified;
 
         /**
          * Constructor
@@ -159,6 +176,8 @@ public class HomeFragmentPopularPeopleAdapter extends RecyclerView.Adapter<HomeF
             cardView = itemView.findViewById(R.id.topArtistCardView);
             profilePicture = itemView.findViewById(R.id.topArtistImage);
             followerCount = itemView.findViewById(R.id.topArtistFollowerCount);
+            watch = itemView.findViewById(R.id.watchArtistButton);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }

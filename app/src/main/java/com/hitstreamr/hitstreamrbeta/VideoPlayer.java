@@ -898,7 +898,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     public void showVideoPlayerOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_player_overflow_menu);
         popupMenu.show();
     }
 
@@ -1107,8 +1107,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService = null;
             mService.stopVideoService();
+            mService = null;
         }
     }
 

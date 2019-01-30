@@ -161,6 +161,8 @@
         <activity android:name=".EditPlaylist"></activity>
         activity android:name=".MorePopularPeople" />
         <activity android:name=".ReportSubmission"></activity>
+        <activity android:name=".MorePopularPeople" />
+
 
         <service
             android:name=".VideoPlayerService"

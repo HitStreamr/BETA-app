@@ -42,6 +42,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private FirebaseUser current_user;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference videosCollectionRef;
+    private String accountType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         temp = getIntent().getParcelableExtra("PlaylistVideos");
         playlistName.setText(temp.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
-
 
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
@@ -79,11 +79,14 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
         Log.e(TAG, "temp value is " + temp.getPlayVideoIds());
 
+
+
         mlistner = new ItemClickListener() {
             @Override
             public void onPlaylistVideoClick(Video selectVideo) {
                 Intent videoPlayerIntent = new Intent(PlaylistVideosActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectVideo);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("Account"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }

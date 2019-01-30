@@ -47,7 +47,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_to_playlsit);
+        setContentView(R.layout.activity_add_to_playlist);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -144,14 +144,16 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             case R.id.cancel:
                 finish();
                 break;
+
             case R.id.confirm:
                 registerVideoToPlaylist();
-                Toast.makeText(this, "video added to "+playlistSelected, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
                 finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
+
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
+                break;
         }
     }
 }

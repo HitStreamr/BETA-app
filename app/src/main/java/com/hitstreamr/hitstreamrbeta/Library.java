@@ -145,6 +145,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             public void onResultClick(Video selectedVideo) {
                 Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }
@@ -154,7 +155,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
 
                 Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
-                //PlaylistIntent.putExtra("PlaylistName", selectedPlaylist.playlistname);
+                PlaylistIntent.putExtra("Account", accountType);
                 Log.e(TAG, "playlist value " + selectedPlaylist.getPlayVideoIds());
 
                 PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);

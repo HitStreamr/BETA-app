@@ -585,11 +585,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         profilePictureDownloadUrl = uri;
                         // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
-                            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-                            circleImageView.setVisibility(View.VISIBLE);
                             CircleImageView profileImageView = findViewById(R.id.profileImage);
                             //Uri photoURL = current_user.getPhotoUrl();
-                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
                             Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
                             getFollowersCount();
                             //getFollowingCount();
@@ -911,7 +908,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void setUpRecyclerViewUpload(){
 
-        Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.whereEqualTo("delete", "N")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
