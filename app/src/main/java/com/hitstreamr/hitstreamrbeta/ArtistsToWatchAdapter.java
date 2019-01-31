@@ -53,7 +53,6 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO open artist profile page
                 Intent artistProfile = new Intent(mContext, Profile.class);
                 artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                 artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
