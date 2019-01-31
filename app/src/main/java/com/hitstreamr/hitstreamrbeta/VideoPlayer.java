@@ -247,7 +247,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_video_player);
 
         vid = getIntent().getParcelableExtra("VIDEO");
-        credit = getIntent().getStringExtra("CREDIT");
         userUploadVideoList = new ArrayList<>();
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
@@ -272,37 +271,32 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             //Glide.with(getApplicationContext()).load(photoURL).into(circleImageView_comment);
         }
 
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String currentCredit = dataSnapshot.getValue(String.class);
+                Log.e(TAG, "Main activity credit val " + currentCredit);
+                if (!Strings.isNullOrEmpty(currentCredit)) {
 
-
-        vid = getIntent().getParcelableExtra("VIDEO");
-
-        if(getIntent().getBooleanExtra("RETURN", false)){
-            mConnection = new ServiceConnection() {
-
-                @Override
-                public void onServiceConnected(ComponentName className,
-                                               IBinder service) {
-                    // We've bound to LocalService, cast the IBinder and get LocalService instance
-                    VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
-                    mService = binder.getService();
-                    mService.setCallbacks(VideoPlayer.this);
-                    mBound = true;
-                    mService.resetPlayer();
+                    currentCreditVal = currentCredit;
+                    if(getIntent().getBooleanExtra("RETURN", false)){
+                        restartConnection();
+                    }else {
+                        startConnection();
+                    }
+                } else {
+                    //userCredits.setText("0");
                 }
+            }
 
-                @Override
-                public void onServiceDisconnected(ComponentName arg0) {
-                    mBound = false;
-                    mService = null;
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
 
-                }
-            };
-        }else {
-            restartConnection();
-        }
-
-
-        credit = getIntent().getStringExtra("CREDIT");
         serviceIntent = new Intent(this, VideoPlayerService.class);
         serviceIntent.putExtra("CREDITS",credit);
         startService(serviceIntent);
@@ -453,6 +447,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         addToPlaylistBtn.setOnClickListener(this);
 
         initFullscreenButton();
+        initMiniButton();
 
         checkLikes();
         checkRepost();
@@ -525,7 +520,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
-        Log.e(TAG, "CREDITS: " + credit);
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
         if (credit != null)
             currentCreditVal = credit;
@@ -559,10 +553,31 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         autoplay_switch.setChecked(autoplay_state);
     }
 
-
-
-
     private void restartConnection(){
+        mConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
+                mService = binder.getService();
+                mService.setCallbacks(VideoPlayer.this);
+                mBound = true;
+                mService.resetPlayer();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+                mService = null;
+
+            }
+        };
+    }
+
+
+    private void startConnection(){
         /* Video Player Service */
         mConnection = new ServiceConnection() {
 
@@ -1001,11 +1016,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if (mBound) {
-            mService.setCallbacks(null);
-            unbindService(mConnection);
-            mBound = false;
-        }
     }
 
     @Override
@@ -1029,9 +1039,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onStop() {
         super.onStop();
-      //  if (Util.SDK_INT > 23) {
-        //    releasePlayer();
-        //}
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
@@ -1791,7 +1798,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
         intent.putExtra("MINI_VISIBLE", true);
         intent.putExtra("VIDEO", vid);
-        intent.putExtra("CREDIT", credit);
         intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
         //intent.putExtra("Playback_Position",  playbackPosition);
         //intent.putExtra("CurrentWindow", currentWindow);

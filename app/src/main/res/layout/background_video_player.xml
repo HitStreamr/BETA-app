@@ -7,82 +7,123 @@
     android:layout_gravity="bottom"
     android:layout_marginBottom="55dp"
     android:padding="10dp"
-    android:visibility="gone">
+    android:visibility="visible">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#CC000000"
-        android:gravity="bottom"
-        android:layoutDirection="ltr"
-        android:orientation="vertical">
+        app:cardCornerRadius="12dp"
+        android:elevation="4dp">
 
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:paddingTop="4dp">
-
-            <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-                android:id="@+id/background_video_player"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                app:hide_on_touch="false"
-                app:show_timeout="0"
-                app:use_artwork="false"
-                app:use_controller="false" />
-
+            android:background="#CC000000"
+            android:gravity="bottom"
+            android:layoutDirection="ltr"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/songTitleBG"
-                    android:layout_width="wrap_content"
+                    android:layout_width="270dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
                     android:text="songTitle"
                     android:textColor="@color/colorAccent"
-                    android:textSize="10sp"
-                    android:transitionName="title" />
+                    android:textSize="14sp"
+                    android:transitionName="title"
 
+                    />
 
-                <com.google.android.exoplayer2.ui.PlayerControlView
-                    android:id="@+id/controls"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:controller_layout_id="@layout/bg_player_control_view"
-                    app:show_timeout="0" />
+                    android:gravity="end">
 
-                <ImageView
-                    android:id="@+id/return_to_full"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
-                    android:tint="@color/colorAccent"
-                    android:visibility="gone"/>
+                    <ImageView
+                        android:id="@+id/closeMini"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_close"
+                        android:tint="@color/colorAccent" />
 
-                <ImageView
-                    android:id="@+id/closeMini"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src= "@drawable/com_facebook_close"
-                    android:tint="@color/colorAccent" />
+                </LinearLayout>
             </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingTop="4dp">
+
+                <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+                    android:id="@+id/background_video_player"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    app:hide_on_touch="false"
+                    app:show_timeout="0"
+                    app:use_artwork="false"
+                    app:use_controller="false" />
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+
+
+                    <com.google.android.exoplayer2.ui.PlayerControlView
+                        android:id="@+id/controls"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:controller_layout_id="@layout/bg_player_control_view"
+                        app:show_timeout="0" />
+
+                    <ImageView
+                        android:id="@+id/return_to_full"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
+                        android:tint="@color/colorAccent"
+                        android:visibility="gone"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
 
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
 
 
 </RelativeLayout>
