@@ -162,13 +162,22 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onPlaylistClick(Playlist selectedPlaylist) {
                 Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
-
                 Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
-                PlaylistIntent.putExtra("Account", accountType);
+                PlaylistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                //PlaylistIntent.putExtra("Account", accountType);
                 Log.e(TAG, "playlist value " + selectedPlaylist.getPlayVideoIds());
 
                 PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);
                 startActivity(PlaylistIntent);
+            }
+
+            @Override
+            public void onHistoryClick(Video historySelected) {
+                Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", historySelected);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                startActivity(videoPlayerIntent);
             }
         };
         getWatchLaterList();
@@ -292,7 +301,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             Log.e(TAG, "Entered setup history" +HistoryVideos);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerView_history.setLayoutManager(layoutManager);
-            historyAdapter_history = new HistoryAdapter(this, HistoryVideos);
+            historyAdapter_history = new HistoryAdapter(this, HistoryVideos, mlistner);
             recyclerView_history.setAdapter(historyAdapter_history);
         }
     }
@@ -447,6 +456,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     public interface ItemClickListener {
         void onResultClick(Video selectedVideo);
         void onPlaylistClick(Playlist selectedPlaylist);
+        void onHistoryClick(Video historySelected);
     }
 
 }

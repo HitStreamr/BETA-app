@@ -249,6 +249,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
                 Intent PlaylistIntent = new Intent(Profile.this, PlaylistVideosActivity.class);
                 PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);
+                PlaylistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 startActivity(PlaylistIntent);
             }
         };
@@ -354,9 +355,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         setTabDetails();
     }
 
-    private void getPublicPlaylistsList() {
+    private void getPublicPlaylistsList(String tempUser) {
         FirebaseDatabase.getInstance().getReference("Playlists")
-                .child(current_user.getUid())
+                .child(tempUser)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -369,7 +370,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                             }
                         }
                         Log.e(TAG, "each children" + a);
-                        getPlaylistsList();
+                        getPlaylistsList(tempUser);
 
                     }
                     @Override
@@ -378,9 +379,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 });
     }
 
-    private void getPlaylistsList() {
+    private void getPlaylistsList(String tempUser) {
         FirebaseDatabase.getInstance().getReference("PlaylistVideos")
-                .child(current_user.getUid())
+                .child(tempUser)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -501,7 +502,12 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         view_UserFeed.setVisibility(View.GONE);
                         view_UserUpload.setVisibility(View.GONE);
                         recyclerView_PublicPlaylists.setVisibility(View.VISIBLE);
-                        getPublicPlaylistsList();
+                        if (!Strings.isNullOrEmpty(userUserID)) {
+                            getPublicPlaylistsList(userUserID);
+                        }
+                        else{
+                            getPublicPlaylistsList(current_user.getUid());
+                        }
                         break;
                 }
             }

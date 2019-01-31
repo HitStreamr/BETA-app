@@ -18,12 +18,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     private static final String TAG = "HistoryAdapter";
     private ArrayList<Video> HistoryList;
     private Context context;
+    private Library.ItemClickListener mlistner;
 
-    //private Library.ItemClickListener mlistner;
-    public HistoryAdapter(Context context, ArrayList<Video> HistoryList) {
+    public HistoryAdapter(Context context, ArrayList<Video> HistoryList, Library.ItemClickListener mlistner) {
         Log.e(TAG, "Enterd History adapter" );
         this.HistoryList = HistoryList;
-        //this.mlistner = mlistner;
+        this.mlistner = mlistner;
         this.context = context;
     }
 
@@ -43,13 +43,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         Glide.with(holder.thumbnail).load(HistoryList.get(position).getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(HistoryList.get(position).getDuration());
 
-       /* holder.parent.setOnClickListener(new View.OnClickListener() {
+        holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mlistner.onResultClick(HistoryList.get(position));
+                mlistner.onHistoryClick(HistoryList.get(position));
             }
-        });*/
-    }
+        });
+
+       }
 
     @Override
     public int getItemCount() {
@@ -62,6 +63,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         public ImageView thumbnail;
         public  TextView duration;
         public RelativeLayout parent;
+        public TextView published;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -70,6 +72,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             thumbnail = view.findViewById(R.id.watchLaterThumbnail);
             duration = view.findViewById(R.id.watchLaterDuration);
             parent = view.findViewById(R.id.parentRLayout);
+            published = view.findViewById(R.id.watchLaterPublished);
         }
     }
 
