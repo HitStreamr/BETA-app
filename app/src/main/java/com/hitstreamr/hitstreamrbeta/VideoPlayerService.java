@@ -423,7 +423,6 @@ public class VideoPlayerService extends Service {
                             timerCounter();
                         }
                     }
-
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";

@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button cancelBtn;
     private TextView messgText;
     private PlayerControlView controls;
-    ImageView returnPlayerView;
     ImageView closeMini;
     //private Button confirmBtn;
 
@@ -272,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
-                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
+                //videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
             }
 
@@ -339,12 +338,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-//                vv.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
-//                    }
-//                });
+
             }
         }
 
@@ -373,27 +367,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else {
                             userCredits.setText("0");
                         }
-
-                        //Make sure credits actually has a value
-                        //setting the fragments
-                        if(getIntent().hasExtra("OPTIONAL_FRAG"))
-                        {
-                            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
-                            switch(frag){
-                                case HOME:
-                                    bottomNavView.setSelectedItemId(R.id.home);
-                                    break;
-                                case DISCOVER:
-                                    bottomNavView.setSelectedItemId(R.id.discover);
-                                    break;
-                                case ACTIVITY:
-                                    bottomNavView.setSelectedItemId(R.id.activity);
-                                    break;
-                            }
-                        }else{
-                            //FRAG not set; default to home
-                            bottomNavView.setSelectedItemId(R.id.home);
-                        }
                     }
 
                     @Override
@@ -402,7 +375,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
 
-
+        //Make sure credits actually has a value
+        //setting the fragments
+        if(getIntent().hasExtra("OPTIONAL_FRAG"))
+        {
+            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
+            switch(frag){
+                case HOME:
+                    bottomNavView.setSelectedItemId(R.id.home);
+                    break;
+                case DISCOVER:
+                    bottomNavView.setSelectedItemId(R.id.discover);
+                    break;
+                case ACTIVITY:
+                    bottomNavView.setSelectedItemId(R.id.activity);
+                    break;
+            }
+        }else{
+            //FRAG not set; default to home
+            bottomNavView.setSelectedItemId(R.id.home);
+        }
 
 
 
@@ -411,7 +403,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BGText = relBG.findViewById(R.id.songTitleBG);
         playerView = relBG.findViewById(R.id.background_video_player);
         controls = findViewById(R.id.controls);
-        returnPlayerView = relBG.findViewById(R.id.return_to_full);
         closeMini = findViewById(R.id.closeMini);
         //Setup Miniplayer
         if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
@@ -444,13 +435,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        returnPlayerView.setOnClickListener(new View.OnClickListener() {
+        BGText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
                 Intent fullscreen = new Intent(MainActivity.this, VideoPlayer.class);
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
                 fullscreen.putExtra("RETURN", true);
-                fullscreen.putExtra("CREDIT", creditValue);
                 startActivity(fullscreen);
             }
         });
@@ -460,6 +452,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View v) {
                 relBG.setVisibility(View.GONE);
                 releasePlayer();
+            }
+        });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }
@@ -923,6 +922,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent profilePage = new Intent(MainActivity.this, Profile.class);
                 profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(profilePage);
             }
         });
@@ -1261,11 +1264,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(prof);
                 break;
             case R.id.fave_result:
@@ -1767,7 +1778,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
-                bundle.putString("CREDITS", userCredits.getText().toString());
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
@@ -1881,12 +1891,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (mConnection != null && mBound){
-            unbindService(mConnection);
-            mBound = false;
-            mService.setCallbacks(null);
-            mService = null;
-        }
+        unbindPlayer();
         stopAdapters();
     }
 
@@ -1899,6 +1904,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void unbindPlayer(){
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
+    }
     /**
      * Decide to show/hide the items in the toolbar
      * @param menu menu
