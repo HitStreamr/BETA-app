@@ -249,6 +249,7 @@
                         android:orientation="horizontal">
 
                         <Button
+                            android:id="@+id/moreWatchAgain"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
                             android:background="@android:color/transparent"
@@ -256,17 +257,16 @@
                             android:textColor="@color/colorPrimary" />
                     </LinearLayout>
 
+                </LinearLayout>
 
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/watchAgainRCV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:layout_marginBottom="10dp">
 
                     </android.support.v7.widget.RecyclerView>
-
-                </LinearLayout>
 
                 <!-- Popular People -->
                 <LinearLayout

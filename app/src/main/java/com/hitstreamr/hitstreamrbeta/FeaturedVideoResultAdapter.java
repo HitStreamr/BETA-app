@@ -15,6 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -85,6 +89,37 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         holder.videoThumbnail.setOnClickListener(v -> mListener.onResultClick(vids.get(position)));
         holder.overflowMenu.setOnClickListener(v -> mListener.onOverflowClick(vids.get(position), holder.overflowMenu));
 
+        // Get the number of likes
+        FirebaseDatabase.getInstance().getReference("VideoLikes").child(vids.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoLikes.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the number of re-posts
+        FirebaseDatabase.getInstance().getReference("Repost").child(vids.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -128,6 +163,8 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         TextView videoViews;
         TextView videoPublish;
         TextView videoTime;
+        TextView videoLikes;
+        TextView videoReposts;
         Button overflowMenu;
         CircleImageView artistProfPic;
         VideoClickListener mListener;
@@ -142,6 +179,8 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
             videoTime = itemView.findViewById(R.id.videoLength);
             overflowMenu = itemView.findViewById(R.id.overflowButton);
             artistProfPic = itemView.findViewById(R.id.artistProfilePicture);
+            videoLikes = itemView.findViewById(R.id.faveAmount);
+            videoReposts = itemView.findViewById(R.id.repostAmount);
             this.mListener = mListener;
         }
     }

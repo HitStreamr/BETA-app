@@ -43,6 +43,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
+import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
 import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
@@ -181,6 +182,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         // Populate the Popular People recycler view
         loadPopularPeople(view);
 
+        // Populate the Watch Again recycler view
+        loadWatchAgain(view);
+
         // More top artists
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
         showMoreArtists.setOnClickListener(new View.OnClickListener() {
@@ -200,6 +204,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 Intent morePopularPeople = new Intent(getContext(), MorePopularPeople.class);
                 morePopularPeople.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
                 startActivity(morePopularPeople);
+            }
+        });
+
+        // More watch again videos
+        Button moreWatchAgain = view.findViewById(R.id.moreWatchAgain);
+        moreWatchAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
             }
         });
 
@@ -504,6 +517,59 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 }
             }
         });
+    }
+
+    /**
+     * Load watch again videos based on the user's history.
+     * @param view view
+     */
+    private void loadWatchAgain(View view) {
+        RecyclerView recyclerView_watchAgain = view.findViewById(R.id.watchAgainRCV);
+        recyclerView_watchAgain.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        List<String> videoIdList = new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
+                .orderByChild("timestamp")
+                .limitToLast(10)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                videoIdList.add(ds.child("videoId").getValue(String.class));
+                            }
+
+                            List<Video> videoList = new ArrayList<>();
+                            HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
+                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent());
+
+                            for (String videoId : videoIdList) {
+                                FirebaseFirestore.getInstance().collection("Videos")
+                                        .document(videoId)
+                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            if ((documentSnapshot.get("delete").equals("N")) &&
+                                                    (documentSnapshot.get("privacy")
+                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                videoList.add(documentSnapshot.toObject(Video.class));
+                                                homeFragmentWatchAgainAdapter.notifyDataSetChanged();
+                                                recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     /**

@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.type.Date;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
@@ -56,7 +60,6 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
         requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
         holder.videoUsername.setText(objects1.get(position).getUsername());
-        //holder.videoViews.setText("TODO");
         holder.videoTime.setText(objects1.get(position).getDuration());
 
         String sdate = objects1.get(position).getTimestamp().toDate().toString();
@@ -76,6 +79,37 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
             }
         });
 
+        // Get the number of likes
+        FirebaseDatabase.getInstance().getReference("VideoLikes").child(objects1.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoLikes.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the number of re-posts
+        FirebaseDatabase.getInstance().getReference("Repost").child(objects1.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -96,6 +130,8 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
         TextView videoViews;
         TextView videoYear;
         TextView videoTime;
+        TextView videoLikes;
+        TextView videoReposts;
         ImageView moreMenu;
         LinearLayout mainSection;
         ImageView overflowMenu;
@@ -114,6 +150,8 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
             moreMenu = itemView.findViewById(R.id.moreMenu);
             mainSection = itemView.findViewById(R.id.mainBody);
             overflowMenu = itemView.findViewById(R.id.moreMenu);
+            videoLikes = itemView.findViewById(R.id.faveAmount);
+            videoReposts = itemView.findViewById(R.id.repostAmount);
             this.mListener = mListener;
         }
     }
