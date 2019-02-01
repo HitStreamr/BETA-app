@@ -466,13 +466,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void stopPlayer(){
+        unbindPlayer();
+        relBG.setVisibility(View.GONE);
+    }
+    @Override
     public void updateCreditText(String creditValue) {
         userCredits.setText(creditValue);
     }
 
     @Override
     public void autoPlayNext() {
-
+        //AutoPlay Next?
     }
 
     @Override

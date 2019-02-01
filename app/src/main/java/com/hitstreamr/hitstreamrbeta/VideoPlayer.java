@@ -247,6 +247,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.activity_video_player);
 
         vid = getIntent().getParcelableExtra("VIDEO");
+
         userUploadVideoList = new ArrayList<>();
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
@@ -642,6 +643,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         Log.d(TAG, "Set PlayerView");
         playerView.setPlayer(VideoPlayerService.player);
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+    }
+
+    @Override
+    public void stopPlayer(){
+        //called when notification is cancelled
+        this.finish();
     }
     
     /**
