@@ -311,7 +311,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
-                //.orderBy("privacy")
                 .whereEqualTo("privacy","Public (everyone can see)")
                 .orderBy("views", Query.Direction.DESCENDING )
                 .limit(FEATURED_LOAD);
@@ -322,19 +321,36 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredResults.addOnSuccessListener(queryDocumentSnapshots -> {
             for (DocumentSnapshot docs : queryDocumentSnapshots) {
                 if (docs.exists()) {
-                    featuredVideos.add(docs.toObject(Video.class));
-                    Log.e(TAG,docs.toObject(Video.class).toString());
+                    Video tmp = docs.toObject(Video.class);
+                    featuredVideos.add(tmp);
+                    Log.e(TAG,"Logging each Video");
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Title: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    if (tmp.getDescription() != null){  Log.e(TAG,"Description: " + tmp.getDescription());} else {Log.e(TAG,"Description was null");}
+                    if (tmp.getGenre() != null){  Log.e(TAG,"Genre: " + tmp.getGenre());} else {Log.e(TAG,"Genre was null");}
+                    if (tmp.getSubGenre() != null){  Log.e(TAG,"Sub-Genre: " + tmp.getSubGenre());} else {Log.e(TAG,"Sub-Genre was null");}
+                    if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
+                    if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
+                    if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
+                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
+                    if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Pub Year: " + tmp.getPubYear());
+                    if (tmp.getDuration() != null){  Log.e(TAG,"Duration: " + tmp.getDuration());} else {Log.e(TAG,"Duration was null");}
+                    if (tmp.getVideoId() != null){  Log.e(TAG,"Video ID: " + tmp.getVideoId());} else {Log.e(TAG,"VID was null");}
+                    if (tmp.getTimestamp() != null){  Log.e(TAG,"Timestamp: " + tmp.getTimestamp().toString());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Views: " + tmp.getTitle());
+                    if (tmp.getDelete() != null){  Log.e(TAG,"Delete: " + tmp.getDelete());} else {Log.e(TAG,"Delete was null");}
                 } else {
                     Log.e(TAG, "Document " + docs.toString() + "does not exist");
                 }
             }
-
             VideoClickListener mListener = new VideoClickListener() {
                 @Override
                 public void onResultClick(Video video) {
                     //Open Video Player for song
                     Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                     videoPlayerIntent.putExtra("VIDEO", video);
+                    Log.e(TAG, video.toString());
                     videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                     startActivity(videoPlayerIntent);
 

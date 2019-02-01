@@ -185,6 +185,9 @@ public class VideoPlayerService extends Service {
 
             @Override
             public void onNotificationCancelled(int notificationId) {
+                if (serviceCallback != null){
+                    serviceCallback.stopPlayer();
+                }
                 stopSelf();
             }
         });
@@ -376,11 +379,13 @@ public class VideoPlayerService extends Service {
                 });
     }
 
-    public void checkAutoplay(){
+    public boolean checkAutoplay(){
         SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
         if (preferences.contains("autoplay_switch")){
-            autoplay_switchState = preferences.getBoolean("autoplay_switch", false);
+            return autoplay_switchState = preferences.getBoolean("autoplay_switch", false);
         }
+
+        return false;
     }
 
     //To reduce 1 user credit for watching a video
@@ -428,7 +433,7 @@ public class VideoPlayerService extends Service {
                     stateString = "ExoPlayer.STATE_ENDED     -";
                     // Play the next video ONLY IF we have finished playing the whole video
                     // and the auto-play switch is turned on
-                    if (!clipped & autoplay_switchState) {
+                    if (!clipped & checkAutoplay()) {
                         Log.e(TAG, "AUTOPLAY entering IF");
                     new Handler().postDelayed(new Runnable() {
                         @Override
