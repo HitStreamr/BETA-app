@@ -1,6 +1,8 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -56,6 +58,8 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         int width = dm.widthPixels;
         int height = dm.heightPixels;
         getWindow().setLayout((int) (width), (int) (height * .8));
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
 
         seekBar = findViewById(R.id.seekBar_credits);
         seekBar.setMax(99);

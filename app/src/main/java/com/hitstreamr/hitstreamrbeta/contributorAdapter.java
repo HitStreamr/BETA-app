@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,7 +13,19 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class contributorAdapter extends ArrayAdapter<Contributor> {
     private static final String TAG = "contributorAdapter";
@@ -21,6 +34,7 @@ public class contributorAdapter extends ArrayAdapter<Contributor> {
     private int mResource;
     private ArrayList<Contributor> objects1 =new ArrayList<>();
     deleteinterface deleteInter;
+    public CircleImageView profilePicture;
 
     public contributorAdapter(@NonNull Context context, int resource, @NonNull ArrayList<Contributor> objects, deleteinterface deleteInter) {
         super(context, resource, objects);
@@ -40,6 +54,39 @@ public class contributorAdapter extends ArrayAdapter<Contributor> {
         Contributor currentContributors = objects1.get(position);
 
         Log.e("TAG", "object current values"+currentContributors.toString());
+
+        profilePicture = convertView.findViewById(R.id.artistImage);
+        Log.e("TAG", "object current user"+currentContributors.getContributorName());
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(currentContributors.getContributorName());
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                    FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                            .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            if (uri != null) {
+                                Glide.with(mContext).load(uri).into(profilePicture);
+                            }
+                        }
+                    })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    // TODO: handle error
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         TextView TextViewContributorName = convertView.findViewById(R.id.firstLine);
         TextView TextViewContributorPercentage = convertView.findViewById(R.id.thirdLine);
         TextView TextViewContributorType = convertView.findViewById(R.id.secondLine);

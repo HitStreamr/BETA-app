@@ -820,25 +820,27 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         Date date = new Date(currentTimeMillis);
         String currentTime = dateFormat.format(date);
         Log.e(TAG, "Your video date format :" + currentTime);*/
+        if(!uploadbyUser && !(iscontributor)) {
 
-        Calendar now = Calendar.getInstance();
-        Calendar tmp = (Calendar) now.clone();
-        tmp.add(Calendar.HOUR_OF_DAY, 24);
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String strDate = simpleFormat.format(tmp.getTime());
-        Log.e(TAG, "Your video date format after" +strDate);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
+            Calendar now = Calendar.getInstance();
+            Calendar tmp = (Calendar) now.clone();
+            tmp.add(Calendar.HOUR_OF_DAY, 24);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            String strDate = simpleFormat.format(tmp.getTime());
+            Log.e(TAG, "Your video date format after" + strDate);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
       /*  Map<String, Object> value = new HashMap<>();
         value.put("UserId", currentFirebaseUser.getUid());
         value.put("timestamp", System.currentTimeMillis());
         ref.setValue(value)*/
-        ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+            ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     //To reduce 1 user credit for watching a video

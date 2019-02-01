@@ -186,7 +186,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             getCurrentProfile();
             getFollowersCount();
             getFollowingCount();
-            getUserFeedDeatils(current_user.getUid());
+           // getUserFeedDeatils(current_user.getUid());
             getUserFeed(current_user.getUid());
         } else {
             getUserClickedUserId();
@@ -475,11 +475,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         view_UserFeed.setVisibility(View.VISIBLE);
                         view_UserUpload.setVisibility(View.GONE);
                         if (!Strings.isNullOrEmpty(userUserID)) {
-                            getUserFeedDeatils(userUserID);
+                           // getUserFeedDeatils(userUserID);
                             getUserFeed(userUserID);
                         }
                         else{
-                            getUserFeedDeatils(current_user.getUid());
+                           // getUserFeedDeatils(current_user.getUid());
                             getUserFeed(current_user.getUid());
                         }
 
@@ -658,7 +658,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                         getSearchProfile();
                         setFollowButton();
-                        getUserFeedDeatils(userUserID);
+                       // getUserFeedDeatils(userUserID);
                         getUserFeed(userUserID);
                         setTabDetails();
                     }
@@ -804,7 +804,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
 
-    private void setUpRecyclerView(){
+    private void setUpRecyclerView(String cUserId){
         /*feedRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -816,17 +816,19 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 call();
             }
         });*/
-        Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    if (userVideoList.contains(document.getId())) {
-                        UserVideoId.add(document.toObject(Video.class));
-                    }
+                       if (userVideoList.contains(document.getId())) {
+                            UserVideoId.add(document.toObject(Video.class));
+
+                        }
                 }
-                call();
+                //call();
+                getUserFeedDeatils(cUserId);
             }
         });
 
@@ -845,7 +847,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                                 userVideoList.add(String.valueOf(each.getKey()));
                             }
                         }
-                        setUpRecyclerView();
+                        setUpRecyclerView(cUserId);
                     }
 
                     @Override
@@ -862,27 +864,36 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            for(DataSnapshot each : dataSnapshot.getChildren()) {
-                                Feed feed = each.getValue(Feed.class);
-                                feed.setFeedvideoId(each.getKey());
 
-                                if(each.child("Likes").exists()) {
-                                    feed.setFeedLike(each.child("Likes").getValue().toString());
-                                }
-                                else {
-                                    feed.setFeedLike("N");
-                                }
+                                for (int ctr=0; ctr < UserVideoId.size(); ctr++)
+                                {
+                                    for(DataSnapshot each : dataSnapshot.getChildren()) {
 
-                                if(each.child("Repost").exists()) {
-                                    feed.setFeedRepost(each.child("Repost").getValue().toString());
-                                }
-                                else {
-                                    feed.setFeedRepost("N");
-                                }
+                                        Feed feed = each.getValue(Feed.class);
 
-                                UserFeedDetails.add(feed);
+                                    if(each.getKey().equals(UserVideoId.get(ctr).getVideoId())){
+
+                                        feed.setFeedvideoId(each.getKey());
+
+                                        if(each.child("Likes").exists()) {
+                                            feed.setFeedLike(each.child("Likes").getValue().toString());
+                                        }
+                                        else {
+                                            feed.setFeedLike("N");
+                                        }
+
+                                        if(each.child("Repost").exists()) {
+                                            feed.setFeedRepost(each.child("Repost").getValue().toString());
+                                        }
+                                        else {
+                                            feed.setFeedRepost("N");
+                                        }
+                                        UserFeedDetails.add(feed);
+                                    }
+                                }
                             }
                         }
+                        call();
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -911,7 +922,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
     private void setUpRecyclerViewUpload(){
 
-        Query queryRef = feedRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
