@@ -117,6 +117,7 @@
                 android:padding="5dp">
 
                 <LinearLayout
+                    android:id="@+id/followers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="50dp"
@@ -151,6 +152,7 @@
                     android:background="@color/drkgryAccent" />
 
                 <LinearLayout
+                    android:id="@+id/following"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">

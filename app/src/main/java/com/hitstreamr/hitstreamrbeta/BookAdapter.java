@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder>{
@@ -40,6 +43,15 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         Glide.with(holder.thumbnail).load(bookList.get(position).getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(bookList.get(position).getDuration());
 
+        String viewCount = Long.toString(bookList.get(position).getViews());
+        holder.views.setText(viewCount);
+
+        //holder.views.setText(Long.toString((bookList.get(position).getViews())));
+
+
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.published.setText(dateFormat.format(bookList.get(position).getTimestamp().toDate()));
+
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,6 +59,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             }
         });
     }
+
 
     @Override
     public int getItemCount() {
@@ -59,6 +72,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         public ImageView thumbnail;
         public  TextView duration;
         public RelativeLayout parent;
+        public TextView published;
+        public TextView views;
 
         public BookViewHolder(View view) {
             super(view);
@@ -67,6 +82,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             thumbnail = view.findViewById(R.id.watchLaterThumbnail);
             duration = view.findViewById(R.id.watchLaterDuration);
             parent = view.findViewById(R.id.parentRLayout);
+            published = view.findViewById(R.id.watchLaterPublished);
+            views = view.findViewById(R.id.watchLaterViews);
         }
     }
 }
