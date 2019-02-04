@@ -70,8 +70,10 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         public TrendingVideosHolder(View itemView) {
             super(itemView);
             videoTitle = itemView.findViewById(R.id.videoTitle);
+            videoTitle.setSelected(true);
             videoUsername = itemView.findViewById(R.id.videoUsername);
             videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
+            videoThumbnail.setSelected(true);
             videoViewsCount = itemView.findViewById(R.id.videoViews);
             videoPublishedYear = itemView.findViewById(R.id.videoTime);
             parentLayout = itemView.findViewById(R.id.videoCard);

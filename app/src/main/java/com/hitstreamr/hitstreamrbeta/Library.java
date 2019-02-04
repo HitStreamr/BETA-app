@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -52,7 +53,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private String accountType;
     private ExpandableRelativeLayout expandableLayout_history, expandableLayout_watchLater, expandableLayout_playlists;
     private BottomNavigationView bottomNavView;
-    private RecyclerView recyclerView_watchLater, recyclerView_playlists;
+    private RecyclerView recyclerView_watchLater, recyclerView_playlists, recyclerView_history;
     private Button playlistBtn;
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -61,10 +62,13 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     private BookAdapter bookAdapter_watchLater;
     private WatchPlaylistAdapter playlistAdapter_playlists;
+    private HistoryAdapter historyAdapter_history;
 
     private ArrayList<Video> WatchList;
     private ArrayList<String> WatchLaterList;
     private ArrayList<Playlist> Play;
+    private ArrayList<Video> HistoryVideos;
+    private ArrayList<String> HistoryList;
 
     private ItemClickListener mlistner;
     private Video vid;
@@ -73,6 +77,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     private CollectionReference videosCollectionRef;
     private DataSnapshot videosDatasnapshot;
+    private DatabaseReference HistoryRef;
 
 
     @Override
@@ -84,6 +89,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         //getVideos();
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
+
+        HistoryRef = FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -101,9 +108,13 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
         recyclerView_watchLater = findViewById(R.id.recyclerView_watchLater);
         recyclerView_playlists = findViewById(R.id.recyclerView_playlists);
+        recyclerView_history = findViewById(R.id.recyclerView_history);
 
         playlistBtn = findViewById(R.id.expandableButton_playlists);
         playlistBtn.setVisibility(View.GONE);
+
+        HistoryList = new ArrayList<>();
+        HistoryVideos = new ArrayList<>();
 
         WatchLaterList = new ArrayList<>();
         WatchList = new ArrayList<>();
@@ -155,15 +166,26 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
 
                 Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
-                PlaylistIntent.putExtra("Account", accountType);
+                PlaylistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                //PlaylistIntent.putExtra("Account", accountType);
                 Log.e(TAG, "playlist value " + selectedPlaylist.getPlayVideoIds());
 
                 PlaylistIntent.putExtra("PlaylistVideos", selectedPlaylist);
                 startActivity(PlaylistIntent);
             }
+
+            @Override
+            public void onHistoryClick(Video historySelected) {
+                Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", historySelected);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                startActivity(videoPlayerIntent);
+            }
         };
         getWatchLaterList();
         getPlaylistsList();
+        getHistoryList();
     }
 
     private void setUpRecyclerView() {
@@ -231,6 +253,59 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             } else {
                 accountType = "LabelAccounts";
             }
+        }
+    }
+
+
+    private void  getHistoryList(){
+        HistoryRef.orderByChild("timestamp").limitToLast(100).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {
+                    HistoryList.add(eachVideoObject.child("videoId").getValue().toString());
+                }
+                Log.e(TAG, "History oredered and limited" +HistoryList);
+                getHistoryVideos();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+    }
+
+    private void getHistoryVideos(){
+        Log.e(TAG, "Entered getHistory Videos" +HistoryList);
+        ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
+        for (int i = 0; i < HistoryList.size(); i++) {
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", HistoryList.get(i)).get());
+        }
+        Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
+        task.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
+                for (QuerySnapshot document : task.getResult()) {
+                    //Log.e(TAG, "aaaaaaaaaaaaa " + document);
+                    for (DocumentSnapshot docume : document.getDocuments()) {
+                        //Log.e(TAG, "bbbbbbbbbbbbbbb" + docume.toObject(Video.class).getVideoId());
+                        HistoryVideos.add(docume.toObject(Video.class));
+                    }
+                }
+                Log.e(TAG, "History Video List : " +HistoryVideos);
+                setupHistoryRecyclerView();
+            }
+        });
+    }
+
+    private void setupHistoryRecyclerView() {
+        if (HistoryVideos.size() > 0) {
+            Log.e(TAG, "Entered setup history" +HistoryVideos);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            recyclerView_history.setLayoutManager(layoutManager);
+            historyAdapter_history = new HistoryAdapter(this, HistoryVideos, mlistner);
+            recyclerView_history.setAdapter(historyAdapter_history);
         }
     }
 
@@ -390,6 +465,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     public interface ItemClickListener {
         void onResultClick(Video selectedVideo);
         void onPlaylistClick(Playlist selectedPlaylist);
+        void onHistoryClick(Video historySelected);
     }
 
 }

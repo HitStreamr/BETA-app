@@ -43,6 +43,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
+import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
 import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
@@ -111,6 +112,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
+        setupRecyclerView();
+
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -151,6 +154,19 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             startActivity(videoPlayerIntent);
         };
 
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
+
         trendingMoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -167,6 +183,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         // Populate the Popular People recycler view
         loadPopularPeople(view);
+
+        // Populate the Watch Again recycler view
+//        loadWatchAgain(view);
 
         // More top artists
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
@@ -187,6 +206,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 Intent morePopularPeople = new Intent(getContext(), MorePopularPeople.class);
                 morePopularPeople.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
                 startActivity(morePopularPeople);
+            }
+        });
+
+        // More watch again videos
+        Button moreWatchAgain = view.findViewById(R.id.moreWatchAgain);
+        moreWatchAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO
             }
         });
 
@@ -287,9 +315,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
-                //.orderBy("privacy")
-                .orderBy("views", Query.Direction.DESCENDING )
                 .whereEqualTo("privacy","Public (everyone can see)")
+                .orderBy("views", Query.Direction.DESCENDING )
                 .limit(FEATURED_LOAD);
 
         featuredResults = featuredVideosQuery.get();
@@ -298,8 +325,25 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredResults.addOnSuccessListener(queryDocumentSnapshots -> {
             for (DocumentSnapshot docs : queryDocumentSnapshots) {
                 if (docs.exists()) {
-                    featuredVideos.add(docs.toObject(Video.class));
-                    Log.e(TAG,docs.toObject(Video.class).toString());
+                    Video tmp = docs.toObject(Video.class);
+                    featuredVideos.add(tmp);
+                    Log.e(TAG,"Logging each Video");
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Title: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    if (tmp.getDescription() != null){  Log.e(TAG,"Description: " + tmp.getDescription());} else {Log.e(TAG,"Description was null");}
+                    if (tmp.getGenre() != null){  Log.e(TAG,"Genre: " + tmp.getGenre());} else {Log.e(TAG,"Genre was null");}
+                    if (tmp.getSubGenre() != null){  Log.e(TAG,"Sub-Genre: " + tmp.getSubGenre());} else {Log.e(TAG,"Sub-Genre was null");}
+                    if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
+                    if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
+                    if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
+                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
+                    if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Pub Year: " + tmp.getPubYear());
+                    if (tmp.getDuration() != null){  Log.e(TAG,"Duration: " + tmp.getDuration());} else {Log.e(TAG,"Duration was null");}
+                    if (tmp.getVideoId() != null){  Log.e(TAG,"Video ID: " + tmp.getVideoId());} else {Log.e(TAG,"VID was null");}
+                    if (tmp.getTimestamp() != null){  Log.e(TAG,"Timestamp: " + tmp.getTimestamp().toString());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Views: " + tmp.getTitle());
+                    if (tmp.getDelete() != null){  Log.e(TAG,"Delete: " + tmp.getDelete());} else {Log.e(TAG,"Delete was null");}
                 } else {
                     Log.e(TAG, "Document " + docs.toString() + "does not exist");
                 }
@@ -311,6 +355,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     //Open Video Player for song
                     Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                     videoPlayerIntent.putExtra("VIDEO", video);
+                    Log.e(TAG, video.toString());
                     videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                     videoPlayerIntent.putExtra("CREDIT", userCredits);
                     startActivity(videoPlayerIntent);
@@ -492,6 +537,59 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             }
         });
     }
+
+    /**
+     * Load watch again videos based on the user's history.
+     * @param view view
+     */
+//    private void loadWatchAgain(View view) {
+//        RecyclerView recyclerView_watchAgain = view.findViewById(R.id.watchAgainRCV);
+//        recyclerView_watchAgain.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+//
+//        List<String> videoIdList = new ArrayList<>();
+//
+//        FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
+//                .orderByChild("timestamp")
+//                .limitToLast(20)
+//                .addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+//                                videoIdList.add(ds.child("videoId").getValue(String.class));
+//                            }
+//
+//                            List<Video> videoList = new ArrayList<>();
+//                            HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
+//                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent());
+//
+//                            for (String videoId : videoIdList) {
+//                                FirebaseFirestore.getInstance().collection("Videos")
+//                                        .document(videoId)
+//                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                    @Override
+//                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                                        if (documentSnapshot.exists()) {
+//                                            if ((documentSnapshot.get("delete").equals("N")) &&
+//                                                    (documentSnapshot.get("privacy")
+//                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+//                                                videoList.add(documentSnapshot.toObject(Video.class));
+//                                                homeFragmentWatchAgainAdapter.notifyDataSetChanged();
+//                                                recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+//                                            }
+//                                        }
+//                                    }
+//                                });
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//    }
 
     /**
      * Get the user's preferred genres.

@@ -56,6 +56,8 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         playlistName.setText(temp.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
 
+        getUserType();
+
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
                 .addValueEventListener(new ValueEventListener() {
@@ -79,23 +81,38 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
         Log.e(TAG, "temp value is " + temp.getPlayVideoIds());
 
-
+        getUserType();
 
         mlistner = new ItemClickListener() {
             @Override
             public void onPlaylistVideoClick(Video selectVideo) {
                 Intent videoPlayerIntent = new Intent(PlaylistVideosActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectVideo);
-                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("Account"));
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }
         };
-
         Log.e(TAG, "Playlist Content activity" + getIntent().getStringExtra("PlaylistName") + getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
         recyclerView_PlaylistVideos = findViewById(R.id.recyclerView_singlePlaylistContent);
         getPlayVideos();
-        //setupRecyclerView();
+    }
+
+    private void getUserType() {
+        Bundle extras = getIntent().getExtras();
+
+        if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
+            //type = getIntent().getStringExtra("TYPE");
+
+            if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
+                accountType = "BasicAccounts";
+            } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
+                accountType = "ArtistAccounts";
+            } else {
+                accountType = "LabelAccounts";
+            }
+        }
+        Log.e(TAG, "account type selected :"+accountType);
     }
 
 
@@ -136,4 +153,5 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     public interface ItemClickListener {
         void onPlaylistVideoClick(Video selectVideo);
     }
+
 }

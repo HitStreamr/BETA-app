@@ -73,15 +73,14 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
         cancel.setOnClickListener(this);
         createPlaylist.setOnClickListener(this);
 
+        // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-
-        getWindow().setLayout((int) (width * .8), (int) (height * .4));
+//        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+        getWindow().setLayout((int) (width), (int) (height));
+        getWindow().setBackgroundDrawable(new ColorDrawable(0x4b000000));
 
         getPlaylists();
     }
