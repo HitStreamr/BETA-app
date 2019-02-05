@@ -86,6 +86,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         setContentView(R.layout.activity_library);
 
         videosCollectionRef = db.collection("Videos");
+        //getVideos();
+
         current_user = FirebaseAuth.getInstance().getCurrentUser();
 
         HistoryRef = FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid());
@@ -162,6 +164,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onPlaylistClick(Playlist selectedPlaylist) {
                 Log.e(TAG, "on Playlist click" + selectedPlaylist.getPlayVideos());
+
                 Intent PlaylistIntent = new Intent(Library.this, PlaylistVideosActivity.class);
                 PlaylistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 //PlaylistIntent.putExtra("Account", accountType);
@@ -347,8 +350,13 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 });
             }
         }
+        //Log.e(TAG, "Watch Later Video List : " + WatchList);
         setUpRecyclerView();
     }
+
+    //ArrayList<String> a = new ArrayList<>();
+    //Playlist p = new Playlist();
+    DataSnapshot playDatasnapshot;
 
     private void getPlaylistsList() {
         FirebaseDatabase.getInstance().getReference("PlaylistVideos")
@@ -366,6 +374,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                                 for (DataSnapshot eachplaylist : each.getChildren()) {
                                     a.add(eachplaylist.getValue(String.class));
                                 }
+                                //getPlayVideos();
                                 p.setPlayVideoIds(a);
                                 Play.add(p);
                             }

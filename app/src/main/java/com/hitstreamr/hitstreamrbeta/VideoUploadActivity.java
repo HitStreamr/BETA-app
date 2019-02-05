@@ -80,6 +80,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
     private static final String VIDEO_DURATION = "duration";
+    private static final String VIDEO_DELETE = "delete";
 
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
@@ -385,6 +386,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         startActivityForResult(Intent.createChooser(intent, "Select your image"), IMG_REQUEST_CODE);
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -572,6 +574,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_TIME_STAMP, null);
         artistVideo.put(VIDEO_ID,null);
         artistVideo.put(VIDEO_VIEWS,0l);
+        artistVideo.put(VIDEO_DELETE,"N");
+
 
         Map<String, Boolean> terms = new HashMap<>();
         ArrayList<String> res = processTitle(title);
@@ -609,6 +613,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
                     }
                 });
+
     }
 
     private ArrayList<String> processTitle(String title){
@@ -669,8 +674,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EdittextTittle.setError("Field can't be empty");
             return false;
         } else if (title.length() >= 100) {
-            EdittextTittle.setError("Title length has crossed 100 characters");
-        } else if (!(checkAlphaNumeric(title))) {
+            EdittextTittle.setError("Title length has passed 100 characters");
+        } else if (!(checkAlphaNumericSymbol(title))) {
                 EdittextTittle.setError("Title must only have letters and numbers");
                 return false;
         } else {
@@ -685,9 +690,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EditTextDescription.setError("Field can't be empty");
             return false;
         } else if (description.length() >= 1000) {
-            EdittextTittle.setError("Description length has crossed 1000 characters");
-        } else if (!(checkAlphaNumeric(description))) {
-            EdittextTittle.setError("Description must only have letters and numbers");
+            EdittextTittle.setError("Description length has passed 1000 characters");
+        } else if (!(checkAlphaNumericSymbol(description))) {
+            EdittextTittle.setError("Title must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);
@@ -715,9 +720,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     /**
      * Method to validate the Street Address of any unwanted characters
      */
-    public boolean checkAlphaNumeric(String s) {
+    public boolean checkAlphaNumericSymbol(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+[]{}|;:',./<>? ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {

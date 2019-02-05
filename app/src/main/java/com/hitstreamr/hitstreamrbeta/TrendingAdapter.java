@@ -112,6 +112,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TrendingHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.scrollingTitle);
+            title.setSelected(true);
             author = itemView.findViewById(R.id.videoUsername);
             thumbnail = itemView.findViewById(R.id.videoThumbnail);
             duration = itemView.findViewById(R.id.duration);

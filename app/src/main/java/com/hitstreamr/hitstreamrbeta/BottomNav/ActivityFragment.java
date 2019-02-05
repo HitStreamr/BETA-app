@@ -50,7 +50,7 @@ public class ActivityFragment extends Fragment {
     private FirebaseFirestore db;
     private FirebaseUser current_user;
     DatabaseReference myFollowingRef, myArtistRef, myLikesRef, myRepostRef;
-    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoTypeFeed, videoFeed, typeFeed, likesCount;
+    ArrayList<String> followingUsers, artistfollowing, eachArtistVideos, videoTypeFeed, videoFeed, typeFeed, likesCount, userFeed;
     ArrayList<Object> artistVideos;
     ArrayList<FeedData> feeddocs;
     DataSnapshot likesDatasnapshot, repostDatasnapshot, videoDatasnapshot;
@@ -109,7 +109,7 @@ public class ActivityFragment extends Fragment {
         typeFeed = new ArrayList<>();
         UserVideos = new ArrayList<>();
         likesCount = new ArrayList<>();
-        //myListCollection = new ArrayList<Object>();
+        userFeed = new ArrayList<>();
         activityRecyclerView = view.findViewById(R.id.activityRecyclerView);
         Log.e(TAG, "Entered On create activity");
         //getArtistUsers();
@@ -254,6 +254,7 @@ public class ActivityFragment extends Fragment {
                             if (followingUsers.contains(document.get("userId"))) {
                                 feeddocs.add(document.toObject(FeedData.class));
                                 if (!(videoTypeFeed.contains(document.get("videoId") + " " + document.get("type").toString()))) {
+                                    userFeed.add(document.get("userId").toString());
                                     videoTypeFeed.add(document.get("videoId").toString() + " " + document.get("type").toString());
                                     videoFeed.add(document.get("videoId").toString());
                                     typeFeed.add(document.get("type").toString());
@@ -359,7 +360,7 @@ public class ActivityFragment extends Fragment {
     private void callToAdapter() {
 
         activityRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount);
+        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount, userFeed);
         adapter.notifyDataSetChanged();
         activityRecyclerView.setAdapter(adapter);
     }

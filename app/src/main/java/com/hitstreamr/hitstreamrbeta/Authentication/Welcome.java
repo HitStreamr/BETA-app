@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hitstreamr.hitstreamrbeta.R;
@@ -40,6 +42,12 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
+        RelativeLayout relativeLayout = findViewById(R.id.animLayout);
+        AnimationDrawable animationDrawable = (AnimationDrawable) relativeLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(2000);
+        animationDrawable.setExitFadeDuration(4000);
+        animationDrawable.start();
+
         sign_in = (Button) findViewById(R.id.signin_button);
         create_account = (Button) findViewById(R.id.create_account_button);
         terms = findViewById(R.id.terms);
@@ -59,6 +67,15 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
 
         //user not logged in, because Splash redirects
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        Intent a = new Intent(Intent.ACTION_MAIN);
+        a.addCategory(Intent.CATEGORY_HOME);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(a);
     }
 
     @Override

@@ -73,6 +73,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+
+
         progressDialog = new ProgressDialog(this);
 
         //Buttons
@@ -362,6 +364,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+        startActivity(new Intent(getApplicationContext(), Welcome.class));
+    }
+
+    @Override
     public void onClick(View view) {
         if (view == signinbtn){
             if (!locked_out){
@@ -369,10 +377,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             }else{
                 Toast.makeText(getApplicationContext(),"Please wait to attempt to login again.",Toast.LENGTH_LONG).show();
             }
-        }
-
-        if (view == backbutton){
-            //will open previous activity
         }
 
         if (view == register){
