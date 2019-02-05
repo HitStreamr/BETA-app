@@ -62,9 +62,8 @@ public class Pop extends Activity implements View.OnClickListener {
                 LoginManager.getInstance().logOut();
                 //startActivity(new Intent(getApplicationContext(), SignInActivity.class));
 
-
                 Intent i = new Intent(this, SignInActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(i);
                 finish();
                 break;
