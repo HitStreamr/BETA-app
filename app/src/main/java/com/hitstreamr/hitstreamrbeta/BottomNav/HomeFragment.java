@@ -45,6 +45,7 @@ import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
 import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
+import com.hitstreamr.hitstreamrbeta.MoreWatchAgain;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
@@ -212,7 +213,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         moreWatchAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                Intent moreWatchAgain = new Intent(getContext(), MoreWatchAgain.class);
+                moreWatchAgain.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
+                startActivity(moreWatchAgain);
             }
         });
 
@@ -531,7 +534,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
                 .orderByChild("timestamp")
-                .limitToLast(10)
+                .limitToLast(20)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -542,7 +545,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
                             List<Video> videoList = new ArrayList<>();
                             HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
-                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent());
+                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent(), mListener);
 
                             for (String videoId : videoIdList) {
                                 FirebaseFirestore.getInstance().collection("Videos")
