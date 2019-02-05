@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
@@ -16,6 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 
 import java.util.ArrayList;
 
@@ -27,12 +30,14 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
     private ArrayList<String> postTypeFeed ;
     private ArrayList<String> postLikeFeed;
     private ArrayList<String> postUserFeed;
+    private ActivityFragment.ItemClickListener mlistner;
 
-    public PostVideoFeedAdapter(ArrayList<Video> postVideoFeed, ArrayList<String> postTypeFeed, ArrayList<String> postLikeCountFeed, ArrayList<String> postuserFeed) {
+    public PostVideoFeedAdapter(ArrayList<Video> postVideoFeed, ArrayList<String> postTypeFeed, ArrayList<String> postLikeCountFeed, ArrayList<String> postuserFeed, ActivityFragment.ItemClickListener itemClickListener) {
         this.postVideoFeed = postVideoFeed;
         this.postTypeFeed = postTypeFeed;
         this.postLikeFeed = postLikeCountFeed;
         this.postUserFeed = postuserFeed;
+        this.mlistner = itemClickListener;
         Log.e(TAG, "Post Video Feed constructor entered ");
     }
 
@@ -129,6 +134,16 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
             Glide.with(getApplicationContext()).load(artistProfReference).into(holder.image);
         }
 
+        holder.parent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.e(TAG, "on click trending :" +postVideoFeed.get(position));
+                mlistner.onActivityClick(postVideoFeed.get(position));
+            }
+        });
+
+
+
     }
 
     @Override
@@ -150,6 +165,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         public ImageView image;
         public TextView videoLikes;
         public TextView videoReposts;
+        public FrameLayout parent;
 
         public VideoPostHolder(View itemView) {
             super(itemView);
@@ -165,6 +181,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
             image = itemView.findViewById(R.id.feedImage);
             videoLikes = itemView.findViewById(R.id.faveAmount);
             videoReposts = itemView.findViewById(R.id.repostAmount);
+            parent = itemView.findViewById(R.id.thumbailCard);
         }
     }
 

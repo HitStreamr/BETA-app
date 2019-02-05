@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -58,6 +59,7 @@ public class ActivityFragment extends Fragment {
     private RecyclerView activityRecyclerView;
     private PostVideoFeedAdapter adapter;
     private ItemClickListener mlistner;
+    private String CreditVal;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -115,14 +117,32 @@ public class ActivityFragment extends Fragment {
         getVideoLikes();
         getVideoReposted();
 
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+                            CreditVal = currentCredit;
+                        }
+                        else
+                            CreditVal = "0";
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
         mlistner = new ItemClickListener() {
             @Override
             public void onActivityClick(Video selectedVideo) {
-               /* Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
+                Log.e(TAG,"entered video trenf=ding" + selectedVideo.getVideoId());
+                Intent videoPlayerIntent = new Intent(getContext(), VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectedVideo);
-                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
-                startActivity(videoPlayerIntent);*/
+                startActivity(videoPlayerIntent);
             }
         };
     }
@@ -277,7 +297,7 @@ public class ActivityFragment extends Fragment {
     private void callToAdapter() {
 
         activityRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount, userFeed);
+        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount, userFeed, mlistner);
         adapter.notifyDataSetChanged();
         activityRecyclerView.setAdapter(adapter);
     }
