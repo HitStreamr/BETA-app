@@ -372,7 +372,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         if (view == backbutton){
-            //will open previous activity
+            finish();
+            startActivity(new Intent(getApplicationContext(), Welcome.class));
         }
 
         if (view == register){
