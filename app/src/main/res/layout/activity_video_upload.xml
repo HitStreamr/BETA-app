@@ -15,16 +15,11 @@
         android:id="@+id/videoUploadScreenLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/toolbar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
         android:orientation="vertical">
-
-        <!--<ProgressBar style="@android:style/Widget.ProgressBar.Large"
-                android:id="@+id/video_progress_bar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>-->
-
 
         <ScrollView
             android:layout_width="match_parent"
@@ -35,75 +30,24 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="1000">
-
-                    <EditText
-                        android:id="@+id/Description"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:ems="10"
-                        android:hint="Description"
-                        android:inputType="textMultiLine"
-                        android:maxLength="1000" />
-                </android.support.design.widget.TextInputLayout>
-
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
-                    android:orientation="horizontal"
-                    android:weightSum="1">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:weightSum="1"
-                        android:orientation="vertical">
+                    <VideoView
+                        android:id="@+id/videoView"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.85" />
 
-                        <ImageView
-                            android:id="@+id/imageView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.85"
-                            app:srcCompat="@color/cardview_dark_background" />
-
-                        <Button
-                            android:id="@+id/selectThumbnail"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.15"
-                            android:text="Browse your Image" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:weightSum="1"
-                        android:orientation="vertical">
-
-                        <VideoView
-                            android:id="@+id/videoView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="right"
-                            android:layout_weight="0.85" />
-
-                        <Button
-                            android:id="@+id/selectVideo"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.15"
-                            android:hint="Browse your Video" />
-                    </LinearLayout>
-
+                    <Button
+                        android:id="@+id/selectVideo"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Browse your Video" />
                 </LinearLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -121,6 +65,23 @@
                         android:hint="Title"
                         android:inputType="textMultiLine"
                         android:maxLength="100" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="1000">
+
+                    <EditText
+                        android:id="@+id/Description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:ems="10"
+                        android:hint="Description"
+                        android:inputType="textMultiLine"
+                        android:maxLength="1000" />
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
@@ -213,18 +174,17 @@
                             android:layout_weight=".15"
                             android:hint=" 0 "
                             android:inputType="number"
-                            android:maxLength="2"/>
+                            android:maxLength="2" />
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight=".10"
                             android:ems="20"
-                            android:text="%"
-                            android:textSize="20dp"
-                            android:textColor="@android:color/black"
                             android:gravity="center_vertical"
-                            />
+                            android:text="%"
+                            android:textColor="@android:color/black"
+                            android:textSize="20dp" />
 
                         <Spinner
                             android:id="@+id/ContributorTypeSpinner"
@@ -239,8 +199,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.35"
                             android:background="@android:color/transparent"
-                            android:textColor="@color/colorPrimary"
-                            android:text="Cancel" />
+                            android:text="Cancel"
+                            android:textColor="@color/colorPrimary" />
                     </LinearLayout>
 
                     <Button

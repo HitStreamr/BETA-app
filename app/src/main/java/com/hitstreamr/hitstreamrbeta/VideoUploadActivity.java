@@ -87,8 +87,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     private static final String VIDEO_TITLE_TERMS = "terms";
 
-
-
     //Video View
     private VideoView artistUploadVideo;
 
@@ -178,6 +176,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     AndroidTransloadit transloadit;
     AndroidAsyncAssembly assembly;
 
+    int i, sum = 0, tempvalue = 0;
+    String temp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -266,8 +267,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorVideo = new HashMap<>();
         artistVideo = new HashMap<>();
 
-        //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
-
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
@@ -350,7 +349,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-
     /*
      * Select Video and Callback from Video
      */
@@ -368,22 +366,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         startActivityForResult(Intent.createChooser(intent, "Select your video"), VID_REQUEST_CODE);
     }
 
-    /*
-     * Select Thumbnail
-     */
-    private void selectThumbnail() {
-        thumbnailSelected.set(false);
-        /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        i.setType("video/*");
-        startActivityForResult(i, SELECT_VIDEO); //, getApplicationContext(), VideoUploadActivity.class*/
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        //Intent intent = new Intent();
-        intent.setType("image/*");
-        //intent.setAction(intent.ACTION_GET_CONTENT);
-        //startActivityForResult(intent, VID_REQUEST_CODE);
-
-        startActivityForResult(Intent.createChooser(intent, "Select your image"), IMG_REQUEST_CODE);
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -426,32 +408,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         videoSelected.set(false);
                     }
                 }
-            }else if (requestCode == IMG_REQUEST_CODE) {
-                if (data != null) {
-                    if (data.getData() != null) {
-                        //selectedVideoPath = getPath(data.getData()); data.getData()
-                        selectedImagePath = data.getData();
-                        try {
-                            thumbnailImage.setImageURI(selectedImagePath);
-                            selectThumbBtn.setBackgroundColor(Color.GREEN);
-                            selectThumbBtn.setText("Thumbnail Selected");
-                            //String path = data.getData().toString();
-
-                            // Image has been selected succesfully
-                            thumbnailSelected.set(true);
-
-
-                        } catch (Exception e) {
-                            //#debug
-                            e.printStackTrace();
-                        }
-                    } else {
-                        selectVideoBtn.setBackgroundColor(Color.RED);
-                        selectVideoBtn.setText(R.string.video_not_selection);
-                        // Image has not  been selected succesfully
-                        thumbnailSelected.set(false);
-                    }
-                }
             }
         }
     }
@@ -490,7 +446,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         save.execute(true);
     }
 
-
     private void getDownloadURL(){
         final String storagetitle = EdittextTittle.getText().toString().trim();
         videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
@@ -499,37 +454,17 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onSuccess(Uri uri) {
                         downloadVideoUri = uri.toString();
-                        getThumbnailURL();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                successFirestoreUpload.set(false);
-                retryUploadBtn.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
-            }
-        });
-
-    }
-
-    private void getThumbnailURL(){
-        final String storagetitle = EdittextTittle.getText().toString().trim();
-        thumbnailRef = mStorageRef.child("thumbnails").child(currentFirebaseUser.getUid()).child(storagetitle);
-        thumbnailRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        thumbnailVideoUri = uri.toString();
                         registerFirebase();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                successFirestoreUpload.set(false);
                 retryUploadBtn.setVisibility(View.VISIBLE);
                 Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
-                successFirestoreUpload.set(false);
             }
         });
+
     }
 
     private void registerFirebase() {
@@ -632,7 +567,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             registerVideo();
         }
     }
-
 
     private void successMessage() {
         Toast.makeText(this, "Video Uploaded successfully", Toast.LENGTH_SHORT).show();
@@ -749,9 +683,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         }
         return flag;
     }
-
-    int i, sum = 0, tempvalue = 0;
-    String temp;
 
     private boolean validateSumPercentage() {
         for (i = 1; i < contributorPercentageList.size(); i++) {
@@ -942,8 +873,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         long seconds = (duration / 1000) % 60;
         return String.format("%d:%02d", minutes, seconds);
     }
-
-
 
     /**
      * Handles back button on toolbar
