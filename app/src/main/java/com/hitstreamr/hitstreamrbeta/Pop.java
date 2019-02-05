@@ -60,8 +60,12 @@ public class Pop extends Activity implements View.OnClickListener {
             case R.id.confirm:
                 mAuth.signOut();
                 LoginManager.getInstance().logOut();
+                //startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+
+                Intent i = new Intent(this, SignInActivity.class);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
                 finish();
-                startActivity(new Intent(getApplicationContext(), SignInActivity.class));
                 break;
         }
     }
