@@ -362,6 +362,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+        startActivity(new Intent(getApplicationContext(), Welcome.class));
+    }
+
+    @Override
     public void onClick(View view) {
         if (view == signinbtn){
             if (!locked_out){

@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta.BottomNav;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -28,9 +29,11 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.FeedData;
+import com.hitstreamr.hitstreamrbeta.Library;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
+import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -54,6 +57,7 @@ public class ActivityFragment extends Fragment {
     //private  ArrayList<Video> myListCollection;
     private RecyclerView activityRecyclerView;
     private PostVideoFeedAdapter adapter;
+    private ItemClickListener mlistner;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -110,7 +114,17 @@ public class ActivityFragment extends Fragment {
         getFollowing();
         getVideoLikes();
         getVideoReposted();
-        //getVideos();
+
+        mlistner = new ItemClickListener() {
+            @Override
+            public void onActivityClick(Video selectedVideo) {
+               /* Intent videoPlayerIntent = new Intent(Library.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                startActivity(videoPlayerIntent);*/
+            }
+        };
     }
 
     private void getVideoLikes() {
@@ -266,6 +280,10 @@ public class ActivityFragment extends Fragment {
         adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount, userFeed);
         adapter.notifyDataSetChanged();
         activityRecyclerView.setAdapter(adapter);
+    }
+
+    public interface ItemClickListener {
+        void onActivityClick(Video selectedVideo);
     }
 
 
