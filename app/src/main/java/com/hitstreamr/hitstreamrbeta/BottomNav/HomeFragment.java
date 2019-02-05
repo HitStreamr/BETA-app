@@ -45,6 +45,7 @@ import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
 import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
+import com.hitstreamr.hitstreamrbeta.MoreWatchAgain;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
@@ -185,7 +186,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         loadPopularPeople(view);
 
         // Populate the Watch Again recycler view
-//        loadWatchAgain(view);
+        loadWatchAgain(view);
 
         // More top artists
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
@@ -214,7 +215,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         moreWatchAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                Intent moreWatchAgain = new Intent(getContext(), MoreWatchAgain.class);
+                moreWatchAgain.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
+                startActivity(moreWatchAgain);
             }
         });
 
@@ -315,8 +318,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
-                .whereEqualTo("privacy","Public (everyone can see)")
+                //.orderBy("privacy")
                 .orderBy("views", Query.Direction.DESCENDING )
+                .whereEqualTo("privacy","Public (everyone can see)")
                 .limit(FEATURED_LOAD);
 
         featuredResults = featuredVideosQuery.get();
@@ -542,54 +546,54 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
      * Load watch again videos based on the user's history.
      * @param view view
      */
-//    private void loadWatchAgain(View view) {
-//        RecyclerView recyclerView_watchAgain = view.findViewById(R.id.watchAgainRCV);
-//        recyclerView_watchAgain.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-//
-//        List<String> videoIdList = new ArrayList<>();
-//
-//        FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
-//                .orderByChild("timestamp")
-//                .limitToLast(20)
-//                .addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-//                                videoIdList.add(ds.child("videoId").getValue(String.class));
-//                            }
-//
-//                            List<Video> videoList = new ArrayList<>();
-//                            HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
-//                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent());
-//
-//                            for (String videoId : videoIdList) {
-//                                FirebaseFirestore.getInstance().collection("Videos")
-//                                        .document(videoId)
-//                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//                                    @Override
-//                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                                        if (documentSnapshot.exists()) {
-//                                            if ((documentSnapshot.get("delete").equals("N")) &&
-//                                                    (documentSnapshot.get("privacy")
-//                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
-//                                                videoList.add(documentSnapshot.toObject(Video.class));
-//                                                homeFragmentWatchAgainAdapter.notifyDataSetChanged();
-//                                                recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
-//                                            }
-//                                        }
-//                                    }
-//                                });
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//    }
+    private void loadWatchAgain(View view) {
+        RecyclerView recyclerView_watchAgain = view.findViewById(R.id.watchAgainRCV);
+        recyclerView_watchAgain.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        List<String> videoIdList = new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
+                .orderByChild("timestamp")
+                .limitToLast(20)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                videoIdList.add(ds.child("videoId").getValue(String.class));
+                            }
+
+                            List<Video> videoList = new ArrayList<>();
+                            HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
+                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent(), mListener);
+
+                            for (String videoId : videoIdList) {
+                                FirebaseFirestore.getInstance().collection("Videos")
+                                        .document(videoId)
+                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                        if (documentSnapshot.exists()) {
+                                            if ((documentSnapshot.get("delete").equals("N")) &&
+                                                    (documentSnapshot.get("privacy")
+                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                videoList.add(documentSnapshot.toObject(Video.class));
+                                                homeFragmentWatchAgainAdapter.notifyDataSetChanged();
+                                                recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
 
     /**
      * Get the user's preferred genres.

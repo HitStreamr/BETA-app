@@ -17,8 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -118,6 +117,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private ArrayList<Playlist> Play;
     private RecyclerView recyclerView_PublicPlaylists;
     private ProfilePlaylistAdapter playlistAdapter_playlists;
+    private DataSnapshot followersSnpshot, followingSnapshot;
+    private LinearLayout followingLayout, followersLayout;
 
 
     private String CreditVal;
@@ -151,6 +152,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         mUnfollowBtn.setVisibility(View.GONE);
         mEditProfile.setVisibility(View.VISIBLE);
+        followingLayout = findViewById(R.id.following);
+        followersLayout = findViewById(R.id.followers);
+
+        followersLayout.setOnClickListener(this);
+        followingLayout.setOnClickListener(this);
 
         a = new ArrayList<>();
         Play = new ArrayList<>();
@@ -591,8 +597,11 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         profilePictureDownloadUrl = uri;
                         // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
+                            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+                            circleImageView.setVisibility(View.VISIBLE);
                             CircleImageView profileImageView = findViewById(R.id.profileImage);
                             //Uri photoURL = current_user.getPhotoUrl();
+                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
                             Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
                             getFollowersCount();
                             //getFollowingCount();
@@ -743,6 +752,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         myFollowersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followersSnpshot = dataSnapshot;
                 long followerscount = dataSnapshot.getChildrenCount();
                 mfollowers.setText(String.valueOf(followerscount));
             }
@@ -763,6 +773,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 // Log.e(TAG, "Following datasnapshot:" + dataSnapshot);
                 //Log.e(TAG, "Following datasnapshot children:" + dataSnapshot.getChildrenCount());
+
+                followingSnapshot = dataSnapshot;
 
                 long followingcount = dataSnapshot.getChildrenCount();
                 Log.e(TAG, "Value is: " + followingcount);
@@ -992,6 +1004,33 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             Intent accountPage = new Intent(this, Account.class);
             accountPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(accountPage);
+        }
+        if(view == followersLayout){
+            Intent followersIentent = new Intent(this, FollowersActivity.class);
+
+            String fextra;
+            if(userUserID == null){
+                fextra = current_user.getUid();
+            }
+            else {
+                fextra = userUserID;
+            }
+            followersIentent.putExtra("USER", fextra);
+            startActivity(followersIentent);
+        }
+        if(view == followingLayout){
+            Intent followingIentent = new Intent(this, FollowingActivity.class);
+
+            String fextra;
+            if(userUserID == null){
+                fextra = current_user.getUid();
+            }
+            else {
+                fextra = userUserID;
+            }
+            followingIentent.putExtra("USER", fextra);
+            startActivity(followingIentent);
+
         }
     }
 }

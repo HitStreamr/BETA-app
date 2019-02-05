@@ -449,6 +449,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 relBG.setVisibility(View.GONE);
                 Intent fullscreen = new Intent(MainActivity.this, VideoPlayer.class);
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 fullscreen.putExtra("RETURN", true);
                 fullscreen.putExtra("CREDIT", creditValue);
                 startActivity(fullscreen);

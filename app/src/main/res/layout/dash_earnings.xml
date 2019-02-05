@@ -241,20 +241,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="15dp">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_help_outline_black_24dp" />
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="EARNINGS HELP"
-                android:textColor="@android:color/black" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Previous Earnings"
+                android:textAlignment="textStart"
+                android:background="@android:color/transparent"
+                android:drawablePadding="5dp"
+                android:paddingHorizontal="10dp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/litgryAccent" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Earnings Help"
+                android:textAlignment="textStart"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/ic_help_outline_black_24dp"
+                android:drawablePadding="5dp"
+                android:paddingHorizontal="10dp"/>
+
+
+            <!--<ImageButton-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/ic_help_outline_black_24dp" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="5dp"-->
+                <!--android:text="EARNINGS HELP"-->
+                <!--android:textColor="@android:color/black" />-->
 
         </LinearLayout>
 
