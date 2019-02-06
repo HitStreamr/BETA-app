@@ -101,6 +101,19 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         }
 
 
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postVideoFeed.get(position).getUserId()).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    holder.artist.setText(dataSnapshot.getValue(String.class));
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+
 
         FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postUserFeed.get(position)).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
