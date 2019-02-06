@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -203,9 +205,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button cancelBtn;
     private TextView messgText;
     private PlayerControlView controls;
-    ImageView returnPlayerView;
     ImageView closeMini;
     //private Button confirmBtn;
+
 
     /**
      * Set up and initialize layouts and variables
@@ -269,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
-                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
+                //videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
             }
 
@@ -336,12 +338,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-//                vv.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
-//                    }
-//                });
+
             }
         }
 
@@ -370,6 +367,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else {
                             userCredits.setText("0");
                         }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                         //Make sure credits actually has a value
                         //setting the fragments
@@ -391,15 +395,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             //FRAG not set; default to home
                             bottomNavView.setSelectedItemId(R.id.home);
                         }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-
 
 
 
@@ -408,7 +403,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BGText = relBG.findViewById(R.id.songTitleBG);
         playerView = relBG.findViewById(R.id.background_video_player);
         controls = findViewById(R.id.controls);
-        returnPlayerView = relBG.findViewById(R.id.return_to_full);
         closeMini = findViewById(R.id.closeMini);
         //Setup Miniplayer
         if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
@@ -441,13 +435,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        returnPlayerView.setOnClickListener(new View.OnClickListener() {
+        BGText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
                 Intent fullscreen = new Intent(MainActivity.this, VideoPlayer.class);
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 fullscreen.putExtra("RETURN", true);
-                fullscreen.putExtra("CREDIT", creditValue);
                 startActivity(fullscreen);
             }
         });
@@ -459,6 +455,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 releasePlayer();
             }
         });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void binder(){
@@ -467,8 +470,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void stopPlayer(){
+        unbindPlayer();
+        relBG.setVisibility(View.GONE);
+    }
+    @Override
     public void updateCreditText(String creditValue) {
         userCredits.setText(creditValue);
+    }
+
+    @Override
+    public void autoPlayNext() {
+        //AutoPlay Next?
     }
 
     @Override
@@ -539,6 +552,74 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
+
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                        .child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                                    .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    if (uri != null) {
+                                        Glide.with(getApplicationContext()).load(uri).into(holder.profilePicture);
+                                    }
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // TODO: handle error
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // Followers count
+                // TODO: add thousands/millions k/m feature
+                db = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseDatabase db = FirebaseDatabase.getInstance();
+                            db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int follower = (int) dataSnapshot.getChildrenCount();
+                                    if (follower > 1) {
+                                        holder.count.setText(follower + " Followers");
+                                    } else {
+                                        holder.count.setText(follower + " Follower");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            holder.count.setText("0 Follower");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 //set up UI for following
 //                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
 //                    @Override
@@ -655,6 +736,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setArtistName(model.getArtistname());
+
+                // Check if artist is verified
+                holder.verified.setVisibility(View.VISIBLE);
+
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                        .child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                                    .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    if (uri != null) {
+                                        Glide.with(getApplicationContext()).load(uri).into(holder.profilePicture);
+                                    }
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // TODO: handle error
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // Followers count
+                // TODO: add thousands/millions k/m feature
+                db = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseDatabase db = FirebaseDatabase.getInstance();
+                            db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int follower = (int) dataSnapshot.getChildrenCount();
+                                    if (follower > 1) {
+                                        holder.count.setText(follower + " Followers");
+                                    } else {
+                                        holder.count.setText(follower + " Follower");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            holder.count.setText("0 Follower");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 //holder.setUserName(model.getUsername());
 //                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
@@ -777,6 +928,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent profilePage = new Intent(MainActivity.this, Profile.class);
                 profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(profilePage);
             }
         });
@@ -952,8 +1107,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
         //Query where the videos are in the correct range and not private
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff")
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query)
+                .whereLessThan("title", query + "\uf8ff")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
     }
 
     /**
@@ -995,7 +1152,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
         final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query)
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //Stop using the old adapter
         stopAdapters();
@@ -1007,7 +1166,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
-        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //allResultsRetrieved is only successful, when all are successful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
@@ -1109,11 +1270,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(prof);
                 break;
             case R.id.fave_result:
@@ -1131,9 +1300,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name, artistName;
-        private TextView count;
         private Button followButton;
         private Button unfollowButton;
+
+        public TextView count;
+        public CircleImageView profilePicture;
+        public ImageView verified;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
@@ -1143,7 +1315,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
             artistName =view.findViewById(R.id.artist_name);
+            profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
+
             artistName.setVisibility(View.GONE);
+            verified.setVisibility(View.GONE);
         }
 
         void setUserName(final String userName) {
@@ -1155,7 +1331,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                    basicProfile.putExtra("artistUsername", userName);
+                    basicProfile.putExtra("basicUsername", userName);
                     basicProfile.putExtra("SearchType", "BasicAccounts");
                     startActivity(basicProfile);
                 }
@@ -1279,9 +1455,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name, artistname;
-        private TextView count;
         private Button followButton;
         private Button unfollowButton;
+
+        public TextView count;
+        public CircleImageView profilePicture;
+        public ImageView verified;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
@@ -1291,6 +1470,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
+            profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
         }
 
         void setArtistName(final String artistName) {
@@ -1603,7 +1784,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
-                bundle.putString("CREDITS", userCredits.getText().toString());
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
@@ -1717,12 +1897,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (mConnection != null && mBound){
-            unbindService(mConnection);
-            mBound = false;
-            mService.setCallbacks(null);
-            mService = null;
-        }
+        unbindPlayer();
         stopAdapters();
     }
 
@@ -1735,6 +1910,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void unbindPlayer(){
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
+    }
     /**
      * Decide to show/hide the items in the toolbar
      * @param menu menu

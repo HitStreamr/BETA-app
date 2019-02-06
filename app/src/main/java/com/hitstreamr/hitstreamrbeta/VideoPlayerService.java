@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -85,6 +86,8 @@ public class VideoPlayerService extends Service {
     private boolean clipped;
     private FirebaseUser currentFirebaseUser;
     private boolean uploadbyUser;
+    private boolean isContributor;
+    private boolean autoplay_switchState;
 
 
     /**
@@ -183,6 +186,9 @@ public class VideoPlayerService extends Service {
 
             @Override
             public void onNotificationCancelled(int notificationId) {
+                if (serviceCallback != null){
+                    serviceCallback.stopPlayer();
+                }
                 stopSelf();
             }
         });
@@ -209,8 +215,11 @@ public class VideoPlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         lastID = startId;
+        Log.e(TAG ,"inside service credits"+intent.getStringExtra("CREDITS"));
         credits = intent.getStringExtra("CREDITS");
         uploadbyUser = intent.getBooleanExtra("UPLOAD", false);
+        isContributor = intent.getBooleanExtra("CONTRIBUTOR", false);
+        Log.e(TAG ,"inside service isuploaded "+uploadbyUser+"  ::: isContributor  "+isContributor);
         //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         return START_STICKY;
     }
@@ -290,12 +299,7 @@ public class VideoPlayerService extends Service {
                 serviceCallback.callPurchase();
             }
         }
-
-
     }
-
-
-
 
     //This method is called after 15 secs for users with credits watch to check if they watched the video before
     public void checkViewTime(Video vid, FirebaseUser currentFirebaseUser) throws ParseException {
@@ -358,30 +362,40 @@ public class VideoPlayerService extends Service {
         Date date = new Date(currentTimeMillis);
         String currentTime = dateFormat.format(date);
         Log.e(TAG, "Your video date format :" + currentTime);*/
-
-        Calendar now = Calendar.getInstance();
-        Calendar tmp = (Calendar) now.clone();
-        tmp.add(Calendar.HOUR_OF_DAY, 4);
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String strDate = simpleFormat.format(tmp.getTime());
-        Log.e(TAG, "Your video date format after" + strDate);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
+        if (!uploadbyUser && !isContributor) {
+            Calendar now = Calendar.getInstance();
+            Calendar tmp = (Calendar) now.clone();
+            tmp.add(Calendar.HOUR_OF_DAY, 24);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            String strDate = simpleFormat.format(tmp.getTime());
+            Log.e(TAG, "Your video date format after" + strDate);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
       /*  Map<String, Object> value = new HashMap<>();
         value.put("UserId", currentFirebaseUser.getUid());
         value.put("timestamp", System.currentTimeMillis());
         ref.setValue(value)*/
-        ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+            ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 
-                    }
-                });
+                        }
+                    });
+        }
+    }
+
+    public boolean checkAutoplay(){
+        SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
+        if (preferences.contains("autoplay_switch")){
+            return autoplay_switchState = preferences.getBoolean("autoplay_switch", false);
+        }
+
+        return false;
     }
 
     //To reduce 1 user credit for watching a video
     private void updateCreditValue(FirebaseUser currentFirebaseUser) {
-        if (!uploadbyUser) {
+        if (!uploadbyUser && !isContributor) {
             if (!Strings.isNullOrEmpty(credits)) {
                 int creditval = Integer.parseInt(credits);
                 final int newval = creditval - 1;
@@ -416,13 +430,28 @@ public class VideoPlayerService extends Service {
                     stateString = "ExoPlayer.STATE_READY     -";
                     if (!(player.equals(""))) {
                         if (player.getCurrentPosition() == 0) {
-                            timerCounter();
+                            if (!uploadbyUser && !isContributor) {
+                                timerCounter();
+                            }
                         }
                     }
-
                     break;
                 case Player.STATE_ENDED:
                     stateString = "ExoPlayer.STATE_ENDED     -";
+                    // Play the next video ONLY IF we have finished playing the whole video
+                    // and the auto-play switch is turned on
+                    if (!clipped & checkAutoplay()) {
+                        Log.e(TAG, "AUTOPLAY entering IF");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (serviceCallback != null){
+                                Log.e(TAG, "AUTOPLAY CALLED");
+                                serviceCallback.autoPlayNext();
+                            }
+                        }
+                    }, 1500);
+                }
                     break;
                 default:
                     stateString = "UNKNOWN_STATE             -";
