@@ -15,10 +15,8 @@
         android:id="@+id/videoUploadScreenLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_below="@+id/toolbar"
         android:orientation="vertical">
 
         <ScrollView
@@ -36,11 +34,13 @@
                     android:orientation="vertical"
                     >
 
+
                     <VideoView
                         android:id="@+id/videoView"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="0.85" />
+                        android:layout_height="219dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginTop="0dp" />
 
                     <Button
                         android:id="@+id/selectVideo"
@@ -174,7 +174,7 @@
                             android:layout_weight=".15"
                             android:hint=" 0 "
                             android:inputType="number"
-                            android:maxLength="2" />
+                            android:maxLength="3" />
 
                         <TextView
                             android:layout_width="0dp"
