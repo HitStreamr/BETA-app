@@ -241,6 +241,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onResultClick(Video video) {
                 Intent videoPlayerIntent = new Intent(Profile.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);

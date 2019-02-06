@@ -57,14 +57,14 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
         userLike = objects2.get(position).getFeedLike();
         UserRepost = objects2.get(position).getFeedRepost();
 
-        if(userLike.equals("Y"))
-        {
+        if (userLike.equals("Y")) {
             FeedLikes.setVisibility(View.VISIBLE);
         }
-        if(UserRepost.equals("Y"))
-        {
+
+        if (UserRepost.equals("Y")) {
             FeedRepost.setVisibility(View.VISIBLE);
         }
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +72,12 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
             }
         });
 
-
+        holder.videoThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onResultClick(objects1.get(position));
+            }
+        });
     }
 
     @Override

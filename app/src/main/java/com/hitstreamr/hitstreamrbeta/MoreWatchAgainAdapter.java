@@ -45,7 +45,7 @@ public class MoreWatchAgainAdapter extends RecyclerView.Adapter<MoreWatchAgainAd
     public void onBindViewHolder(@NonNull MoreWatchAgainViewHolder holder, int position) {
         holder.title.setText(videoList.get(position).getTitle());
         holder.username.setText(videoList.get(position).getUsername());
-        holder.views.setText(String.valueOf(videoList.get(position).getViews()));
+        holder.views.setText(String.valueOf(videoList.get(position).getViews()) + " views");
         holder.duration.setText(videoList.get(position).getDuration());
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy");

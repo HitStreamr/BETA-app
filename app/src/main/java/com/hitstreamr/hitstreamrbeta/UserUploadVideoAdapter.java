@@ -43,7 +43,7 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
         requestBuilder.load(vids.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(vids.get(position).getTitle());
         holder.videoUsername.setText(vids.get(position).getUsername());
-        //holder.videoViews.setText("TODO");
+        holder.videoViews.setText(String.valueOf(vids.get(position).getViews()) + " views");
         holder.videoTime.setText(vids.get(position).getDuration());
         holder.videoYear.setText(String.valueOf(vids.get(position).getPubYear()));
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
@@ -58,7 +58,12 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
                 mListener.onOverflowClick(vids.get(position), holder.moreMenu);
             }
         });
-
+        holder.videoThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onResultClick(vids.get(position));
+            }
+        });
     }
 
     @Override
