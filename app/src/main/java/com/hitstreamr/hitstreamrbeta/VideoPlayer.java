@@ -424,10 +424,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     //if following == true
                     follow.setVisibility(View.GONE);
                     unfollow.setVisibility(View.VISIBLE);
-                }else{
-                    //if following == false
-                    follow.setVisibility(View.VISIBLE);
-                    unfollow.setVisibility(View.GONE);
+                }else {
+                    if (currentFirebaseUser.getUid().equals(vid.getUserId())) {
+                        follow.setVisibility(View.GONE);
+                        unfollow.setVisibility(View.GONE);
+                    } else {
+                        //if following == false
+                        follow.setVisibility(View.VISIBLE);
+                        unfollow.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -1580,10 +1585,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
         // check who the user is following
-        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).child(vid.getUserId())
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(vid.getUserId()).exists()){
+                if (dataSnapshot.exists()){
                     Log.e(TAG, "Following");
                     callback.onFollowChecked(true);
                 }else{

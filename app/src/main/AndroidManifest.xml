@@ -101,7 +101,6 @@
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".AddToPlaylist"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".Library"
