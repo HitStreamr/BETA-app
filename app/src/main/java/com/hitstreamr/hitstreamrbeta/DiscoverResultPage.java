@@ -1,6 +1,7 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -53,6 +55,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class DiscoverResultPage extends AppCompatActivity {
 
     private FirestoreRecyclerAdapter<Video, DiscoverResultHolder> firestoreRecyclerAdapter_videos;
+    private FirebaseUser current_user;
     private String accountType, creditValue;
 
     @Override
@@ -69,7 +72,7 @@ public class DiscoverResultPage extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         getUserType();
-        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Profile Picture
         CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
@@ -229,19 +232,17 @@ public class DiscoverResultPage extends AppCompatActivity {
                         menuInflater.inflate(R.menu.video_menu_pop_up, popupMenu.getMenu());
                         popupMenu.show();
 
-                        // TODO: implement the video popup menu
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
                                 switch (menuItem.getItemId()) {
                                     case R.id.addToWatchLater_videoMenu:
-                                        return true;
+                                        addToWatchLater(model);
+                                        break;
 
                                     case R.id.addToPlaylist_videoMenu:
-                                        return true;
-
-                                    case R.id.repost_videoMenu:
-                                        return true;
+                                        addToPlaylist(model);
+                                        break;
 
                                     case R.id.report_videoMenu:
                                         Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
@@ -249,7 +250,7 @@ public class DiscoverResultPage extends AppCompatActivity {
                                         startActivity(reportVideo);
                                         break;
                                 }
-                                return false;
+                                return true;
                             }
                         });
                     }
@@ -328,9 +329,9 @@ public class DiscoverResultPage extends AppCompatActivity {
      */
     public class DiscoverResultHolder extends RecyclerView.ViewHolder {
 
-        public TextView videoTitle, videoUsername, videoYear, videoDuration, videoViews;
-        public ImageView videoThumbnail, videoMenu;
-        public LinearLayout videoCard;
+        TextView videoTitle, videoUsername, videoYear, videoDuration, videoViews;
+        ImageView videoThumbnail, videoMenu;
+        LinearLayout videoCard;
 
         public DiscoverResultHolder(View view) {
             super(view);
@@ -387,5 +388,36 @@ public class DiscoverResultPage extends AppCompatActivity {
                 accountType = "LabelAccounts";
             }
         }
+    }
+
+    /**
+     * Add the video to the watch later list.
+     * @param video video
+     */
+    private void addToWatchLater(Video video) {
+        FirebaseDatabase.getInstance()
+                .getReference("WatchLater")
+                .child(current_user.getUid())
+                .child(video.getVideoId())
+                .child("VideoId")
+                .setValue(video.getVideoId())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Add the video to the playlist.
+     * @param video video
+     */
+    private void addToPlaylist(Video video) {
+        Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+        playlistIntent.putExtra("VIDEO", video);
+        playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+        startActivity(playlistIntent);
     }
 }

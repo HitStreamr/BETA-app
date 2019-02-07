@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoDelete;
@@ -154,6 +155,10 @@ public class Uploads extends Fragment {
                                         break;
 
                                     case R.id.addToPlaylist_dashboardUploads:
+                                        Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                        playlistIntent.putExtra("VIDEO", model);
+                                        playlistIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                                        startActivity(playlistIntent);
                                         break;
                                 }
                                 return false;
