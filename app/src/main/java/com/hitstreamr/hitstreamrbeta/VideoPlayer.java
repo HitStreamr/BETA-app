@@ -898,7 +898,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     public void showVideoPlayerOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_player_overflow_menu);
         popupMenu.show();
     }
 
@@ -913,7 +913,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         String value = dataSnapshot.getValue(String.class);
                         if (dataSnapshot.exists()) {
                             if (value.equals(currentFirebaseUser.getUid())) {
-                                int fillColor = Color.parseColor("#ff13ae");
+                                int fillColor = Color.parseColor("#C8FF681C");
                                 likeBtn.setColorFilter(fillColor);
                                 //Log.e(TAG, "Video not Liked");
                                 VideoLiked = true;
@@ -967,7 +967,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         String value = dataSnapshot.getValue(String.class);
                         if (dataSnapshot.exists()) {
                             if (value.equals(currentFirebaseUser.getUid())) {
-                                int fillColor = Color.parseColor("#ff13ae");
+                                int fillColor = Color.parseColor("#FF0099FF");
                                 repostBtn.setColorFilter(fillColor);
                                 Log.e(TAG, "Video not Reposted");
                                 VideoReposted = true;
@@ -984,6 +984,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void checkRepostCount() {
+        Log.e(TAG, "Repost Count entered : ");
         FirebaseDatabase.getInstance().getReference("Repost")
                 .child(vid.getVideoId())
                 .addValueEventListener(new ValueEventListener() {
@@ -1249,7 +1250,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finishedLike();
-                        int fillColor = Color.parseColor("#ff13ae");
+                        int fillColor = Color.parseColor("#C8FF681C");
                         likeBtn.setColorFilter(fillColor);
                         VideoLiked = true;
                         Log.e(TAG, "Video is liked " + VideoLiked);
@@ -1325,7 +1326,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
-        Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(VideoPlayer.this, "Video has been faved.", Toast.LENGTH_SHORT).show();
     }
 
     private void repostVideo() {
@@ -1342,7 +1343,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finishedRepost();
-                        int fillColor = Color.parseColor("#ff13ae");
+                        int fillColor = Color.parseColor("#FF0099FF");
                         repostBtn.setColorFilter(fillColor);
                         VideoReposted = true;
                         Log.e(TAG, "Video is reposted " + VideoReposted);
