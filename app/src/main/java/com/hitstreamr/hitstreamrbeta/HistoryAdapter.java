@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>{
@@ -46,6 +48,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(HistoryList.get(position).getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(HistoryList.get(position).getDuration());
+
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.published.setText(dateFormat.format(HistoryList.get(position).getTimestamp().toDate()));
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override

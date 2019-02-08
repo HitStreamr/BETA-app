@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,10 +35,13 @@ import com.hitstreamr.hitstreamrbeta.FeedData;
 import com.hitstreamr.hitstreamrbeta.Library;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
+import com.hitstreamr.hitstreamrbeta.RecentArtistsUploadedAdapter;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -113,9 +118,13 @@ public class ActivityFragment extends Fragment {
         userFeed = new ArrayList<>();
         activityRecyclerView = view.findViewById(R.id.activityRecyclerView);
         Log.e(TAG, "Entered On create activity");
+        //getArtistUsers();
         getFollowing();
         getVideoLikes();
         getVideoReposted();
+        //getVideos();
+
+        showRecentArtists(view);
 
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
@@ -146,6 +155,69 @@ public class ActivityFragment extends Fragment {
             }
         };
     }
+
+    /**
+     * Get the most recent artists that uploads music videos.
+     * @param view view
+     */
+    public void showRecentArtists(View view) {
+        RecyclerView recyclerView = view.findViewById(R.id.artistsActivity);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        List<String> followingList = new ArrayList<>();
+        List<ArtistUser> artistList = new ArrayList<>();
+        RecentArtistsUploadedAdapter adapter = new RecentArtistsUploadedAdapter(artistList, getContext(), getActivity().getIntent());
+
+        FirebaseDatabase.getInstance().getReference("following").child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                followingList.add(ds.getKey());
+                            }
+
+                            Log.d("FOLLOWING", followingList.toString());
+
+                            FirebaseFirestore.getInstance().collection("RecentArtistsUploaded")
+                                    .orderBy("upload_time", Query.Direction.DESCENDING).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (DocumentSnapshot ds : queryDocumentSnapshots.getDocuments()) {
+                                        if (followingList.contains(ds.getId())) {
+                                            // adapter stuff
+                                            FirebaseDatabase.getInstance().getReference("ArtistAccounts")
+                                                    .child(ds.getId()).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    if (dataSnapshot.exists()) {
+                                                        ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
+                                                        artistList.add(artistUser);
+                                                        adapter.notifyDataSetChanged();
+                                                        recyclerView.setAdapter(adapter);
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+
 
     private void getVideoLikes() {
         myLikesRef.addValueEventListener(new ValueEventListener() {
@@ -233,6 +305,34 @@ public class ActivityFragment extends Fragment {
             }
         });
     }
+
+    public void getVideos() {
+        myVideosRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                videoDatasnapshot = dataSnapshot;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /*public void getVideoFirestore() {
+        if (videoFeed.size() > 0) {
+            for (int i = 0; i < videoFeed.size(); i++) {
+                videoDatasnapshot.child(videoFeed.get(i)).getValue();
+                UserVideos.add(videoDatasnapshot.child(videoFeed.get(i)).getValue(Video.class));
+                long VideoLikesCount = likesDatasnapshot.child(videoFeed.get(i)).getChildrenCount();
+                String temp = formatt(VideoLikesCount);
+                likesCount.add(temp);
+                Log.e(TAG, "Video Count likes : " + likesCount);
+            }
+        }
+        callToAdapter();
+    }*/
 
     public void getVideoFirestore() {
         Query queryRef = videosCollectionRef;

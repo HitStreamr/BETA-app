@@ -85,7 +85,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                             case R.id.addToPlaylist:
                                 Intent playListAct = new Intent(context, AddToPlaylist.class);
                                 playListAct.putExtra("VideoId", bookList.get(position).getVideoId());
-                                //playListAct.putExtra("TYPE", type);
+                                playListAct.putExtra("TYPE", type);
                                 context.startActivity(playListAct);
                                 break;
 

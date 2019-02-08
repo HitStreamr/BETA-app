@@ -5,6 +5,6 @@
         android:title="Add to Playlist" />
 
     <item android:id="@+id/removeWatch"
-        android:title="Remove from Watchlater" />
+        android:title="Remove from Watch Later" />
 
 </menu>

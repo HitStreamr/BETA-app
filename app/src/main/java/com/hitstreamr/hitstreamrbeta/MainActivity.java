@@ -373,27 +373,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else {
                             userCredits.setText("0");
                         }
-
-                        //Make sure credits actually has a value
-                        //setting the fragments
-                        if(getIntent().hasExtra("OPTIONAL_FRAG"))
-                        {
-                            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
-                            switch(frag){
-                                case HOME:
-                                    bottomNavView.setSelectedItemId(R.id.home);
-                                    break;
-                                case DISCOVER:
-                                    bottomNavView.setSelectedItemId(R.id.discover);
-                                    break;
-                                case ACTIVITY:
-                                    bottomNavView.setSelectedItemId(R.id.activity);
-                                    break;
-                            }
-                        }else{
-                            //FRAG not set; default to home
-                            bottomNavView.setSelectedItemId(R.id.home);
-                        }
                     }
 
                     @Override
@@ -402,7 +381,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
 
-
+        //Make sure credits actually has a value
+        //setting the fragments
+        if(getIntent().hasExtra("OPTIONAL_FRAG"))
+        {
+            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
+            switch(frag){
+                case HOME:
+                    bottomNavView.setSelectedItemId(R.id.home);
+                    break;
+                case DISCOVER:
+                    bottomNavView.setSelectedItemId(R.id.discover);
+                    break;
+                case ACTIVITY:
+                    bottomNavView.setSelectedItemId(R.id.activity);
+                    break;
+            }
+        }else{
+            //FRAG not set; default to home
+            bottomNavView.setSelectedItemId(R.id.home);
+        }
 
 
 
@@ -444,11 +442,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        returnPlayerView.setOnClickListener(new View.OnClickListener() {
+        BGText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
                 Intent fullscreen = new Intent(MainActivity.this, VideoPlayer.class);
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 fullscreen.putExtra("RETURN", true);
                 fullscreen.putExtra("CREDIT", creditValue);
                 startActivity(fullscreen);
@@ -462,6 +463,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 releasePlayer();
             }
         });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void binder(){
@@ -470,8 +478,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    public void stopPlayer(){
+        unbindPlayer();
+        relBG.setVisibility(View.GONE);
+    }
+    @Override
     public void updateCreditText(String creditValue) {
         userCredits.setText(creditValue);
+    }
+
+    @Override
+    public void autoPlayNext() {
+        //AutoPlay Next?
     }
 
     @Override
@@ -727,6 +745,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setArtistName(model.getArtistname());
 
+                // Check if artist is verified
+                holder.verified.setVisibility(View.VISIBLE);
+
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
                         .child(model.getUsername());
                 db.addValueEventListener(new ValueEventListener() {
@@ -915,6 +936,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent profilePage = new Intent(MainActivity.this, Profile.class);
                 profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(profilePage);
             }
         });
@@ -1090,8 +1115,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
         //Query where the videos are in the correct range and not private
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff")
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query)
+                .whereLessThan("title", query + "\uf8ff")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
     }
 
     /**
@@ -1133,7 +1160,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
         final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query)
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //Stop using the old adapter
         stopAdapters();
@@ -1145,7 +1174,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
-        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //allResultsRetrieved is only successful, when all are successful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
@@ -1247,11 +1278,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(prof);
                 break;
             case R.id.fave_result:
@@ -1274,6 +1313,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         public TextView count;
         public CircleImageView profilePicture;
+        public ImageView verified;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
@@ -1282,9 +1322,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
-            artistName =view.findViewById(R.id.artist_name);
+            artistName = view.findViewById(R.id.artist_name);
             profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
+
             artistName.setVisibility(View.GONE);
+            verified.setVisibility(View.GONE);
         }
 
         void setUserName(final String userName) {
@@ -1425,6 +1468,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         public TextView count;
         public CircleImageView profilePicture;
+        public ImageView verified;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
@@ -1435,6 +1479,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
             profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
         }
 
         void setArtistName(final String artistName) {
@@ -1861,12 +1906,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (mConnection != null && mBound){
-            unbindService(mConnection);
-            mBound = false;
-            mService.setCallbacks(null);
-            mService = null;
-        }
+        unbindPlayer();
         stopAdapters();
     }
 
@@ -1875,6 +1915,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             unbindService(mConnection);
             mBound = false;
             mService.stopVideoService();
+            mService = null;
+        }
+    }
+
+    private void unbindPlayer(){
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
             mService = null;
         }
     }
