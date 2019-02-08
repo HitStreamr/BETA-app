@@ -142,7 +142,6 @@ public class Uploads extends Fragment {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
                                 switch (menuItem.getItemId()) {
-                                    // TODO: finish implementing the video popup menu
                                     case R.id.editVideo:
                                         Intent editVideo = new Intent(getApplicationContext(), VideoEdit.class);
                                         editVideo.putExtra("VIDEO", model);

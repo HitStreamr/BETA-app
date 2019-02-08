@@ -610,13 +610,13 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
-                                                if ((documentSnapshot.get("delete").equals("N")) &&
-                                                        (documentSnapshot.get("privacy")
-                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+//                                                if ((documentSnapshot.get("delete").equals("N")) &&
+//                                                        (documentSnapshot.get("privacy")
+//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                     videoList.add(documentSnapshot.toObject(Video.class));
                                                     homeFragmentWatchAgainAdapter.notifyDataSetChanged();
                                                     recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
-                                                }
+//                                                }
                                             }
                                         }
                                     });

@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta.BottomNav;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,11 +32,13 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.FeedData;
+import com.hitstreamr.hitstreamrbeta.Library;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.RecentArtistsUploadedAdapter;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.Video;
+import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +63,8 @@ public class ActivityFragment extends Fragment {
     //private  ArrayList<Video> myListCollection;
     private RecyclerView activityRecyclerView;
     private PostVideoFeedAdapter adapter;
+    private ItemClickListener mlistner;
+    private String CreditVal;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -119,6 +125,35 @@ public class ActivityFragment extends Fragment {
         //getVideos();
 
         showRecentArtists(view);
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+                            CreditVal = currentCredit;
+                        }
+                        else
+                            CreditVal = "0";
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
+        mlistner = new ItemClickListener() {
+            @Override
+            public void onActivityClick(Video selectedVideo) {
+                Log.e(TAG,"entered video trenf=ding" + selectedVideo.getVideoId());
+                Intent videoPlayerIntent = new Intent(getContext(), VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                startActivity(videoPlayerIntent);
+            }
+        };
     }
 
     /**
@@ -181,6 +216,8 @@ public class ActivityFragment extends Fragment {
                     }
                 });
     }
+
+
 
     private void getVideoLikes() {
         myLikesRef.addValueEventListener(new ValueEventListener() {
@@ -360,9 +397,13 @@ public class ActivityFragment extends Fragment {
     private void callToAdapter() {
 
         activityRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount, userFeed);
+        adapter = new PostVideoFeedAdapter(UserVideos, typeFeed, likesCount, userFeed, mlistner);
         adapter.notifyDataSetChanged();
         activityRecyclerView.setAdapter(adapter);
+    }
+
+    public interface ItemClickListener {
+        void onActivityClick(Video selectedVideo);
     }
 
 

@@ -420,10 +420,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     //if following == true
                     follow.setVisibility(View.GONE);
                     unfollow.setVisibility(View.VISIBLE);
-                }else{
-                    //if following == false
-                    follow.setVisibility(View.VISIBLE);
-                    unfollow.setVisibility(View.GONE);
+                }else {
+                    if (currentFirebaseUser.getUid().equals(vid.getUserId())) {
+                        follow.setVisibility(View.GONE);
+                        unfollow.setVisibility(View.GONE);
+                    } else {
+                        //if following == false
+                        follow.setVisibility(View.VISIBLE);
+                        unfollow.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -1244,7 +1249,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finishedLike();
-                        int fillColor = Color.parseColor("#ff13ae");
+                        int fillColor = Color.parseColor("#C8FF681C");
                         likeBtn.setColorFilter(fillColor);
                         VideoLiked = true;
                         Log.e(TAG, "Video is liked " + VideoLiked);
@@ -1337,7 +1342,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finishedRepost();
-                        int fillColor = Color.parseColor("#ff13ae");
+                        int fillColor = Color.parseColor("#FF0099FF");
                         repostBtn.setColorFilter(fillColor);
                         VideoReposted = true;
                         Log.e(TAG, "Video is reposted " + VideoReposted);

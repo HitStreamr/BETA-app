@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
@@ -29,6 +30,7 @@ public class MoreWatchAgain extends AppCompatActivity {
     private FirebaseUser current_user;
     private ItemClickListener mListener;
     private String credit_value;
+    private Video onClickedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,14 +70,44 @@ public class MoreWatchAgain extends AppCompatActivity {
 
             @Override
             public void onOverflowClick(Video video, View view) {
+                onClickedVideo = video;
                 PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
-                popupMenu.inflate(R.menu.video_overflow_menu);
+                popupMenu.inflate(R.menu.video_menu_pop_up);
                 popupMenu.show();
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
-                        // TODO
-                        return false;
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToWatchLater_videoMenu:
+                                FirebaseDatabase.getInstance()
+                                        .getReference("WatchLater")
+                                        .child(current_user.getUid())
+                                        .child(onClickedVideo.getVideoId())
+                                        .child("VideoId")
+                                        .setValue(onClickedVideo.getVideoId())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                break;
+
+                            case R.id.addToPlaylist_videoMenu:
+                                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                                startActivity(playlistIntent);
+                                break;
+
+                            case R.id.report_videoMenu:
+                                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                reportVideo.putExtra("VideoId", onClickedVideo);
+                                startActivity(reportVideo);
+                                break;
+                        }
+                        return true;
                     }
                 });
             }
@@ -115,13 +147,13 @@ public class MoreWatchAgain extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         if (documentSnapshot.exists()) {
-                                            if ((documentSnapshot.get("delete").equals("N")) &&
-                                                    (documentSnapshot.get("privacy")
-                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+//                                            if ((documentSnapshot.get("delete").equals("N")) &&
+//                                                    (documentSnapshot.get("privacy")
+//                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                 videoList.add(documentSnapshot.toObject(Video.class));
                                                 moreWatchAgainAdapter.notifyDataSetChanged();
                                                 recyclerView.setAdapter(moreWatchAgainAdapter);
-                                            }
+//                                            }
                                         }
                                     }
                                 });

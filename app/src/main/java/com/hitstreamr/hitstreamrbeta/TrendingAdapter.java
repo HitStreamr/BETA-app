@@ -20,6 +20,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAdapter.TrendingHolder> {
     private static final String TAG = "TrendingAdapter";
 
@@ -49,8 +52,10 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         Glide.with(holder.thumbnail).load(model.getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
         String viewCount = Long.toString(model.getViews());
-        String pubYear = Long.toString(model.getPubYear());
         holder.viewsCount.setText(viewCount);
+
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.published.setText(dateFormat.format(model.getTimestamp().toDate()));
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,6 +124,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TextView videoLikes;
         public TextView videoReposts;
         public ImageView overflowMenu;
+        public TextView published;
 
         public TrendingHolder(View itemView) {
             super(itemView);
@@ -132,6 +138,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
             videoLikes = itemView.findViewById(R.id.faveAmount);
             videoReposts = itemView.findViewById(R.id.repostAmount);
             overflowMenu = itemView.findViewById(R.id.moreMenu);
+            published = itemView.findViewById(R.id.published);
         }
     }
 }

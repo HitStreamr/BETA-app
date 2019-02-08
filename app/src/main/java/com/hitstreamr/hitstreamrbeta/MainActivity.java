@@ -1262,7 +1262,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void showOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_menu_pop_up);
         popupMenu.show();
     }
 
