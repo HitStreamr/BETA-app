@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/update_over_wifi_button"
                 android:textSize="18sp"
-                android:theme="@style/SwitchTheme"/>
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                 android:text="@string/clear_application_cache"
                 android:textSize="18sp"
                 android:layout_marginTop="15dp"
-                android:theme="@style/SwitchTheme"/>
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings"
                 android:textSize="18sp"
-                android:theme="@style/SwitchTheme"/>
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,8 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/crash_log_settings"
                 android:textSize="18sp"
-                android:layout_marginTop="20dp"
-                android:theme="@style/SwitchTheme"/>
+                android:layout_marginTop="20dp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -241,6 +241,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onResultClick(Video video) {
                 Intent videoPlayerIntent = new Intent(Profile.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
@@ -597,14 +598,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         profilePictureDownloadUrl = uri;
                         // Log.e(TAG, "profile picture uri::" + profilePictureDownloadUrl);
                         if (profilePictureDownloadUrl != null) {
-                            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-                            circleImageView.setVisibility(View.VISIBLE);
                             CircleImageView profileImageView = findViewById(R.id.profileImage);
-                            //Uri photoURL = current_user.getPhotoUrl();
-                            Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(circleImageView);
                             Glide.with(getApplicationContext()).load(profilePictureDownloadUrl).into(profileImageView);
                             getFollowersCount();
-                            //getFollowingCount();
+                            getFollowingCount();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -982,7 +979,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
     /**
-     * Handles back button on toolbar
+     * Handles back button on toolbar.
      *
      * @return true if pressed
      */

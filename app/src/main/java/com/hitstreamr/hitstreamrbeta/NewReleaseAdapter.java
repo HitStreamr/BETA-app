@@ -23,6 +23,8 @@ import com.google.type.Date;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
 import com.google.firebase.Timestamp;
+
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,9 +64,9 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
         holder.videoUsername.setText(objects1.get(position).getUsername());
         holder.videoTime.setText(objects1.get(position).getDuration());
 
-        String sdate = objects1.get(position).getTimestamp().toDate().toString();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.videoYear.setText(dateFormat.format(objects1.get(position).getTimestamp().toDate()));
 
-        holder.videoYear.setText(sdate);
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,12 +1,16 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -54,6 +58,32 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                 mlistner.onHistoryClick(HistoryList.get(position));
             }
         });
+
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(context, view);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToPlaylist:
+                                Intent playListAct = new Intent(context, AddToPlaylist.class);
+                                playListAct.putExtra("VideoId", HistoryList.get(position).getVideoId());
+                                context.startActivity(playListAct);
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.inflate(R.menu.history_menu);
+                popupMenu.show();
+            }
+        });
+
     }
 
     @Override
@@ -68,6 +98,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         public TextView duration;
         public RelativeLayout parent;
         public TextView published;
+        public Button more;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -77,6 +108,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             duration = view.findViewById(R.id.watchLaterDuration);
             parent = view.findViewById(R.id.parentRLayout);
             published = view.findViewById(R.id.watchLaterPublished);
+            more = view.findViewById(R.id.moreBtn);
         }
     }
 

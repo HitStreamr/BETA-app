@@ -20,10 +20,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAdapter.TrendingHolder> {
     private static final String TAG = "TrendingAdapter";
 
     private HomeFragment.TrendingItemClickListener listner;
+    private HomeFragment.ItemClickListener mListener;
 
     /**
      * Create a new RecyclerView adapter that listens to a Firestore Query.  See {@link
@@ -31,9 +35,11 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
      *
      * @param options
      */
-    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Video> options, HomeFragment.TrendingItemClickListener tlistner) {
+    public TrendingAdapter(@NonNull FirestoreRecyclerOptions<Video> options, HomeFragment.TrendingItemClickListener tlistner,
+                           HomeFragment.ItemClickListener mListener) {
         super(options);
         this.listner = tlistner;
+        this.mListener = mListener;
         Log.e(TAG, "listner value "+tlistner);
     }
 
@@ -46,14 +52,23 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         Glide.with(holder.thumbnail).load(model.getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
         String viewCount = Long.toString(model.getViews());
-        String pubYear = Long.toString(model.getPubYear());
         holder.viewsCount.setText(viewCount);
+
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.published.setText(dateFormat.format(model.getTimestamp().toDate()));
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.e(TAG, "on click trending :" +model);
                 listner.onTrendingVideoClick(model);
+            }
+        });
+
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onOverflowClick(model, holder.overflowMenu);
             }
         });
 
@@ -108,6 +123,8 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public LinearLayout parent;
         public TextView videoLikes;
         public TextView videoReposts;
+        public ImageView overflowMenu;
+        public TextView published;
 
         public TrendingHolder(View itemView) {
             super(itemView);
@@ -120,6 +137,8 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
             parent = itemView.findViewById(R.id.mainBody);
             videoLikes = itemView.findViewById(R.id.faveAmount);
             videoReposts = itemView.findViewById(R.id.repostAmount);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
+            published = itemView.findViewById(R.id.published);
         }
     }
 }
