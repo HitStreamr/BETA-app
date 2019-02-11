@@ -102,18 +102,18 @@
         <activity
             android:name=".AddToPlaylist"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopUpMenu"/>
+            android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".Library"
             android:screenOrientation="portrait" />
         <activity
             android:name=".CreateNewPlaylist"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopUpMenu"/>
+            android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".CreditsPurchase"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopUpMenu"/>
+            android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".BillingManager"
             android:screenOrientation="portrait" />
@@ -123,7 +123,7 @@
         <activity
             android:name=".GetVerifiedPopUp"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopUpMenu"/>
+            android:theme="@style/AppTheme.PopUpMenu" />
 
         <service android:name=".HitStreamrFirebaseMessagingService">
             <intent-filter>
@@ -154,14 +154,19 @@
         <activity
             android:name=".VideoDelete"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopUpMenu"/>
-        <activity android:name=".EditPlaylist"></activity>
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity android:name=".EditPlaylist" />
         <activity android:name=".MorePopularPeople" />
-        <activity android:name=".ReportSubmission"></activity>
+        <activity android:name=".ReportSubmission" />
+
         <service
             android:name=".VideoPlayerService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".Payouts"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu"/>
     </application>
 
 </manifest>

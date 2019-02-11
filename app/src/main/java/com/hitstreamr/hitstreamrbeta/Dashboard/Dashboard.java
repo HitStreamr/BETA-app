@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta.Dashboard;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,6 +12,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.hitstreamr.hitstreamrbeta.Payouts;
 import com.hitstreamr.hitstreamrbeta.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -72,6 +75,7 @@ public class Dashboard extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
     }
 
 
@@ -104,6 +108,11 @@ public class Dashboard extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void openPayouts(View view) {
+      Intent openPayout = new Intent(this, Payouts.class);
+        startActivity(openPayout);
     }
 
     /**

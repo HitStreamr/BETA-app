@@ -5,7 +5,8 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Dashboard.Dashboard">
+    tools:context=".Dashboard.Dashboard"
+    android:background="@color/colorAccent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,7 +45,7 @@
             android:text="WEEKLY TOTAL"
             android:textAlignment="center"
             android:textSize="18dp"
-            android:layout_marginTop="25dp"/>
+            android:layout_marginTop="10dp"/>
 
         <TextView
             android:id="@+id/earnings"
@@ -53,7 +54,7 @@
             android:textColor="@color/colorPrimary"
             android:textAlignment="center"
             android:textSize="60dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="25dp"/>
 
         <View
@@ -140,24 +141,34 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
             android:padding="10dp"
             android:background="@color/colorAccent">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Songs"
+                android:text="My Streams"
                 android:textSize="16dp"
                 android:textColor="@android:color/black"
                 android:layout_gravity="center_horizontal"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
             <TextView
                 android:id="@+id/mySongs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textSize="16dp"
-                android:textColor="@android:color/black"
+                    android:textColor="@color/colorPrimary"
                 android:layout_gravity="center_horizontal"/>
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
     <View
@@ -174,7 +185,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
+
             android:padding="10dp"
             android:background="@color/colorAccent">
             <TextView
@@ -184,14 +195,24 @@
                 android:textSize="16dp"
                 android:textColor="@android:color/black"
                 android:layout_gravity="center_horizontal"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
             <TextView
                 android:id="@+id/myContribution"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
                 android:textSize="16dp"
-                android:textColor="@android:color/black"
+                    android:textColor="@color/colorPrimary"
                 android:layout_gravity="center_horizontal"/>
+
+            </LinearLayout>
+
 
         </LinearLayout>
         <View
@@ -221,20 +242,48 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="15dp">
+            android:orientation="vertical">
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_help_outline_black_24dp" />
 
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:text="EARNINGS HELP"
-                android:textColor="@android:color/black" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Payouts"
+                android:textAlignment="textStart"
+                android:background="@android:color/transparent"
+                android:drawablePadding="5dp"
+                android:paddingHorizontal="10dp"
+
+                android:onClick="openPayouts"
+                />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/litgryAccent" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Earnings Help"
+                android:textAlignment="textStart"
+                android:background="@android:color/transparent"
+                android:drawableLeft="@drawable/ic_help_outline_black_24dp"
+                android:drawablePadding="5dp"
+                android:paddingHorizontal="10dp"/>
+
+
+            <!--<ImageButton-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:background="@drawable/ic_help_outline_black_24dp" />-->
+
+            <!--<TextView-->
+                <!--android:layout_width="fill_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginStart="5dp"-->
+                <!--android:text="EARNINGS HELP"-->
+                <!--android:textColor="@android:color/black" />-->
 
         </LinearLayout>
 

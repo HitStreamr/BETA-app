@@ -282,13 +282,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 if (!Strings.isNullOrEmpty(currentCredit)) {
 
                     currentCreditVal = currentCredit;
-                    if(getIntent().getBooleanExtra("RETURN", false)){
-                        restartConnection();
-                    }else {
-                        startConnection();
-                    }
-        }else {
+
+                }else {
                     //userCredits.setText("0");
+                    currentCreditVal = "0";
+                }
+                if(getIntent().getBooleanExtra("RETURN", false)){
+                        restartConnection();
+                }else {
+                        startConnection();
                 }
         }
 
@@ -298,16 +300,71 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         });
 
+        contributorTextViews = new ArrayList<>();
+        userContributor = new ArrayList<>();
+
+        FirebaseFirestore.getInstance().collection("Videos")
+                .whereEqualTo("videoId", vid.getVideoId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
+
+
+
+                                for(HashMap<String,String> contributor : temp){
+                                    Log.d(TAG, "player before contributor   "+contributor.get("contributorUserId") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
+                                    TextView TVtemp = new TextView(context);
+                                    userContributor.add(contributor.get("contributorUserId"));
+                                    TVtemp.setText(contributor.get("contributorName") + "(" +  contributor.get("type") + ")"+", ");
+                                    TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                    TVtemp.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(context, Profile.class);
+                                            intent.putExtra("TYPE", context.getString(R.string.type_artist));
+                                            intent.putExtra("artistUsername", contributor.get("contributorName"));
+                                            context.startActivity(intent);
+                                        }
+                                    });
+
+                                    contributorTextViews.add(TVtemp);
+                                }
+
+                                if(contributorTextViews.size()>0) {
+
+                                    //remove extra ,0
+                                    TextView last = contributorTextViews.get(contributorTextViews.size()-1);
+                                    last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
+                                    contributorTextViews.set(contributorTextViews.size()-1,last);
+
+                                    for(TextView tv : contributorTextViews){
+                                        contributorView.addView(tv);
+                                    }
+                                }
+
+
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
 
         readData(new MyCallback() {
                      @Override
                      public void onCallback(ArrayList value) {
                          if (value.size() > 0) {
-                             Log.e(TAG, "player before inside callback " + value);
                              checkuploaded();
                          }
-                         iscontributor = userContributor.contains(username);
-                         startService();
+                         iscontributor = userContributor.contains(currentFirebaseUser.getUid());
+                           startService();
                      }
                  });
 
@@ -470,63 +527,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         context = this;
 
 
-        contributorTextViews = new ArrayList<>();
-        userContributor = new ArrayList<>();
-
-        FirebaseFirestore.getInstance().collection("Videos")
-                .whereEqualTo("videoId", vid.getVideoId())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
-
-
-
-                               for(HashMap<String,String> contributor : temp){
-                                   Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
-                                   TextView TVtemp = new TextView(context);
-                                   userContributor.add(contributor.get("contributorName"));
-                                   TVtemp.setText(contributor.get("contributorName") + "(" +  contributor.get("type") + ")"+", ");
-                                   TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                           LinearLayout.LayoutParams.WRAP_CONTENT));
-
-                                   TVtemp.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
-                                           Intent intent = new Intent(context, Profile.class);
-                                           intent.putExtra("TYPE", context.getString(R.string.type_artist));
-                                           intent.putExtra("artistUsername", contributor.get("contributorName"));
-                                           context.startActivity(intent);
-                                       }
-                                   });
-
-                                   contributorTextViews.add(TVtemp);
-                               }
-
-                               if(contributorTextViews.size()>0) {
-
-                               //remove extra ,0
-                                TextView last = contributorTextViews.get(contributorTextViews.size()-1);
-                                last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
-                                contributorTextViews.set(contributorTextViews.size()-1,last);
-
-                                for(TextView tv : contributorTextViews){
-                                    contributorView.addView(tv);
-                                }
-                               }
-
-
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
@@ -569,8 +569,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private void startService(){
         serviceIntent = new Intent(this, VideoPlayerService.class);
-        Log.e(TAG," upload video id "+ vid.getVideoId());
-        Log.e(TAG,"isUpload and Contributor on create "+uploadbyUser+ " : " +iscontributor);
         serviceIntent.putExtra("CREDITS",credit);
         serviceIntent.putExtra("UPLOAD",uploadbyUser);
         serviceIntent.putExtra("CONTRIBUTOR",iscontributor);
@@ -622,35 +620,24 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     public void onCallback(ArrayList value) {
 
 
-                        iscontributor = userContributor.contains(username);
-                        Log.e(TAG, "player user contributor name " + userContributor.size() + " user " + username);
-                        Log.e(TAG, "player user contributor iscontributor " + iscontributor);
-                        Log.e(TAG, "player user uploadbyUser " + uploadbyUser);
-                        Log.e(TAG, "player user currentCreditVal " + currentCreditVal);
+                        iscontributor = userContributor.contains(currentFirebaseUser.getUid());
 
                         if (value.size() > 0) {
-                            // Log.e(TAG, "player before inside callback "+value);
                             checkuploaded();
-                            //checkforContributor();
                         }
                         if (uploadbyUser) {
-                            //Log.e(TAG, "player before inside else if  "+uploadbyUser);
                             wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else if (iscontributor) {
-                            Log.e(TAG, "player before inside else if  contributor" + iscontributor);
                             wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else if (Integer.parseInt(currentCreditVal) > 0) {
-                            //Log.e(TAG, "player before inside if ");
-                            // Log.e(TAG, "player before initializePlayer success ");
                             wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else {
                             mService.setPlayer(vid, true, currentCreditVal);
                             runCheck = true;
                         }
-                        //startService();
                     }
 
                 });
@@ -870,16 +857,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     public void checkuploaded(){
-        Log.e(TAG, "player user uploaded video list "+userUploadVideoList);
         if (userUploadVideoList.get(0).contains(vid.getVideoId())) {
             uploadbyUser = true;
-            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
-
         }
-
         else{
             uploadbyUser = false;
-            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
         }
 
     }
