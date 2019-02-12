@@ -30,15 +30,15 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     private static final String TAG = "BookAdapter";
     private ArrayList<Video> bookList;
     private Context context;
-    private String type;
+    private Intent mIntent;
 
     private Library.ItemClickListener mlistner;
 
-    public BookAdapter(Context context, ArrayList<Video> bookList, Library.ItemClickListener mlistner, String type) {
+    public BookAdapter(Context context, ArrayList<Video> bookList, Library.ItemClickListener mlistner, Intent type) {
         this.bookList = bookList;
         this.mlistner = mlistner;
         this.context = context;
-        this.type = type;
+        this.mIntent = type;
     }
 
     @Override
@@ -85,7 +85,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                             case R.id.addToPlaylist:
                                 Intent playListAct = new Intent(context, AddToPlaylist.class);
                                 playListAct.putExtra("VideoId", bookList.get(position).getVideoId());
-                                playListAct.putExtra("TYPE", type);
+                                playListAct.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                                 context.startActivity(playListAct);
                                 break;
 

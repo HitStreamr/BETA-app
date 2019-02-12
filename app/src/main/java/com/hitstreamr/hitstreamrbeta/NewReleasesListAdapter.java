@@ -16,6 +16,8 @@ import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesListAdapter.newUploadHolder> {
@@ -48,10 +50,13 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
         requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
         holder.videoUsername.setText(objects1.get(position).getUsername());
-        //holder.videoViews.setText("TODO");
-        holder.videoTime.setText(objects1.get(position).getDuration());
-        //holder.videoYear.setText(String.valueOf(objects1.get(position).getPubYear()));
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
+        holder.videoTime.setText(objects1.get(position).getDuration());
+        holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()) + " views");
+
+        DateFormat dateFormat = new SimpleDateFormat("yyyy");
+        holder.videoYear.setText(dateFormat.format(objects1.get(position).getTimestamp().toDate()));
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +102,7 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
             videoTitle = itemView.findViewById(R.id.videoTitle);
             videoUsername = itemView.findViewById(R.id.videoUsername);
             videoViews = itemView.findViewById(R.id.videoViews);
-            videoYear = itemView.findViewById(R.id.published);
+            videoYear = itemView.findViewById(R.id.videoYear);
             videoTime = itemView.findViewById(R.id.videoTime);
             moreMenu = itemView.findViewById(R.id.moreMenu);
             mainSection = itemView.findViewById(R.id.mainBody);

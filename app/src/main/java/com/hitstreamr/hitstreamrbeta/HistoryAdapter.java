@@ -25,12 +25,14 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     private ArrayList<Video> HistoryList;
     private Context context;
     private Library.ItemClickListener mlistner;
+    private Intent mIntent;
 
-    public HistoryAdapter(Context context, ArrayList<Video> HistoryList, Library.ItemClickListener mlistner) {
+    public HistoryAdapter(Context context, ArrayList<Video> HistoryList, Library.ItemClickListener mlistner, Intent type) {
         Log.e(TAG, "Enterd History adapter" );
         this.HistoryList = HistoryList;
         this.mlistner = mlistner;
         this.context = context;
+        this.mIntent = type;
     }
 
     @Override
@@ -70,6 +72,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
                             case R.id.addToPlaylist:
                                 Intent playListAct = new Intent(context, AddToPlaylist.class);
                                 playListAct.putExtra("VideoId", HistoryList.get(position).getVideoId());
+                                playListAct.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                                 context.startActivity(playListAct);
                                 break;
 
