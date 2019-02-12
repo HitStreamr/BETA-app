@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -57,6 +58,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private Spinner mState, mCountry;
     // Add address line 1 and 2?
 
+    private TextView passwordHint;
+
     // Buttons
     private Button signup, profilePictureBtn;
     private RadioButton termsCond;
@@ -89,8 +92,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     "(?=.*[0-9])" +         //at least 1 digit
                     "(?=.*[a-z])" +         //at least 1 lower case letter
                     "(?=.*[A-Z])" +         //at least 1 upper case letter
-                    //"(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+                    "(?=.*[!@#$%^&*_+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
@@ -131,6 +133,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mZipcode = findViewById(R.id.artistZip);
         mCountry = findViewById(R.id.artistCountry);
         mPhone = findViewById(R.id.artistPhone);
+        passwordHint = findViewById(R.id.PasswordHint);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -482,9 +485,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
      */
     private boolean validatePassword(String password) {
         if (password.isEmpty()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPassword.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPassword.setError("Password too weak");
             return false;
         } else {
