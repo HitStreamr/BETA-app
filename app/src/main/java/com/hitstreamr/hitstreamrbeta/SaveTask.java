@@ -14,15 +14,18 @@ class SaveTask extends AsyncTask<Boolean, Void, AssemblyResponse> {
     private final String TAG = "SAVE_TASK";
     private VideoUploadActivity activity;
     private AndroidAsyncAssembly assembly;
+    private SaveTaskCallback callback;
 
-    SaveTask(VideoUploadActivity activity, AndroidAsyncAssembly assembly) {
+    SaveTask(VideoUploadActivity activity, AndroidAsyncAssembly assembly, SaveTaskCallback callback) {
         this.activity = activity;
         this.assembly = assembly;
+        this.callback = callback;
     }
 
     @Override
     protected void onPostExecute(AssemblyResponse response) {
         Toast.makeText(activity, "Your androidAsyncAssembly is running on " + response.getUrl(), Toast.LENGTH_LONG).show();
+        callback.goBack();
     }
 
     @Override

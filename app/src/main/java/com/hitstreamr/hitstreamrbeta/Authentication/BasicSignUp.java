@@ -133,8 +133,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                     "(?=.*[0-9])" +         //at least 1 digit
                     "(?=.*[a-z])" +         //at least 1 lower case letter
                     "(?=.*[A-Z])" +         //at least 1 upper case letter
-                    //"(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+                    "(?=.*[!@#$%^&*_+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
@@ -265,7 +264,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         if (selectedImagePath != null) {
             return true;
         }
-        uploadPhotoBtn.setText(R.string.image_not_selection);
+        Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show();
         return false;
     }
 

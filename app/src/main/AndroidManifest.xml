@@ -183,6 +183,12 @@
             android:enabled="true"
             android:exported="false" />
 
+        <service
+            android:name=".VideoUploadService"
+            android:enabled="true"
+            android:exported="false"></service>
+
+
         <activity android:name=".Payouts"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu"/>

@@ -456,7 +456,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
             case R.id.report_videoMenu:
                 Intent reportVideo = new Intent(getContext(), ReportVideoPopup.class);
-                reportVideo.putExtra("VideoId", onClickedVideo);
+                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
                 getContext().startActivity(reportVideo);
                 break;
         }

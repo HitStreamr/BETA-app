@@ -1,17 +1,20 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -29,6 +32,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PlaylistVideosActivity extends AppCompatActivity {
     private static final String TAG = "PlaylistVideosActivity";
@@ -50,10 +55,28 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_playlist_videos);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Toolbar Setup
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        // Set toolbar profile picture to always be the current user
+        if (current_user.getPhotoUrl() != null) {
+            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+            circleImageView.setVisibility(View.VISIBLE);
+            Uri photoURL = current_user.getPhotoUrl();
+            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
+        }
+
         playlistName = findViewById(R.id.playlist_Name);
         playlist = new Playlist();
         temp = getIntent().getParcelableExtra("PlaylistVideos");
         playlistName.setText(temp.getPlaylistname());
+        getSupportActionBar().setTitle(temp.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
 
         getUserType();
@@ -154,4 +177,14 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         void onPlaylistVideoClick(Video selectVideo);
     }
 
+    /**
+     * Handles back button on toolbar.
+     *
+     * @return true if pressed
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 }

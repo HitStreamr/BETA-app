@@ -60,7 +60,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             }
         };
 
-        videoId = getIntent().getStringExtra("VideoId");
+        Video video = getIntent().getParcelableExtra("VIDEO");
+        videoId = video.getVideoId();
         Log.e(TAG, "Video id is :" +videoId);
 
         cancel = (Button) findViewById(R.id.cancel);
