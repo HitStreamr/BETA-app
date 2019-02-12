@@ -103,7 +103,7 @@ public class MoreWatchAgain extends AppCompatActivity {
 
                             case R.id.report_videoMenu:
                                 Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
-                                reportVideo.putExtra("VideoId", onClickedVideo);
+                                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
                                 startActivity(reportVideo);
                                 break;
                         }
