@@ -76,6 +76,9 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
     private String downloadVideoURI;
     private Map<String, Object> artistVideo;
 
+    private static final String VIDEO_DOWNLOAD_LINK = "url";
+    private static final String THUMBNAIL_DOWNLOAD_LINK = "thumbnailUrl";
+
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -200,6 +203,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         if (!cancel) {
             notifB.mActions.clear();
             mNM.notify(notifID, notifB.build());
+            artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoURI);
             db.collection("Videos").document()
                     //.set(contributorList)
                     .set(artistVideo)
