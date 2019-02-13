@@ -79,7 +79,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         public TextView title;
         public TextView author;
         public ImageView thumbnail;
-        public TextView duration;
+        public  TextView duration;
         public RelativeLayout parent;
         public TextView published;
         private Button overflowMenu;

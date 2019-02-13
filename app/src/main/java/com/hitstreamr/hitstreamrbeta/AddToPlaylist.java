@@ -151,7 +151,6 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
-                break;
         }
     }
 }
