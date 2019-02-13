@@ -30,15 +30,14 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     private static final String TAG = "BookAdapter";
     private ArrayList<Video> bookList;
     private Context context;
-    private Intent mIntent;
+    //private Intent mIntent;
 
     private Library.ItemClickListener mlistner;
 
-    public BookAdapter(Context context, ArrayList<Video> bookList, Library.ItemClickListener mlistner, Intent type) {
+    public BookAdapter(Context context, ArrayList<Video> bookList, Library.ItemClickListener mlistner) {
         this.bookList = bookList;
         this.mlistner = mlistner;
         this.context = context;
-        this.mIntent = type;
     }
 
     @Override
@@ -73,39 +72,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             }
         });
 
-
-        holder.more.setOnClickListener(new View.OnClickListener() {
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(context, view);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.addToPlaylist:
-                                Intent playListAct = new Intent(context, AddToPlaylist.class);
-                                playListAct.putExtra("VideoId", bookList.get(position).getVideoId());
-                                playListAct.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
-                                context.startActivity(playListAct);
-                                break;
-
-                            case R.id.removeWatch:
-                                RemoveWatchLater(position);
-                                break;
-
-                            default:
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                popupMenu.inflate(R.menu.watchlater_library_menu);
-                popupMenu.show();
+                mlistner.onOverflowClick(bookList.get(position), holder.overflowMenu);
             }
         });
-
-
-
     }
 
     private void RemoveWatchLater(int pos){
@@ -134,7 +106,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         public RelativeLayout parent;
         public TextView published;
         public TextView views;
-        public Button more;
+        private Button overflowMenu;
 
         public BookViewHolder(View view) {
             super(view);
@@ -145,7 +117,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             parent = view.findViewById(R.id.parentRLayout);
             published = view.findViewById(R.id.watchLaterPublished);
             views = view.findViewById(R.id.watchLaterViews);
-            more = view.findViewById(R.id.moreBtn);
+            overflowMenu = view.findViewById(R.id.moreBtn);
         }
     }
 }

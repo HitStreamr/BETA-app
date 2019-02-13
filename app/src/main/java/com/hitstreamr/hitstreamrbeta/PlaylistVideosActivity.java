@@ -9,13 +9,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Strings;
@@ -48,6 +51,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference videosCollectionRef;
     private String accountType;
+    private Video onClickedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +119,50 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }
+
+            @Override
+            public void onOverflowClick(Video video, View view) {
+                onClickedVideo = video;
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                popupMenu.inflate(R.menu.video_menu_pop_up);
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToWatchLater_videoMenu:
+                                FirebaseDatabase.getInstance()
+                                        .getReference("WatchLater")
+                                        .child(current_user.getUid())
+                                        .child(onClickedVideo.getVideoId())
+                                        .child("VideoId")
+                                        .setValue(onClickedVideo.getVideoId())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                break;
+
+                            case R.id.addToPlaylist_videoMenu:
+                                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                                startActivity(playlistIntent);
+                                break;
+
+                            case R.id.report_videoMenu:
+                                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                                startActivity(reportVideo);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+            }
         };
         Log.e(TAG, "Playlist Content activity" + getIntent().getStringExtra("PlaylistName") + getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
         recyclerView_PlaylistVideos = findViewById(R.id.recyclerView_singlePlaylistContent);
@@ -175,6 +223,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
     public interface ItemClickListener {
         void onPlaylistVideoClick(Video selectVideo);
+        void onOverflowClick(Video video, View view);
     }
 
     /**

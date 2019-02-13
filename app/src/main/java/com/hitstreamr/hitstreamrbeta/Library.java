@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Tasks;
 
 
@@ -78,6 +80,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private CollectionReference videosCollectionRef;
     private DataSnapshot videosDatasnapshot;
     private DatabaseReference HistoryRef;
+    private Video onClickedVideo;
 
 
     @Override
@@ -179,6 +182,50 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
             }
+
+            @Override
+            public void onOverflowClick(Video video, View view) {
+                onClickedVideo = video;
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                popupMenu.inflate(R.menu.video_menu_pop_up);
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToWatchLater_videoMenu:
+                                FirebaseDatabase.getInstance()
+                                        .getReference("WatchLater")
+                                        .child(current_user.getUid())
+                                        .child(onClickedVideo.getVideoId())
+                                        .child("VideoId")
+                                        .setValue(onClickedVideo.getVideoId())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                break;
+
+                            case R.id.addToPlaylist_videoMenu:
+                                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                                startActivity(playlistIntent);
+                                break;
+
+                            case R.id.report_videoMenu:
+                                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                                startActivity(reportVideo);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+            }
         };
         getWatchLaterList();
         getPlaylistsList();
@@ -189,7 +236,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         if (WatchLaterList.size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerView_watchLater.setLayoutManager(layoutManager);
-            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner, getIntent());
+            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner);
             recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
         }
     }
@@ -254,14 +301,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
 
-    private void  getHistoryList(){
+    private void getHistoryList() {
         HistoryRef.orderByChild("timestamp").limitToLast(100).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {
+                for (DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {
                     HistoryList.add(eachVideoObject.child("videoId").getValue().toString());
                 }
-                Log.e(TAG, "History oredered and limited" +HistoryList);
+                Log.e(TAG, "History oredered and limited" + HistoryList);
                 getHistoryVideos();
             }
 
@@ -273,8 +320,8 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         });
     }
 
-    private void getHistoryVideos(){
-        Log.e(TAG, "Entered getHistory Videos" +HistoryList);
+    private void getHistoryVideos() {
+        Log.e(TAG, "Entered getHistory Videos" + HistoryList);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int i = 0; i < HistoryList.size(); i++) {
             queryy.add(videosCollectionRef.whereEqualTo("videoId", HistoryList.get(i)).get());
@@ -290,7 +337,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                         HistoryVideos.add(docume.toObject(Video.class));
                     }
                 }
-                Log.e(TAG, "History Video List : " +HistoryVideos);
+                Log.e(TAG, "History Video List : " + HistoryVideos);
                 setupHistoryRecyclerView();
             }
         });
@@ -298,7 +345,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
     private void setupHistoryRecyclerView() {
         if (HistoryVideos.size() > 0) {
-            Log.e(TAG, "Entered setup history" +HistoryVideos);
+            Log.e(TAG, "Entered setup history" + HistoryVideos);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerView_history.setLayoutManager(layoutManager);
             historyAdapter_history = new HistoryAdapter(this, HistoryVideos, mlistner, getIntent());
@@ -453,10 +500,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         return true;
     }
 
-    public interface ItemClickListener {
-        void onResultClick(Video selectedVideo);
-        void onPlaylistClick(Playlist selectedPlaylist);
-        void onHistoryClick(Video historySelected);
-    }
+public interface ItemClickListener {
+    void onResultClick(Video selectedVideo);
+
+    void onPlaylistClick(Playlist selectedPlaylist);
+
+    void onHistoryClick(Video historySelected);
+
+    void onOverflowClick(Video video, View view);
+}
 
 }

@@ -27,7 +27,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     private Library.ItemClickListener mlistner;
     private Intent mIntent;
 
-    public HistoryAdapter(Context context, ArrayList<Video> HistoryList, Library.ItemClickListener mlistner, Intent type) {
+    public  HistoryAdapter(Context context, ArrayList<Video> HistoryList, Library.ItemClickListener mlistner, Intent type) {
         Log.e(TAG, "Enterd History adapter" );
         this.HistoryList = HistoryList;
         this.mlistner = mlistner;
@@ -61,29 +61,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             }
         });
 
-        holder.more.setOnClickListener(new View.OnClickListener() {
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(context, view);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        switch (menuItem.getItemId()) {
-                            case R.id.addToPlaylist:
-                                Intent playListAct = new Intent(context, AddToPlaylist.class);
-                                playListAct.putExtra("VideoId", HistoryList.get(position).getVideoId());
-                                playListAct.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
-                                context.startActivity(playListAct);
-                                break;
-
-                            default:
-                                break;
-                        }
-                        return false;
-                    }
-                });
-                popupMenu.inflate(R.menu.history_menu);
-                popupMenu.show();
+                mlistner.onOverflowClick(HistoryList.get(position), holder.overflowMenu);
             }
         });
 
@@ -101,7 +82,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         public  TextView duration;
         public RelativeLayout parent;
         public TextView published;
-        public Button more;
+        private Button overflowMenu;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -111,8 +92,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             duration = view.findViewById(R.id.watchLaterDuration);
             parent = view.findViewById(R.id.parentRLayout);
             published = view.findViewById(R.id.watchLaterPublished);
-            more = view.findViewById(R.id.moreBtn);
+            overflowMenu = view.findViewById(R.id.moreBtn);
         }
     }
+
+
 
 }
