@@ -128,7 +128,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     public void run() {
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                }, 3000);
+                },3000);
             }
         });
 
@@ -456,10 +456,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
             case R.id.report_videoMenu:
                 Intent reportVideo = new Intent(getContext(), ReportVideoPopup.class);
-                reportVideo.putExtra("VideoId", onClickedVideo);
+                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
                 getContext().startActivity(reportVideo);
                 break;
-
         }
         return true;
     }
@@ -611,13 +610,13 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
-                                                //if ((documentSnapshot.get("delete").equals("N")) &&
-                                                // (documentSnapshot.get("privacy")
-                                                //       .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
-                                                videoList.add(documentSnapshot.toObject(Video.class));
-                                                homeFragmentWatchAgainAdapter.notifyDataSetChanged();
-                                                recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
-                                                //}
+//                                                if ((documentSnapshot.get("delete").equals("N")) &&
+//                                                        (documentSnapshot.get("privacy")
+//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                    videoList.add(documentSnapshot.toObject(Video.class));
+                                                    homeFragmentWatchAgainAdapter.notifyDataSetChanged();
+                                                    recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+//                                                }
                                             }
                                         }
                                     });

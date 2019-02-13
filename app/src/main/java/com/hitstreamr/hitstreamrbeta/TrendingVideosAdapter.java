@@ -51,8 +51,15 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
             }
         });
 
-        DateFormat dateFormat = new SimpleDateFormat("yyyy");
-        holder.videoYear.setText(dateFormat.format(model.getTimestamp().toDate()));
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listner.onOverflowClick(model, holder.overflowMenu);
+            }
+        });
+
+        /*DateFormat dateFormat = new SimpleDateFormat("yyyy");
+        holder.videoYear.setText(dateFormat.format(model.getTimestamp().toDate()));*/
 
         holder.videoDuration.setText(model.getDuration());
     }
@@ -75,6 +82,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         private LinearLayout parentLayout;
         private TextView videoYear;
         private TextView videoDuration;
+        private ImageView overflowMenu;
 
         public TrendingVideosHolder(View itemView) {
             super(itemView);
@@ -88,6 +96,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
             parentLayout = itemView.findViewById(R.id.videoCard);
             videoYear = itemView.findViewById(R.id.videoYear);
             videoDuration = itemView.findViewById(R.id.videoTime);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
         }
     }
 }

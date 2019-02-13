@@ -6,8 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -27,6 +32,7 @@ public class TrendingVideos extends AppCompatActivity {
     private TrendingVideosAdapter adapter;
     private ItemClickListener mlistner;
     private String CreditVal;
+    private Video onClickedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +60,70 @@ public class TrendingVideos extends AppCompatActivity {
                     }
                 });
 
-        mlistner = selectedVideo -> {
+
+        mlistner = new ItemClickListener() {
+            @Override
+            public void onTrendingMoreClick(Video selectedVideo) {
+                Intent videoPlayerIntent = new Intent(TrendingVideos.this, VideoPlayer.class);
+                videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+                videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                startActivity(videoPlayerIntent);
+            }
+
+            @Override
+            public void onOverflowClick(Video video, View view) {
+                onClickedVideo = video;
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                popupMenu.inflate(R.menu.video_menu_pop_up);
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToWatchLater_videoMenu:
+                                FirebaseDatabase.getInstance()
+                                        .getReference("WatchLater")
+                                        .child(current_user.getUid())
+                                        .child(onClickedVideo.getVideoId())
+                                        .child("VideoId")
+                                        .setValue(onClickedVideo.getVideoId())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                break;
+
+                            case R.id.addToPlaylist_videoMenu:
+                                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                                startActivity(playlistIntent);
+                                break;
+
+                            case R.id.report_videoMenu:
+                                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                                startActivity(reportVideo);
+                                break;
+                        }
+                        return true;
+                    }
+                });
+            }
+        };
+
+
+        /*mlistner = selectedVideo -> {
             Intent videoPlayerIntent = new Intent(TrendingVideos.this, VideoPlayer.class);
             videoPlayerIntent.putExtra("VIDEO", selectedVideo);
             videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
             videoPlayerIntent.putExtra("CREDIT", CreditVal);
             startActivity(videoPlayerIntent);
-        };
+        };*/
 
         recyclerView_TrendingNow = findViewById(R.id.RecyclerView_TrendingNow);
         setupRecyclerView();
@@ -95,6 +158,7 @@ public class TrendingVideos extends AppCompatActivity {
 
     public interface ItemClickListener {
         void onTrendingMoreClick(Video selectedVideo);
+        void onOverflowClick(Video video, View view);
 
     }
 }
