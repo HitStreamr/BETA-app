@@ -191,6 +191,9 @@
             android:name=".Payouts"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
+
+        <activity android:name=".BottomNav.FeaturedVideoRCV"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
