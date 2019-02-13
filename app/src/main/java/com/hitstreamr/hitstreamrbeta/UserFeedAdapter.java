@@ -53,18 +53,19 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
     public void onBindViewHolder(@NonNull UserFeedHolder holder, int position) {
         requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        holder.videoUsername.setText(objects1.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(objects1.get(position).getUsername());
         userLike = objects2.get(position).getFeedLike();
         UserRepost = objects2.get(position).getFeedRepost();
 
-        if(userLike.equals("Y"))
-        {
+        if (userLike.equals("Y")) {
             FeedLikes.setVisibility(View.VISIBLE);
         }
-        if(UserRepost.equals("Y"))
-        {
+
+        if (UserRepost.equals("Y")) {
             FeedRepost.setVisibility(View.VISIBLE);
         }
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +73,12 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
             }
         });
 
-
+        holder.videoThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onResultClick(objects1.get(position));
+            }
+        });
     }
 
     @Override

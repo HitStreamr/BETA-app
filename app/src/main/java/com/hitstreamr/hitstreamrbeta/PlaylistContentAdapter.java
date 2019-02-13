@@ -11,10 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -45,18 +42,30 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
     @Override
     public void onBindViewHolder(@NonNull PlaylistContentViewHolder holder, int position) {
         holder.videoTitle.setText(playlist.getPlayVideos().get(position).getTitle());
-        holder.videoUsername.setText(playlist.getPlayVideos().get(position).getUsername());
-        //holder.videoViews.setText(playlist.getPlayVideos().get(position).getvideoViews);
-        Glide.with(getApplicationContext()).load(Uri.parse((playlist.getPlayVideos().get(position).getThumbnailUrl()))).into(holder.videoThumbnail);
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(playlist.getPlayVideos().get(position).getUsername());
+        String viewCount = Long.toString(playlist.getPlayVideos().get(position).getViews()) + " views";
+        String pubYear = Long.toString(playlist.getPlayVideos().get(position).getPubYear());
+        holder.videoViewsCount.setText(viewCount);
+        holder.videoPublishedYear.setText(pubYear);
+        holder.videoDuration.setText(playlist.getPlayVideos().get(position).getDuration());
+
+        Glide.with(getApplicationContext()).load(Uri.parse((playlist.getPlayVideos().get(position)
+                .getThumbnailUrl()))).into(holder.videoThumbnail);
+
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mlistner.onPlaylistVideoClick(playlist.getPlayVideos().get(position));
-
             }
         });
 
-
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mlistner.onOverflowClick(playlist.getPlayVideos().get(position), holder.overflowMenu);
+            }
+        });
 
     }
 
@@ -68,18 +77,26 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
     public class PlaylistContentViewHolder extends RecyclerView.ViewHolder {
         private TextView videoTitle;
         private TextView videoUsername;
-        private TextView videoViews;
         private ImageView videoThumbnail;
+        private TextView videoViewsCount;
+        private TextView videoPublishedYear;
         private LinearLayout parentLayout;
+        private ImageView videoMoreBtn;
+        private TextView videoDuration;
+        private ImageView overflowMenu;
 
         public PlaylistContentViewHolder(View view) {
             super(view);
 
             videoTitle = view.findViewById(R.id.videoTitle);
             videoUsername = view.findViewById(R.id.videoUsername);
-            videoViews = view.findViewById(R.id.videoViews);
             videoThumbnail = view.findViewById(R.id.videoThumbnail);
+            videoViewsCount = itemView.findViewById(R.id.videoViews);
+            videoPublishedYear = itemView.findViewById(R.id.videoYear);
             parentLayout = view.findViewById(R.id.videoCard);
+            videoMoreBtn = view.findViewById(R.id.moreMenu);
+            videoDuration = view.findViewById(R.id.videoTime);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
         }
     }
 

@@ -2,20 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/listPreferredItemHeight"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/artistImage"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:src="@mipmap/ic_launcher_round"
-            app:civ_border_color="@color/colorAccent"
-            app:civ_border_width="2dp"/>
+            android:id="@+id/icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+             />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -71,7 +71,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/button1"
-                        android:text="delete"/>
+                        android:text="delete"
+                        android:textColor="@color/colorAccent"/>
 
                 </LinearLayout>
             </LinearLayout>

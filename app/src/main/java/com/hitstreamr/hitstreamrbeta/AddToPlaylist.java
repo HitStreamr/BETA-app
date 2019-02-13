@@ -47,7 +47,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_to_playlsit);
+        setContentView(R.layout.activity_add_to_playlist);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -60,7 +60,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             }
         };
 
-        videoId = getIntent().getStringExtra("VideoId");
+        Video video = getIntent().getParcelableExtra("VIDEO");
+        videoId = video.getVideoId();
         Log.e(TAG, "Video id is :" +videoId);
 
         cancel = (Button) findViewById(R.id.cancel);
@@ -73,15 +74,14 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
         cancel.setOnClickListener(this);
         createPlaylist.setOnClickListener(this);
 
+        // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-
-
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-
-        getWindow().setLayout((int) (width * .8), (int) (height * .4));
+//        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+        getWindow().setLayout((int) (width), (int) (height));
+        getWindow().setBackgroundDrawable(new ColorDrawable(0x4b000000));
 
         getPlaylists();
     }
@@ -146,9 +146,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.confirm:
                 registerVideoToPlaylist();
-                Toast.makeText(this, "video added to "+playlistSelected, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
                 finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 break;
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));

@@ -283,7 +283,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
             return;
         }
 
-        validateUserNameFirebase(new User(username, email, null, fullName, null), password);
+        validateUserNameFirebase(new User(username, email, null, fullName, null, "false"), password);
 
     }
 

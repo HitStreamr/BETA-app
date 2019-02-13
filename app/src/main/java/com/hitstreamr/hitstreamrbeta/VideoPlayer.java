@@ -465,8 +465,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
-        artistName.setText(vid.getUsername());
-        artistNameBold.setText(vid.getUsername());
+        //TODO gotta do a thingy
+//        artistName.setText(vid.getUsername());
+//        artistNameBold.setText(vid.getUsername());
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
         follow = findViewById(R.id.followText);
@@ -486,10 +487,15 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     //if following == true
                     follow.setVisibility(View.GONE);
                     unfollow.setVisibility(View.VISIBLE);
-                }else{
-                    //if following == false
-                    follow.setVisibility(View.VISIBLE);
-                    unfollow.setVisibility(View.GONE);
+                }else {
+                    if (currentFirebaseUser.getUid().equals(vid.getUserId())) {
+                        follow.setVisibility(View.GONE);
+                        unfollow.setVisibility(View.GONE);
+                    } else {
+                        //if following == false
+                        follow.setVisibility(View.VISIBLE);
+                        unfollow.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -620,18 +626,26 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     public void onCallback(ArrayList value) {
 
 
-                        iscontributor = userContributor.contains(currentFirebaseUser.getUid());
+                        iscontributor = userContributor.contains(username);
+                        Log.e(TAG, "player user contributor name " + userContributor.size() + " user " + username);
+                        Log.e(TAG, "player user contributor iscontributor " + iscontributor);
 
                         if (value.size() > 0) {
+                            // Log.e(TAG, "player before inside callback "+value);
                             checkuploaded();
+                            //checkforContributor();
                         }
                         if (uploadbyUser) {
+                            //Log.e(TAG, "player before inside else if  "+uploadbyUser);
                             wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else if (iscontributor) {
+                            Log.e(TAG, "player before inside else if  contributor" + iscontributor);
                             wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else if (Integer.parseInt(currentCreditVal) > 0) {
+                            //Log.e(TAG, "player before inside if ");
+                            // Log.e(TAG, "player before initializePlayer success ");
                             wholeVideo = true;
                             mService.setPlayer(vid, false, currentCreditVal);
                         } else {
@@ -639,7 +653,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                             runCheck = true;
                         }
                     }
-
                 });
 
             }
@@ -662,6 +675,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     }
 
+    @Override
     public void stopPlayer(){
         //called when notification is cancelled
         this.finish();
@@ -766,6 +780,41 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void updateCreditText(String credit) {
         Log.d(TAG, "Credits Decresed:  " + credit);
+    }
+
+    //This method is called after 15 secs for users with credits watch to check if they watched the video before
+    private void checkViewTime() throws ParseException {
+
+        FirebaseDatabase.getInstance().getReference("VideoViews")
+                .child(vid.getVideoId()).child(currentFirebaseUser.getUid()).child("TimeLimit")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        sTimeStamp = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Your video date from db check view time " + sTimeStamp);
+                        if(!Strings.isNullOrEmpty(sTimeStamp)) {
+                            try {
+                                checkTimeStamp();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else
+                        {
+                            try {
+                                updatevideoview();
+                                updateCreditValue();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     // This method is to compare the current time with 4 hrs specified time limit for particular user
@@ -885,7 +934,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         String value = dataSnapshot.getValue(String.class);
                         if (dataSnapshot.exists()) {
                             if (value.equals(currentFirebaseUser.getUid())) {
-                                int fillColor = Color.parseColor("#ff13ae");
+                                int fillColor = Color.parseColor("#C8FF681C");
                                 likeBtn.setColorFilter(fillColor);
                                 //Log.e(TAG, "Video not Liked");
                                 VideoLiked = true;
@@ -939,7 +988,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         String value = dataSnapshot.getValue(String.class);
                         if (dataSnapshot.exists()) {
                             if (value.equals(currentFirebaseUser.getUid())) {
-                                int fillColor = Color.parseColor("#ff13ae");
+                                int fillColor = Color.parseColor("#FF0099FF");
                                 repostBtn.setColorFilter(fillColor);
                                 Log.e(TAG, "Video not Reposted");
                                 VideoReposted = true;
@@ -1036,6 +1085,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onDestroy(){
         super.onDestroy();
+        if (mBound) {
+            mService.setCallbacks(null);
+            unbindService(mConnection);
+            mBound = false;
+        }
     }
 
 
@@ -1061,6 +1115,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onStop() {
         super.onStop();
+      //  if (Util.SDK_INT > 23) {
+        //    releasePlayer();
+        //}
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
@@ -1215,7 +1272,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finishedLike();
-                        int fillColor = Color.parseColor("#ff13ae");
+                        int fillColor = Color.parseColor("#C8FF681C");
                         likeBtn.setColorFilter(fillColor);
                         VideoLiked = true;
                         Log.e(TAG, "Video is liked " + VideoLiked);
@@ -1256,7 +1313,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.e(TAG, "User Video is reposted ");
+                        Log.e(TAG, "Reposted ");
                     }
                 });
     }
@@ -1291,7 +1348,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
-        Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(VideoPlayer.this, "Video has been faved.", Toast.LENGTH_SHORT).show();
     }
 
     private void repostVideo() {
@@ -1308,7 +1365,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                     @Override
                     public void onSuccess(Void aVoid) {
                         finishedRepost();
-                        int fillColor = Color.parseColor("#ff13ae");
+                        int fillColor = Color.parseColor("#FF0099FF");
                         repostBtn.setColorFilter(fillColor);
                         VideoReposted = true;
                         Log.e(TAG, "Video is reposted " + VideoReposted);
@@ -1803,10 +1860,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void initMiniButton(){
         minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
         minimizeButton.setOnClickListener(new View.OnClickListener() {
-    @Override
+            @Override
             public void onClick(View v) {
                 makeMiniPlayer();
-        }
+            }
         });
     }
 

@@ -2,9 +2,11 @@ package com.hitstreamr.hitstreamrbeta.BottomNav;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -38,14 +40,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
+import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
 import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
+import com.hitstreamr.hitstreamrbeta.MoreWatchAgain;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
+import com.hitstreamr.hitstreamrbeta.ReportVideoPopup;
 import com.hitstreamr.hitstreamrbeta.TrendingAdapter;
 import com.hitstreamr.hitstreamrbeta.TrendingVideos;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
@@ -91,7 +97,11 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private ArrayList<Video> UserGenreVideos;
     private ArrayList<Video> UserNewVideos;
     private ItemClickListener mListener;
+    private TrendingItemClickListener tlistner;
     private String CreditVal;
+    private Video onClickedVideo;
+
+    SwipeRefreshLayout swipeRefreshLayout;
 
 
     @Override
@@ -108,19 +118,78 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
         setupRecyclerView();
 
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
+
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(current_user.getUid()).child("creditvalue")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        if(!Strings.isNullOrEmpty(currentCredit)){
+                            CreditVal = currentCredit;
+                        }
+                        else
+                            CreditVal = "0";
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
+
+        tlistner = selectedVideo -> {
+            Log.e(TAG,"entered video trenf=ding" + selectedVideo.getVideoId());
+            Intent videoPlayerIntent = new Intent(getContext(), VideoPlayer.class);
+            videoPlayerIntent.putExtra("VIDEO", selectedVideo);
+            videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+            videoPlayerIntent.putExtra("CREDIT", CreditVal);
+            startActivity(videoPlayerIntent);
+        };
+
+        swipeRefreshLayout = view.findViewById(R.id.swipe);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },3000);
+            }
+        });
+
         trendingMoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent trending = new Intent(getContext(), TrendingVideos.class);
+                trending.putExtra("TYPE", getArguments().getString("TYPE"));
                 startActivity(trending);
             }
         });
+
+
 
         // Populate the Artists To Watch recycler view
         showArtistsToWatch(view);
 
         // Populate the Popular People recycler view
         loadPopularPeople(view);
+
+        // Populate the Watch Again recycler view
+        loadWatchAgain(view);
 
         // More top artists
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);
@@ -141,6 +210,17 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 Intent morePopularPeople = new Intent(getContext(), MorePopularPeople.class);
                 morePopularPeople.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
                 startActivity(morePopularPeople);
+            }
+        });
+
+        // More watch again videos
+        Button moreWatchAgain = view.findViewById(R.id.moreWatchAgain);
+        moreWatchAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent moreWatchAgain = new Intent(getContext(), MoreWatchAgain.class);
+                moreWatchAgain.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
+                startActivity(moreWatchAgain);
             }
         });
 
@@ -192,9 +272,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             }
 
             @Override
-            public void onOverflowClick(Video title, View v) { showOverflow(v);
+            public void onOverflowClick(Video video, View v) {
+                onClickedVideo = video;
+                showOverflow(v);
             }
         };
+
+        setupRecyclerView();
+
+
     }
 
     @Nullable
@@ -248,8 +334,26 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredResults.addOnSuccessListener(queryDocumentSnapshots -> {
             for (DocumentSnapshot docs : queryDocumentSnapshots) {
                 if (docs.exists()) {
-                    featuredVideos.add(docs.toObject(Video.class));
-                    Log.e(TAG,docs.toObject(Video.class).toString());
+                    Video tmp = docs.toObject(Video.class);
+                    featuredVideos.add(tmp);
+                    Log.e(TAG,"Logging each Video");
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Title: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    if (tmp.getDescription() != null){  Log.e(TAG,"Description: " + tmp.getDescription());} else {Log.e(TAG,"Description was null");}
+                    if (tmp.getGenre() != null){  Log.e(TAG,"Genre: " + tmp.getGenre());} else {Log.e(TAG,"Genre was null");}
+                    if (tmp.getSubGenre() != null){  Log.e(TAG,"Sub-Genre: " + tmp.getSubGenre());} else {Log.e(TAG,"Sub-Genre was null");}
+                    if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
+                    if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
+                    if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
+                    //TODO just a log!
+//                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
+                    if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Pub Year: " + tmp.getPubYear());
+                    if (tmp.getDuration() != null){  Log.e(TAG,"Duration: " + tmp.getDuration());} else {Log.e(TAG,"Duration was null");}
+                    if (tmp.getVideoId() != null){  Log.e(TAG,"Video ID: " + tmp.getVideoId());} else {Log.e(TAG,"VID was null");}
+                    if (tmp.getTimestamp() != null){  Log.e(TAG,"Timestamp: " + tmp.getTimestamp().toString());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Views: " + tmp.getTitle());
+                    if (tmp.getDelete() != null){  Log.e(TAG,"Delete: " + tmp.getDelete());} else {Log.e(TAG,"Delete was null");}
                 } else {
                     Log.e(TAG, "Document " + docs.toString() + "does not exist");
                 }
@@ -261,6 +365,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     //Open Video Player for song
                     Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                     videoPlayerIntent.putExtra("VIDEO", video);
+                    Log.e(TAG, video.toString());
                     videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                     videoPlayerIntent.putExtra("CREDIT", userCredits);
                     startActivity(videoPlayerIntent);
@@ -298,7 +403,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        adapter = new TrendingAdapter(options);
+        adapter = new TrendingAdapter(options, tlistner, mListener);
         recyclerView_Trending.hasFixedSize();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView_Trending.setLayoutManager(layoutManager);
@@ -319,14 +424,42 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         adapter.stopListening();
     }
 
+    /**
+     * Video menu popup options.
+     * @param item item
+     * @return true
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.fave_result:
-                break;
-            case R.id.addLibrary_result:
+            case R.id.addToWatchLater_videoMenu:
+                FirebaseDatabase.getInstance()
+                        .getReference("WatchLater")
+                        .child(current_user.getUid())
+                        .child(onClickedVideo.getVideoId())
+                        .child("VideoId")
+                        .setValue(onClickedVideo.getVideoId())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(), "Video has been added to Watch Later",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 break;
 
+            case R.id.addToPlaylist_videoMenu:
+                Intent playlistIntent = new Intent(getContext(), AddToPlaylist.class);
+                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                playlistIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                startActivity(playlistIntent);
+                break;
+
+            case R.id.report_videoMenu:
+                Intent reportVideo = new Intent(getContext(), ReportVideoPopup.class);
+                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                getContext().startActivity(reportVideo);
+                break;
         }
         return true;
     }
@@ -339,7 +472,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void showOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_menu_pop_up);
         popupMenu.show();
     }
 
@@ -444,6 +577,63 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     }
 
     /**
+     * Load watch again videos based on the user's history.
+     * @param view view
+     */
+    private void loadWatchAgain(View view) {
+        RecyclerView recyclerView_watchAgain = view.findViewById(R.id.watchAgainRCV);
+        recyclerView_watchAgain.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+
+        List<String> videoIdList = new ArrayList<>();
+
+        FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
+                .orderByChild("timestamp")
+                .limitToLast(20)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                                videoIdList.add(ds.child("videoId").getValue(String.class));
+                            }
+
+                            // Query to database
+                            if (getActivity() != null) {
+
+                                List<Video> videoList = new ArrayList<>();
+                                HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
+                                        new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent(), mListener);
+
+                                for (String videoId : videoIdList) {
+                                    FirebaseFirestore.getInstance().collection("Videos")
+                                            .document(videoId)
+                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            if (documentSnapshot.exists()) {
+//                                                if ((documentSnapshot.get("delete").equals("N")) &&
+//                                                        (documentSnapshot.get("privacy")
+//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                    videoList.add(documentSnapshot.toObject(Video.class));
+                                                    homeFragmentWatchAgainAdapter.notifyDataSetChanged();
+                                                    recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+//                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+    }
+
+    /**
      * Get the user's preferred genres.
      */
     public void getUserGenre() {
@@ -515,6 +705,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         newReleaseadapter.notifyDataSetChanged();
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
+    }
+
+    public interface TrendingItemClickListener {
+        void onTrendingVideoClick(Video selectedVideo);
     }
 
 }

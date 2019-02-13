@@ -10,10 +10,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,9 +43,10 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
     private RecyclerView recyclerView_newRelease;
     private ArrayList<String> userGenreList;
     private ArrayList<Video> UserGenreVideos;
-   private ItemClickListener mListener;
+    private ItemClickListener mListener;
     private String CreditVal;
     public final String TAG = "NewReleasePage";
+    private Video onClickedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +75,6 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
                         }
                         else
                             CreditVal = "0";
-
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -95,19 +95,49 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
 
             @Override
-            public void onOverflowClick(Video title, View v) { showOverflow(v);
+            public void onOverflowClick(Video video, View v) {
+                onClickedVideo = video;
+                showOverflow(v);
             }
         };
     }
 
+    /**
+     * Video menu popup options.
+     * @param item item
+     * @return true
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.fave_result:
-                break;
-            case R.id.addLibrary_result:
+            case R.id.addToWatchLater_videoMenu:
+                FirebaseDatabase.getInstance()
+                        .getReference("WatchLater")
+                        .child(current_user.getUid())
+                        .child(onClickedVideo.getVideoId())
+                        .child("VideoId")
+                        .setValue(onClickedVideo.getVideoId())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 break;
 
+            case R.id.addToPlaylist_videoMenu:
+                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                startActivity(playlistIntent);
+                break;
+
+            case R.id.report_videoMenu:
+                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                startActivity(reportVideo);
+                break;
         }
         return true;
     }
@@ -120,7 +150,7 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
     public void showOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_menu_pop_up);
         popupMenu.show();
     }
 

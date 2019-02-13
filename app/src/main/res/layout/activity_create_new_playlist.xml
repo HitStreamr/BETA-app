@@ -7,74 +7,87 @@
     android:background="@drawable/round_outline_wht"
     android:outlineProvider="background"
     android:layout_gravity="center"
-    android:elevation="4dp"
+    android:elevation="10dp"
     tools:context=".CreateNewPlaylist">
 
-    <LinearLayout
+
+    <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Playlist"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            android:paddingEnd="120dp"
-            android:textColor="@color/drkgryAccent" />
-
-        <EditText
-            android:id="@+id/createPlayListTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Title"
-            android:layout_marginBottom="10dp"
-            android:textCursorDrawable="@android:color/black" />
-
-        <TextView
-            android:id="@+id/privacy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Privacy"
-            android:textSize="10dp"
-            android:textColor="@color/drkgryAccent" />
-
-        <Spinner
-            android:id="@+id/createPlaylistPrivacy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:entries="@array/Privacy" />
+        app:cardCornerRadius="8dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="end"
-            >
+            android:orientation="vertical"
+            android:padding="20dp">
 
-            <Button
-                android:id="@+id/createPlayListCancel"
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:textColor="@color/colorPrimary"
-                android:background="@android:color/transparent"/>
+                android:text="New Playlist"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:paddingEnd="120dp"
+                android:textColor="@color/drkgryAccent" />
 
-            <Button
-                android:id="@+id/createPlayListConfirm"
+            <EditText
+                android:id="@+id/createPlayListTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Title"
+                android:layout_marginBottom="10dp"
+                android:textCursorDrawable="@android:color/black"
+                android:singleLine="true"
+                android:cursorVisible="true"/>
+
+            <TextView
+                android:id="@+id/privacy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="OK"
-                android:textColor="@color/litgryAccent"
-                android:background="@android:color/transparent"
-                />
+                android:text="Privacy"
+                android:textSize="10dp"
+                android:textColor="@color/drkgryAccent" />
 
+            <Spinner
+                android:id="@+id/createPlaylistPrivacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/Privacy" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"
+                >
+
+                <Button
+                    android:id="@+id/createPlayListCancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cancel"
+                    android:textColor="@color/litgryAccent"
+                    android:background="@android:color/transparent"
+                    android:layout_marginEnd="40dp"/>
+
+                <Button
+                    android:id="@+id/createPlayListConfirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="OK"
+                    android:textColor="@color/colorPrimary"
+                    android:background="@android:color/transparent"
+                    />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+
 
 </RelativeLayout>

@@ -18,7 +18,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="2000dp"
             android:layout_below="@+id/toolbar"
             android:orientation="vertical">
 
@@ -117,6 +117,7 @@
                 android:padding="5dp">
 
                 <LinearLayout
+                    android:id="@+id/followers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="50dp"
@@ -151,6 +152,7 @@
                     android:background="@color/drkgryAccent" />
 
                 <LinearLayout
+                    android:id="@+id/following"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -253,29 +255,38 @@
                 android:id="@+id/profile_recyclerView">
 
             </android.support.v7.widget.RecyclerView>-->
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/listView_Feed"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:visibility="visible"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/listView_Upload"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:visibility="visible" />
+                android:layout_height="600dp"
+                android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/playlist_RC"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:visibility="visible" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/listView_Feed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:visibility="visible" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/listView_Upload"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:visibility="visible" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/playlist_RC"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:visibility="visible" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
 
