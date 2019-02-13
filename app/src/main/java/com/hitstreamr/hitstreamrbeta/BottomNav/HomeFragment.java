@@ -344,7 +344,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
                     if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
                     if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
-                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
+                    //TODO just a log!
+//                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
                     if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
                     if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
                     Log.e(TAG,"Pub Year: " + tmp.getPubYear());

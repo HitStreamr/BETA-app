@@ -81,7 +81,8 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         }
 
         holder.videoTitle.setText(vids.get(position).getTitle());
-        holder.videoUsername.setText(vids.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(vids.get(position).getUsername());
         holder.videoViews.setText(formatt(vids.get(position).getViews()));
         holder.videoTime.setText(vids.get(position).getDuration());
         if (vids.get(position).getTimestamp() != null)

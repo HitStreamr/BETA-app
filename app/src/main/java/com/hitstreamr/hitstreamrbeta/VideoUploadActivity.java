@@ -81,7 +81,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_ID = "videoId";
     private static final String VIDEO_VIEWS = "views";
     private static final String USER_ID = "userId";
-    private static final String USER_NAME = "username";
+//    private static final String USER_NAME = "username";
     private static final String VIDEO_CONTRIBUTOR = "contributors";
     private static final String VIDEO_DURATION = "duration";
     private static final String VIDEO_DELETE = "delete";
@@ -307,7 +307,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 autoComplete.clear();
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
                     String username = suggestionSnapshot.child("username").getValue(String.class);
-                    //Log.e(TAG,"username --"+username);
+//                    //Log.e(TAG,"username --"+username);
                     //Add the retrieved string to the list
                     autoComplete.add(username);
                 }
@@ -547,7 +547,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_PUB_YEAR, pubYear);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
-        artistVideo.put(USER_NAME, currentFirebaseUser.getDisplayName());
+//        artistVideo.put(USER_NAME, currentFirebaseUser.getDisplayName());
         artistVideo.put(VIDEO_DURATION,millisecondsToString(duration));
         artistVideo.put(VIDEO_TIME_STAMP, null);
         artistVideo.put(VIDEO_ID,null);

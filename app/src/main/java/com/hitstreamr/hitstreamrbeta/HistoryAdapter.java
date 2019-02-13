@@ -46,7 +46,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(HistoryAdapter.HistoryViewHolder holder, int position) {
         holder.title.setText(HistoryList.get(position).getTitle());
-        holder.author.setText(HistoryList.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.author.setText(HistoryList.get(position).getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(HistoryList.get(position).getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(HistoryList.get(position).getDuration());

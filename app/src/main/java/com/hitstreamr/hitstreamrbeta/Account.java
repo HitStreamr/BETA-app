@@ -65,6 +65,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private boolean backgroundChanged = false;
 
     private String email;
+    private String verified;
 
     //Account Type
     private String type;
@@ -254,6 +255,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String zip = dataSnapshot.child("zip").getValue(String.class);
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
+        verified = dataSnapshot.child("verified").getValue(String.class);
 
         String bio = "";
         if (dataSnapshot.child("bio").exists()) {
@@ -261,7 +263,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         }
 
         artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state,
-                country, phone, zip, bio/*, null*/);
+                country, phone, zip, bio, userID, verified);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -295,15 +297,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
-        String userID = dataSnapshot.child("userID").getValue(String.class);
         String fullname = dataSnapshot.child("fullname").getValue(String.class);
-        String bio = "";
+        verified = dataSnapshot.child("verified").getValue(String.class);
 
+        String bio = "";
         if (dataSnapshot.child("bio").exists()) {
             bio = dataSnapshot.child("bio").getValue(String.class);
         }
 
-        oldBasic = new User(username, email, userID, fullname, bio);
+        oldBasic = new User(username, email, userID, fullname, bio, verified);
 
         EditTextEmail.setText(oldBasic.getEmail());
         EditTextUsername.setText(oldBasic.getUsername());
@@ -330,7 +332,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.setMessage("Registering New User...");*/
 
         //make sure the basic user has the write id
-        basicUser = new User(username, email, oldBasic.getUserID(), name, bio);
+        basicUser = new User(username, email, oldBasic.getUserID(), name, bio, verified);
         oldBasic = basicUser;
 
         if(selectedBackgroundPath!= null){
@@ -390,7 +392,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String phone = EditTextPhone.getText().toString().trim();
         final String bio = EditTextBio.getText().toString().trim();
 
-        // TODO: validate bio
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname)
                 | !validateEmail(email) | !validateAddressLine(address) | !validateCity(city)
                 | !validateUsername(username) | !validatePhone(phone) | !validateZip(zip)
@@ -400,7 +401,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return;
         }
         artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city,
-                state, country, phone, zip, bio/*, null*/);
+                state, country, phone, zip, bio, userID, verified);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);

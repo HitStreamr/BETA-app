@@ -7,7 +7,7 @@ public class ArtistUser {
 
     public ArtistUser(String firstname, String lastname, String artistname, String email, String username,
                       String address, String city, String state, String country, String phone, String zip,
-                      String bio/*, String userID, String verified*/) {
+                      String bio, String userID, String verified) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.artistname = artistname;
@@ -20,8 +20,8 @@ public class ArtistUser {
         this.zip = zip;
         this.country = country;
         this.bio = bio;
-//        this.userID = userID;
-//        this.verified = verified;
+        this.userID = userID;
+        this.verified = verified;
     }
 
     public ArtistUser() {}

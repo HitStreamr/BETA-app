@@ -53,7 +53,8 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
     public void onBindViewHolder(@NonNull UserFeedHolder holder, int position) {
         requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        holder.videoUsername.setText(objects1.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(objects1.get(position).getUsername());
         userLike = objects2.get(position).getFeedLike();
         UserRepost = objects2.get(position).getFeedRepost();
 
