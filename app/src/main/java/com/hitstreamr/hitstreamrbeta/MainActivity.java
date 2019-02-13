@@ -909,6 +909,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
         final MenuItem mSearch = menu.findItem(R.id.search);
+        
         //Items
         profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();

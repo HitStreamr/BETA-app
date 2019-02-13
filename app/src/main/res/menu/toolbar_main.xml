@@ -20,9 +20,11 @@
         tools:ignore="AlwaysShowAction"
         app:theme="@style/backArrowTheme" />
 
+
     <item android:title="Profile"
         android:id="@+id/profilePicMenu"
         app:showAsAction="always"
-        app:actionLayout="@layout/profile_picture_menu_item" />
+        app:actionLayout="@layout/profile_picture_menu_item"
+        />
 
 </menu>

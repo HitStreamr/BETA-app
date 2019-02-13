@@ -178,7 +178,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
         //getBackgroundImage();
         getUserType();
-        getUsername(); // for userClicked
+        getUsername();
 
 
 
@@ -192,7 +192,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             getCurrentProfile();
             getFollowersCount();
             getFollowingCount();
-            getUserFeedDeatils(current_user.getUid());
+           // getUserFeedDeatils(current_user.getUid());
             getUserFeed(current_user.getUid());
         } else {
             getUserClickedUserId();

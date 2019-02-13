@@ -9,110 +9,32 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-    <LinearLayout
-        android:background="@color/drkgryAccent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:background="@color/drkgryAccent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Date:"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"/>
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/finalQuaterDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00/00/0000"
-            android:textColor="@android:color/white"
-            android:layout_marginStart="5dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Date:"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"/>
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/finalQuaterDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00/00/0000"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="5dp"/>
+
+        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/litgryAccent" />
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Total Streams:"-->
-                <!--android:textSize="16sp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textStyle="bold"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/totalStreams"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="0"-->
-                <!--android:textSize="16sp"-->
-                <!--android:textColor="@color/colorPrimary"-->
-                <!--android:textAlignment="textEnd" />-->
-
-        <!--</LinearLayout>-->
-
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Streams Earnings:"-->
-                <!--android:textSize="16sp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textStyle="bold"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/streamsEarnings"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:text="0"-->
-                <!--android:textSize="16sp"-->
-                <!--android:textColor="@color/colorPrimary"-->
-                <!--android:textAlignment="textEnd" />-->
-
-        <!--</LinearLayout>-->
-
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Contributions:"-->
-                <!--android:textSize="16sp"-->
-                <!--android:textColor="@android:color/black"-->
-                <!--android:textStyle="bold"/>-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/contributions"-->
-                <!--android:layout_width="fill_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="0"-->
-                <!--android:textSize="16sp"-->
-                <!--android:textColor="@color/colorPrimary"-->
-                <!--android:textAlignment="textEnd" />-->
-
-        <!--</LinearLayout>-->
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/litgryAccent" />-->
 
         <LinearLayout
             android:layout_width="match_parent"

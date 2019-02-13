@@ -11,8 +11,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -31,11 +34,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.FeedData;
 import com.hitstreamr.hitstreamrbeta.Library;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.RecentArtistsUploadedAdapter;
+import com.hitstreamr.hitstreamrbeta.ReportVideoPopup;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
@@ -45,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 
 public class ActivityFragment extends Fragment {
@@ -65,6 +72,7 @@ public class ActivityFragment extends Fragment {
     private PostVideoFeedAdapter adapter;
     private ItemClickListener mlistner;
     private String CreditVal;
+    private Video onClickedVideo;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -152,6 +160,50 @@ public class ActivityFragment extends Fragment {
                 videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 startActivity(videoPlayerIntent);
+            }
+
+            @Override
+            public void onOverflowClick(Video video, View view) {
+                onClickedVideo = video;
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                popupMenu.inflate(R.menu.video_menu_pop_up);
+                popupMenu.show();
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToWatchLater_videoMenu:
+                                FirebaseDatabase.getInstance()
+                                        .getReference("WatchLater")
+                                        .child(current_user.getUid())
+                                        .child(onClickedVideo.getVideoId())
+                                        .child("VideoId")
+                                        .setValue(onClickedVideo.getVideoId())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                break;
+
+                            case R.id.addToPlaylist_videoMenu:
+                                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                                playlistIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                                startActivity(playlistIntent);
+                                break;
+
+                            case R.id.report_videoMenu:
+                                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                                startActivity(reportVideo);
+                                break;
+                        }
+                        return true;
+                    }
+                });
             }
         };
     }
@@ -404,6 +456,7 @@ public class ActivityFragment extends Fragment {
 
     public interface ItemClickListener {
         void onActivityClick(Video selectedVideo);
+        void onOverflowClick(Video video, View view);
     }
 
 

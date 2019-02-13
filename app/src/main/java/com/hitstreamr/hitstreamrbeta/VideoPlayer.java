@@ -275,22 +275,24 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         FirebaseDatabase.getInstance().getReference("Credits")
                 .child(current_user.getUid()).child("creditvalue")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
+                @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String currentCredit = dataSnapshot.getValue(String.class);
                 Log.e(TAG, "Main activity credit val " + currentCredit);
                 if (!Strings.isNullOrEmpty(currentCredit)) {
 
                     currentCreditVal = currentCredit;
-                    if(getIntent().getBooleanExtra("RETURN", false)){
-                        restartConnection();
-                    }else {
-                        startConnection();
-                    }
-                } else {
+
+                }else {
                     //userCredits.setText("0");
+                    currentCreditVal = "0";
                 }
-            }
+                if(getIntent().getBooleanExtra("RETURN", false)){
+                        restartConnection();
+                }else {
+                        startConnection();
+                }
+        }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -298,10 +300,74 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             }
         });
 
-        serviceIntent = new Intent(this, VideoPlayerService.class);
-        serviceIntent.putExtra("CREDITS",credit);
-        startService(serviceIntent);
-        (new Handler()).postDelayed(this::binder, 500);
+        contributorTextViews = new ArrayList<>();
+        userContributor = new ArrayList<>();
+
+        FirebaseFirestore.getInstance().collection("Videos")
+                .whereEqualTo("videoId", vid.getVideoId())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
+
+
+
+                                for(HashMap<String,String> contributor : temp){
+                                    Log.d(TAG, "player before contributor   "+contributor.get("contributorUserId") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
+                                    TextView TVtemp = new TextView(context);
+                                    userContributor.add(contributor.get("contributorUserId"));
+                                    TVtemp.setText(contributor.get("contributorName") + "(" +  contributor.get("type") + ")"+", ");
+                                    TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                                    TVtemp.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Intent intent = new Intent(context, Profile.class);
+                                            intent.putExtra("TYPE", context.getString(R.string.type_artist));
+                                            intent.putExtra("artistUsername", contributor.get("contributorName"));
+                                            context.startActivity(intent);
+                                        }
+                                    });
+
+                                    contributorTextViews.add(TVtemp);
+                                }
+
+                                if(contributorTextViews.size()>0) {
+
+                                    //remove extra ,0
+                                    TextView last = contributorTextViews.get(contributorTextViews.size()-1);
+                                    last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
+                                    contributorTextViews.set(contributorTextViews.size()-1,last);
+
+                                    for(TextView tv : contributorTextViews){
+                                        contributorView.addView(tv);
+                                    }
+                                }
+
+
+                            }
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+        readData(new MyCallback() {
+                     @Override
+                     public void onCallback(ArrayList value) {
+                         if (value.size() > 0) {
+                             checkuploaded();
+                         }
+                         iscontributor = userContributor.contains(currentFirebaseUser.getUid());
+                           startService();
+                     }
+                 });
+
         userUploadVideoList = new ArrayList<>();
 
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -466,72 +532,18 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         context = this;
 
 
-        contributorTextViews = new ArrayList<>();
-        userContributor = new ArrayList<>();
-
-        FirebaseFirestore.getInstance().collection("Videos")
-                .whereEqualTo("videoId", vid.getVideoId())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) document.get("contributors");
-
-
-
-                               for(HashMap<String,String> contributor : temp){
-                                   Log.d(TAG, contributor.get("contributorName") + " " + contributor.get("percentage")+ " " + contributor.get("type"));
-                                   TextView TVtemp = new TextView(context);
-                                   userContributor.add(contributor.get("contributorName"));
-                                   TVtemp.setText(contributor.get("contributorName") + "(" +  contributor.get("type") + ")"+", ");
-                                   TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                                           LinearLayout.LayoutParams.WRAP_CONTENT));
-
-                                   TVtemp.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
-                                           Intent intent = new Intent(context, Profile.class);
-                                           intent.putExtra("TYPE", context.getString(R.string.type_artist));
-                                           intent.putExtra("artistUsername", contributor.get("contributorName"));
-                                           context.startActivity(intent);
-                                       }
-                                   });
-
-                                   contributorTextViews.add(TVtemp);
-                               }
-
-                               if(contributorTextViews.size()>0) {
-
-                               //remove extra ,0
-                                TextView last = contributorTextViews.get(contributorTextViews.size()-1);
-                                last.setText(last.getText().toString().substring(0,last.getText().toString().length()-2));
-                                contributorTextViews.set(contributorTextViews.size()-1,last);
-
-                                for(TextView tv : contributorTextViews){
-                                    contributorView.addView(tv);
-                                }
-                               }
-
-
-                            }
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
-        Log.e(TAG, "CREDITS: " + credit);
         // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
-        if (credit != null)
+       /* if (credit != null) {
+            Log.e(TAG ,"inside credit not null "+credit);
             currentCreditVal = credit;
-        else
+        }
+        else {
             currentCreditVal = "0";
+            Log.e(TAG ,"inside credit null "+credit);
+        }*/
 
         mDetector = new GestureDetectorCompat(this,this);
 
@@ -558,6 +570,17 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
         boolean autoplay_state = preferences.getBoolean("autoplay_switch", false);
         autoplay_switch.setChecked(autoplay_state);
+    }
+
+    private void startService(){
+        serviceIntent = new Intent(this, VideoPlayerService.class);
+        serviceIntent.putExtra("CREDITS",credit);
+        serviceIntent.putExtra("UPLOAD",uploadbyUser);
+        serviceIntent.putExtra("CONTRIBUTOR",iscontributor);
+
+        startService(serviceIntent);
+        (new Handler()).postDelayed(this::binder, 500);
+
     }
 
     private void restartConnection(){
@@ -820,25 +843,27 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         Date date = new Date(currentTimeMillis);
         String currentTime = dateFormat.format(date);
         Log.e(TAG, "Your video date format :" + currentTime);*/
+        if (!uploadbyUser && !(iscontributor)) {
 
-        Calendar now = Calendar.getInstance();
-        Calendar tmp = (Calendar) now.clone();
-        tmp.add(Calendar.HOUR_OF_DAY, 24);
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String strDate = simpleFormat.format(tmp.getTime());
-        Log.e(TAG, "Your video date format after" +strDate);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
+            Calendar now = Calendar.getInstance();
+            Calendar tmp = (Calendar) now.clone();
+            tmp.add(Calendar.HOUR_OF_DAY, 24);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            String strDate = simpleFormat.format(tmp.getTime());
+            Log.e(TAG, "Your video date format after" + strDate);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
       /*  Map<String, Object> value = new HashMap<>();
         value.put("UserId", currentFirebaseUser.getUid());
         value.put("timestamp", System.currentTimeMillis());
         ref.setValue(value)*/
-        ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+            ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     //To reduce 1 user credit for watching a video
@@ -880,16 +905,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     public void checkuploaded(){
-        Log.e(TAG, "player user uploaded video list "+userUploadVideoList);
         if (userUploadVideoList.get(0).contains(vid.getVideoId())) {
             uploadbyUser = true;
-            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
-
         }
-
         else{
             uploadbyUser = false;
-            Log.e(TAG, "player user uploaded video list boolean "+uploadbyUser);
         }
 
     }
@@ -1071,12 +1091,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    @Override
-    public void onResume() {
+
+    /*public void onResume() {
         super.onResume();
-        restartConnection();
-        binder();
-    }
+        if(mConnection== null) {
+            restartConnection();
+            binder();
+        }
+    }*/
 
     @Override
     public void onPause() {

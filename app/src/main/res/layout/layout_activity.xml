@@ -72,12 +72,12 @@
                         <ImageView
                             android:id="@+id/feedThumbnail"
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
+                            android:layout_height="180dp"
                             android:outlineProvider="background" />
 
                         <ImageView
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
+                            android:layout_height="180dp"
                             android:background="@drawable/round_outline"
                             android:outlineProvider="background" />
 
@@ -226,6 +226,7 @@
                         android:gravity="end">
 
                         <Button
+                            android:id="@+id/moreBtn"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:background="@drawable/ic_more_vert" />

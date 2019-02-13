@@ -54,7 +54,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     private Button signup, uploadPhotoBtn;
     private Button backbtn;
     private EditText mEmailField, mPasswordField, mUsername, mFullName;
-    private TextView signintext;
+    private TextView signintext, passwordHint;
     private RadioButton radiobtn;
     private ImageView mProfilePhoto;
 
@@ -92,7 +92,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         mEmailField = findViewById(R.id.Email);
         mPasswordField = findViewById(R.id.Password);
         signintext = findViewById(R.id.textviewsignin);
-
+        passwordHint = findViewById(R.id.PasswordHint);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -239,9 +239,11 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private boolean validatePassword(String password) {
         if (password.isEmpty()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPasswordField.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPasswordField.setError("Password too weak");
             return false;
         } else {
@@ -264,7 +266,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         if (selectedImagePath != null) {
             return true;
         }
-        Toast.makeText(this, "Please select a profile image", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
+        uploadPhotoBtn.setText(R.string.image_not_selection);
         return false;
     }
 
