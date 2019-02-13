@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -155,6 +156,13 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
             }
         });
 
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mlistner.onOverflowClick(postVideoFeed.get(position), holder.overflowMenu);
+            }
+        });
+
 
 
     }
@@ -179,6 +187,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         public TextView videoLikes;
         public TextView videoReposts;
         public FrameLayout parent;
+        public Button overflowMenu;
 
         public VideoPostHolder(View itemView) {
             super(itemView);
@@ -195,6 +204,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
             videoLikes = itemView.findViewById(R.id.faveAmount);
             videoReposts = itemView.findViewById(R.id.repostAmount);
             parent = itemView.findViewById(R.id.thumbailCard);
+            overflowMenu = itemView.findViewById(R.id.moreBtn);
         }
     }
 

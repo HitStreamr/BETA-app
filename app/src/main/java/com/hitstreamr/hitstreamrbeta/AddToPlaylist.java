@@ -144,13 +144,11 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             case R.id.cancel:
                 finish();
                 break;
-
             case R.id.confirm:
                 registerVideoToPlaylist();
                 Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
                 finish();
                 break;
-
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
                 break;

@@ -6,11 +6,11 @@
     app:popupTheme="@style/AppTheme"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-    <item android:id="@+id/notifications"
-        android:icon="@drawable/ic_notifications_none"
-        android:title="Notifications"
-        app:showAsAction="always"
-        tools:ignore="AlwaysShowAction" />
+    <!--<item android:id="@+id/notifications"-->
+        <!--android:icon="@drawable/ic_notifications_none"-->
+        <!--android:title="Notifications"-->
+        <!--app:showAsAction="always"-->
+        <!--tools:ignore="AlwaysShowAction"/>-->
 
     <item android:id="@+id/search"
         android:icon="@drawable/ic_search_black_24dp"
@@ -20,9 +20,11 @@
         tools:ignore="AlwaysShowAction"
         app:theme="@style/backArrowTheme" />
 
+
     <item android:title="Profile"
         android:id="@+id/profilePicMenu"
         app:showAsAction="always"
-        app:actionLayout="@layout/profile_picture_menu_item" />
+        app:actionLayout="@layout/profile_picture_menu_item"
+        />
 
 </menu>

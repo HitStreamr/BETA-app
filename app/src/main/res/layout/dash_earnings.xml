@@ -5,7 +5,8 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Dashboard.Dashboard">
+    tools:context=".Dashboard.Dashboard"
+    android:background="@color/colorAccent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -89,6 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
+                    android:text="0"
                     android:textColor="@color/colorPrimary"
                     android:layout_gravity="center_horizontal"
                     />
@@ -145,7 +147,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="My Songs"
+                android:text="My Streams"
                 android:textSize="16dp"
                 android:textColor="@android:color/black"
                 android:layout_gravity="center_horizontal"/>
@@ -156,14 +158,14 @@
                 android:orientation="horizontal"
                 android:gravity="end">
 
-                <TextView
-                    android:id="@+id/mySongs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="16dp"
+            <TextView
+                android:id="@+id/mySongs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="16dp"
                     android:textColor="@color/colorPrimary"
-                    android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"/>
 
 
             </LinearLayout>
@@ -201,14 +203,14 @@
                 android:orientation="horizontal"
                 android:gravity="end">
 
-                <TextView
-                    android:id="@+id/myContribution"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="16dp"
+            <TextView
+                android:id="@+id/myContribution"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="16dp"
                     android:textColor="@color/colorPrimary"
-                    android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"/>
 
             </LinearLayout>
 
@@ -247,11 +249,14 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:text="Previous Earnings"
+                android:text="Payouts"
                 android:textAlignment="textStart"
                 android:background="@android:color/transparent"
                 android:drawablePadding="5dp"
-                android:paddingHorizontal="10dp"/>
+                android:paddingHorizontal="10dp"
+                android:drawableLeft="@drawable/ic_money_black_24dp"
+                android:onClick="openPayouts"
+                />
 
             <View
                 android:layout_width="match_parent"

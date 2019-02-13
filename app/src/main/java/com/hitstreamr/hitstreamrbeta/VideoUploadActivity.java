@@ -1,11 +1,15 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -61,7 +65,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, AssemblyProgressListener {
+public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, VideoUploadCallback, SaveTaskCallback{
 
     private static final String TAG = "MyVideoUploadService";
 
@@ -106,7 +110,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button ContributorCancelBtn;
 
     //EditText Inputs
-    private EditText EdittextTittle;
+    private EditText EdittextTitle;
     private EditText EditTextDescription;
 
     //private EditText EdittextContributorName;
@@ -160,8 +164,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private AtomicBoolean successVideoUpload;
     private AtomicBoolean successFirestoreUpload;
     private AtomicBoolean videoSelected;
-    private AtomicBoolean thumbnailSelected;
-    private static int SPLASH_TIME_OUT = 3000;
 
     //Firestore Database
     private FirebaseFirestore db;
@@ -178,6 +180,16 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     //Transloadit
     AndroidTransloadit transloadit;
     AndroidAsyncAssembly assembly;
+
+    int i, sum = 0, tempvalue = 0;
+    String temp;
+    private Intent serviceIntent;
+
+    private ServiceConnection mConnection;
+    private VideoUploadService mService;
+    private boolean mBound;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +226,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         successVideoUpload = new AtomicBoolean(false);
         successFirestoreUpload = new AtomicBoolean(false);
         videoSelected = new AtomicBoolean(false);
-        thumbnailSelected = new AtomicBoolean(false);
 
         //Layout
         addContributorLayout = findViewById(R.id.add_contributor_layout);
@@ -224,7 +235,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Buttons
         uploadBtn = findViewById(R.id.uploadVideo);
         selectVideoBtn = findViewById(R.id.selectVideo);
-        selectThumbBtn = findViewById(R.id.selectThumbnail);
         contributeBtn = findViewById(R.id.ContributorBtn);
         addContributorBtn = findViewById(R.id.AddContributorButton);
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
@@ -233,11 +243,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
 
-        //ImageView
-        thumbnailImage = findViewById(R.id.imageView);
-
         //Edittext
-        EdittextTittle = findViewById(R.id.Title);
+        EdittextTitle = findViewById(R.id.Title);
         EditTextDescription = findViewById(R.id.Description);
        // EdittextContributorName = findViewById(R.id.ContributorName);
         EdittextContributorPercentage = findViewById(R.id.ContributorPercentage);
@@ -267,8 +274,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorVideo = new HashMap<>();
         artistVideo = new HashMap<>();
 
-        //contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList);
-
         //progressBar
         progressBar = findViewById(R.id.uploadProgress);
 
@@ -279,7 +284,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         //Listeners
         uploadBtn.setOnClickListener(this);
         selectVideoBtn.setOnClickListener(this);
-        selectThumbBtn.setOnClickListener(this);
         contributeBtn.setOnClickListener(this);
         addContributorBtn.setOnClickListener(this);
         retryUploadBtn.setOnClickListener(this);
@@ -292,6 +296,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 contributorAdapter.notifyDataSetChanged();
             }
         });
+
         database = FirebaseDatabase.getInstance().getReference();
 
         final ArrayAdapter<String> autoComplete = new ArrayAdapter<>(this,android.R.layout.simple_list_item_1);
@@ -313,6 +318,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
             }
         });
+
         EdittextContributorName= (AutoCompleteTextView)findViewById(R.id.ContributorName);
         EdittextContributorName.setAdapter(autoComplete);
         autoComplete.notifyDataSetChanged();
@@ -334,23 +340,17 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
                     EdittextContributorName.setText("");
                     Toast.makeText(VideoUploadActivity.this, "Please choose Contributor name from the suggested list", Toast.LENGTH_SHORT).show();
-
-
                 }
             }
         });
 
+        //Video Upload Service
+        startConnection();
+        startVideoUploadService();
 
         /* Transloadit Credentials */
         transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
-
-        assembly = transloadit.newAssembly(this,this);
-
-        //set template Id
-        assembly.addOption("template_id", BuildConfig.Transloadit_TEMPLATE_ID);
-
     }
-
 
     /*
      * Select Video and Callback from Video
@@ -369,24 +369,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         startActivityForResult(Intent.createChooser(intent, "Select your video"), VID_REQUEST_CODE);
     }
 
-    /*
-     * Select Thumbnail
-     */
-    private void selectThumbnail() {
-        thumbnailSelected.set(false);
-        /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        i.setType("video/*");
-        startActivityForResult(i, SELECT_VIDEO); //, getApplicationContext(), VideoUploadActivity.class*/
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        //Intent intent = new Intent();
-        intent.setType("image/*");
-        //intent.setAction(intent.ACTION_GET_CONTENT);
-        //startActivityForResult(intent, VID_REQUEST_CODE);
-
-        startActivityForResult(Intent.createChooser(intent, "Select your image"), IMG_REQUEST_CODE);
-    }
-
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -394,7 +376,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             if (requestCode == VID_REQUEST_CODE) {
                 if (data != null) {
                     if (data.getData() != null) {
-                        //selectedVideoPath = getPath(data.getData()); data.getData()
                         selectedVideoPath = data.getData();
                         try {
 
@@ -428,114 +409,111 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         videoSelected.set(false);
                     }
                 }
-            }else if (requestCode == IMG_REQUEST_CODE) {
-                if (data != null) {
-                    if (data.getData() != null) {
-                        //selectedVideoPath = getPath(data.getData()); data.getData()
-                        selectedImagePath = data.getData();
-                        try {
-                            thumbnailImage.setImageURI(selectedImagePath);
-                            selectThumbBtn.setBackgroundColor(Color.GREEN);
-                            selectThumbBtn.setText("Thumbnail Selected");
-                            //String path = data.getData().toString();
-
-                            // Image has been selected succesfully
-                            thumbnailSelected.set(true);
-
-
-                        } catch (Exception e) {
-                            //#debug
-                            e.printStackTrace();
-                        }
-                    } else {
-                        selectVideoBtn.setBackgroundColor(Color.RED);
-                        selectVideoBtn.setText(R.string.video_not_selection);
-                        // Image has not  been selected succesfully
-                        thumbnailSelected.set(false);
-                    }
-                }
             }
         }
     }
 
-    private void uploadFromUri(final Uri videoUri, final Uri imageUri){
+    private void startConnection(){
+        /* Video Player Service */
+        mConnection = new ServiceConnection() {
 
-        final String storagetitle = EdittextTittle.getText().toString().trim();
-        videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
-        String storage  = "videos/" + currentFirebaseUser.getUid()+ "/mp4" + "/" + storagetitle;
-        String original = "videos/" + currentFirebaseUser.getUid()+ "/original" + "/" + storagetitle;
-        String thumbnail = "thumbnails/" + currentFirebaseUser.getUid() + "/" + storagetitle;
-        // Upload file to Firebase Storage
-        Log.d(TAG, "uploadFromUri:dst:" + storage);
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                VideoUploadService.LocalBinder binder = (VideoUploadService.LocalBinder) service;
+                mService = binder.getService();
+                mService.setCallbacks(VideoUploadActivity.this);
+                assembly = transloadit.newAssembly(mService, VideoUploadActivity.this);
+                //set template Id
+                assembly.addOption("template_id", BuildConfig.Transloadit_TEMPLATE_ID);
+            }
 
-        try {
-            assembly.addFile(getContentResolver().openInputStream(videoUri), storagetitle);
-            assembly.addFile(getContentResolver().openInputStream(imageUri), "thumbnail_" + storagetitle);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mService = null;
+            }
+        };
+    }
+
+    public void startVideoUploadService(){
+        serviceIntent = new Intent(this, VideoUploadService.class);
+        startService(serviceIntent);
+        (new Handler()).postDelayed(this::binder, 500);
+    }
+
+    @Override
+    public void unbindUploadService(){
+        if(mBound){
+            mService.setCallbacks(null);
+            unbindService(mConnection);
+            mBound = false;
+            mService = null;
+            mConnection = null;
         }
-
-        Map<String, Object> exportOptions = new HashMap<>();
-        exportOptions.put("path", storage);
-        assembly.addStep("store_encoded", "/google/store", exportOptions);
-
-        Map<String, Object> exportOriginalOptions = new HashMap<>();
-        exportOriginalOptions.put("path", original);
-        assembly.addStep("store_original", "/google/store", exportOriginalOptions);
-
-        Map<String, Object> exportThumbnailOptions = new HashMap<>();
-        exportThumbnailOptions.put("path", thumbnail);
-        assembly.addStep("store_thumbnail", "/google/store", exportThumbnailOptions);
-
-
-        ReportVideoPopup.SaveTask save = new ReportVideoPopup.SaveTask(this,assembly);
-        save.execute(true);
     }
 
+    @Override
+    public void goBack(){
+        onBackPressed();
+    }
 
-    private void getDownloadURL(){
-        final String storagetitle = EdittextTittle.getText().toString().trim();
-        videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
-        videoRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        downloadVideoUri = uri.toString();
-                        getThumbnailURL();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                successFirestoreUpload.set(false);
-                retryUploadBtn.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        unbindUploadService();
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        unbindUploadService();
+    }
+
+    private void binder(){
+        Log.d(TAG, "Bind Service");
+        if (bindService(serviceIntent,mConnection, 0)) {
+            mBound = true;
+        } else {
+            Log.e(TAG, "Error: The requested service doesn't " +
+                    "exist, or this client isn't allowed access to it.");
+        }
+    }
+
+    private ArrayList<String> processTitle(String title){
+        // ArrayList of characters to remove
+        ArrayList<String> remove = new ArrayList<>();
+        remove.add(" ");
+
+        ArrayList<String> tmp = new ArrayList<>(Arrays.asList(title.trim().toLowerCase().split("\\s+")));
+        tmp.removeAll(remove);
+
+        return tmp;
+    }
+
+    private void registerVideo() {
+        final String title = EdittextTitle.getText().toString().trim();
+        final String description = EditTextDescription.getText().toString().trim();
+
+        if (!validateTitle(title) || !validateDescription(description) || !validateBrowseVideo() || !validateSumPercentage()
+                || !validateGenre() || !validateSubGenre()) {
+            return;
+        } else {
+            Log.e("tag", "Enter register video");
+            // videoLayout.setVisibility(View.GONE);
+            // videoCancelLayout.setVisibility(View.VISIBLE);
+            // TextViewVideoFilename.setText(title);
+            makeArtistVideoMap();
+            if(mService != null){
+                mService.setTitle(title);
+                mService.setMap(artistVideo);
             }
-        });
-
+            uploadFromUri(selectedVideoPath);
+        }
     }
 
-    private void getThumbnailURL(){
-        final String storagetitle = EdittextTittle.getText().toString().trim();
-        thumbnailRef = mStorageRef.child("thumbnails").child(currentFirebaseUser.getUid()).child(storagetitle);
-        thumbnailRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        thumbnailVideoUri = uri.toString();
-                        registerFirebase();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                retryUploadBtn.setVisibility(View.VISIBLE);
-                Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
-                successFirestoreUpload.set(false);
-            }
-        });
-    }
-
-    private void registerFirebase() {
-        final String title = EdittextTittle.getText().toString().trim();
+    private void makeArtistVideoMap(){
+        final String title = EdittextTitle.getText().toString().trim();
         final String description = EditTextDescription.getText().toString().trim();
         final String genre = SpinnerGenre.getSelectedItem().toString().trim();
         final String subGenre = SpinnerSubGenre.getSelectedItem().toString().trim();
@@ -583,80 +561,33 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             terms.put(res.get(i), true);
         }
         artistVideo.put(VIDEO_TITLE_TERMS,terms);
-
-
-        db.collection("Videos").document()
-                //.set(contributorList)
-                .set(artistVideo)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                        successFirestoreUpload.set(true);
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                finish();
-                                Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                                homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                startActivity(homeIntent);
-                            }
-                        }, SPLASH_TIME_OUT);
-                        successMessage();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                        retryUploadBtn.setVisibility(View.VISIBLE);
-                        Toast.makeText(VideoUploadActivity.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
-                    }
-                });
-
     }
 
-    private ArrayList<String> processTitle(String title){
-        // ArrayList of characters to remove
-        ArrayList<String> remove = new ArrayList<>();
-        remove.add(" ");
+    private void uploadFromUri(final Uri videoUri){
+        if (assembly != null) {
+            final String storagetitle = EdittextTitle.getText().toString().trim();
+            videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
+            String storage = "videos/" + currentFirebaseUser.getUid() + "/mp4" + "/" + storagetitle;
+            String original = "videos/" + currentFirebaseUser.getUid() + "/original" + "/" + storagetitle;
 
-        ArrayList<String> tmp = new ArrayList<>(Arrays.asList(title.trim().toLowerCase().split("\\s+")));
-        tmp.removeAll(remove);
+            try {
+                assembly.addFile(getContentResolver().openInputStream(videoUri), storagetitle);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-        return tmp;
-    }
+            Map<String, Object> exportOptions = new HashMap<>();
+            exportOptions.put("path", storage);
+            assembly.addStep("store_encoded", "/google/store", exportOptions);
 
-    private void retryVideo() {
-        Toast.makeText(this, "Retrying Upload", Toast.LENGTH_SHORT).show();
-        // succesful upload, but some step of the firestore upload failed for whatever reason
-        if (successVideoUpload.get() && !successFirestoreUpload.get()){
-            getDownloadURL();
-        }else {
-            //if the upload failed, then nothing else matters restart the whole process
-            registerVideo();
-        }
-    }
+            Map<String, Object> exportOriginalOptions = new HashMap<>();
+            exportOriginalOptions.put("path", original);
+            assembly.addStep("store_original", "/google/store", exportOriginalOptions);
 
-
-    private void successMessage() {
-        Toast.makeText(this, "Video Uploaded successfully", Toast.LENGTH_SHORT).show();
-    }
-
-    private void registerVideo() {
-        final String title = EdittextTittle.getText().toString().trim();
-        final String description = EditTextDescription.getText().toString().trim();
-
-        if (!validateTitle(title) | !validateDescription(description) | !validateBrowseVideo() | !validateSumPercentage()
-                | !validateGenre() | !validateSubGenre()) {
-            return;
-        } else {
-            Log.e("tag", "Enter register video");
-            videoLayout.setVisibility(View.GONE);
-            videoCancelLayout.setVisibility(View.VISIBLE);
-            TextViewVideoFilename.setText(title);
-
-            uploadFromUri(selectedVideoPath, selectedImagePath);
+            SaveTask save = new SaveTask(this, assembly, this);
+            save.execute(true);
+        }else{
+            Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -671,15 +602,15 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
     private boolean validateTitle(String title) {
         if (title.isEmpty()) {
-            EdittextTittle.setError("Field can't be empty");
+            EdittextTitle.setError("Field can't be empty");
             return false;
         } else if (title.length() >= 100) {
-            EdittextTittle.setError("Title length has passed 100 characters");
-        } else if (!(checkAlphaNumericSymbol(title))) {
-                EdittextTittle.setError("Title must only have letters and numbers");
+            EdittextTitle.setError("Title length has crossed 100 characters");
+        } else if (!(checkAlphaNumeric(title))) {
+                EdittextTitle.setError("Title must only have letters and numbers");
                 return false;
         } else {
-            EdittextTittle.setError(null);
+            EdittextTitle.setError(null);
             return true;
         }
         return true;
@@ -690,9 +621,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EditTextDescription.setError("Field can't be empty");
             return false;
         } else if (description.length() >= 1000) {
-            EdittextTittle.setError("Description length has passed 1000 characters");
-        } else if (!(checkAlphaNumericSymbol(description))) {
-            EdittextTittle.setError("Title must only have letters and numbers");
+            EdittextTitle.setError("Description length has crossed 1000 characters");
+        } else if (!(checkAlphaNumeric(description))) {
+            EdittextTitle.setError("Description must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);
@@ -720,9 +651,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     /**
      * Method to validate the Street Address of any unwanted characters
      */
-    public boolean checkAlphaNumericSymbol(String s) {
+    public boolean checkAlphaNumeric(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+[]{}|;:',./<>? ";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz 1234567890!@#$%^&*()_+-=[]{}|;':',./<>?";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -755,19 +686,17 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         return flag;
     }
 
-    int i, sum = 0, tempvalue = 0;
-    String temp;
-
     private boolean validateSumPercentage() {
         for (i = 1; i < contributorPercentageList.size(); i++) {
             temp = contributorPercentageList.get(i);
             tempvalue = Integer.parseInt(temp);
             sum += tempvalue;
         }
-        if (sum > 100) {
+        if (sum > 99) {
             Toast.makeText(this, "Percentage exceding 100, please check", Toast.LENGTH_SHORT).show();
             return false;
-        } else {
+        } else
+        {
             return true;
         }
     }
@@ -858,29 +787,16 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             selectVideo();
         }
 
-        if(view == selectThumbBtn){
-            selectThumbnail();
-        }
-
         if (view == uploadBtn) {
-            if (videoSelected.get() && thumbnailSelected.get()){
+            if (videoSelected.get()){
                 registerVideo();
-            }else{
-                if (!videoSelected.get() && thumbnailSelected.get()) {
+            }else {
+                if (!videoSelected.get()) {
                     Toast.makeText(this, "Please Select a Video.", Toast.LENGTH_SHORT).show();
-                }else if (!thumbnailSelected.get() && videoSelected.get()){
-                    Toast.makeText(this, "Please Select a Thumbnail.", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(this, "Please Select a Video and Thumbnail.", Toast.LENGTH_SHORT).show();
                 }
             }
-
         }
 
-        if (view == retryUploadBtn) {
-            retryVideo();
-            retryUploadBtn.setVisibility(View.INVISIBLE);
-        }
         if(view == ContributorCancelBtn){
             resetContributor();
             addContributorLayout.setVisibility(View.GONE);
@@ -892,54 +808,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorList.remove(deletePosition);
         contributorFirestoreList.remove(deletePosition);
         contributorAdapter.notifyDataSetChanged();
-    }
-
-    //TRANSLOADIT IMPLEMENTATION
-
-    @Override
-    public void onUploadFinished() {
-        Log.e(TAG, "Your AndroidAsyncAssembly Upload is done and it's now executing");
-    }
-
-    @Override
-    public void onUploadPogress(long uploadedBytes, long totalBytes) {
-        progressBar.setProgress((int) (((double) uploadedBytes) / totalBytes * 100.0));
-        Log.e(TAG, "Percentage: " + (int) (((double) uploadedBytes)/ totalBytes * 100.0));
-    }
-
-    @Override
-    public void onAssemblyFinished(AssemblyResponse response) {
-        try {
-            String res = response.json().getString("ok");
-            Log.e(TAG , "Your AndroidAsyncAssembly is done executing with status: " + res);
-            if (res.equalsIgnoreCase("ASSEMBLY_COMPLETED")){
-                successVideoUpload.set(true);
-                getDownloadURL();
-            }else {
-                successVideoUpload.set(false);
-                retryUploadBtn.setVisibility(View.VISIBLE);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onUploadFailed(Exception exception) {
-        successVideoUpload.set(false);
-        retryUploadBtn.setVisibility(View.VISIBLE);
-        Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
-        Log.e(TAG , "Upload Failed: " + exception.getMessage());
-    }
-
-    @Override
-    public void onAssemblyStatusUpdateFailed(Exception exception) {
-        successVideoUpload.set(false);
-        retryUploadBtn.setVisibility(View.VISIBLE);
-        Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
-        Log.e(TAG , "Assembly Status Update Failed: " + exception.getMessage());
-        exception.printStackTrace();
-
     }
 
     private String millisecondsToString(long duration){

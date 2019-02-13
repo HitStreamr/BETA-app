@@ -58,6 +58,14 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
                 mlistner.onPlaylistVideoClick(playlist.getPlayVideos().get(position));
             }
         });
+
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mlistner.onOverflowClick(playlist.getPlayVideos().get(position), holder.overflowMenu);
+            }
+        });
+
     }
 
     @Override
@@ -74,6 +82,7 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
         private LinearLayout parentLayout;
         private ImageView videoMoreBtn;
         private TextView videoDuration;
+        private ImageView overflowMenu;
 
         public PlaylistContentViewHolder(View view) {
             super(view);
@@ -86,6 +95,7 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
             parentLayout = view.findViewById(R.id.videoCard);
             videoMoreBtn = view.findViewById(R.id.moreMenu);
             videoDuration = view.findViewById(R.id.videoTime);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
         }
     }
 
