@@ -6,7 +6,7 @@
     <item android:id="@+id/deleteVideo"
         android:title="Delete" />
 
-    <item android:id="@+id/addToPlaylist_dashboardUploads"
+    <item android:id="@+id/addToPlaylist"
         android:title="Add to Playlist" />
 
 
