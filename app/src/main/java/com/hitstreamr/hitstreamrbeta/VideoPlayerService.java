@@ -86,6 +86,7 @@ public class VideoPlayerService extends Service {
     private boolean clipped;
     private FirebaseUser currentFirebaseUser;
     private boolean uploadbyUser;
+    private boolean isContributor;
     private boolean autoplay_switchState;
 
 
@@ -216,6 +217,8 @@ public class VideoPlayerService extends Service {
         lastID = startId;
         credits = intent.getStringExtra("CREDITS");
         uploadbyUser = intent.getBooleanExtra("UPLOAD", false);
+        isContributor = intent.getBooleanExtra("CONTRIBUTOR", false);
+        Log.e(TAG ,"inside service isuploaded "+uploadbyUser+"  ::: isContributor  "+isContributor);
         //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         return START_STICKY;
     }
@@ -358,25 +361,26 @@ public class VideoPlayerService extends Service {
         Date date = new Date(currentTimeMillis);
         String currentTime = dateFormat.format(date);
         Log.e(TAG, "Your video date format :" + currentTime);*/
-
-        Calendar now = Calendar.getInstance();
-        Calendar tmp = (Calendar) now.clone();
-        tmp.add(Calendar.HOUR_OF_DAY, 4);
-        SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        String strDate = simpleFormat.format(tmp.getTime());
-        Log.e(TAG, "Your video date format after" + strDate);
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
+        if (!uploadbyUser && !isContributor) {
+            Calendar now = Calendar.getInstance();
+            Calendar tmp = (Calendar) now.clone();
+            tmp.add(Calendar.HOUR_OF_DAY, 24);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            String strDate = simpleFormat.format(tmp.getTime());
+            Log.e(TAG, "Your video date format after" + strDate);
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("VideoViews").child(vid.getVideoId());
       /*  Map<String, Object> value = new HashMap<>();
         value.put("UserId", currentFirebaseUser.getUid());
         value.put("timestamp", System.currentTimeMillis());
         ref.setValue(value)*/
-        ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
+            ref.child(currentFirebaseUser.getUid()).child("TimeLimit").setValue(strDate)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
 
-                    }
-                });
+                        }
+                    });
+        }
     }
 
     public boolean checkAutoplay(){
@@ -390,7 +394,7 @@ public class VideoPlayerService extends Service {
 
     //To reduce 1 user credit for watching a video
     private void updateCreditValue(FirebaseUser currentFirebaseUser) {
-        if (!uploadbyUser) {
+        if (!uploadbyUser && !isContributor) {
             if (!Strings.isNullOrEmpty(credits)) {
                 int creditval = Integer.parseInt(credits);
                 final int newval = creditval - 1;
@@ -425,7 +429,9 @@ public class VideoPlayerService extends Service {
                     stateString = "ExoPlayer.STATE_READY     -";
                     if (!(player.equals(""))) {
                         if (player.getCurrentPosition() == 0) {
-                            timerCounter();
+                            if (!uploadbyUser && !isContributor) {
+                                timerCounter();
+                            }
                         }
                     }
                     break;

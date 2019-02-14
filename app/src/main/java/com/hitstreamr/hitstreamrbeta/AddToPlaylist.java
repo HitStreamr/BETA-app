@@ -47,7 +47,7 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_to_playlsit);
+        setContentView(R.layout.activity_add_to_playlist);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
 

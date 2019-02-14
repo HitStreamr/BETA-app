@@ -106,7 +106,8 @@ public class Uploads extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull DashboardUploadsHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                holder.videoUsername.setText(model.getUsername());
+                //TODO needs to be a callback (or however follows are done)
+//                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
@@ -142,7 +143,6 @@ public class Uploads extends Fragment {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
                                 switch (menuItem.getItemId()) {
-                                    // TODO: finish implementing the video popup menu
                                     case R.id.editVideo:
                                         Intent editVideo = new Intent(getApplicationContext(), VideoEdit.class);
                                         editVideo.putExtra("VIDEO", model);

@@ -72,12 +72,12 @@
                         <ImageView
                             android:id="@+id/feedThumbnail"
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
+                            android:layout_height="180dp"
                             android:outlineProvider="background" />
 
                         <ImageView
                             android:layout_width="match_parent"
-                            android:layout_height="160dp"
+                            android:layout_height="180dp"
                             android:background="@drawable/round_outline"
                             android:outlineProvider="background" />
 

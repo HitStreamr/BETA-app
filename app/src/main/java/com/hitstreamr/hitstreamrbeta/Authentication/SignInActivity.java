@@ -73,6 +73,8 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+
+
         progressDialog = new ProgressDialog(this);
 
         //Buttons

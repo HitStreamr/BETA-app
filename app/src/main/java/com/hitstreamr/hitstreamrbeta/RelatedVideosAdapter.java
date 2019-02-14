@@ -63,7 +63,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     @Override
     public void onBindViewHolder(@NonNull RelatedVideosHolder holder, int position) {
         holder.videoTitle.setText(videoList.get(position).getTitle());
-        holder.videoUsername.setText(videoList.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(videoList.get(position).getUsername());
         holder.videoYear.setText(String.valueOf(videoList.get(position).getPubYear()));
         holder.videoDuration.setText(videoList.get(position).getDuration());
 

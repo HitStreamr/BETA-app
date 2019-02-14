@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -31,13 +32,14 @@ public class Pop extends Activity implements View.OnClickListener {
         ok.setOnClickListener(this);
         cancel.setOnClickListener(this);
 
+        // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-
-        getWindow().setLayout((int) (width * .8), (int) (height * .4));
+//        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+        getWindow().setLayout((int) (width), (int) (height));
+        getWindow().setBackgroundDrawable(new ColorDrawable(0x4b000000));
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();

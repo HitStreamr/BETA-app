@@ -38,7 +38,8 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
     protected void onBindViewHolder(@NonNull TrendingVideosAdapter.TrendingVideosHolder holder, int position, @NonNull Video model) {
 
         holder.videoTitle.setText(model.getTitle());
-        holder.videoUsername.setText(model.getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(model.getUsername());
         String viewCount = Long.toString(model.getViews()) + " views";
         String pubYear = Long.toString(model.getPubYear());
         holder.videoViewsCount.setText(viewCount);
