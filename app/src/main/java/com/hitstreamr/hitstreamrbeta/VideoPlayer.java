@@ -1793,6 +1793,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void initMiniButton(){
+        /*
         minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
         minimizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1800,19 +1801,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 makeMiniPlayer();
             }
         });
+        */
     }
 
     /**DRAG VIDEO **/
-
-    private void initMiniButton(){
-        minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
-        minimizeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeMiniPlayer();
-            }
-        });
-    }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){

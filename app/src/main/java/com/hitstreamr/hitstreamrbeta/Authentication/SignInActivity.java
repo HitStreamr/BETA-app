@@ -73,14 +73,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-
-
         progressDialog = new ProgressDialog(this);
 
         //Buttons
         backbutton = (ImageButton) findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
-
 
         //Views
         ETemail = (EditText) findViewById(R.id.Email);
@@ -184,7 +181,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == RESET_PASSWORD) {
             if (resultCode == RESULT_OK) {
                 loginAttempts = 0;
-                Toast.makeText(SignInActivity.this, "Password Rest Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "Password Reset Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(SignInActivity.this, "Email failed to send. Please try again.", Toast.LENGTH_SHORT).show();
             }
