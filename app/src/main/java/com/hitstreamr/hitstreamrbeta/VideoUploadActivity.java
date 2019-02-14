@@ -616,8 +616,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EdittextTittle.setError("Field can't be empty");
             return false;
         } else if (title.length() >= 100) {
-            EdittextTittle.setError("Title length has crossed 100 characters");
-        } else if (!(checkAlphaNumeric(title))) {
+            EdittextTittle.setError("Title length has passed 100 characters");
+        } else if (!(checkAlphaNumericSymbol(title))) {
                 EdittextTittle.setError("Title must only have letters and numbers");
                 return false;
         } else {
@@ -632,9 +632,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EditTextDescription.setError("Field can't be empty");
             return false;
         } else if (description.length() >= 1000) {
-            EdittextTittle.setError("Description length has crossed 1000 characters");
-        } else if (!(checkAlphaNumeric(description))) {
-            EdittextTittle.setError("Description must only have letters and numbers");
+            EdittextTittle.setError("Description length has passed 1000 characters");
+        } else if (!(checkAlphaNumericSymbol(description))) {
+            EdittextTittle.setError("Title must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);
@@ -662,9 +662,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     /**
      * Method to validate the Street Address of any unwanted characters
      */
-    public boolean checkAlphaNumeric(String s) {
+    public boolean checkAlphaNumericSymbol(String s) {
 
-        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 ()-=+_*&^%$#@!";
+        String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+[]{}|;:',./<>? ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -706,11 +706,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if (sum > 100) {
             Toast.makeText(this, "Percentage exceding 100, please check", Toast.LENGTH_SHORT).show();
             return false;
-        } else if (sum <= 0) {
-            Toast.makeText(this, "Percentage below or equal to 0, please check", Toast.LENGTH_SHORT).show();
-            return false;
-        }else
-        {
+        } else {
             return true;
         }
     }

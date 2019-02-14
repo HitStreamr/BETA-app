@@ -14,19 +14,20 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImage"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:src="@drawable/com_facebook_profile_picture_blank_portrait"
             android:layout_marginBottom="5dp"
             />
 
         <TextView
             android:id="@+id/artistUsername"
-            android:layout_width="match_parent"
+            android:layout_width="65dp"
             android:layout_height="wrap_content"
             android:text="Usename"
             android:textSize="10dp"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            android:singleLine="true"/>
 
     </LinearLayout>
 

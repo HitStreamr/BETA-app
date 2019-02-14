@@ -174,17 +174,18 @@
                             android:layout_weight=".15"
                             android:hint=" 0 "
                             android:inputType="number"
-                            android:maxLength="3" />
+                            android:maxLength="2"/>
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight=".10"
                             android:ems="20"
-                            android:gravity="center_vertical"
                             android:text="%"
+                            android:textSize="20dp"
                             android:textColor="@android:color/black"
-                            android:textSize="20dp" />
+                            android:gravity="center_vertical"
+                            />
 
                         <Spinner
                             android:id="@+id/ContributorTypeSpinner"
@@ -199,8 +200,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.35"
                             android:background="@android:color/transparent"
-                            android:text="Cancel"
-                            android:textColor="@color/colorPrimary" />
+                            android:textColor="@color/colorPrimary"
+                            android:text="Cancel" />
                     </LinearLayout>
 
                     <Button
@@ -277,8 +278,10 @@
             android:id="@+id/uploadProgress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
+            android:paddingHorizontal="10dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:progressTint="@color/colorPrimary"/>
 
         <LinearLayout
             android:layout_width="match_parent"

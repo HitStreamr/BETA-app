@@ -650,7 +650,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         //called when notification is cancelled
         this.finish();
     }
-    
+
     /**
      * Load related videos to the current displayed one based on its genre, and sorted based on views.
      */
@@ -857,7 +857,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     public void showVideoPlayerOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_player_overflow_menu);
+        popupMenu.inflate(R.menu.video_overflow_menu);
         popupMenu.show();
     }
 
@@ -872,7 +872,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         String value = dataSnapshot.getValue(String.class);
                         if (dataSnapshot.exists()) {
                             if (value.equals(currentFirebaseUser.getUid())) {
-                                int fillColor = Color.parseColor("#ff13ae");
+                                int fillColor = Color.parseColor("#C8FF681C");
                                 likeBtn.setColorFilter(fillColor);
                                 //Log.e(TAG, "Video not Liked");
                                 VideoLiked = true;
@@ -926,7 +926,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         String value = dataSnapshot.getValue(String.class);
                         if (dataSnapshot.exists()) {
                             if (value.equals(currentFirebaseUser.getUid())) {
-                                int fillColor = Color.parseColor("#ff13ae");
+                                int fillColor = Color.parseColor("#FF0099FF");
                                 repostBtn.setColorFilter(fillColor);
                                 Log.e(TAG, "Video not Reposted");
                                 VideoReposted = true;
@@ -1023,6 +1023,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onDestroy(){
         super.onDestroy();
+        /*
+        if (mBound) {
+            mService.setCallbacks(null);
+            unbindService(mConnection);
+            mBound = false;
+        }
+        */
     }
 
     @Override
@@ -1241,7 +1248,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.e(TAG, "User Video is reposted ");
+                        Log.e(TAG, "Reposted ");
                     }
                 });
     }
@@ -1276,7 +1283,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
-        Toast.makeText(VideoPlayer.this, "You liked", Toast.LENGTH_SHORT).show();
+        Toast.makeText(VideoPlayer.this, "Video has been faved.", Toast.LENGTH_SHORT).show();
     }
 
     private void repostVideo() {
@@ -1786,13 +1793,33 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void initMiniButton(){
-        //minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
-        //minimizeButton.setOnClickListener(new View.OnClickListener() {
-          //  @Override
-            //public void onClick(View v) {
-              //  makeMiniPlayer();
-            //}
-        //});
+        minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
+        minimizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeMiniPlayer();
+            }
+        });
+    }
+
+    /**DRAG VIDEO **/
+
+    private void initMiniButton(){
+        minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
+        minimizeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeMiniPlayer();
+            }
+        });
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 
     public void makeMiniPlayer(){
@@ -1814,21 +1841,26 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         startActivity(intent, options.toBundle());
     }
 
-
-    /**DRAG VIDEO **/
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2,
                            float velocityX, float velocityY) {
         Log.d(DEBUG_TAG, "onFling: " );
-        makeMiniPlayer();
+        Intent intent = new Intent(this, MainActivity.class);
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
+        intent.putExtra("MINI_VISIBLE", true);
+        intent.putExtra("VIDEO", vid);
+        intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        //intent.putExtra("Playback_Position",  playbackPosition);
+        //intent.putExtra("CurrentWindow", currentWindow);
+        // Pass data object in the bundle and populate details activity.
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this, TextViewTitle, "title");
+        startActivity(intent, options.toBundle());
         return true;
     }
 

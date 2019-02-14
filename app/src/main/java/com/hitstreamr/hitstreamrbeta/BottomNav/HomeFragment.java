@@ -45,6 +45,7 @@ import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
 import com.hitstreamr.hitstreamrbeta.MorePopularPeople;
+import com.hitstreamr.hitstreamrbeta.MoreWatchAgain;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
@@ -112,6 +113,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
+        setupRecyclerView();
+
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -212,7 +215,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         moreWatchAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO
+                Intent moreWatchAgain = new Intent(getContext(), MoreWatchAgain.class);
+                moreWatchAgain.putExtra("TYPE", getActivity().getIntent().getStringExtra("TYPE"));
+                startActivity(moreWatchAgain);
             }
         });
 
@@ -321,25 +326,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredResults.addOnSuccessListener(queryDocumentSnapshots -> {
             for (DocumentSnapshot docs : queryDocumentSnapshots) {
                 if (docs.exists()) {
-                    Video tmp = docs.toObject(Video.class);
-                    featuredVideos.add(tmp);
-                    Log.e(TAG,"Logging each Video");
-                    if (tmp.getTitle() != null){  Log.e(TAG,"Title: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
-                    if (tmp.getDescription() != null){  Log.e(TAG,"Description: " + tmp.getDescription());} else {Log.e(TAG,"Description was null");}
-                    if (tmp.getGenre() != null){  Log.e(TAG,"Genre: " + tmp.getGenre());} else {Log.e(TAG,"Genre was null");}
-                    if (tmp.getSubGenre() != null){  Log.e(TAG,"Sub-Genre: " + tmp.getSubGenre());} else {Log.e(TAG,"Sub-Genre was null");}
-                    if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
-                    if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
-                    if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
-                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
-                    if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
-                    if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
-                    Log.e(TAG,"Pub Year: " + tmp.getPubYear());
-                    if (tmp.getDuration() != null){  Log.e(TAG,"Duration: " + tmp.getDuration());} else {Log.e(TAG,"Duration was null");}
-                    if (tmp.getVideoId() != null){  Log.e(TAG,"Video ID: " + tmp.getVideoId());} else {Log.e(TAG,"VID was null");}
-                    if (tmp.getTimestamp() != null){  Log.e(TAG,"Timestamp: " + tmp.getTimestamp().toString());} else {Log.e(TAG,"Title was null");}
-                    Log.e(TAG,"Views: " + tmp.getTitle());
-                    if (tmp.getDelete() != null){  Log.e(TAG,"Delete: " + tmp.getDelete());} else {Log.e(TAG,"Delete was null");}
+                    featuredVideos.add(docs.toObject(Video.class));
+                    Log.e(TAG,docs.toObject(Video.class).toString());
                 } else {
                     Log.e(TAG, "Document " + docs.toString() + "does not exist");
                 }
@@ -544,7 +532,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
                 .orderByChild("timestamp")
-                .limitToLast(10)
+                .limitToLast(20)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -555,7 +543,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
                             List<Video> videoList = new ArrayList<>();
                             HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
-                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent());
+                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent(), mListener);
 
                             for (String videoId : videoIdList) {
                                 FirebaseFirestore.getInstance().collection("Videos")
@@ -564,7 +552,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         if (documentSnapshot.exists()) {
-                                            if ((documentSnapshot.get("delete") != null && documentSnapshot.get("delete").equals("N")) &&
+                                            if ((documentSnapshot.get("delete").equals("N")) &&
                                                     (documentSnapshot.get("privacy")
                                                             .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                 videoList.add(documentSnapshot.toObject(Video.class));

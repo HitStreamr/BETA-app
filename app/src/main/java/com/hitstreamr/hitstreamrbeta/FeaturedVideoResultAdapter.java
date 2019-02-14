@@ -173,6 +173,7 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
             super(itemView);
             videoThumbnail = itemView.findViewById(R.id.featuredVideoThumbnail);
             videoTitle = itemView.findViewById(R.id.title);
+            videoTitle.setSelected(true);
             videoUsername = itemView.findViewById(R.id.artistName);
             videoViews = itemView.findViewById(R.id.videoViews);
             videoPublish = itemView.findViewById(R.id.publishDate);

@@ -117,7 +117,7 @@
         <activity
             android:name=".BillingManager"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.PopUpMenu"/>
+            android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".TrendingVideos"
             android:screenOrientation="portrait" />
@@ -152,14 +152,31 @@
         <activity
             android:name=".VideoEdit"
             android:screenOrientation="portrait" />
-        <activity android:name=".PlaylistVideosActivity" />
+        <activity
+            android:name=".PlaylistVideosActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".VideoDelete"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
-        <activity android:name=".EditPlaylist" />
-        <activity android:name=".MorePopularPeople" />
-        <activity android:name=".ReportSubmission" />
+        <activity
+            android:name=".EditPlaylist"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReportSubmission"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MorePopularPeople"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FollowersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FollowingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MoreWatchAgain"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".VideoPlayerService"
@@ -168,7 +185,11 @@
         <service
             android:name=".VideoUploadService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".Payouts"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu"/>
     </application>
 
 </manifest>

@@ -13,7 +13,8 @@
         android:layout_height="wrap_content">
 
         <include layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>
+            android:id="@+id/toolbar"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -225,8 +226,9 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/ic_fave"
-                                android:backgroundTint="@color/drkgryAccent" />
+                                android:src="@drawable/ic_fave"
+                                android:background="@android:color/transparent"
+                                 />
 
                             <TextView
                                 android:id="@+id/videoLikes"
@@ -249,8 +251,8 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/ic_repost_black_24dp"
-                                android:backgroundTint="@color/drkgryAccent" />
+                                android:src="@drawable/ic_repost_black_24dp"
+                                android:background="@android:color/transparent" />
 
                             <TextView
                                 android:id="@+id/repostCount"
@@ -275,7 +277,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_playlist_add_black_24dp"
-                                android:tint="@color/drkgryAccent" />
+                                 />
 
                         </LinearLayout>
 

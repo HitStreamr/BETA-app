@@ -3,14 +3,17 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/round_outline_wht"
+    android:outlineProvider="background"
     android:layout_gravity="center"
-    android:elevation="4dp">
+    android:elevation="10dp">
 
 
     <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp">
+        app:cardCornerRadius="8dp"
+        >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -22,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Confirm Purchase Credits"
+                android:text="Confirm Credits Purchase"
                 android:textAlignment="center"
                 android:textColor="@color/drkgryAccent"
                 android:textSize="18sp" />
@@ -39,7 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Cancel"
-                    android:textColor="@color/drkgryAccent"
+                    android:textColor="@color/colorPrimary"
                     android:textStyle="bold"
                     android:background="@android:color/transparent"
                     android:layout_marginEnd="20dp"/>
@@ -49,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Confirm"
-                    android:textColor="@color/drkgryAccent"
+                    android:textColor="@color/colorPrimary"
                     android:textStyle="bold"
                     android:background="@android:color/transparent"
                     />
