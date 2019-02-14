@@ -42,7 +42,8 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
     @Override
     public void onBindViewHolder(@NonNull PlaylistContentViewHolder holder, int position) {
         holder.videoTitle.setText(playlist.getPlayVideos().get(position).getTitle());
-        holder.videoUsername.setText(playlist.getPlayVideos().get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(playlist.getPlayVideos().get(position).getUsername());
         String viewCount = Long.toString(playlist.getPlayVideos().get(position).getViews()) + " views";
         String pubYear = Long.toString(playlist.getPlayVideos().get(position).getPubYear());
         holder.videoViewsCount.setText(viewCount);

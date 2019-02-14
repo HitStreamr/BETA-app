@@ -61,7 +61,8 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
 
         requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        holder.videoUsername.setText(objects1.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(objects1.get(position).getUsername());
         holder.videoTime.setText(objects1.get(position).getDuration());
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");

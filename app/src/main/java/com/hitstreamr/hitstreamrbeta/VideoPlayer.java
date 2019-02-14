@@ -465,8 +465,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
-        artistName.setText(vid.getUsername());
-        artistNameBold.setText(vid.getUsername());
+        //TODO gotta do a thingy
+//        artistName.setText(vid.getUsername());
+//        artistNameBold.setText(vid.getUsername());
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
         follow = findViewById(R.id.followText);

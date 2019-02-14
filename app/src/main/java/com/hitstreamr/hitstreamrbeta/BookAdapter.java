@@ -51,7 +51,8 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
         holder.title.setText(bookList.get(position).getTitle());
-        holder.author.setText(bookList.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.author.setText(bookList.get(position).getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(bookList.get(position).getThumbnailUrl()).into(holder.thumbnail);
         holder.duration.setText(bookList.get(position).getDuration());

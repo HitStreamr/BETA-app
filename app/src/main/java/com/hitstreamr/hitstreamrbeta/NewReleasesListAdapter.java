@@ -49,7 +49,8 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
 
         requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        holder.videoUsername.setText(objects1.get(position).getUsername());
+        //TODO needs to be a callback
+//        holder.videoUsername.setText(objects1.get(position).getUsername());
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
         holder.videoTime.setText(objects1.get(position).getDuration());
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()) + " views");

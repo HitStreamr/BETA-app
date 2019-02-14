@@ -201,7 +201,8 @@ public class DiscoverResultPage extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull DiscoverResultHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                holder.videoUsername.setText(model.getUsername());
+                //TODO needs to be a callback (or however follows are done)
+//                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
