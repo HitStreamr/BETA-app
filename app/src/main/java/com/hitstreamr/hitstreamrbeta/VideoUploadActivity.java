@@ -625,7 +625,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         } else if (description.length() >= 1000) {
             EditTextDescription.setError("Description length has crossed 1000 characters");
         } else if (!(checkAlphaNumeric(description))) {
-            EdittextTittle.setError("Description must only have letters and numbers");
+            EditTextDescription.setError("Description must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);
@@ -687,9 +687,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         }
         return flag;
     }
-
-    int i, sum = 0, tempvalue = 0;
-    String temp;
 
     private boolean validateSumPercentage() {
         for (i = 1; i < contributorPercentageList.size(); i++) {
