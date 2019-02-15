@@ -632,9 +632,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EditTextDescription.setError("Field can't be empty");
             return false;
         } else if (description.length() >= 1000) {
-            EdittextDescription.setError("Description length has crossed 1000 characters");
+            EditTextDescription.setError("Description length has crossed 1000 characters");
         } else if (!(checkAlphaNumeric(description))) {
-            EdittextDescription.setError("Description must only have letters and numbers");
+            EditTextDescription.setError("Description must only have letters and numbers");
             return false;
         } else {
             EditTextDescription.setError(null);
