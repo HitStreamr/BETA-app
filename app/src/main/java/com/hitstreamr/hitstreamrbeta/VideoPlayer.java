@@ -1602,10 +1602,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
         // check who the user is following
-        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).child(vid.getUserId())
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(vid.getUserId()).exists()){
+                if (dataSnapshot.exists()){
                     Log.e(TAG, "Following");
                     callback.onFollowChecked(true);
                 }else{
