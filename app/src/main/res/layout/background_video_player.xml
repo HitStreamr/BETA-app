@@ -32,19 +32,19 @@
                     android:id="@+id/songTitleBG"
                     android:layout_width="270dp"
                     android:layout_height="wrap_content"
-                    android:text="songTitle"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="14sp"
-                    android:transitionName="title"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
-
                     android:ellipsize="marquee"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
+
                     android:scrollHorizontally="true"
                     android:singleLine="true"
+                    android:text="songTitle"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="14sp"
+                    android:transitionName="title"
 
                     />
 
@@ -58,12 +58,12 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginEnd="5dp"
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
-                        android:src= "@drawable/ic_close"
-                        android:tint="@color/colorAccent"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="5dp"/>
+                        android:src="@drawable/ic_close"
+                        android:tint="@color/colorAccent" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -91,9 +91,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-
-
-
 
                     <com.google.android.exoplayer2.ui.PlayerControlView
                         android:id="@+id/controls"

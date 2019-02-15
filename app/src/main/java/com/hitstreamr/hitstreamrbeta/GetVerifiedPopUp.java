@@ -20,7 +20,7 @@ public class GetVerifiedPopUp extends Activity implements View.OnClickListener {
     private Button close, ok;
     // [START declare_auth]
     private FirebaseAuth mAuth;
-// [END declare_auth]
+    // [END declare_auth]
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,7 @@ public class GetVerifiedPopUp extends Activity implements View.OnClickListener {
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
-       // [END initialize_auth]
+        // [END initialize_auth]
         if(mAuth.getCurrentUser() ==null){
             finish();
             startActivity(new Intent(this, SignInActivity.class));

@@ -230,14 +230,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             }
         });
 
-        /*Profile Picture
-        if (user.getPhotoUrl() != null) {
-            circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
-            circleImageView.setVisibility(View.VISIBLE);
-            Uri photoURL = user.getPhotoUrl();
-            Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-        }*/
-
         // Prevent keyboard from showing automatically
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }

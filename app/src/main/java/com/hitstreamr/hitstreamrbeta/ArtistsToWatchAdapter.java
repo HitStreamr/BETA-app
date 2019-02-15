@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -52,7 +53,6 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO open artist profile page
                 Intent artistProfile = new Intent(mContext, Profile.class);
                 artistProfile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                 artistProfile.putExtra("artistUsername", artistList.get(position).getUsername());
@@ -126,6 +126,9 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
 
             }
         });
+
+        // Check if artist is verified
+        holder.verified.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -145,6 +148,7 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
         public TextView artistName, followerCount;
         public LinearLayout cardView;
         public CircleImageView profilePicture;
+        public ImageView verified;
 
         public TopArtistsHolder(View itemView) {
             super(itemView);
@@ -153,6 +157,7 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
             cardView = itemView.findViewById(R.id.userCardView);
             profilePicture = itemView.findViewById(R.id.searchImage);
             followerCount = itemView.findViewById(R.id.count);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }

@@ -782,41 +782,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         Log.d(TAG, "Credits Decresed:  " + credit);
     }
 
-    //This method is called after 15 secs for users with credits watch to check if they watched the video before
-    private void checkViewTime() throws ParseException {
-
-        FirebaseDatabase.getInstance().getReference("VideoViews")
-                .child(vid.getVideoId()).child(currentFirebaseUser.getUid()).child("TimeLimit")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        sTimeStamp = dataSnapshot.getValue(String.class);
-                        Log.e(TAG, "Your video date from db check view time " + sTimeStamp);
-                        if(!Strings.isNullOrEmpty(sTimeStamp)) {
-                            try {
-                                checkTimeStamp();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        else
-                        {
-                            try {
-                                updatevideoview();
-                                updateCreditValue();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-    }
-
     // This method is to compare the current time with 4 hrs specified time limit for particular user
     private void checkTimeStamp() throws ParseException{
         //Log.e(TAG, "Your video date checktimestamp" + sTimeStamp);
@@ -1085,11 +1050,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onDestroy(){
         super.onDestroy();
+        /*
         if (mBound) {
             mService.setCallbacks(null);
             unbindService(mConnection);
             mBound = false;
         }
+        */
     }
 
 
@@ -1115,9 +1082,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onStop() {
         super.onStop();
-      //  if (Util.SDK_INT > 23) {
-        //    releasePlayer();
-        //}
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
@@ -1859,6 +1823,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void initMiniButton(){
+        /*
         minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
         minimizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1866,6 +1831,17 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 makeMiniPlayer();
             }
         });
+        */
+    }
+
+    /**DRAG VIDEO **/
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event){
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 
     public void makeMiniPlayer(){
@@ -1887,21 +1863,26 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         startActivity(intent, options.toBundle());
     }
 
-
-    /**DRAG VIDEO **/
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2,
                            float velocityX, float velocityY) {
         Log.d(DEBUG_TAG, "onFling: " );
-        makeMiniPlayer();
+        Intent intent = new Intent(this, MainActivity.class);
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            mService.setCallbacks(null);
+            mService = null;
+        }
+        intent.putExtra("MINI_VISIBLE", true);
+        intent.putExtra("VIDEO", vid);
+        intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        //intent.putExtra("Playback_Position",  playbackPosition);
+        //intent.putExtra("CurrentWindow", currentWindow);
+        // Pass data object in the bundle and populate details activity.
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(this, TextViewTitle, "title");
+        startActivity(intent, options.toBundle());
         return true;
     }
 

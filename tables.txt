@@ -1,0 +1,93 @@
+
+user_table
+ user_id
+ basic_id
+ artist_id
+ lable_id
+
+
+
+Baisc
+ user_name
+ password
+ email_id
+
+Artist
+  first_name
+  last_name
+  email_id
+  phone
+  address1
+  city
+  state
+  country
+  user_name
+  pwd
+
+Label
+  first_name
+  last_name
+  email_id
+  phone
+  address1
+  city
+  state
+  country
+  label_name
+  pwd
+
+follow
+  Basic_ID,Artist_ID ->  follower_id
+
+
+Post_videos
+ artist_id
+ video_id
+ video_img
+ description
+ upload_date
+ time
+ contributor - (list of artists)
+ label //single value
+
+Comments
+ comment_id
+ Artist_id,basic_id
+ video_id
+ comments
+ date
+ time
+
+Reply
+ comment_id
+ reply_id
+ reply
+ date
+ time
+
+Playlist
+ user_id
+ video_id
+
+
+
+Favorite
+ user_id -> video_id
+
+Repost
+ Basic_id,Artist_id -> Video_id
+ 
+
+
+Payment
+ artist_id
+ amount
+ date
+
+
+
+
+
+
+
+ 

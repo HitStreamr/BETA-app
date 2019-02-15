@@ -160,6 +160,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private long duration;
     private boolean ContributorSuccess = false;
 
+    private boolean startedUpload;
+
     private String downloadVideoUri;
     private String thumbnailVideoUri;
     private AtomicBoolean successVideoUpload;
@@ -468,7 +470,14 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onDestroy(){
         super.onDestroy();
-        unbindUploadService();
+        if(!startedUpload){
+            if (mService != null)
+                mService.deleteBeforeWork();
+        }else{
+            unbindUploadService();
+        }
+
+
     }
 
     private void binder(){
@@ -509,6 +518,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 mService.setTitle(title);
                 mService.setMap(artistVideo);
             }
+
+            startedUpload = true;
             uploadFromUri(selectedVideoPath);
         }
     }

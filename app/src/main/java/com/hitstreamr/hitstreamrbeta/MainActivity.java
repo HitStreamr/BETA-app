@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private Button cancelBtn;
     private TextView messgText;
     private PlayerControlView controls;
-    ImageView returnPlayerView;
     ImageView closeMini;
     //private Button confirmBtn;
 
@@ -245,13 +244,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         //prevent from crashing due to setting the settings again
-        if (savedInstanceState == null) {
-            db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        /*if (savedInstanceState == null) {
+
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setTimestampsInSnapshotsEnabled(true)
                     .build();
             db.setFirestoreSettings(settings);
         }
+        */
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
@@ -272,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
-                videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
+                //videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
             }
 
@@ -339,12 +341,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-//                vv.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
-//                    }
-//                });
+
             }
         }
 
@@ -409,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BGText = relBG.findViewById(R.id.songTitleBG);
         playerView = relBG.findViewById(R.id.background_video_player);
         controls = findViewById(R.id.controls);
-        returnPlayerView = relBG.findViewById(R.id.return_to_full);
         closeMini = findViewById(R.id.closeMini);
         //Setup Miniplayer
         if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
@@ -451,7 +447,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
                 fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 fullscreen.putExtra("RETURN", true);
-                fullscreen.putExtra("CREDIT", creditValue);
                 startActivity(fullscreen);
             }
         });
@@ -1792,7 +1787,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
-                bundle.putString("CREDITS", userCredits.getText().toString());
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
@@ -1927,7 +1921,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mService = null;
         }
     }
-
     /**
      * Decide to show/hide the items in the toolbar
      * @param menu menu

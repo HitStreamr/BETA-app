@@ -83,12 +83,13 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
     public void onBindViewHolder(@NonNull GenreHolder holder, int position) {
         if(selItems.get(position)){
             holder.card.setCardBackgroundColor(holder.card.getContext().getColorStateList(R.color.colorPrimary));
-        }else{
+        } else {
             holder.card.setCardBackgroundColor(holder.card.getContext().getColorStateList(R.color.cardview_light_background));
         }
         //set the content description and image
         holder.genre.setContentDescription(mImageNames[position]);
-        holder.genre.setImageResource(holder.itemView.getResources().getIdentifier(mImageNames[position], "drawable", holder.genre.getContext().getPackageName()));
+        holder.genre.setImageResource(holder.itemView.getResources().getIdentifier(mImageNames[position],
+                "drawable", holder.genre.getContext().getPackageName()));
     }
 
     @Override
