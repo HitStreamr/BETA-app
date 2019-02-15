@@ -89,6 +89,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
     private static final String VIDEO_CONTRIBUTOR_TYPE = "type";
+    private static final String VIDEO_CONTRIBUTOR_USERID = "contributorUserId";
 
     private static final String VIDEO_TITLE_TERMS = "terms";
 
@@ -545,6 +546,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             Contributor.put(VIDEO_CONTRIBUTOR_NAME, tempArray[0]);
             Contributor.put(VIDEO_CONTRIBUTOR_PERCENTAGE, tempArray[1]);
             Contributor.put(VIDEO_CONTRIBUTOR_TYPE, tempArray[2]);
+            Contributor.put(VIDEO_CONTRIBUTOR_USERID, tempArray[3]);
             sample.add(Contributor);
         }
 
@@ -739,6 +741,50 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         }
         return true;
     }
+    String aa;
+
+    private void getContributorUserId(){
+
+        FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(EdittextContributorName.getText().toString().trim())
+                .child("tempUserId")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    aa = dataSnapshot.getValue(String.class);
+                    continueGetContributor();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    private void continueGetContributor(){
+        final String name = EdittextContributorName.getText().toString().trim();
+        final String percentage = EdittextContributorPercentage.getText().toString().trim();
+        final String type = SpinnerContributorType.getSelectedItem().toString().trim();
+
+        contributorVideo.put(VIDEO_CONTRIBUTOR_NAME, name);
+        contributorVideo.put(VIDEO_CONTRIBUTOR_PERCENTAGE, percentage);
+        contributorVideo.put(VIDEO_CONTRIBUTOR_TYPE, type);
+
+        Contributor contributor1 = new Contributor(name, percentage, type);
+        contributorFirestoreList.add(name + "," + percentage + "," + type + "," + aa);
+        contributorList.add(contributor1);
+        contributorPercentageList.add(percentage);
+
+        contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList, this);
+        ContributorValuesLV.setAdapter(contributorAdapter);
+        contributorAdapter.notifyDataSetChanged();
+        //TextViewContributorName.setText(name);
+        //TextViewContributorPercentage.setText(percentage);
+        //TextViewContributorType.setText(type);
+        ContributorSuccess = true;
+    }
 
     private void GetContributor() {
 
@@ -752,22 +798,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         } else {
 
-            contributorVideo.put(VIDEO_CONTRIBUTOR_NAME, name);
-            contributorVideo.put(VIDEO_CONTRIBUTOR_PERCENTAGE, percentage);
-            contributorVideo.put(VIDEO_CONTRIBUTOR_TYPE, type);
-
-            Contributor contributor1 = new Contributor(name, percentage, type);
-            contributorFirestoreList.add(name + "," + percentage + "," + type);
-            contributorList.add(contributor1);
-            contributorPercentageList.add(percentage);
-
-            contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList, this);
-            ContributorValuesLV.setAdapter(contributorAdapter);
-            contributorAdapter.notifyDataSetChanged();
-            //TextViewContributorName.setText(name);
-            //TextViewContributorPercentage.setText(percentage);
-            //TextViewContributorType.setText(type);
-            ContributorSuccess = true;
+            getContributorUserId();
         }
     }
 

@@ -376,6 +376,11 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             }
         }
 
+        if (view == backbutton){
+            finish();
+            startActivity(new Intent(getApplicationContext(), Welcome.class));
+        }
+
         if (view == register){
             finish();
             startActivity(new Intent(getApplicationContext(), AccountType.class));
