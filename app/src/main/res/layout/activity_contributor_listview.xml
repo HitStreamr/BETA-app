@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight">
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="5dp">
+        android:paddingHorizontal="10dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/icon"
@@ -69,7 +70,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/button1"
-                        android:text="delete"/>
+                        android:text="delete"
+                        android:textColor="@color/colorAccent"/>
 
                 </LinearLayout>
             </LinearLayout>

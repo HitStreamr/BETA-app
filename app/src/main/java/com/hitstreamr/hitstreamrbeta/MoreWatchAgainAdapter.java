@@ -44,7 +44,9 @@ public class MoreWatchAgainAdapter extends RecyclerView.Adapter<MoreWatchAgainAd
     @Override
     public void onBindViewHolder(@NonNull MoreWatchAgainViewHolder holder, int position) {
         holder.title.setText(videoList.get(position).getTitle());
-        holder.username.setText(videoList.get(position).getUsername());
+
+        //TODO needs to be a callback (or however follows are done)
+//        holder.username.setText(videoList.get(position).getUsername());
         holder.views.setText(String.valueOf(videoList.get(position).getViews()));
         holder.duration.setText(videoList.get(position).getDuration());
 

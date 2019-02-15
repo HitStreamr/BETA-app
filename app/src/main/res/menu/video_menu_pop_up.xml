@@ -7,8 +7,8 @@
     <item android:id="@+id/addToPlaylist_videoMenu"
         android:title="Add to Playlist" />
 
-    <item android:id="@+id/repost_videoMenu"
-        android:title="Repost" />
+    <!--<item android:id="@+id/repost_videoMenu"-->
+        <!--android:title="Repost" />-->
 
     <item android:id="@+id/report_videoMenu"
         android:title="Report" />

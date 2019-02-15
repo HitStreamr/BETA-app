@@ -15,6 +15,9 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, TrendingVideosAdapter.TrendingVideosHolder> {
@@ -35,8 +38,9 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
     protected void onBindViewHolder(@NonNull TrendingVideosAdapter.TrendingVideosHolder holder, int position, @NonNull Video model) {
 
         holder.videoTitle.setText(model.getTitle());
-        holder.videoUsername.setText(model.getUsername());
-        String viewCount = Long.toString(model.getViews());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(model.getUsername());
+        String viewCount = Long.toString(model.getViews()) + " views";
         String pubYear = Long.toString(model.getPubYear());
         holder.videoViewsCount.setText(viewCount);
         holder.videoPublishedYear.setText(pubYear);
@@ -48,6 +52,17 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
             }
         });
 
+        holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listner.onOverflowClick(model, holder.overflowMenu);
+            }
+        });
+
+        /*DateFormat dateFormat = new SimpleDateFormat("yyyy");
+        holder.videoYear.setText(dateFormat.format(model.getTimestamp().toDate()));*/
+
+        holder.videoDuration.setText(model.getDuration());
     }
 
     @NonNull
@@ -63,9 +78,12 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         private TextView videoTitle;
         private TextView videoUsername;
         private ImageView videoThumbnail;
-        private  TextView videoViewsCount;
+        private TextView videoViewsCount;
         private TextView videoPublishedYear;
         private LinearLayout parentLayout;
+        private TextView videoYear;
+        private TextView videoDuration;
+        private ImageView overflowMenu;
 
         public TrendingVideosHolder(View itemView) {
             super(itemView);
@@ -77,6 +95,9 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
             videoViewsCount = itemView.findViewById(R.id.videoViews);
             videoPublishedYear = itemView.findViewById(R.id.videoTime);
             parentLayout = itemView.findViewById(R.id.videoCard);
+            videoYear = itemView.findViewById(R.id.videoYear);
+            videoDuration = itemView.findViewById(R.id.videoTime);
+            overflowMenu = itemView.findViewById(R.id.moreMenu);
         }
     }
 }

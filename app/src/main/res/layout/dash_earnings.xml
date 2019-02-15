@@ -90,6 +90,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
+                    android:text="0"
                     android:textColor="@color/colorPrimary"
                     android:layout_gravity="center_horizontal"
                     />
@@ -157,14 +158,14 @@
                 android:orientation="horizontal"
                 android:gravity="end">
 
-                <TextView
-                    android:id="@+id/mySongs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="16dp"
+            <TextView
+                android:id="@+id/mySongs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="16dp"
                     android:textColor="@color/colorPrimary"
-                    android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"/>
 
 
             </LinearLayout>
@@ -202,14 +203,14 @@
                 android:orientation="horizontal"
                 android:gravity="end">
 
-                <TextView
-                    android:id="@+id/myContribution"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textSize="16dp"
+            <TextView
+                android:id="@+id/myContribution"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0"
+                android:textSize="16dp"
                     android:textColor="@color/colorPrimary"
-                    android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"/>
 
             </LinearLayout>
 

@@ -99,22 +99,26 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
 
         Log.e(TAG, "report video is clicked" + idx +" and video id is :::::" +videoId + "and text is :::" + selectedtext);
 
-        Toast.makeText(this, "video is reported", Toast.LENGTH_SHORT).show();
-        FirebaseDatabase.getInstance()
-                .getReference("Report")
-                .child(videoId)
-                .child(currentFirebaseUser.getUid())
-                .child("reason")
-                .setValue(selectedtext)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.e(TAG, "Video is reported");
-                        finish();
-                        startActivity(new Intent(getApplicationContext(), ReportSubmission.class));
-                    }
-                });
-
+        // Check if the user has selected ONE reason for reporting a video
+        if (radioGroup.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(this, "Please choose ONE reason for reporting.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "video is reported", Toast.LENGTH_SHORT).show();
+            FirebaseDatabase.getInstance()
+                    .getReference("Report")
+                    .child(videoId)
+                    .child(currentFirebaseUser.getUid())
+                    .child("reason")
+                    .setValue(selectedtext)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.e(TAG, "Video is reported");
+                            finish();
+                            startActivity(new Intent(getApplicationContext(), ReportSubmission.class));
+                        }
+                    });
+        }
     }
 
     @Override

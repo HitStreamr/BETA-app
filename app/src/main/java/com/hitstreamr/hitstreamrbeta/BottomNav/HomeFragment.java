@@ -40,6 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
@@ -50,6 +51,7 @@ import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
+import com.hitstreamr.hitstreamrbeta.ReportVideoPopup;
 import com.hitstreamr.hitstreamrbeta.TrendingAdapter;
 import com.hitstreamr.hitstreamrbeta.TrendingVideos;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
@@ -97,6 +99,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private ItemClickListener mListener;
     private TrendingItemClickListener tlistner;
     private String CreditVal;
+    private Video onClickedVideo;
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -269,7 +272,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             }
 
             @Override
-            public void onOverflowClick(Video title, View v) { showOverflow(v);
+            public void onOverflowClick(Video video, View v) {
+                onClickedVideo = video;
+                showOverflow(v);
             }
         };
 
@@ -375,7 +380,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        adapter = new TrendingAdapter(options, tlistner);
+        adapter = new TrendingAdapter(options, tlistner, mListener);
         recyclerView_Trending.hasFixedSize();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerView_Trending.setLayoutManager(layoutManager);
@@ -396,14 +401,42 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         adapter.stopListening();
     }
 
+    /**
+     * Video menu popup options.
+     * @param item item
+     * @return true
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.fave_result:
-                break;
-            case R.id.addLibrary_result:
+            case R.id.addToWatchLater_videoMenu:
+                FirebaseDatabase.getInstance()
+                        .getReference("WatchLater")
+                        .child(current_user.getUid())
+                        .child(onClickedVideo.getVideoId())
+                        .child("VideoId")
+                        .setValue(onClickedVideo.getVideoId())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(), "Video has been added to Watch Later",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 break;
 
+            case R.id.addToPlaylist_videoMenu:
+                Intent playlistIntent = new Intent(getContext(), AddToPlaylist.class);
+                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                playlistIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                startActivity(playlistIntent);
+                break;
+
+            case R.id.report_videoMenu:
+                Intent reportVideo = new Intent(getContext(), ReportVideoPopup.class);
+                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                getContext().startActivity(reportVideo);
+                break;
         }
         return true;
     }
@@ -416,7 +449,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void showOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_menu_pop_up);
         popupMenu.show();
     }
 
@@ -541,27 +574,31 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                 videoIdList.add(ds.child("videoId").getValue(String.class));
                             }
 
-                            List<Video> videoList = new ArrayList<>();
-                            HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
-                                    new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent(), mListener);
+                            // Query to database
+                            if (getActivity() != null) {
 
-                            for (String videoId : videoIdList) {
-                                FirebaseFirestore.getInstance().collection("Videos")
-                                        .document(videoId)
-                                        .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                                        if (documentSnapshot.exists()) {
-                                            if ((documentSnapshot.get("delete").equals("N")) &&
-                                                    (documentSnapshot.get("privacy")
-                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
-                                                videoList.add(documentSnapshot.toObject(Video.class));
-                                                homeFragmentWatchAgainAdapter.notifyDataSetChanged();
-                                                recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+                                List<Video> videoList = new ArrayList<>();
+                                HomeFragmentWatchAgainAdapter homeFragmentWatchAgainAdapter =
+                                        new HomeFragmentWatchAgainAdapter(videoList, getContext(), getActivity().getIntent(), mListener);
+
+                                for (String videoId : videoIdList) {
+                                    FirebaseFirestore.getInstance().collection("Videos")
+                                            .document(videoId)
+                                            .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                            if (documentSnapshot.exists()) {
+//                                                if ((documentSnapshot.get("delete").equals("N")) &&
+//                                                        (documentSnapshot.get("privacy")
+//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                    videoList.add(documentSnapshot.toObject(Video.class));
+                                                    homeFragmentWatchAgainAdapter.notifyDataSetChanged();
+                                                    recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
+//                                                }
                                             }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
                         }
                     }

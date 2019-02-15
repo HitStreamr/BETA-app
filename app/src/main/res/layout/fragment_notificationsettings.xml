@@ -58,7 +58,7 @@
                     android:text="@string/push_notifications"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:theme="@style/SwitchTheme"/>
+                    />
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/new_follower_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/repostVid"
@@ -80,7 +80,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/repost_of_your_videos_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/newPost"
@@ -89,7 +89,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/new_post_by_followed_user_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/favesVid"
@@ -98,7 +98,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/faves_on_your_video_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/commentVid"
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/comment_on_your_video_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/replyToComment"
@@ -114,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:text="Reply to your comment on a video"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/newFeatures"
@@ -123,7 +123,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/new_hitstreamr_features_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/surveyFeedback"
@@ -132,7 +132,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/surveys_and_feedback_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
                 <android.support.v7.widget.SwitchCompat
                     android:id="@+id/hitstreamrTips"
@@ -141,7 +141,7 @@
                     android:layout_marginTop="5dp"
                     android:text="@string/hitstreamr_tips_and_offers_setting"
                     android:textSize="18sp"
-                    android:theme="@style/SwitchTheme"/>
+                    />
 
 
 

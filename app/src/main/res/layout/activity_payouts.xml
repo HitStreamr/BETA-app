@@ -8,22 +8,21 @@
     android:background="@color/colorAccent"
     >
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <LinearLayout
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:background="@color/colorAccent"
         android:elevation="4dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="10dp">
 
-        <Button
-            android:id="@+id/back"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="@drawable/ic_keyboard_arrow_left_black_24dp"
-            android:backgroundTint="@android:color/black" />
 
         <TextView
             android:id="@+id/previousEarnings"
@@ -54,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:text="No Previous History"
                 android:textAlignment="center"
+                android:visibility="gone"
                 />
 
 

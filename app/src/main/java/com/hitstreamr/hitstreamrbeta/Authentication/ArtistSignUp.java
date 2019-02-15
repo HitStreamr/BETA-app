@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +37,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -55,6 +57,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private EditText mFirstName, mLastName, mArtistName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
     private Spinner mState, mCountry;
     // Add address line 1 and 2?
+
+    private TextView passwordHint;
 
     // Buttons
     private Button signup, profilePictureBtn;
@@ -88,8 +92,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     "(?=.*[0-9])" +         //at least 1 digit
                     "(?=.*[a-z])" +         //at least 1 lower case letter
                     "(?=.*[A-Z])" +         //at least 1 upper case letter
-                    //"(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+                    "(?=.*[!@#$%^&*_+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
@@ -130,6 +133,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         mZipcode = findViewById(R.id.artistZip);
         mCountry = findViewById(R.id.artistCountry);
         mPhone = findViewById(R.id.artistPhone);
+        passwordHint = findViewById(R.id.PasswordHint);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -206,7 +210,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
 
         validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address,
-                city, state, country, phone, zip, null/*, null, "false"*/), password);
+                city, state, country, phone, zip, null, null, "false"), password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -389,7 +393,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG, "4");
         return true;
     }
 
@@ -398,7 +401,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG, "5");
         return true;
     }
 
@@ -416,7 +418,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mEmail.setError("Email is not valid!");
             return false;
         } else {
-            Log.e(TAG, "6");
             mEmail.setError(null);
             return true;
         }
@@ -436,7 +437,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
         } else {
-            Log.e(TAG, "7");
             mPhone.setError(null);
             return true;
         }
@@ -453,7 +453,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mCity.setError("Field can't be empty");
             return false;
         } else {
-            Log.e(TAG, "8");
             mCity.setError(null);
             return true;
         }
@@ -473,7 +472,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mZipcode.setError("Zip is invalid");
             return false;
         } else {
-            Log.e(TAG, "9");
             mZipcode.setError(null);
             return true;
         }
@@ -487,13 +485,14 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
      */
     private boolean validatePassword(String password) {
         if (password.isEmpty()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPassword.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPassword.setError("Password too weak");
             return false;
         } else {
-            Log.e(TAG, "10");
             mPassword.setError(null);
             return true;
         }
@@ -583,7 +582,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            Log.e(TAG, "13");
             termsCond.setError(null);
             return true;
         }

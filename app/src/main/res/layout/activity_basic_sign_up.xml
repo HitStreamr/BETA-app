@@ -170,6 +170,14 @@
                 android:layout_marginBottom="15dp"
                 android:textCursorDrawable = "@null"/>
 
+            <TextView
+                android:id="@+id/PasswordHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:text="Minimum 8 characters, atleast 1 Number, 1 Special char, 1 Uppercase and 1 Lowercase char"
+                android:visibility="gone"/>
+
 
             <RadioButton
                 android:id="@+id/tos_button"

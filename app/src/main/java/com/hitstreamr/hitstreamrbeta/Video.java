@@ -17,7 +17,7 @@ public class Video implements Parcelable {
     private String url;
     private String thumbnailUrl;
     private String userId;
-    private String username;
+//    private String username;
     private String duration;
     private int pubYear;
     private String videoId;
@@ -33,8 +33,11 @@ public class Video implements Parcelable {
     }
 
     public Video(String title, String description, String genre, String subGenre, String privacy, String url, String userId, String duration,
-                 String username, String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Timestamp timestamp,
-                 long views, String delete) {
+                  String thumbnailUrl, int pubYear, ArrayList<Contributor> contributors, String videoId, Timestamp timestamp,
+                 long views, String delete)
+    //String username should go between duration and Thumbnail
+    //String username
+    {
         this.title = title;
         this.description = description;
         this.genre = genre;
@@ -42,7 +45,7 @@ public class Video implements Parcelable {
         this.privacy = privacy;
         this.url = url;
         this.userId = userId;
-        this.username = username;
+ //       this.username = username;
         this.thumbnailUrl = thumbnailUrl;
         this.contributors = contributors;
         this.pubYear = pubYear;
@@ -117,13 +120,11 @@ public class Video implements Parcelable {
         this.contributors = contributors;
     }
 
-    public String getUsername() {
-        return username;
-    }
+ //   public String getUsername() { return username; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+ //   public void setUsername(String username) {
+ //       this.username = username;
+//    }
 
 
     public String getThumbnailUrl() {
@@ -184,7 +185,8 @@ public class Video implements Parcelable {
 
     @Override
     public String toString() {
-        return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + thumbnailUrl + " " +userId + " " + username;
+        return title + " " + description + " " + genre + " " + subGenre + " " + privacy + " " + url + thumbnailUrl + " " +userId;
+        //+ " " + username;
 
     }
     protected Video(Parcel in) {
@@ -196,7 +198,7 @@ public class Video implements Parcelable {
         url = in.readString();
         thumbnailUrl = in.readString();
         userId = in.readString();
-        username = in.readString();
+ //       username = in.readString();
         pubYear = in.readInt();
         videoId = in.readString();
         duration = in.readString();
@@ -227,7 +229,7 @@ public class Video implements Parcelable {
         dest.writeString(url);
         dest.writeString(thumbnailUrl);
         dest.writeString(userId);
-        dest.writeString(username);
+ //       dest.writeString(username);
         dest.writeInt(pubYear);
         dest.writeString(videoId);
         dest.writeString(duration);

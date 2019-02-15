@@ -5,13 +5,13 @@ public class User {
 
     public User() { }
 
-    public User(String username, String email, String userID, String fullname, String bio/*, String verified*/) {
+    public User(String username, String email, String userID, String fullname, String bio, String verified) {
         this.username = username;
         this.email = email;
         this.userID = userID;
         this.fullname = fullname;
         this.bio = bio;
-//        this.verified = verified;
+        this.verified = verified;
     }
 
     public String getUsername() {
@@ -54,11 +54,11 @@ public class User {
         this.bio = bio;
     }
 
-//    public String getVerified() {
-//        return verified;
-//    }
-//
-//    public void setVerified(String verified) {
-//        this.verified = verified;
-//    }
+    public String getVerified() {
+        return verified;
+    }
+
+    public void setVerified(String verified) {
+        this.verified = verified;
+    }
 }
