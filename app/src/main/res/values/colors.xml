@@ -6,8 +6,14 @@
     <color name="litgryAccent">#c1c1c1</color>
     <color name="litgryAccentOverlay">#4b000000</color>
     <color name="drkgryAccent">#3d3d3d</color>
+    <color name="drkgryAccentOverlay">#9c000000</color>
     <color name="colorAccent">#ffffff</color>
     <color name="colorAccent1">#84ffffff</color>
     <color name="colorAccent2">#00ffffff</color>
+
+
+    <color name="colorPrimary2">#c8ff13ae</color>
+    <color name="colorPrimaryDark2">#c83c005e</color>
+    <color name="colorPrimaryLite2">#c8e35bec</color>
 
 </resources>
