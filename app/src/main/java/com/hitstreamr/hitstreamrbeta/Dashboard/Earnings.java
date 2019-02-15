@@ -80,7 +80,6 @@ public class Earnings extends Fragment{
                     }
                 }
                 videoViewCount.setText(String.valueOf(viewCount));
-                totalEarn = Math.round(totalEarn*100)/100.00;
                 artistEarnings.setText(String.valueOf(totalEarn));
                 artistBalance.setText(String.valueOf(artistbal));
                 artistSongs.setText(String.valueOf(myEarnings));

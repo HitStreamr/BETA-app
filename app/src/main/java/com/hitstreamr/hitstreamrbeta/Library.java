@@ -302,7 +302,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
 
     private void getHistoryList() {
-        HistoryRef.orderByChild("timestamp").limitToLast(100).addValueEventListener(new ValueEventListener() {
+        HistoryRef.orderByChild("timestamp").limitToFirst(100).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {

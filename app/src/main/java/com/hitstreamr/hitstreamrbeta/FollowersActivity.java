@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public class FollowersActivity extends AppCompatActivity {
     ArrayList<String> followersUsers;
     String userId;
     private RecyclerView recyclerView_Followers;
-    private FollowersAdapter adapter_Followers;
+    private  FollowersAdapter adapter_Followers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
