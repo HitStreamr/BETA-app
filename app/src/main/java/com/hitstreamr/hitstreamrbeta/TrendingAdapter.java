@@ -50,13 +50,13 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         //TODO needs to be a callback (or however follows are done)
 //        holder.author.setText(model.getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(holder.thumbnail).load(model.getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(holder.thumbnail).load(model.getUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
         String viewCount = Long.toString(model.getViews());
         holder.viewsCount.setText(viewCount);
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        holder.published.setText(dateFormat.format(model.getTimestamp().toDate()));
+        holder.year.setText(dateFormat.format(model.getTimestamp().toDate()));
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +125,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TextView videoLikes;
         public TextView videoReposts;
         public ImageView overflowMenu;
-        public TextView published;
+        public TextView year;
 
         public TrendingHolder(View itemView) {
             super(itemView);
@@ -139,7 +139,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
             videoLikes = itemView.findViewById(R.id.faveAmount);
             videoReposts = itemView.findViewById(R.id.repostAmount);
             overflowMenu = itemView.findViewById(R.id.moreMenu);
-            published = itemView.findViewById(R.id.published);
+            year = itemView.findViewById(R.id.published);
         }
     }
 }
