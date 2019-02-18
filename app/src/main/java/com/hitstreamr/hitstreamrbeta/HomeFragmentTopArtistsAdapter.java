@@ -150,7 +150,11 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
         });
 
         // Check if artist is verified
-        holder.verified.setVisibility(View.VISIBLE);
+        if (artistList.get(position).getVerified().equals("true")) {
+            holder.verified.setVisibility(View.VISIBLE);
+        } else {
+            holder.verified.setVisibility(View.GONE);
+        }
     }
 
     @Override

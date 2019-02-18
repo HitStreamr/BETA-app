@@ -556,6 +556,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
 
+                // Check if user is verified
+                if (model.getVerified().equals("true")) {
+                    holder.verified.setVisibility(View.VISIBLE);
+                } else {
+                    holder.verified.setVisibility(View.GONE);
+                }
+
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
                         .child(model.getUsername());
                 db.addValueEventListener(new ValueEventListener() {
@@ -740,8 +747,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setArtistName(model.getArtistname());
 
-                // TODO: Check if artist is verified
-                holder.verified.setVisibility(View.VISIBLE);
+                // Check if artist is verified
+                if (model.getVerified().equals("true")) {
+                    holder.verified.setVisibility(View.VISIBLE);
+                } else {
+                    holder.verified.setVisibility(View.GONE);
+                }
 
                 DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
                         .child(model.getUsername());
@@ -811,25 +822,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
 
                 holder.setUserName(model.getUsername());
-                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
-                    @Override
-                    public void onFollowChecked(boolean following) {
-                        if(following){
-                            //if following == true
-                            holder.followButton.setVisibility(View.GONE);
-                            holder.unfollowButton.setVisibility(View.VISIBLE);
-                        }else{
-                            //if following == false
-                            holder.followButton.setVisibility(View.VISIBLE);
-                            holder.unfollowButton.setVisibility(View.GONE);
+
+                if (!user.getUid().equals(model.getUserID())) {
+                    holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                        @Override
+                        public void onFollowChecked(boolean following) {
+                            if (following) {
+                                //if following == true
+                                holder.followButton.setVisibility(View.GONE);
+                                holder.unfollowButton.setVisibility(View.VISIBLE);
+                            } else {
+                                //if following == false
+                                holder.followButton.setVisibility(View.VISIBLE);
+                                holder.unfollowButton.setVisibility(View.GONE);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCheckUpdateFailed() {
+                        @Override
+                        public void onCheckUpdateFailed() {
 
-                    }
-                }, model.getUserID());
+                        }
+                    }, model.getUserID());
+                } else {
+                    holder.followButton.setVisibility(View.GONE);
+                    holder.unfollowButton.setVisibility(View.GONE);
+                }
 
                 holder.followButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -1322,7 +1339,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             verified = view.findViewById(R.id.verified);
 
             artistName.setVisibility(View.GONE);
-            verified.setVisibility(View.GONE);
         }
 
         void setUserName(final String userName) {

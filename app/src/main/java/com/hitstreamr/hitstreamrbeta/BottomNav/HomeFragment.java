@@ -624,10 +624,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     }
                 }
             }
-
         });
     }
-
 
     /**
      * Load popular people.
@@ -818,7 +816,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
     }
-
 
     public interface TrendingItemClickListener {
         void onTrendingVideoClick(Video selectedVideo);
