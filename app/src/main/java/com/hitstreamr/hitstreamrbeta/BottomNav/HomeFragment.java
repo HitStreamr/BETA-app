@@ -116,7 +116,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
-        setupRecyclerView();
+        //setupRecyclerView();
 
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);

@@ -325,8 +325,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         getSupportActionBar().setTitle(username);
                         getBackgroundImage(current_user.getUid());
 
-
-
                         if (dataSnapshot.child("artistname").exists()) {
                             String artist_name = dataSnapshot.child("artistname").getValue(String.class);
                             mProfileName.setText(artist_name);
@@ -340,6 +338,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         if (dataSnapshot.child("bio").exists()) {
                             String bio = dataSnapshot.child("bio").getValue(String.class);
                             mBio.setText(bio);
+                        }
+
+                        if (dataSnapshot.child("verified").exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                verifiedCheckMark.setVisibility(View.VISIBLE);
+                            } else {
+                                verifiedCheckMark.setVisibility(View.GONE);
+                            }
                         }
                     }
 
@@ -546,8 +552,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         String searchType = getIntent().getStringExtra("SearchType");
 
         if (searchType.equals("BasicAccounts")) {
-            verifiedCheckMark.setVisibility(View.GONE);
-
             // Hide uploads for basic users
             TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
             mTabLayout.removeTabAt(1);
@@ -578,6 +582,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         if (dataSnapshot.child("bio").exists()) {
                             String bio = dataSnapshot.child("bio").getValue(String.class);
                             mBio.setText(bio);
+                        }
+
+                        if (dataSnapshot.child("verified").exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                verifiedCheckMark.setVisibility(View.VISIBLE);
+                            } else {
+                                verifiedCheckMark.setVisibility(View.GONE);
+                            }
                         }
                     }
                     @Override
