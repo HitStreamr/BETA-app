@@ -452,7 +452,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     for (DocumentSnapshot docume : document.getDocuments()) {
                         Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
                         //bb = docume.toObject(Video.class).getThumbnailUrl();
-                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
