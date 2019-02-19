@@ -484,9 +484,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        if (options.getSnapshots().size() <= 0)
-            TrendingNowLinLayout.setVisibility(GONE);
-        else {
+//        if (options.getSnapshots().size() <= 0)
+//           TrendingNowLinLayout.setVisibility(View.INVISIBLE);
+//        else {
 
             adapter = new TrendingAdapter(options, tlistner, mListener);
             recyclerView_Trending.hasFixedSize();
@@ -495,7 +495,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             recyclerView_Trending.setAdapter(adapter);
 
         }
-    }
+//    }
 
     @Override
     public void onStart() {

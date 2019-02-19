@@ -91,6 +91,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -158,6 +159,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView unfollow;
     private RelativeLayout MediaControlLayout;
     private TextView showMore;
+    private ImageView verified;
 
     private RelativeLayout MediaContolLayout;
 
@@ -465,9 +467,32 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
-        //TODO gotta do a thingy
-//        artistName.setText(vid.getUsername());
-//        artistNameBold.setText(vid.getUsername());
+        verified = findViewById(R.id.verified);
+
+        // TODO gotta do a thingy
+        String artistID = vid.getUserId();
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(artistID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ArtistUser artist = dataSnapshot.getValue(ArtistUser.class);
+                            artistName.setText(artist.getArtistname());
+                            artistNameBold.setText(artist.getUsername());
+
+                            if (artist.getVerified().equals("true")) {
+                                verified.setVisibility(View.VISIBLE);
+                            } else {
+                                verified.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
         follow = findViewById(R.id.followText);
@@ -1602,11 +1627,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
         // check who the user is following
-        database.getReference().child("following").child(currentFirebaseUser.getUid()).child(vid.getUserId())
-                .addValueEventListener(new ValueEventListener() {
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.child(vid.getUserId()).exists()){
                     Log.e(TAG, "Following");
                     callback.onFollowChecked(true);
                 }else{

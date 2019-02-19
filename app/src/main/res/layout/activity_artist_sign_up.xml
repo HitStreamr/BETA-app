@@ -160,7 +160,7 @@
                     android:background="@drawable/button2"
                     android:ems="10"
                     android:hint="Artist/Band Name"
-                    android:inputType="textEmailAddress"
+                    android:inputType="textPersonName"
                     android:paddingLeft="10dp"
                     android:paddingTop="3dp"
                     android:paddingBottom="3dp"

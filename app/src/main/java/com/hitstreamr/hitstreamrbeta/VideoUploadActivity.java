@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -247,9 +248,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         //Edittext
         EdittextTitle = findViewById(R.id.Title);
+        EdittextTitle.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         EditTextDescription = findViewById(R.id.Description);
+        EditTextDescription.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
        // EdittextContributorName = findViewById(R.id.ContributorName);
         EdittextContributorPercentage = findViewById(R.id.ContributorPercentage);
+
 
         //Spinner
         SpinnerGenre = findViewById(R.id.Genre);
