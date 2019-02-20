@@ -347,8 +347,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
                 //.orderBy("privacy")
-                .orderBy("views", Query.Direction.DESCENDING)
-                .whereEqualTo("privacy", "Public (everyone can see)")
+                .orderBy("views", Query.Direction.DESCENDING )
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
                 .limit(FEATURED_LOAD);
 
         featuredResults = featuredVideosQuery.get();
@@ -477,7 +478,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
      * Set up the recycler view for trending videos.
      */
     private void setupRecyclerView() {
-        Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING).limit(20);
+        Query query = trendingNowRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("views", Query.Direction.DESCENDING).limit(10);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)
