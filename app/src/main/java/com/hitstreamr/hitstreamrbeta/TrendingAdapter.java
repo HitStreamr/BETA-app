@@ -50,7 +50,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         //TODO needs to be a callback (or however follows are done)
 //        holder.author.setText(model.getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(holder.thumbnail).load(model.getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(holder.thumbnail).load(model.getUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
         String viewCount = Long.toString(model.getViews());
         holder.viewsCount.setText(viewCount);

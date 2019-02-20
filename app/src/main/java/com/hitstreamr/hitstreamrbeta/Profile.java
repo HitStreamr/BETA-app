@@ -840,7 +840,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 call();
             }
         });*/
-        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -938,15 +940,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                     }
                 }
-                setUpRecyclerViewUpload();
+                setUpRecyclerViewUpload(cUserId);
             }
         });
 
     }
 
-    private void setUpRecyclerViewUpload(){
+    private void setUpRecyclerViewUpload(String cUserId) {
 
+        // Private videos are okay for the uploader
         Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+
+        if (!current_user.getUid().equals(cUserId)) {
+            queryRef = feedRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        }
+
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

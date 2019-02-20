@@ -325,7 +325,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .collection("FeaturedVideo")
                 //.orderBy("privacy")
                 .orderBy("views", Query.Direction.DESCENDING )
-                .whereEqualTo("privacy","Public (everyone can see)")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
                 .limit(FEATURED_LOAD);
 
         featuredResults = featuredVideosQuery.get();
@@ -397,7 +398,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
      * Set up the recycler view for trending videos.
      */
     private void setupRecyclerView() {
-        Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING).limit(10);
+        Query query = trendingNowRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("views", Query.Direction.DESCENDING).limit(10);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)
@@ -611,13 +615,13 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
-//                                                if ((documentSnapshot.get("delete").equals("N")) &&
-//                                                        (documentSnapshot.get("privacy")
-//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                if ((documentSnapshot.get("delete").equals("N")) &&
+                                                        (documentSnapshot.get("privacy")
+                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                     videoList.add(documentSnapshot.toObject(Video.class));
                                                     homeFragmentWatchAgainAdapter.notifyDataSetChanged();
                                                     recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
-//                                                }
+                                                }
                                             }
                                         }
                                     });
@@ -661,7 +665,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public void getFreshReleases() {
 
-        Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = newReleaseRef.whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override

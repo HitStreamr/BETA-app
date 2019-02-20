@@ -1057,27 +1057,17 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Get the video's view count.
      */
     private void checkViewCount() {
-        FirebaseDatabase.getInstance().getReference("VideoViews")
-                .child(vid.getVideoId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            VideoViewCount = dataSnapshot.getChildrenCount();
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "View Count : " + temp);
-                            TextViewViewCount.setText(temp);
-                        }else{
-                            VideoViewCount = 0l;
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "Video Count reposts : " + temp);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+        FirebaseFirestore.getInstance().collection("Videos")
+                .document(vid.getVideoId())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    TextViewViewCount.setText(documentSnapshot.get("views").toString());
+                }
+            }
+        });
     }
 
 

@@ -71,7 +71,7 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
     @Override
     public void onBindViewHolder(@NonNull FeaturedVideoResultsHolder holder, int position) {
         DateFormat df2 = new SimpleDateFormat("MM/dd/yyyy");
-        requestBuilder.load(vids.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(vids.get(position).getUrl()).into(holder.videoThumbnail);
         StorageReference artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vids.get(position).getUserId());
 
         if (artistProfReference == null) {
