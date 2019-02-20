@@ -78,8 +78,6 @@ public class VideoEdit extends AppCompatActivity implements View.OnClickListener
      * Load the current video's data.
      */
     private void loadCurrentVideoData() {
-
-
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos").document(video.getVideoId()).get()
                 .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -103,8 +101,6 @@ public class VideoEdit extends AppCompatActivity implements View.OnClickListener
                             ArrayList<HashMap<String,String>> temp = (ArrayList<HashMap<String,String>>) documentSnapshot.get("contributors");
 
                             for (HashMap<String,String> contributor : temp) {
-
-                                //String contributorName =
                                 TextView TVtemp = new TextView(getApplicationContext());
                                 TVtemp.setText(contributor.get("contributorName") + " (" +  contributor.get("type") + ")" + ", ");
                                 TVtemp.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,

@@ -215,7 +215,6 @@ public class VideoPlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         lastID = startId;
-        Log.e(TAG ,"inside service credits"+intent.getStringExtra("CREDITS"));
         credits = intent.getStringExtra("CREDITS");
         uploadbyUser = intent.getBooleanExtra("UPLOAD", false);
         isContributor = intent.getBooleanExtra("CONTRIBUTOR", false);

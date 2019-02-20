@@ -44,7 +44,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         String pubYear = Long.toString(model.getPubYear());
         holder.videoViewsCount.setText(viewCount);
         holder.videoPublishedYear.setText(pubYear);
-        Glide.with(getApplicationContext()).load(Uri.parse((model.getThumbnailUrl()))).into(holder.videoThumbnail);
+  //      Glide.with(getApplicationContext()).load(Uri.parse((model.getThumbnailUrl()))).into(holder.videoThumbnail);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

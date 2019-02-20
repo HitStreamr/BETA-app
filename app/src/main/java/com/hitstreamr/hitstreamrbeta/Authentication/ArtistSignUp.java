@@ -535,7 +535,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     artist_object = artist;
 
                     //If validations are ok we will first show progressbar
-                    progressDialog.setMessage("Registering new Artist...");
+                    progressDialog.setMessage("Loading...");
                     progressDialog.show();
 
                     registerAuthentication(artist_object.getEmail(), password);
@@ -546,7 +546,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(getApplicationContext(), "Connection Error. Please try again in some time.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Connection Error. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -35,7 +35,6 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
     ArrayList<Integer> selectedItems;
     String[] images;
     HashMap<String, String> drawableToReadableNames;
-    FirebaseUser user;
     Button skipButton, nextButton;
     List<String> selectedGenres;
 
@@ -54,7 +53,7 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
 
         images = getResources().getStringArray(R.array.genreImageDrawables);
 
-        //drawableToReadableNames = setStrings();
+        drawableToReadableNames = setStrings();
 
         recyclerViewLayoutManager = new GridLayoutManager(context, 2);
 
@@ -63,8 +62,6 @@ public class PickGenre extends AppCompatActivity implements GenreRecyclerViewAda
         recyclerView_Adapter = new GenreRecyclerViewAdapter(images,this);
 
         mRecyclerView.setAdapter(recyclerView_Adapter);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
         skipButton = findViewById(R.id.skipButton);
         skipButton.setOnClickListener(this);

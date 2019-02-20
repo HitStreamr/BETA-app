@@ -221,7 +221,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                     basicUser = user;
 
                     //If validations are ok we will first show progressbar
-                    progressDialog.setMessage("Registering new Listener...");
+                    progressDialog.setMessage("Loading...");
                     progressDialog.show();
 
                     registerAuthentication(basicUser.getEmail(), password);
@@ -364,6 +364,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                uploadFromUri(selectedImagePath);
                                 registerNotifcationTokens();
                             } else {
                                 Toast.makeText(BasicSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
@@ -373,12 +374,13 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         }else{
             //failed on step after authentication
             registerNotifcationTokens();
+            uploadFromUri(selectedImagePath);
         }
 
     }
 
     private void updateAuthentication() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null) {
             UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()

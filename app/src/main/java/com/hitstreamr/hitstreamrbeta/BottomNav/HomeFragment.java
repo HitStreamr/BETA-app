@@ -669,10 +669,14 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (userGenreList.size() > 0) {
                        for (int itr = 0; itr < userGenreList.size(); itr++) {
-                            if (userGenreList.get(itr).contains( document.get("genre").toString().toLowerCase())) {
+                           String userGenre = userGenreList.get(itr);
+                           userGenre = userGenre.replaceAll("_"," ");
+                            if (userGenre.contains( document.get("genre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
-                            } else if (userGenreList.get(itr).contains(document.get("subGenre").toString().toLowerCase())) {
+                                break;
+                            } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
+                                break;
                             }
                         }
                     }
