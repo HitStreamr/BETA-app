@@ -1029,7 +1029,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 fextra = userUserID;
             }
             followersIentent.putExtra("USER", fextra);
-            //followersIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+            followersIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(followersIentent);
         }
         if(view == followingLayout){
@@ -1043,6 +1043,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 fextra = userUserID;
             }
             followingIentent.putExtra("USER", fextra);
+            followingIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(followingIentent);
 
         }

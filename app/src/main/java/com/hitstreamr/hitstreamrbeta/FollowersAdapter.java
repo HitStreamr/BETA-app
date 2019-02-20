@@ -37,11 +37,13 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
     private ArrayList<String> followersList;
     private Context context;
     private FirebaseUser current_user;
+    private Intent mIntent;
     private Library.ItemClickListener mlistner;
 
-    public FollowersAdapter(Context context, ArrayList<String> bookList) {
+    public FollowersAdapter(Context context, ArrayList<String> bookList, Intent intent) {
         this.followersList = bookList;
         this.context = context;
+        this.mIntent = intent;
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -67,11 +69,50 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent artistProfile = new Intent(context, Profile.class);
-                //artistProfile.putExtra("TYPE", .getStringExtra("TYPE"));
-                artistProfile.putExtra("artistUsername", followersList.get(position));
-                //artistProfile.putExtra("SearchType", "ArtistAccounts");
-                context.startActivity(artistProfile);
+
+                        FirebaseDatabase.getInstance().getReference("ArtistAccounts")
+                        .child(followersList.get(position))
+                        .child("username")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String username;
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.getValue(String.class));
+                            username = dataSnapshot.getValue(String.class);
+                            Intent profile = new Intent(context, Profile.class);
+                            profile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                            profile.putExtra("artistUsername",username);
+                            profile.putExtra("SearchType", "ArtistAccounts");
+                            context.startActivity(profile);
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts")
+                                    .child(followersList.get(position)).child("username")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String username;
+                                    holder.username.setText(dataSnapshot.getValue(String.class));
+                                    username = dataSnapshot.getValue(String.class);
+                                    Intent profile = new Intent(context, Profile.class);
+                                    profile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                                    profile.putExtra("basicUsername", username);
+                                    profile.putExtra("SearchType", "BasicAccounts");
+                                    context.startActivity(profile);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
             }
         });
 
