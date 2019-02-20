@@ -61,8 +61,6 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
 
         requestBuilder.load(objects1.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(objects1.get(position).getUsername());
         holder.videoTime.setText(objects1.get(position).getDuration());
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -105,6 +103,22 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(objects1.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
                         }
                     }
 

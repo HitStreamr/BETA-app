@@ -108,6 +108,13 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         showNotification();
     }
 
+    public void deleteBeforeWork(){
+        if (mVUC != null){
+            mVUC.unbindUploadService();
+        }
+        stopSelf(startID);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent.getBooleanExtra("CANCEL", false)){

@@ -54,7 +54,6 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
             Glide.with(getApplicationContext()).load(artistProfReference).into(holder.image);
         }
 
-
         FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followingList.get(position)).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -122,6 +121,44 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
 
         holder.followBtn.setVisibility(View.GONE);
 
+        // Check if user is verified
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followingList.get(position))
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                holder.verified.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.verified.setVisibility(View.GONE);
+                            }
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followingList.get(position))
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                                    holder.verified.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    holder.verified.setVisibility(View.GONE);
+                                                }
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
 
@@ -133,7 +170,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
     public class FollowingViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
         public TextView username;
-        public ImageView image;
+        public ImageView image, verified;
         public TextView followersCount;
         public Button followBtn;
 
@@ -144,6 +181,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
             image = view.findViewById(R.id.searchImage);
             followersCount = view.findViewById(R.id.count);
             followBtn = view.findViewById(R.id.follow_button);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }

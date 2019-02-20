@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -28,7 +29,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -61,13 +61,13 @@ import com.hitstreamr.hitstreamrbeta.VideoClickListener;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import static android.view.View.GONE;
 
 public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
-    private static final int MAX_PRELOAD = 10 ;
+    private static final int MAX_PRELOAD = 10;
     //Featured Artist
     RecyclerView featuredArtistRCV;
     Button featuredMore;
@@ -76,8 +76,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     Task<QuerySnapshot> featuredResults;
     ArrayList<Video> featuredVideos;
     FirestoreRecyclerOptions<Video> featuredArtistOptions;
-    private FeaturedVideoResultAdapter  resultAdapter;
-    private final int FEATURED_LOAD = 5;
+    private FeaturedVideoResultAdapter resultAdapter;
+    private final int FEATURED_LOAD = 10;
     String userCredits;
     String userID;
     String type;
@@ -101,6 +101,17 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private String CreditVal;
     private Video onClickedVideo;
 
+    //Layouts
+    private LinearLayout FeaturedVideosLinLayout;
+    private LinearLayout FreshReleasesLinLayout;
+    private LinearLayout TrendingNowLinLayout;
+    //TODO include sponsored videos and hot playlists on home frag
+//    private LinearLayout SponsoredVideosLinLayout;
+    private LinearLayout WatchAgainLinLayout;
+    private LinearLayout ArtistWatchLinLayout;
+    private LinearLayout PopularUsersLinLayout;
+//    private LinearLayout HotPlaylistsLinLayout;
+
     SwipeRefreshLayout swipeRefreshLayout;
 
 
@@ -116,7 +127,17 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
-        //setupRecyclerView();
+        setupRecyclerView();
+
+        // Layouts
+        FeaturedVideosLinLayout = view.findViewById(R.id.featuredVideosLinLayout);
+        FreshReleasesLinLayout = view.findViewById(R.id.freshReleasesLinLayout);
+        TrendingNowLinLayout = view.findViewById(R.id.trendingNowLinLayout);
+//        SponsoredVideosLinLayout = view.findViewById(R.id.sponsoredVideosLinLayout);
+        WatchAgainLinLayout = view.findViewById(R.id.watchAgainLinLayout);
+        ArtistWatchLinLayout = view.findViewById(R.id.artistWatchLinLayout);
+        PopularUsersLinLayout = view.findViewById(R.id.popularUsersLinLayout);
+        //       HotPlaylistsLinLayout = view.findViewById(R.id.hotPlaylistsLinLayout);
 
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
@@ -128,7 +149,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     public void run() {
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                },3000);
+                }, 3000);
             }
         });
 
@@ -138,19 +159,19 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                        if(!Strings.isNullOrEmpty(currentCredit)){
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
                             CreditVal = currentCredit;
-                        }
-                        else
+                        } else
                             CreditVal = "0";
                     }
+
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
 
         tlistner = selectedVideo -> {
-            Log.e(TAG,"entered video trenf=ding" + selectedVideo.getVideoId());
+            Log.e(TAG, "entered video trenf=ding" + selectedVideo.getVideoId());
             Intent videoPlayerIntent = new Intent(getContext(), VideoPlayer.class);
             videoPlayerIntent.putExtra("VIDEO", selectedVideo);
             videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
@@ -167,7 +188,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     public void run() {
                         swipeRefreshLayout.setRefreshing(false);
                     }
-                },3000);
+                }, 3000);
             }
         });
 
@@ -179,7 +200,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 startActivity(trending);
             }
         });
-
 
 
         // Populate the Artists To Watch recycler view
@@ -244,11 +264,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                        if(!Strings.isNullOrEmpty(currentCredit)){
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
 
                             CreditVal = currentCredit;
-                        }
-                        else
+                        } else
                             CreditVal = "0";
 
                         // Log.e(TAG, "Profile credit val inside change" + CreditVal);
@@ -290,12 +309,12 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     }
 
-    public void featuredVideosSetup(View view){
+    public void featuredVideosSetup(View view) {
         /**
          * Featured Artist Start
          */
         Bundle bundle = this.getArguments();
-        if (bundle != null){
+        if (bundle != null) {
             userCredits = bundle.getString("CREDITS", "0");
             type = bundle.getString("TYPE", "basic");
             userID = bundle.getString("USER_ID");
@@ -337,55 +356,112 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 if (docs.exists()) {
                     Video tmp = docs.toObject(Video.class);
                     featuredVideos.add(tmp);
-                    Log.e(TAG,"Logging each Video");
-                    if (tmp.getTitle() != null){  Log.e(TAG,"Title: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
-                    if (tmp.getDescription() != null){  Log.e(TAG,"Description: " + tmp.getDescription());} else {Log.e(TAG,"Description was null");}
-                    if (tmp.getGenre() != null){  Log.e(TAG,"Genre: " + tmp.getGenre());} else {Log.e(TAG,"Genre was null");}
-                    if (tmp.getSubGenre() != null){  Log.e(TAG,"Sub-Genre: " + tmp.getSubGenre());} else {Log.e(TAG,"Sub-Genre was null");}
-                    if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
-                    if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
-                    if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
+                    Log.e(TAG, "Logging each Video");
+                    if (tmp.getTitle() != null) {
+                        Log.e(TAG, "Title: " + tmp.getTitle());
+                    } else {
+                        Log.e(TAG, "Title was null");
+                    }
+                    if (tmp.getDescription() != null) {
+                        Log.e(TAG, "Description: " + tmp.getDescription());
+                    } else {
+                        Log.e(TAG, "Description was null");
+                    }
+                    if (tmp.getGenre() != null) {
+                        Log.e(TAG, "Genre: " + tmp.getGenre());
+                    } else {
+                        Log.e(TAG, "Genre was null");
+                    }
+                    if (tmp.getSubGenre() != null) {
+                        Log.e(TAG, "Sub-Genre: " + tmp.getSubGenre());
+                    } else {
+                        Log.e(TAG, "Sub-Genre was null");
+                    }
+                    if (tmp.getPrivacy() != null) {
+                        Log.e(TAG, "Privacy: " + tmp.getPrivacy());
+                    } else {
+                        Log.e(TAG, "Privacy was null");
+                    }
+                    if (tmp.getUrl() != null) {
+                        Log.e(TAG, "URL: " + tmp.getUrl());
+                    } else {
+                        Log.e(TAG, "URL was null");
+                    }
+                    if (tmp.getUserId() != null) {
+                        Log.e(TAG, "User ID: " + tmp.getUserId());
+                    } else {
+                        Log.e(TAG, "UID was null");
+                    }
                     //TODO just a log!
 //                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
-                    if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
-                    if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
-                    Log.e(TAG,"Pub Year: " + tmp.getPubYear());
-                    if (tmp.getDuration() != null){  Log.e(TAG,"Duration: " + tmp.getDuration());} else {Log.e(TAG,"Duration was null");}
-                    if (tmp.getVideoId() != null){  Log.e(TAG,"Video ID: " + tmp.getVideoId());} else {Log.e(TAG,"VID was null");}
-                    if (tmp.getTimestamp() != null){  Log.e(TAG,"Timestamp: " + tmp.getTimestamp().toString());} else {Log.e(TAG,"Title was null");}
-                    Log.e(TAG,"Views: " + tmp.getTitle());
-                    if (tmp.getDelete() != null){  Log.e(TAG,"Delete: " + tmp.getDelete());} else {Log.e(TAG,"Delete was null");}
+                    if (tmp.getThumbnailUrl() != null) {
+                        Log.e(TAG, "Thumbnail URL: " + tmp.getThumbnailUrl());
+                    } else {
+                        Log.e(TAG, "Thumbnail was null");
+                    }
+                    if (tmp.getTitle() != null) {
+                        Log.e(TAG, "Contributors: " + tmp.getTitle());
+                    } else {
+                        Log.e(TAG, "Title was null");
+                    }
+                    Log.e(TAG, "Pub Year: " + tmp.getPubYear());
+                    if (tmp.getDuration() != null) {
+                        Log.e(TAG, "Duration: " + tmp.getDuration());
+                    } else {
+                        Log.e(TAG, "Duration was null");
+                    }
+                    if (tmp.getVideoId() != null) {
+                        Log.e(TAG, "Video ID: " + tmp.getVideoId());
+                    } else {
+                        Log.e(TAG, "VID was null");
+                    }
+                    if (tmp.getTimestamp() != null) {
+                        Log.e(TAG, "Timestamp: " + tmp.getTimestamp().toString());
+                    } else {
+                        Log.e(TAG, "Title was null");
+                    }
+                    Log.e(TAG, "Views: " + tmp.getTitle());
+                    if (tmp.getDelete() != null) {
+                        Log.e(TAG, "Delete: " + tmp.getDelete());
+                    } else {
+                        Log.e(TAG, "Delete was null");
+                    }
                 } else {
                     Log.e(TAG, "Document " + docs.toString() + "does not exist");
                 }
             }
 
-            VideoClickListener mListener = new VideoClickListener() {
-                @Override
-                public void onResultClick(Video video) {
-                    //Open Video Player for song
-                    Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
-                    videoPlayerIntent.putExtra("VIDEO", video);
-                    Log.e(TAG, video.toString());
-                    videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
-                    videoPlayerIntent.putExtra("CREDIT", userCredits);
-                    startActivity(videoPlayerIntent);
+            if (featuredVideos.size() <= 0) {
+                FeaturedVideosLinLayout.setVisibility(GONE);
+            } else {
 
-                }
+                VideoClickListener mListener = new VideoClickListener() {
+                    @Override
+                    public void onResultClick(Video video) {
+                        //Open Video Player for song
+                        Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
+                        videoPlayerIntent.putExtra("VIDEO", video);
+                        Log.e(TAG, video.toString());
+                        videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                        videoPlayerIntent.putExtra("CREDIT", userCredits);
+                        startActivity(videoPlayerIntent);
 
-                @Override
-                public void onOverflowClick(Video video, View v) {
-                    selectedFeaturedVideo = video;
-                    showOverflow(v);
-                }
-            };
+                    }
 
-            resultAdapter = new FeaturedVideoResultAdapter(featuredVideos, mListener, glideRequests);
-            RecyclerViewPreloader<Video> preloader = new RecyclerViewPreloader<>( glideRequests, resultAdapter, resultAdapter, MAX_PRELOAD /*maxPreload*/);
-            resultAdapter.notifyDataSetChanged();
-            featuredArtistRCV.addOnScrollListener(preloader);
-            featuredArtistRCV.setAdapter(resultAdapter);
-            featuredArtistRCV.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+                    @Override
+                    public void onOverflowClick(Video video, View v) {
+                        selectedFeaturedVideo = video;
+                        showOverflow(v);
+                    }
+                };
+
+                resultAdapter = new FeaturedVideoResultAdapter(featuredVideos, mListener, glideRequests);
+                RecyclerViewPreloader<Video> preloader = new RecyclerViewPreloader<>(glideRequests, resultAdapter, resultAdapter, MAX_PRELOAD /*maxPreload*/);
+                resultAdapter.notifyDataSetChanged();
+                featuredArtistRCV.addOnScrollListener(preloader);
+                featuredArtistRCV.setAdapter(resultAdapter);
+                featuredArtistRCV.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+            }
 
         });
 
@@ -407,13 +483,18 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        adapter = new TrendingAdapter(options, tlistner, mListener);
-        recyclerView_Trending.hasFixedSize();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView_Trending.setLayoutManager(layoutManager);
-        recyclerView_Trending.setAdapter(adapter);
+//        if (options.getSnapshots().size() <= 0)
+//           TrendingNowLinLayout.setVisibility(View.INVISIBLE);
+//        else {
 
-    }
+            adapter = new TrendingAdapter(options, tlistner, mListener);
+            recyclerView_Trending.hasFixedSize();
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            recyclerView_Trending.setLayoutManager(layoutManager);
+            recyclerView_Trending.setAdapter(adapter);
+
+        }
+//    }
 
     @Override
     public void onStart() {
@@ -493,38 +574,42 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .limit(20).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<String> artistFirestoreList = new ArrayList<>();
-                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
-                    String temp = documentSnapshot.getId();
-                    // Sorted based on highest likes
-                    artistFirestoreList.add(temp);
-                }
+                if (queryDocumentSnapshots.size() <= 0) {
+                    ArtistWatchLinLayout.setVisibility(GONE);
+                } else {
+                    List<String> artistFirestoreList = new ArrayList<>();
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots.getDocuments()) {
+                        String temp = documentSnapshot.getId();
+                        // Sorted based on highest likes
+                        artistFirestoreList.add(temp);
+                    }
 
-                // Query to Firebase
-                if (getActivity() != null) {
+                    // Query to Firebase
+                    if (getActivity() != null) {
 
-                    List<ArtistUser> artistList = new ArrayList<>();
-                    HomeFragmentTopArtistsAdapter homeFragmentTopArtistsAdapter =
-                            new HomeFragmentTopArtistsAdapter(artistList, getContext(), getActivity().getIntent());
+                        List<ArtistUser> artistList = new ArrayList<>();
+                        HomeFragmentTopArtistsAdapter homeFragmentTopArtistsAdapter =
+                                new HomeFragmentTopArtistsAdapter(artistList, getContext(), getActivity().getIntent());
 
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                    for (String artistID : artistFirestoreList) {
-                        databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
-                                    artistList.add(artist_user);
-                                    homeFragmentTopArtistsAdapter.notifyDataSetChanged();
-                                    recyclerView_topArtists.setAdapter(homeFragmentTopArtistsAdapter);
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
+                        for (String artistID : artistFirestoreList) {
+                            databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
+                                        artistList.add(artist_user);
+                                        homeFragmentTopArtistsAdapter.notifyDataSetChanged();
+                                        recyclerView_topArtists.setAdapter(homeFragmentTopArtistsAdapter);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -541,39 +626,43 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("PopularPeople").orderBy("followers", Query.Direction.DESCENDING)
-                .limit(15).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .limit(20).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                List<String> userFirestoreList = new ArrayList<>();
-                for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                    userFirestoreList.add(documentSnapshot.getId());
-                }
+                if (queryDocumentSnapshots.size() <= 0) {
+                    PopularUsersLinLayout.setVisibility(GONE);
+                } else {
+                    List<String> userFirestoreList = new ArrayList<>();
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        userFirestoreList.add(documentSnapshot.getId());
+                    }
 
-                // Query to Firebase
-                if (getActivity() != null) {
+                    // Query to Firebase
+                    if (getActivity() != null) {
 
-                    List<User> userList = new ArrayList<>();
-                    HomeFragmentPopularPeopleAdapter homeFragmentPopularPeopleAdapter =
-                            new HomeFragmentPopularPeopleAdapter(userList, getContext(), getActivity().getIntent());
+                        List<User> userList = new ArrayList<>();
+                        HomeFragmentPopularPeopleAdapter homeFragmentPopularPeopleAdapter =
+                                new HomeFragmentPopularPeopleAdapter(userList, getContext(), getActivity().getIntent());
 
-                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BasicAccounts");
-                    for (String userID : userFirestoreList) {
-                        databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    User basic_user = dataSnapshot.getValue(User.class);
-                                    userList.add(basic_user);
-                                    homeFragmentPopularPeopleAdapter.notifyDataSetChanged();
-                                    recyclerView_popularPeople.setAdapter(homeFragmentPopularPeopleAdapter);
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BasicAccounts");
+                        for (String userID : userFirestoreList) {
+                            databaseReference.child(userID).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        User basic_user = dataSnapshot.getValue(User.class);
+                                        userList.add(basic_user);
+                                        homeFragmentPopularPeopleAdapter.notifyDataSetChanged();
+                                        recyclerView_popularPeople.setAdapter(homeFragmentPopularPeopleAdapter);
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-                        });
+                                }
+                            });
+                        }
                     }
                 }
             }
@@ -628,6 +717,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                 }
                             }
                         }
+                        else {
+                            WatchAgainLinLayout.setVisibility(GONE);
+                        }
                     }
 
                     @Override
@@ -665,8 +757,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public void getFreshReleases() {
 
-        Query queryRef = newReleaseRef.whereEqualTo("delete", "N")
+        Query queryRef = newReleaseRef
                 .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
                 .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -675,10 +768,14 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (userGenreList.size() > 0) {
                        for (int itr = 0; itr < userGenreList.size(); itr++) {
-                            if (userGenreList.get(itr).contains( document.get("genre").toString().toLowerCase())) {
+                           String userGenre = userGenreList.get(itr);
+                           userGenre = userGenre.replaceAll("_"," ");
+                            if (userGenre.contains( document.get("genre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
-                            } else if (userGenreList.get(itr).contains(document.get("subGenre").toString().toLowerCase())) {
+                                break;
+                            } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
+                                break;
                             }
                         }
                     }
@@ -712,6 +809,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
     }
+
 
     public interface TrendingItemClickListener {
         void onTrendingVideoClick(Video selectedVideo);

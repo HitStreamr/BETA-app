@@ -106,8 +106,6 @@ public class Uploads extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull DashboardUploadsHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                //TODO needs to be a callback (or however follows are done)
-//                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
@@ -166,6 +164,22 @@ public class Uploads extends Fragment {
                         });
                     }
                 });
+
+                // Get the uploader's username
+                FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(current_user.getUid())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
             }
 
             @NonNull

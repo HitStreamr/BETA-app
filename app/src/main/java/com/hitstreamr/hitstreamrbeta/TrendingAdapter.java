@@ -47,8 +47,6 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
     protected void onBindViewHolder(@NonNull TrendingHolder holder, int position, @NonNull Video model) {
 
         holder.title.setText(model.getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.author.setText(model.getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(model.getUrl()).into(holder.thumbnail);
         holder.duration.setText(model.getDuration());
@@ -56,7 +54,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         holder.viewsCount.setText(viewCount);
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        holder.published.setText(dateFormat.format(model.getTimestamp().toDate()));
+        holder.year.setText(dateFormat.format(model.getTimestamp().toDate()));
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +102,22 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
 
                     }
                 });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(model.getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.author.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @NonNull
@@ -125,7 +139,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
         public TextView videoLikes;
         public TextView videoReposts;
         public ImageView overflowMenu;
-        public TextView published;
+        public TextView year;
 
         public TrendingHolder(View itemView) {
             super(itemView);
@@ -139,7 +153,7 @@ public class TrendingAdapter extends FirestoreRecyclerAdapter<Video, TrendingAda
             videoLikes = itemView.findViewById(R.id.faveAmount);
             videoReposts = itemView.findViewById(R.id.repostAmount);
             overflowMenu = itemView.findViewById(R.id.moreMenu);
-            published = itemView.findViewById(R.id.published);
+            year = itemView.findViewById(R.id.published);
         }
     }
 }
