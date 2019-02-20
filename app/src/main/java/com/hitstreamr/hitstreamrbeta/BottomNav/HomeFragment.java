@@ -489,7 +489,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 Log.e(TAG, "SIZE " +task.getResult().getDocuments().size());
-                if(task.getResult().getDocuments().size()>0){
+                if(task.getResult().getDocuments().size() == 0){
                     TrendingNowLinLayout.setVisibility(GONE);
                 }
             }

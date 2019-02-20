@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
@@ -10,12 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.content.Context;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -32,12 +36,14 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
 
     private ArrayList<String> followersList;
     private Context context;
-
+    private FirebaseUser current_user;
     private Library.ItemClickListener mlistner;
 
     public FollowersAdapter(Context context, ArrayList<String> bookList) {
         this.followersList = bookList;
         this.context = context;
+
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
@@ -56,6 +62,18 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
         } else {
             Glide.with(getApplicationContext()).load(artistProfReference).into(holder.image);
         }
+
+
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent artistProfile = new Intent(context, Profile.class);
+                //artistProfile.putExtra("TYPE", .getStringExtra("TYPE"));
+                artistProfile.putExtra("artistUsername", followersList.get(position));
+                //artistProfile.putExtra("SearchType", "ArtistAccounts");
+                context.startActivity(artistProfile);
+            }
+        });
 
 
         FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position)).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -124,15 +142,21 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
         });
 
 
+
         FirebaseDatabase.getInstance().getReference("following")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(followersList.get(position)).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.exists()) {
-                    holder.followBtn.setText("Followed");
-                    //holder.followBtn.setBackgroundColor(drawable/button1);
-                    //holder.followBtn.setBackground(new ColorDrawable(R.drawable.button1));
-                    //holder.followBtn.setBackgroundColor(Color.parseColor("#e35bec"));
+                if (current_user.getUid().equals(followersList.get(position))) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (!dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.VISIBLE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.VISIBLE);
+
                 }
             }
 
@@ -140,6 +164,63 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
                 Log.w(TAG, "Failed to read value.", error.toException());
+            }
+        });
+
+        holder.follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance().getReference("following")
+                        .child(current_user.getUid())
+                        .child(followersList.get(position))
+                        .setValue(followersList.get(position))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance().getReference("followers")
+                                        .child(followersList.get(position))
+                                        .child(current_user.getUid())
+                                        .setValue(current_user.getUid())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.GONE);
+                                                holder.unfollow.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
+
+
+        holder.unfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance()
+                        .getReference("following")
+                        .child(current_user.getUid())
+                        .child(followersList.get(position))
+                        .removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance()
+                                        .getReference("followers")
+                                        .child(followersList.get(position))
+                                        .child(current_user.getUid())
+                                        .removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.VISIBLE);
+                                                holder.unfollow.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        });
             }
         });
 
@@ -157,15 +238,18 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
         public TextView username;
         public ImageView image;
         public TextView followersCount;
-        public Button followBtn;
+        public Button follow, unfollow;
+        LinearLayout cardView;
 
         public FollowersViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.artist_name);
             username = view.findViewById(R.id.user_name);
+            cardView = itemView.findViewById(R.id.userCardView);
             image = view.findViewById(R.id.searchImage);
             followersCount = view.findViewById(R.id.count);
-            followBtn = view.findViewById(R.id.follow_button);
+            follow = view.findViewById(R.id.follow_button);
+            unfollow = itemView.findViewById(R.id.unfollow_button);
         }
     }
 }

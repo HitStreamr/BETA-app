@@ -1021,6 +1021,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 fextra = userUserID;
             }
             followersIentent.putExtra("USER", fextra);
+            //followersIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(followersIentent);
         }
         if(view == followingLayout){
