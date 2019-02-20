@@ -324,7 +324,10 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Log.e(TAG, "Entered getHistory Videos" + HistoryList);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int i = 0; i < HistoryList.size(); i++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", HistoryList.get(i)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", HistoryList.get(i))
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .whereEqualTo("delete", "N")
+                    .get());
         }
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
         task.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
@@ -382,7 +385,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private void getWatchLaterVideos() {
         if (WatchLaterList.size() > 0) {
             for (int i = 0; i < WatchLaterList.size(); i++) {
-                Query query = videosCollectionRef.whereEqualTo("videoId", WatchLaterList.get(i));
+                Query query = videosCollectionRef.whereEqualTo("videoId", WatchLaterList.get(i))
+                        .whereEqualTo("delete", "N")
+                        .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -440,7 +445,10 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .get());
         }
 
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);

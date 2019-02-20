@@ -59,7 +59,7 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
     @Override
     public void onBindViewHolder(@NonNull newUploadHolder holder, int position) {
 
-        requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(objects1.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
         //TODO needs to be a callback (or however follows are done)
 //        holder.videoUsername.setText(objects1.get(position).getUsername());

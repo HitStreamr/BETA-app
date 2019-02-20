@@ -54,7 +54,7 @@ public class MoreWatchAgainAdapter extends RecyclerView.Adapter<MoreWatchAgainAd
         holder.year.setText(dateFormat.format(videoList.get(position).getTimestamp().toDate()));
 
         // Get the video's thumbnail
-        Glide.with(holder.thumbnail).load(videoList.get(position).getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(holder.thumbnail).load(videoList.get(position).getUrl()).into(holder.thumbnail);
 
         // onClick listener
         holder.cardView.setOnClickListener(new View.OnClickListener() {

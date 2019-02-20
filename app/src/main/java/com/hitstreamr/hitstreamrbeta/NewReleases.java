@@ -179,7 +179,10 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     public void getFreshReleases(){
 
-        Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = newReleaseRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
