@@ -80,7 +80,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
                                     username = dataSnapshot.getValue(String.class);
                                     Intent profile = new Intent(context, Profile.class);
                                     profile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
-                                    profile.putExtra("artistUsername",username);
+                                    profile.putExtra("artistUsername", username);
                                     profile.putExtra("SearchType", "ArtistAccounts");
                                     context.startActivity(profile);
                                 } else {
@@ -259,7 +259,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 holder.unfollow.setVisibility(View.GONE);
-                                                //notifyDataSetChanged();
+                                                clear();
                                             }
                                         });
                             }
@@ -276,9 +276,11 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
     }
 
     public void clear() {
-        int size = followingList.size();
-        followingList.clear();
-        notifyItemRangeRemoved(0, size);
+        if (followingList.size() > 0) {
+            int size = followingList.size();
+            followingList.clear();
+            notifyItemRangeRemoved(0, size);
+        }
     }
 
     public class FollowingViewHolder extends RecyclerView.ViewHolder {

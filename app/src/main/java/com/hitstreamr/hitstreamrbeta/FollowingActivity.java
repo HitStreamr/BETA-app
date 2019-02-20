@@ -58,7 +58,7 @@ public class FollowingActivity extends AppCompatActivity {
         type =getIntent().getStringExtra("TYPE");
         recyclerView_Following = findViewById(R.id.recyclerView_following);
 
-        followingUsers = new ArrayList<>();
+        //followingUsers = new ArrayList<>();
         setupAdapter();
         myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
                 .child(userId);
@@ -66,12 +66,14 @@ public class FollowingActivity extends AppCompatActivity {
         myFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                adapter_Following.clear();
+                followingUsers = new ArrayList<>();
                 for(DataSnapshot each : dataSnapshot.getChildren()) {
                     followingUsers.add(each.getKey());
                 }
-                setupAdapter();
-
+                if(followingUsers.size()>0) {
+                    setupAdapter();
+                    //adapter_Following.clear();
+                }
             }
 
             @Override
