@@ -88,7 +88,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
 
 
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(getApplicationContext()).load(postVideoFeed.get(position).getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(getApplicationContext()).load(postVideoFeed.get(position).getUrl()).into(holder.thumbnail);
         String viewCount = Long.toString(postVideoFeed.get(position).getViews());
         holder.views.setText(viewCount);
         //holder.username.setText(postVideoFeed.get(position).getUsername() );

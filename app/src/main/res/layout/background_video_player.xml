@@ -6,22 +6,21 @@
     android:layout_alignParentBottom="true"
     android:layout_gravity="bottom"
     android:layout_marginBottom="55dp"
-    android:padding="10dp"
     android:visibility="visible">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp"
         android:elevation="4dp">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#CC000000"
+            android:background="@color/drkgryAccent"
             android:gravity="bottom"
             android:layoutDirection="ltr"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -30,14 +29,14 @@
 
                 <TextView
                     android:id="@+id/songTitleBG"
-                    android:layout_width="270dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="songTitle"
                     android:textColor="@color/colorAccent"
                     android:textSize="14sp"
                     android:transitionName="title"
-                    android:layout_marginStart="10dp"
                     android:layout_marginTop="5dp"
+                    android:textAlignment="center"
 
                     android:ellipsize="marquee"
                     android:focusable="true"
@@ -45,7 +44,6 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-
                     />
 
                 <LinearLayout
@@ -53,17 +51,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="end">
 
-                    <ImageView
-                        android:id="@+id/closeMini"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:src= "@drawable/ic_close"
-                        android:tint="@color/colorAccent"
-                        android:layout_marginEnd="5dp"
-                        android:layout_marginTop="5dp"/>
+
 
                 </LinearLayout>
             </LinearLayout>
@@ -90,17 +78,30 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    >
 
 
 
 
                     <com.google.android.exoplayer2.ui.PlayerControlView
                         android:id="@+id/controls"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight=".9"
                         android:layout_height="wrap_content"
                         app:controller_layout_id="@layout/bg_player_control_view"
                         app:show_timeout="0" />
+
+                    <ImageView
+                        android:id="@+id/closeMini"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_weight=".03"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src= "@drawable/ic_close"
+                        android:tint="@color/colorAccent" />
 
                     <ImageView
                         android:id="@+id/return_to_full"
@@ -114,6 +115,8 @@
                         android:visibility="gone"/>
 
                 </LinearLayout>
+
+
 
             </LinearLayout>
 

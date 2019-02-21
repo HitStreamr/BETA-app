@@ -40,7 +40,7 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
     @Override
     public void onBindViewHolder(@NonNull VideoUploadHolder holder, int position) {
 
-        requestBuilder.load(vids.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(vids.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(vids.get(position).getTitle());
         //TODO needs to be a callback (or however follows are done)
 //        holder.videoUsername.setText(vids.get(position).getUsername());

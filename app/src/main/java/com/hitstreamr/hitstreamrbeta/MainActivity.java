@@ -122,6 +122,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hotchemi.android.rate.AppRate;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
@@ -419,6 +420,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             BGText.setText(((Video)getIntent().getParcelableExtra("VIDEO")).getTitle());
             binder();
         }
+
+        AppRate.with(this)
+                .setInstallDays(1)
+                .setLaunchTimes(3)
+                .setRemindInterval(3)
+                .setDebug(true)
+
+
+                .monitor();
+
+        AppRate.showRateDialogIfMeetsConditions(this);
+        AppRate.with(this).clearAgreeShowDialog();
+
+//        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.custom_dialog, (ViewGroup)findViewById(R.id.layout_root));
+//        AppRate.with(this).setView(view).monitor();
+
+
+
     }
 
     private void initMiniPlayer(){

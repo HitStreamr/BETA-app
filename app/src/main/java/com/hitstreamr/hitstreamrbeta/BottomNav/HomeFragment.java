@@ -42,7 +42,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.core.OrderBy;
-import com.google.firestore.v1beta1.StructuredQuery;
+//import com.google.firestore.v1beta1.StructuredQuery;
 import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
@@ -125,15 +125,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         super.onViewCreated(view, savedInstanceState);
         featuredVideosSetup(view);
 
-        current_user = FirebaseAuth.getInstance().getCurrentUser();
-        userGenreList = new ArrayList<>();
-        UserGenreVideos = new ArrayList<>();
-        UserNewVideos = new ArrayList<>();
-
-        recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
-        trendingMoreBtn = view.findViewById(R.id.trendingMore);
-        setupRecyclerView();
-
         // Layouts
         FeaturedVideosLinLayout = view.findViewById(R.id.featuredVideosLinLayout);
         FreshReleasesLinLayout = view.findViewById(R.id.freshReleasesLinLayout);
@@ -144,6 +135,14 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         PopularUsersLinLayout = view.findViewById(R.id.popularUsersLinLayout);
         //       HotPlaylistsLinLayout = view.findViewById(R.id.hotPlaylistsLinLayout);
 
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
+        userGenreList = new ArrayList<>();
+        UserGenreVideos = new ArrayList<>();
+        UserNewVideos = new ArrayList<>();
+
+        recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
+        trendingMoreBtn = view.findViewById(R.id.trendingMore);
+        //setupRecyclerView();
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -348,8 +347,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
                 //.orderBy("privacy")
-                .orderBy("views", Query.Direction.DESCENDING)
-                .whereEqualTo("privacy", "Public (everyone can see)")
+                .orderBy("views", Query.Direction.DESCENDING )
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
                 .limit(FEATURED_LOAD);
 
         featuredResults = featuredVideosQuery.get();
@@ -360,76 +360,24 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 if (docs.exists()) {
                     Video tmp = docs.toObject(Video.class);
                     featuredVideos.add(tmp);
-                    Log.e(TAG, "Logging each Video");
-                    if (tmp.getTitle() != null) {
-                        Log.e(TAG, "Title: " + tmp.getTitle());
-                    } else {
-                        Log.e(TAG, "Title was null");
-                    }
-                    if (tmp.getDescription() != null) {
-                        Log.e(TAG, "Description: " + tmp.getDescription());
-                    } else {
-                        Log.e(TAG, "Description was null");
-                    }
-                    if (tmp.getGenre() != null) {
-                        Log.e(TAG, "Genre: " + tmp.getGenre());
-                    } else {
-                        Log.e(TAG, "Genre was null");
-                    }
-                    if (tmp.getSubGenre() != null) {
-                        Log.e(TAG, "Sub-Genre: " + tmp.getSubGenre());
-                    } else {
-                        Log.e(TAG, "Sub-Genre was null");
-                    }
-                    if (tmp.getPrivacy() != null) {
-                        Log.e(TAG, "Privacy: " + tmp.getPrivacy());
-                    } else {
-                        Log.e(TAG, "Privacy was null");
-                    }
-                    if (tmp.getUrl() != null) {
-                        Log.e(TAG, "URL: " + tmp.getUrl());
-                    } else {
-                        Log.e(TAG, "URL was null");
-                    }
-                    if (tmp.getUserId() != null) {
-                        Log.e(TAG, "User ID: " + tmp.getUserId());
-                    } else {
-                        Log.e(TAG, "UID was null");
-                    }
+                    Log.e(TAG,"Logging each Video");
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Title: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    if (tmp.getDescription() != null){  Log.e(TAG,"Description: " + tmp.getDescription());} else {Log.e(TAG,"Description was null");}
+                    if (tmp.getGenre() != null){  Log.e(TAG,"Genre: " + tmp.getGenre());} else {Log.e(TAG,"Genre was null");}
+                    if (tmp.getSubGenre() != null){  Log.e(TAG,"Sub-Genre: " + tmp.getSubGenre());} else {Log.e(TAG,"Sub-Genre was null");}
+                    if (tmp.getPrivacy() != null){  Log.e(TAG,"Privacy: " + tmp.getPrivacy());} else {Log.e(TAG,"Privacy was null");}
+                    if (tmp.getUrl() != null){  Log.e(TAG,"URL: " + tmp.getUrl());} else {Log.e(TAG,"URL was null");}
+                    if (tmp.getUserId() != null){  Log.e(TAG,"User ID: " + tmp.getUserId());} else {Log.e(TAG,"UID was null");}
                     //TODO just a log!
 //                    if (tmp.getUsername() != null){  Log.e(TAG,"Username: " + tmp.getUsername());} else {Log.e(TAG,"Username was null");}
-                    if (tmp.getThumbnailUrl() != null) {
-                        Log.e(TAG, "Thumbnail URL: " + tmp.getThumbnailUrl());
-                    } else {
-                        Log.e(TAG, "Thumbnail was null");
-                    }
-                    if (tmp.getTitle() != null) {
-                        Log.e(TAG, "Contributors: " + tmp.getTitle());
-                    } else {
-                        Log.e(TAG, "Title was null");
-                    }
-                    Log.e(TAG, "Pub Year: " + tmp.getPubYear());
-                    if (tmp.getDuration() != null) {
-                        Log.e(TAG, "Duration: " + tmp.getDuration());
-                    } else {
-                        Log.e(TAG, "Duration was null");
-                    }
-                    if (tmp.getVideoId() != null) {
-                        Log.e(TAG, "Video ID: " + tmp.getVideoId());
-                    } else {
-                        Log.e(TAG, "VID was null");
-                    }
-                    if (tmp.getTimestamp() != null) {
-                        Log.e(TAG, "Timestamp: " + tmp.getTimestamp().toString());
-                    } else {
-                        Log.e(TAG, "Title was null");
-                    }
-                    Log.e(TAG, "Views: " + tmp.getTitle());
-                    if (tmp.getDelete() != null) {
-                        Log.e(TAG, "Delete: " + tmp.getDelete());
-                    } else {
-                        Log.e(TAG, "Delete was null");
-                    }
+                    if (tmp.getThumbnailUrl() != null){  Log.e(TAG,"Thumbnail URL: " + tmp.getThumbnailUrl());} else {Log.e(TAG,"Thumbnail was null");}
+                    if (tmp.getTitle() != null){  Log.e(TAG,"Contributors: " + tmp.getTitle());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Pub Year: " + tmp.getPubYear());
+                    if (tmp.getDuration() != null){  Log.e(TAG,"Duration: " + tmp.getDuration());} else {Log.e(TAG,"Duration was null");}
+                    if (tmp.getVideoId() != null){  Log.e(TAG,"Video ID: " + tmp.getVideoId());} else {Log.e(TAG,"VID was null");}
+                    if (tmp.getTimestamp() != null){  Log.e(TAG,"Timestamp: " + tmp.getTimestamp().toString());} else {Log.e(TAG,"Title was null");}
+                    Log.e(TAG,"Views: " + tmp.getTitle());
+                    if (tmp.getDelete() != null){  Log.e(TAG,"Delete: " + tmp.getDelete());} else {Log.e(TAG,"Delete was null");}
                 } else {
                     Log.e(TAG, "Document " + docs.toString() + "does not exist");
                 }
@@ -478,30 +426,41 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
      * Set up the recycler view for trending videos.
      */
     private void setupRecyclerView() {
-        Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING).limit(20);
+        Query query = trendingNowRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("views", Query.Direction.DESCENDING).limit(20);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)
                 .build();
 
-//        if (options.getSnapshots().size() <= 0)
-//           TrendingNowLinLayout.setVisibility(View.INVISIBLE);
-//        else {
+        trendingNowRef.orderBy("views", Query.Direction.DESCENDING)
+                .limit(2)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                Log.e(TAG, "SIZE " +task.getResult().getDocuments().size());
+                if(task.getResult().getDocuments().size() == 0){
+                    TrendingNowLinLayout.setVisibility(GONE);
+                }
+            }
+        });
 
-            adapter = new TrendingAdapter(options, tlistner, mListener);
-            recyclerView_Trending.hasFixedSize();
-            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            recyclerView_Trending.setLayoutManager(layoutManager);
-            recyclerView_Trending.setAdapter(adapter);
+        Log.e(TAG, "trending videos size" + options.getSnapshots().size());
+        adapter = new TrendingAdapter(options, tlistner, mListener);
+        adapter.startListening();
+        recyclerView_Trending.hasFixedSize();
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView_Trending.setLayoutManager(layoutManager);
+        recyclerView_Trending.setAdapter(adapter);
+    }
 
-        }
-//    }
 
     @Override
     public void onStart() {
         super.onStart();
         adapter.startListening();
-
     }
 
     @Override
@@ -617,10 +576,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     }
                 }
             }
-
         });
     }
-
 
     /**
      * Load popular people.
@@ -712,13 +669,13 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
-//                                                if ((documentSnapshot.get("delete").equals("N")) &&
-//                                                        (documentSnapshot.get("privacy")
-//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                if ((documentSnapshot.get("delete").equals("N")) &&
+                                                        (documentSnapshot.get("privacy")
+                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                     videoList.add(documentSnapshot.toObject(Video.class));
                                                     homeFragmentWatchAgainAdapter.notifyDataSetChanged();
                                                     recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
-//                                                }
+                                                }
                                             }
                                         }
                                     });
@@ -772,16 +729,23 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (userGenreList.size() > 0) {
-                        for (int itr = 0; itr < userGenreList.size(); itr++) {
-                            if (userGenreList.get(itr).contains(document.get("genre").toString().toLowerCase())) {
+                       for (int itr = 0; itr < userGenreList.size(); itr++) {
+                           String userGenre = userGenreList.get(itr);
+                           userGenre = userGenre.replaceAll("_"," ");
+                            if (userGenre.contains( document.get("genre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
-                            } else if (userGenreList.get(itr).contains(document.get("subGenre").toString().toLowerCase())) {
+                                break;
+                            } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
+                                break;
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         UserGenreVideos.add(document.toObject(Video.class));
                     }
+
 
                 }
                 if (userGenreList.size() <= 0)
@@ -811,7 +775,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
     }
-
 
     public interface TrendingItemClickListener {
         void onTrendingVideoClick(Video selectedVideo);

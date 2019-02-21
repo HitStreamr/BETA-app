@@ -194,6 +194,10 @@
 
         <activity android:name=".BottomNav.FeaturedVideoRCV"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".ContributorHelp"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu"/>
     </application>
 
 </manifest>

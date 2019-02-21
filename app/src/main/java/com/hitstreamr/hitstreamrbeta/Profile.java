@@ -1,7 +1,5 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -46,7 +43,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -840,7 +836,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 call();
             }
         });*/
-        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -938,15 +936,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                     }
                 }
-                setUpRecyclerViewUpload();
+                setUpRecyclerViewUpload(cUserId);
             }
         });
 
     }
 
-    private void setUpRecyclerViewUpload(){
+    private void setUpRecyclerViewUpload(String cUserId) {
 
+        // Private videos are okay for the uploader
         Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+
+        if (!current_user.getUid().equals(cUserId)) {
+            queryRef = feedRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        }
+
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -1025,6 +1029,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 fextra = userUserID;
             }
             followersIentent.putExtra("USER", fextra);
+            //followersIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(followersIentent);
         }
         if(view == followingLayout){

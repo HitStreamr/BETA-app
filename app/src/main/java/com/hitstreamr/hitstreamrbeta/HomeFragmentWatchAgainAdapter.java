@@ -58,7 +58,7 @@ public class HomeFragmentWatchAgainAdapter extends RecyclerView.Adapter<HomeFrag
         holder.published.setText(dateFormat.format(videoList.get(position).getTimestamp().toDate()));
 
         // Get the video's thumbnail
-        Glide.with(holder.thumbnail).load(videoList.get(position).getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(holder.thumbnail).load(videoList.get(position).getUrl()).into(holder.thumbnail);
 
         // Get the number of likes
         FirebaseDatabase.getInstance().getReference("VideoLikes").child(videoList.get(position).getVideoId())

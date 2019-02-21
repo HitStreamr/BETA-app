@@ -1057,27 +1057,17 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Get the video's view count.
      */
     private void checkViewCount() {
-        FirebaseDatabase.getInstance().getReference("VideoViews")
-                .child(vid.getVideoId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            VideoViewCount = dataSnapshot.getChildrenCount();
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "View Count : " + temp);
-                            TextViewViewCount.setText(temp);
-                        }else{
-                            VideoViewCount = 0l;
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "Video Count reposts : " + temp);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+        FirebaseFirestore.getInstance().collection("Videos")
+                .document(vid.getVideoId())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    TextViewViewCount.setText(documentSnapshot.get("views").toString());
+                }
+            }
+        });
     }
 
 
@@ -1627,10 +1617,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
         // check who the user is following
-        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).child(vid.getUserId())
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(vid.getUserId()).exists()){
+                if (dataSnapshot.exists()){
                     Log.e(TAG, "Following");
                     callback.onFollowChecked(true);
                 }else{

@@ -130,7 +130,10 @@ public class TrendingVideos extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        Query query = trendingNowRef.orderBy("views", Query.Direction.DESCENDING);
+        Query query = trendingNowRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("views", Query.Direction.DESCENDING);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)

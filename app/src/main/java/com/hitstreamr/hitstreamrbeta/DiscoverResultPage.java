@@ -211,7 +211,7 @@ public class DiscoverResultPage extends AppCompatActivity {
                 holder.videoViews.setText(videoViews);
 
                 // Set the video thumbnail
-                String URI = model.getThumbnailUrl();
+                String URI = model.getUrl();
                 Glide.with(holder.videoThumbnail.getContext()).load(URI).into(holder.videoThumbnail);
 
                 holder.videoCard.setOnClickListener(new View.OnClickListener() {
