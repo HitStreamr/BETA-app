@@ -127,7 +127,7 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
 
         Log.e("sku","Inside billing init" );
         SkuDetails sku =  bp.getPurchaseListingDetails("credits_00000002");
-        String price =sku.priceText;
+        String price = sku.priceText;
         String Title = sku.title;
         Log.e("sku","price->" +price);
         Log.e("sku","Title->" +Title);

@@ -12,6 +12,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,11 +48,10 @@ public class MoreWatchAgainAdapter extends RecyclerView.Adapter<MoreWatchAgainAd
     @Override
     public void onBindViewHolder(@NonNull MoreWatchAgainViewHolder holder, int position) {
         holder.title.setText(videoList.get(position).getTitle());
-
-        //TODO needs to be a callback (or however follows are done)
-//        holder.username.setText(videoList.get(position).getUsername());
-        holder.views.setText(String.valueOf(videoList.get(position).getViews()));
         holder.duration.setText(videoList.get(position).getDuration());
+
+        String viewCount = String.valueOf(videoList.get(position).getViews()) + " views";
+        holder.views.setText(viewCount);
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy");
         holder.year.setText(dateFormat.format(videoList.get(position).getTimestamp().toDate()));
@@ -77,6 +80,22 @@ public class MoreWatchAgainAdapter extends RecyclerView.Adapter<MoreWatchAgainAd
                 mListener.onResultClick(videoList.get(position));
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(videoList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

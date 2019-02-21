@@ -29,6 +29,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -999,6 +1000,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     search_input = newText;
                     switch (tab_position) {
                         case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                             //searchVideos(newText);
                             //firestoreRecyclerAdapter_video.startListening();
                             searchVideoFirestore(autocompleteQuery(newText));
@@ -1007,11 +1009,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             return true;
 
                         case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                             searchArtistAccounts(newText);
                             firebaseRecyclerAdapter_artist.startListening();
                             return true;
 
                         case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                             searchBasicAccounts(newText);
                             firebaseRecyclerAdapter_basic.startListening();
                             return true;
@@ -1019,6 +1023,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 if (newText.trim().isEmpty()) {
+                    switch (tab_position) {
+                        case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                            return true;
+                        case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                            return true;
+                        case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                            return true;
+                    }
                     stopAdapters();
                     if (suggestionAdapter != null){
                         suggestionAdapter.stopListening();
@@ -1085,22 +1100,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     stopAdapters();
                     switch (tab_position) {
                         case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                             searchVideoFirestore(autocompleteQuery(search_input));
                             suggestionAdapter.startListening();
                             break;
 
                         case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                             searchArtistAccounts(search_input);
                             firebaseRecyclerAdapter_artist.startListening();
                             break;
 
                         case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
                             searchBasicAccounts(search_input);
                             firebaseRecyclerAdapter_basic.startListening();
                             break;
                     }
                 } else {
-                    stopAdapters();
+
+                        switch (tab_position) {
+                            case 0:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                                break;
+                            case 1:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                                break;
+                            case 2:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                                break;
+
+                        }
+                        stopAdapters();
                 }
             }
 
