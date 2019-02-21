@@ -427,7 +427,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .get());
         }
 
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
@@ -435,12 +438,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
+                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
                         //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        //bb = docume.toObject(Video.class).getThumbnailUrl();
-                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                        bb.add(docume.toObject(Video.class).getVideoId());
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
+                    Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
