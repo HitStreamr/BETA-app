@@ -717,14 +717,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").orderBy("views",
-                com.google.firebase.firestore.Query.Direction.DESCENDING)
+        firebaseFirestore.collection("Videos")/*.orderBy("views",
+                com.google.firebase.firestore.Query.Direction.DESCENDING)*/
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.get("genre").equals(vid.getGenre())) {
+                            if (doc.get("genre").equals(vid.getGenre())
+                                    || doc.get("subGenre").equals(vid.getSubGenre())
+                                    || doc.get("userId").equals(vid.getUserId())) {
                                 if (!vid.getVideoId().equals(doc.getId())) {
                                     videoList.add(doc.toObject(Video.class));
                                     relatedVideosAdapter.notifyDataSetChanged();
@@ -738,7 +740,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //plays the next video when the Service signals
     public void autoPlayNext(){
-        autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
+        autoPlayNextVideo(relatedVideosAdapter.getNextFromList());
     }
 
     /**

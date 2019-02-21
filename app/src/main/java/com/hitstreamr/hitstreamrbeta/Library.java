@@ -302,7 +302,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
 
     private void getHistoryList() {
-        HistoryRef.orderByChild("timestamp").limitToLast(100).addValueEventListener(new ValueEventListener() {
+        HistoryRef.orderByChild("timestamp").limitToFirst(100).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {
@@ -456,12 +456,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
+                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
-                        Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        //bb = docume.toObject(Video.class).getThumbnailUrl();
-                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        bb.add(docume.toObject(Video.class).getVideoId());
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
+                    Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
