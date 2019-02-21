@@ -29,7 +29,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,8 +40,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.core.OrderBy;
-//import com.google.firestore.v1beta1.StructuredQuery;
 import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
@@ -64,9 +61,7 @@ import com.hitstreamr.hitstreamrbeta.VideoClickListener;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.view.View.GONE;
 
@@ -125,6 +120,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         super.onViewCreated(view, savedInstanceState);
         featuredVideosSetup(view);
 
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
+        userGenreList = new ArrayList<>();
+        UserGenreVideos = new ArrayList<>();
+        UserNewVideos = new ArrayList<>();
+
+        recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
+        trendingMoreBtn = view.findViewById(R.id.trendingMore);
+        setupRecyclerView();
+
         // Layouts
         FeaturedVideosLinLayout = view.findViewById(R.id.featuredVideosLinLayout);
         FreshReleasesLinLayout = view.findViewById(R.id.freshReleasesLinLayout);
@@ -135,14 +139,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         PopularUsersLinLayout = view.findViewById(R.id.popularUsersLinLayout);
         //       HotPlaylistsLinLayout = view.findViewById(R.id.hotPlaylistsLinLayout);
 
-        current_user = FirebaseAuth.getInstance().getCurrentUser();
-        userGenreList = new ArrayList<>();
-        UserGenreVideos = new ArrayList<>();
-        UserNewVideos = new ArrayList<>();
-
-        recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
-        trendingMoreBtn = view.findViewById(R.id.trendingMore);
-        //setupRecyclerView();
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -523,7 +519,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     /**
      * Video menu popup options.
-     *
      * @param item item
      * @return true
      */
@@ -564,7 +559,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public interface ItemClickListener {
         void onResultClick(Video title);
-
         void onOverflowClick(Video title, View v);
     }
 
@@ -577,7 +571,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     /**
      * Load top artists.
-     *
      * @param view view
      */
     private void showArtistsToWatch(View view) {
@@ -700,8 +693,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
                         if (dataSnapshot.exists()) {
                             for (DataSnapshot ds : dataSnapshot.getChildren()) {
                                 videoIdList.add(ds.child("videoId").getValue(String.class));
@@ -721,13 +712,13 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         @Override
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
-//                                                if ((documentSnapshot.get("delete").equals("N")) &&
-//                                                        (documentSnapshot.get("privacy")
-//                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                if ((documentSnapshot.get("delete").equals("N")) &&
+                                                        (documentSnapshot.get("privacy")
+                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                     videoList.add(documentSnapshot.toObject(Video.class));
                                                     homeFragmentWatchAgainAdapter.notifyDataSetChanged();
                                                     recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
-//                                                }
+                                                }
                                             }
                                         }
                                     });
@@ -774,30 +765,36 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public void getFreshReleases() {
 
-        Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = newReleaseRef
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (userGenreList.size() > 0) {
-                        for (int itr = 0; itr < userGenreList.size(); itr++) {
-                            if (userGenreList.get(itr).contains(document.get("genre").toString().toLowerCase())) {
+                       for (int itr = 0; itr < userGenreList.size(); itr++) {
+                           String userGenre = userGenreList.get(itr);
+                           userGenre = userGenre.replaceAll("_"," ");
+                            if (userGenre.contains( document.get("genre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
-                            } else if (userGenreList.get(itr).contains(document.get("subGenre").toString().toLowerCase())) {
+                                break;
+                            } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
+                                break;
                             }
                         }
-                    } else {
+                    }
+                    else
+                    {
                         UserGenreVideos.add(document.toObject(Video.class));
                     }
 
+
                 }
-                if (userGenreList.size() <= 0)
-                    FreshReleasesLinLayout.setVisibility(GONE);
-                else {
-                    callToAdapter();
-                }
+                callToAdapter();
             }
         });
 
@@ -820,6 +817,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
     }
+
 
     public interface TrendingItemClickListener {
         void onTrendingVideoClick(Video selectedVideo);
