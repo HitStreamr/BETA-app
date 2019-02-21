@@ -144,6 +144,13 @@ public class HomeFragmentPopularPeopleAdapter extends RecyclerView.Adapter<HomeF
                 mContext.startActivity(artistProfile);
             }
         });
+
+        // Check if user is verified
+        if (userList.get(position).getVerified().equals("true")) {
+            holder.verified.setVisibility(View.VISIBLE);
+        } else {
+            holder.verified.setVisibility(View.GONE);
+        }
     }
 
     @Override

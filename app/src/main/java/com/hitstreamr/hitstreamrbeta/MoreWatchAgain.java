@@ -147,13 +147,13 @@ public class MoreWatchAgain extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(DocumentSnapshot documentSnapshot) {
                                         if (documentSnapshot.exists()) {
-//                                            if ((documentSnapshot.get("delete").equals("N")) &&
-//                                                    (documentSnapshot.get("privacy")
-//                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                            if ((documentSnapshot.get("delete").equals("N")) &&
+                                                    (documentSnapshot.get("privacy")
+                                                            .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
                                                 videoList.add(documentSnapshot.toObject(Video.class));
                                                 moreWatchAgainAdapter.notifyDataSetChanged();
                                                 recyclerView.setAdapter(moreWatchAgainAdapter);
-//                                            }
+                                            }
                                         }
                                     }
                                 });

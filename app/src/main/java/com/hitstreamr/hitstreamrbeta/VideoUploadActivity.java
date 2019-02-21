@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -248,9 +249,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         //Edittext
         EdittextTitle = findViewById(R.id.Title);
+        EdittextTitle.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         EditTextDescription = findViewById(R.id.Description);
+        EditTextDescription.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
        // EdittextContributorName = findViewById(R.id.ContributorName);
         EdittextContributorPercentage = findViewById(R.id.ContributorPercentage);
+
 
         //Spinner
         SpinnerGenre = findViewById(R.id.Genre);
@@ -618,9 +622,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EdittextTitle.setError("Field can't be empty");
             return false;
         } else if (title.length() >= 100) {
-            EdittextTitle.setError("Title length has crossed 100 characters");
+            EdittextTitle.setError("Title length can't exceed 100 characters");
         } else if (!(checkAlphaNumeric(title))) {
-                EdittextTitle.setError("Title must only have letters and numbers");
+                EdittextTitle.setError("Title contains unaccepted characters");
                 return false;
         } else {
             EdittextTitle.setError(null);
@@ -634,9 +638,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             EditTextDescription.setError("Field can't be empty");
             return false;
         } else if (description.length() >= 1000) {
-            EditTextDescription.setError("Description length has crossed 1000 characters");
+            EditTextDescription.setError("Description length can't exceed 1000 characters");
         } else if (!(checkAlphaNumeric(description))) {
-            EditTextDescription.setError("Description must only have letters and numbers");
+            EditTextDescription.setError("Description contains unaccepted characters");
             return false;
         } else {
             EditTextDescription.setError(null);

@@ -27,7 +27,7 @@ public class FollowingActivity extends AppCompatActivity {
     private static final String TAG = "FollowingActivity";
     DatabaseReference myFollowingRef;
     ArrayList<String> followingUsers;
-    String userId;
+    String userId, type;
     private RecyclerView recyclerView_Following;
     private  FollowingAdapter adapter_Following;
 
@@ -55,9 +55,10 @@ public class FollowingActivity extends AppCompatActivity {
         }
 
         userId = getIntent().getStringExtra("USER");
+        type = getIntent().getStringExtra("TYPE");
         recyclerView_Following = findViewById(R.id.recyclerView_following);
 
-        followingUsers = new ArrayList<>();
+        //followingUsers = new ArrayList<>();
         setupAdapter();
         myFollowingRef = FirebaseDatabase.getInstance().getReference("following")
                 .child(userId);
@@ -65,11 +66,14 @@ public class FollowingActivity extends AppCompatActivity {
         myFollowingRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                followingUsers = new ArrayList<>();
                 for(DataSnapshot each : dataSnapshot.getChildren()) {
                     followingUsers.add(each.getKey());
                 }
-                setupAdapter();
-
+                if(followingUsers.size()>0) {
+                    setupAdapter();
+                    //adapter_Following.clear();
+                }
             }
 
             @Override
@@ -88,7 +92,7 @@ public class FollowingActivity extends AppCompatActivity {
         Log.e(TAG, "Entered Setup recycler view " + userId + " " +followingUsers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_Following.setLayoutManager(layoutManager);
-        adapter_Following = new FollowingAdapter(this, followingUsers);
+        adapter_Following = new FollowingAdapter(this, followingUsers, getIntent());
         recyclerView_Following.setAdapter(adapter_Following);
     }
 

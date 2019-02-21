@@ -111,7 +111,6 @@ public class CreateNewPlaylist extends AppCompatActivity implements View.OnClick
             validatePlaylist();
         }
         if (view == cancelBtn) {
-            finish();
             Log.e(TAG, "Cancel Creating new Playlist");
             finish();
         }

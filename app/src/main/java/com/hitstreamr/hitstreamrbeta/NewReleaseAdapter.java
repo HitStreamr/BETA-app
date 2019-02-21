@@ -59,16 +59,15 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
     @Override
     public void onBindViewHolder(@NonNull newUploadHolder holder, int position) {
 
-        requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(objects1.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(objects1.get(position).getUsername());
         holder.videoTime.setText(objects1.get(position).getDuration());
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         holder.videoYear.setText(dateFormat.format(objects1.get(position).getTimestamp().toDate()));
 
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +104,22 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(objects1.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
                         }
                     }
 

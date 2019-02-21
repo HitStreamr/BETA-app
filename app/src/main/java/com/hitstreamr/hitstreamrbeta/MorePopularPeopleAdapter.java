@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +35,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
     private List<User> userList;
     private Context mContext;
     private Intent mIntent;
+    private FirebaseUser current_user;
 
     /**
      * Constructor
@@ -40,6 +44,8 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
         this.userList = userList;
         this.mContext = mContext;
         this.mIntent = mIntent;
+
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @NonNull
@@ -52,7 +58,13 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
     @Override
     public void onBindViewHolder(@NonNull MorePopularPeopleHolder holder, int position) {
         holder.userName.setText(userList.get(position).getUsername());
-        holder.verified.setVisibility(View.GONE);
+
+        // Check if user is verified
+        if (userList.get(position).getVerified().equals("true")) {
+            holder.verified.setVisibility(View.VISIBLE);
+        } else {
+            holder.verified.setVisibility(View.GONE);
+        }
 
         // Listener for the whole user card view
         holder.cardView.setOnClickListener(new View.OnClickListener() {
@@ -131,6 +143,12 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
 
             }
         });
+
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(userList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -147,10 +165,11 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
      */
     public class MorePopularPeopleHolder extends RecyclerView.ViewHolder {
 
-        public TextView userName, followerCount;
-        public LinearLayout cardView;
-        public CircleImageView profilePicture;
-        public ImageView verified;
+        TextView userName, followerCount;
+        LinearLayout cardView;
+        CircleImageView profilePicture;
+        ImageView verified;
+        Button follow, unfollow;
 
         public MorePopularPeopleHolder(View itemView) {
             super(itemView);
@@ -160,6 +179,8 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             profilePicture = itemView.findViewById(R.id.searchImage);
             followerCount = itemView.findViewById(R.id.count);
             verified = itemView.findViewById(R.id.verified);
+            follow = itemView.findViewById(R.id.follow_button);
+            unfollow = itemView.findViewById(R.id.unfollow_button);
         }
     }
 }

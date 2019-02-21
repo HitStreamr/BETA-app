@@ -91,6 +91,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -158,6 +159,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private TextView unfollow;
     private RelativeLayout MediaControlLayout;
     private TextView showMore;
+    private ImageView verified;
 
     private RelativeLayout MediaContolLayout;
 
@@ -465,9 +467,32 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         artistNameBold = findViewById(R.id.artistNameBold);
         artistName = findViewById(R.id.Artist);
-        //TODO gotta do a thingy
-//        artistName.setText(vid.getUsername());
-//        artistNameBold.setText(vid.getUsername());
+        verified = findViewById(R.id.verified);
+
+        // TODO gotta do a thingy
+        String artistID = vid.getUserId();
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(artistID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            ArtistUser artist = dataSnapshot.getValue(ArtistUser.class);
+                            artistName.setText(artist.getArtistname());
+                            artistNameBold.setText(artist.getUsername());
+
+                            if (artist.getVerified().equals("true")) {
+                                verified.setVisibility(View.VISIBLE);
+                            } else {
+                                verified.setVisibility(View.GONE);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
         artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vid.getUserId());
         follow = findViewById(R.id.followText);
@@ -692,14 +717,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").orderBy("views",
-                com.google.firebase.firestore.Query.Direction.DESCENDING)
+        firebaseFirestore.collection("Videos")/*.orderBy("views",
+                com.google.firebase.firestore.Query.Direction.DESCENDING)*/
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.get("genre").equals(vid.getGenre())) {
+                            if (doc.get("genre").equals(vid.getGenre())
+                                    || doc.get("subGenre").equals(vid.getSubGenre())
+                                    || doc.get("userId").equals(vid.getUserId())) {
                                 if (!vid.getVideoId().equals(doc.getId())) {
                                     videoList.add(doc.toObject(Video.class));
                                     relatedVideosAdapter.notifyDataSetChanged();
@@ -713,7 +740,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     //plays the next video when the Service signals
     public void autoPlayNext(){
-        autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
+        autoPlayNextVideo(relatedVideosAdapter.getNextFromList());
     }
 
     /**
@@ -997,27 +1024,17 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Get the video's view count.
      */
     private void checkViewCount() {
-        FirebaseDatabase.getInstance().getReference("VideoViews")
-                .child(vid.getVideoId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            VideoViewCount = dataSnapshot.getChildrenCount();
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "View Count : " + temp);
-                            TextViewViewCount.setText(temp);
-                        }else{
-                            VideoViewCount = 0l;
-                            String temp = formatt(VideoViewCount);
-                            Log.e(TAG, "Video Count reposts : " + temp);
-                        }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                    }
-                });
+        FirebaseFirestore.getInstance().collection("Videos")
+                .document(vid.getVideoId())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    TextViewViewCount.setText(documentSnapshot.get("views").toString());
+                }
+            }
+        });
     }
 
 

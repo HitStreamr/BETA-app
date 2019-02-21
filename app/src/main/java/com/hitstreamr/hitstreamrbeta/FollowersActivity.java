@@ -29,7 +29,7 @@ public class FollowersActivity extends AppCompatActivity {
     private static final String TAG = "FollowersActivity";
     DatabaseReference myFollowersRef;
     ArrayList<String> followersUsers;
-    String userId;
+    String userId, type;
     private RecyclerView recyclerView_Followers;
     private  FollowersAdapter adapter_Followers;
 
@@ -57,6 +57,7 @@ public class FollowersActivity extends AppCompatActivity {
         }
 
         userId = getIntent().getStringExtra("USER");
+        type = getIntent().getStringExtra("TYPE");
         recyclerView_Followers = findViewById(R.id.recyclerView_followers);
 
         followersUsers = new ArrayList<>();
@@ -91,7 +92,7 @@ public class FollowersActivity extends AppCompatActivity {
         Log.e(TAG, "Entered Setup recycler view " + userId + " " +followersUsers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_Followers.setLayoutManager(layoutManager);
-        adapter_Followers = new FollowersAdapter(this, followersUsers);
+        adapter_Followers = new FollowersAdapter(this, followersUsers, getIntent());
         recyclerView_Followers.setAdapter(adapter_Followers);
     }
 

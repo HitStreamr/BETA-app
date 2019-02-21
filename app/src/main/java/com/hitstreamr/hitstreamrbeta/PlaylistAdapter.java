@@ -46,13 +46,12 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
             @Override
             public void onClick(View view) {
                 Log.e("TAG", "Itemclicked and selcted");
-                Toast.makeText(mContext, Playlists.get(position) + " selected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, Playlists.get(position) + "selected", Toast.LENGTH_SHORT).show();
 
                 for(int i = 0; i<Playlists.size(); i++){
                     holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
-                holder.parentLayout.setBackgroundColor(Color.parseColor("#ff13ae"));
-                holder.singlePlaylist.setTextColor(Color.parseColor("#FFFFFF"));
+                holder.parentLayout.setBackgroundColor(Color.parseColor("#0000FF"));
 
 
                 mlistner.onResultClick(Playlists.get(position));
