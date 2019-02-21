@@ -421,18 +421,12 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                                 p.setPlayVideoIds(a);
                                 Play.add(p);
                             }
-                            //Log.e(TAG, "Playlist List 1 : " + Play.get(0).getPlaylistname() + " " + Play.get(0).getPlayVideos() + " " + Play.get(0).getPlayVideoIds());
-                            //Log.e(TAG, "Playlist List 2 : " + Play.get(1).getPlayVideoIds() + " " + Play.get(1).getPlaylistname());
-                            //Log.e(TAG, "Playlist List 2 : " + Play.get(2).getPlayVideoIds() + " " +Play.get(2).getPlaylistname());
-
                         }
                         if (Play.size() > 0) {
                             playlistBtn.setVisibility(View.VISIBLE);
                             getaaaPlayVideos();
 
                         }
-                        //setUpPlaylistRecyclerView();
-
                     }
 
                     @Override
@@ -441,8 +435,20 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 });
     }
 
+    /*private void getPlayvideos(){
+        ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
+        for(int i=0; i<Play.size(); i++) {
+            for (int j = 0; j < Play.get(i).getPlayVideoIds().size(); j++) {
+                queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(i).getPlayVideoIds().get(j))
+                        .whereEqualTo("delete", "N")
+                        .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                        .get());
+            }
+        }
+
+    }*/
+
     private void getaaaPlayVideos() {
-        //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
             queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
@@ -459,11 +465,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                 for (QuerySnapshot document : task.getResult()) {
                     ArrayList<String> bb = new ArrayList<>();
                     for (DocumentSnapshot docume : document.getDocuments()) {
-                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
                         //bb.add(docume.toObject(Video.class).getVideoId());
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
-                    //Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
