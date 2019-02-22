@@ -340,9 +340,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
-                .orderBy("views", Query.Direction.DESCENDING)
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
                 .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("views", Query.Direction.DESCENDING)
                 .limit(FEATURED_LOAD);
 
         featuredResults = featuredVideosQuery.get();
