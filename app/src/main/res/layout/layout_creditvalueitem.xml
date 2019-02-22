@@ -12,7 +12,8 @@
             android:elevation="1dp"
             app:cardCornerRadius="4dp"
             app:cardMaxElevation="2dp"
-            android:layout_gravity="center">
+            android:layout_gravity="center"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
