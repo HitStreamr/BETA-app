@@ -342,7 +342,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
-                //.orderBy("privacy")
                 .orderBy("views", Query.Direction.DESCENDING )
                 .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
                 .whereEqualTo("delete", "N")

@@ -192,8 +192,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
 
-        <activity android:name=".BottomNav.FeaturedVideoRCV"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".BottomNav.FeaturedVideoRCV"
+            android:screenOrientation="portrait" />
+
+        <activity android:name=".EmailVerification"></activity>
     </application>
 
 </manifest>
