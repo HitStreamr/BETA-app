@@ -19,9 +19,13 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.Random;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -63,19 +67,18 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     @Override
     public void onBindViewHolder(@NonNull RelatedVideosHolder holder, int position) {
         holder.videoTitle.setText(videoList.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(videoList.get(position).getUsername());
         holder.videoYear.setText(String.valueOf(videoList.get(position).getPubYear()));
         holder.videoDuration.setText(videoList.get(position).getDuration());
 
-        // TODO adjust view/views + use K/M
+        // TODO: adjust view/views + use K/M
         String videoViews = videoList.get(position).getViews() + " views";
         holder.videoViews.setText(videoViews);
 
         // Set the video thumbnail
-        String URI = videoList.get(position).getThumbnailUrl();
+        String URI = videoList.get(position).getUrl();
         Glide.with(holder.videoThumbnail.getContext()).load(URI).into(holder.videoThumbnail);
 
+        // onClick Listeners
         holder.videoCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -119,14 +122,32 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
                 });
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(videoList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     /**
      * Get the first video on the list.
      * @return video
      */
-    public Video getFirstFromList() {
-        return videoList.get(0);
+    public Video getNextFromList() {
+        Random random = new Random();
+        int index = random.nextInt(videoList.size());
+        return videoList.get(index);
     }
 
     /**

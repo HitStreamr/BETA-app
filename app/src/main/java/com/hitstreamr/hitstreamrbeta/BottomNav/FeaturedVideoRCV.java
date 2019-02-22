@@ -73,7 +73,8 @@ public class FeaturedVideoRCV extends AppCompatActivity implements PopupMenu.OnM
         featuredVideosQuery = FirebaseFirestore.getInstance()
                 .collection("FeaturedVideo")
                 .orderBy("views", Query.Direction.DESCENDING )
-                .whereEqualTo("privacy","Public (everyone can see)");
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
 
         featuredResults = featuredVideosQuery.get();
 

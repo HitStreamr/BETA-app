@@ -325,8 +325,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         getSupportActionBar().setTitle(username);
                         getBackgroundImage(current_user.getUid());
 
-
-
                         if (dataSnapshot.child("artistname").exists()) {
                             String artist_name = dataSnapshot.child("artistname").getValue(String.class);
                             mProfileName.setText(artist_name);
@@ -340,6 +338,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         if (dataSnapshot.child("bio").exists()) {
                             String bio = dataSnapshot.child("bio").getValue(String.class);
                             mBio.setText(bio);
+                        }
+
+                        if (dataSnapshot.child("verified").exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                verifiedCheckMark.setVisibility(View.VISIBLE);
+                            } else {
+                                verifiedCheckMark.setVisibility(View.GONE);
+                            }
                         }
                     }
 
@@ -425,7 +431,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .get());
         }
 
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
@@ -433,12 +442,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
+                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
                         //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        //bb = docume.toObject(Video.class).getThumbnailUrl();
-                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                        bb.add(docume.toObject(Video.class).getVideoId());
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
+                    Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
@@ -546,8 +557,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         String searchType = getIntent().getStringExtra("SearchType");
 
         if (searchType.equals("BasicAccounts")) {
-            verifiedCheckMark.setVisibility(View.GONE);
-
             // Hide uploads for basic users
             TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
             mTabLayout.removeTabAt(1);
@@ -578,6 +587,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         if (dataSnapshot.child("bio").exists()) {
                             String bio = dataSnapshot.child("bio").getValue(String.class);
                             mBio.setText(bio);
+                        }
+
+                        if (dataSnapshot.child("verified").exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                verifiedCheckMark.setVisibility(View.VISIBLE);
+                            } else {
+                                verifiedCheckMark.setVisibility(View.GONE);
+                            }
                         }
                     }
                     @Override
@@ -828,7 +845,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 call();
             }
         });*/
-        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -926,15 +945,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
                     }
                 }
-                setUpRecyclerViewUpload();
+                setUpRecyclerViewUpload(cUserId);
             }
         });
 
     }
 
-    private void setUpRecyclerViewUpload(){
+    private void setUpRecyclerViewUpload(String cUserId) {
 
+        // Private videos are okay for the uploader
         Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+
+        if (!current_user.getUid().equals(cUserId)) {
+            queryRef = feedRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        }
+
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -1013,6 +1038,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 fextra = userUserID;
             }
             followersIentent.putExtra("USER", fextra);
+            followersIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(followersIentent);
         }
         if(view == followingLayout){
@@ -1026,6 +1052,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 fextra = userUserID;
             }
             followingIentent.putExtra("USER", fextra);
+            followingIentent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
             startActivity(followingIentent);
 
         }

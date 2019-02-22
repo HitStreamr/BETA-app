@@ -201,8 +201,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull DiscoverResultHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                //TODO needs to be a callback (or however follows are done)
-//                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
@@ -211,7 +209,7 @@ public class DiscoverResultPage extends AppCompatActivity {
                 holder.videoViews.setText(videoViews);
 
                 // Set the video thumbnail
-                String URI = model.getThumbnailUrl();
+                String URI = model.getUrl();
                 Glide.with(holder.videoThumbnail.getContext()).load(URI).into(holder.videoThumbnail);
 
                 holder.videoCard.setOnClickListener(new View.OnClickListener() {
@@ -256,6 +254,22 @@ public class DiscoverResultPage extends AppCompatActivity {
                         });
                     }
                 });
+
+                // Get the uploader's username
+                FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(model.getUserId())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
             }
 
             @NonNull

@@ -51,8 +51,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
                 for(int i = 0; i<Playlists.size(); i++){
                     holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
                 }
-                holder.parentLayout.setBackgroundColor(Color.parseColor("#ff13ae"));
-                holder.singlePlaylist.setTextColor(Color.parseColor("#FFFFFF"));
+                holder.parentLayout.setBackgroundColor(Color.parseColor("#0000FF"));
 
 
                 mlistner.onResultClick(Playlists.get(position));

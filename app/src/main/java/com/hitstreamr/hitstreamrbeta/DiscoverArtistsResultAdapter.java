@@ -9,12 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,6 +37,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
     private List<ArtistUser> artistList;
     private Context mContext;
     private Intent mIntent;
+    private FirebaseUser current_user;
 
     /**
      * Constructor
@@ -42,6 +46,8 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
         this.artistList = artistList;
         this.mContext = mContext;
         this.mIntent = mIntent;
+
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
@@ -149,6 +155,19 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
 
             }
         });
+
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
+        }
+
+        // Check if user is verified
+        if (artistList.get(position).getVerified().equals("true")) {
+            holder.verified.setVisibility(View.VISIBLE);
+        } else {
+            holder.verified.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -156,10 +175,12 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
      */
     public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
 
-        public TextView username, followerCount;
-        public LinearLayout cardView;
-        public Button followButton;
-        public CircleImageView profilePicture;
+        TextView username, followerCount;
+        LinearLayout cardView;
+        Button followButton;
+        CircleImageView profilePicture;
+        ImageView verified;
+        Button follow, unfollow;
 
         public ArtistsToWatchHolder(View view) {
             super(view);
@@ -169,6 +190,9 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             followButton = view.findViewById(R.id.follow_button);
             profilePicture = view.findViewById(R.id.searchImage);
             followerCount = view.findViewById(R.id.count);
+            verified = itemView.findViewById(R.id.verified);
+            follow = itemView.findViewById(R.id.follow_button);
+            unfollow = itemView.findViewById(R.id.unfollow_button);
         }
     }
 }

@@ -302,7 +302,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
 
     private void getHistoryList() {
-        HistoryRef.orderByChild("timestamp").limitToLast(100).addValueEventListener(new ValueEventListener() {
+        HistoryRef.orderByChild("timestamp").limitToFirst(100).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {
@@ -324,7 +324,10 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Log.e(TAG, "Entered getHistory Videos" + HistoryList);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int i = 0; i < HistoryList.size(); i++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", HistoryList.get(i)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", HistoryList.get(i))
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .whereEqualTo("delete", "N")
+                    .get());
         }
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
         task.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
@@ -382,7 +385,9 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private void getWatchLaterVideos() {
         if (WatchLaterList.size() > 0) {
             for (int i = 0; i < WatchLaterList.size(); i++) {
-                Query query = videosCollectionRef.whereEqualTo("videoId", WatchLaterList.get(i));
+                Query query = videosCollectionRef.whereEqualTo("videoId", WatchLaterList.get(i))
+                        .whereEqualTo("delete", "N")
+                        .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
                 query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -440,7 +445,10 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .get());
         }
 
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
@@ -448,12 +456,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
+                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
-                        Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        //bb = docume.toObject(Video.class).getThumbnailUrl();
-                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getThumbnailUrl());
+                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        bb.add(docume.toObject(Video.class).getVideoId());
+                        Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
+                    Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }

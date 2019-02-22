@@ -49,8 +49,6 @@ public class HomeFragmentWatchAgainAdapter extends RecyclerView.Adapter<HomeFrag
     @Override
     public void onBindViewHolder(@NonNull WatchAgainViewHolder holder, int position) {
         holder.title.setText(videoList.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.username.setText(videoList.get(position).getUsername());
         holder.views.setText(String.valueOf(videoList.get(position).getViews()));
         holder.duration.setText(videoList.get(position).getDuration());
 
@@ -58,7 +56,7 @@ public class HomeFragmentWatchAgainAdapter extends RecyclerView.Adapter<HomeFrag
         holder.published.setText(dateFormat.format(videoList.get(position).getTimestamp().toDate()));
 
         // Get the video's thumbnail
-        Glide.with(holder.thumbnail).load(videoList.get(position).getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(holder.thumbnail).load(videoList.get(position).getUrl()).into(holder.thumbnail);
 
         // Get the number of likes
         FirebaseDatabase.getInstance().getReference("VideoLikes").child(videoList.get(position).getVideoId())
@@ -106,6 +104,22 @@ public class HomeFragmentWatchAgainAdapter extends RecyclerView.Adapter<HomeFrag
                 mListener.onOverflowClick(videoList.get(position), holder.overflowMenu);
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(videoList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

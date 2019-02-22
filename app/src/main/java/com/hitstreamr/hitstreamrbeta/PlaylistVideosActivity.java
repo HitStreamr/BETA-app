@@ -192,7 +192,10 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < temp.getPlayVideoIds().size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", temp.getPlayVideoIds().get(j)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", temp.getPlayVideoIds().get(j))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .get());
         }
 
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);

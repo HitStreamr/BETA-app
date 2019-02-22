@@ -54,7 +54,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         //TODO needs to be a callback (or however follows are done)
 //        holder.author.setText(bookList.get(position).getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        Glide.with(holder.thumbnail).load(bookList.get(position).getThumbnailUrl()).into(holder.thumbnail);
+        Glide.with(holder.thumbnail).load(bookList.get(position).getUrl()).into(holder.thumbnail);
         holder.duration.setText(bookList.get(position).getDuration());
 
         String viewCount = Long.toString(bookList.get(position).getViews());
