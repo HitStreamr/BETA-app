@@ -483,7 +483,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        trendingNowRef.orderBy("views", Query.Direction.DESCENDING)
+        //commented due to insufficient permissions
+        /*trendingNowRef.orderBy("views", Query.Direction.DESCENDING)
                 .limit(2)
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -493,7 +494,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                     TrendingNowLinLayout.setVisibility(GONE);
                 }
             }
-        });
+        });*/
 
         Log.e(TAG, "trending videos size" + options.getSnapshots().size());
         adapter = new TrendingAdapter(options, tlistner, mListener);

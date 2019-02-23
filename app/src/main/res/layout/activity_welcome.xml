@@ -14,13 +14,13 @@
         <!--android:background="@drawable/background_splash"/>-->
 
 
-        <com.q42.android.scrollingimageview.ScrollingImageView
+        <!--<com.q42.android.scrollingimageview.ScrollingImageView
             android:layout_height="fill_parent"
             android:layout_width="wrap_content"
             scrolling_image_view:speed="1.5dp"
             scrolling_image_view:src="@drawable/scroll_backg"
 
-            />
+            />-->
 
     <RelativeLayout
         android:id="@+id/animLayout"
