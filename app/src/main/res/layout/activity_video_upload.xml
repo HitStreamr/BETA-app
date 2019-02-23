@@ -152,12 +152,34 @@
                             android:layout_height="match_parent"
                             android:hint="Contributor username/ email"
                             android:inputType="textPersonName" />-->
-                    <AutoCompleteTextView
-                        android:id="@+id/ContributorName"
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Contributor username"
-                        android:inputType="textPersonName" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingEnd="20dp">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/ContributorName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Contributor username"
+                            android:inputType="textPersonName"
+                            android:layout_weight=".9"/>
+
+                        <ImageButton
+                            android:id="@+id/help"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_help_outline_black_24dp"
+                            android:tint="@color/litgryAccent"
+                            android:background="@android:color/transparent"
+                            android:layout_weight=".1"/>
+
+
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="wrap_content"

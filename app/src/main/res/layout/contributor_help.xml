@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/round_outline_wht"
+    android:outlineProvider="background"
+    android:layout_gravity="center"
+    android:elevation="4dp">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end">
+
+                <Button
+                    android:id="@+id/closePop"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    android:background="@drawable/ic_close"
+                    android:backgroundTint="@color/drkgryAccent"
+                    />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/contributorHelp"
+                android:textAlignment="center"
+                android:textColor="@color/drkgryAccent"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="30dp">
+
+                <Button
+                    android:id="@+id/invite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:text="@string/invite_a_friend"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    android:background="@drawable/gradient1round"
+                    android:paddingHorizontal="12dp"
+                    />
+
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+</RelativeLayout>

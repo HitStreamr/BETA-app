@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -110,6 +111,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button addContributorBtn;
     private Button retryUploadBtn;
     private Button ContributorCancelBtn;
+    private ImageButton Help;
 
     //EditText Inputs
     private EditText EdittextTitle;
@@ -243,6 +245,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         addContributorBtn = findViewById(R.id.AddContributorButton);
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
         ContributorCancelBtn =findViewById(R.id.ContributorCancel);
+        Help = findViewById(R.id.help);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -295,6 +298,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         addContributorBtn.setOnClickListener(this);
         retryUploadBtn.setOnClickListener(this);
         ContributorCancelBtn.setOnClickListener(this);
+        Help.setOnClickListener(this);
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -846,6 +850,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if(view == ContributorCancelBtn){
             resetContributor();
             addContributorLayout.setVisibility(View.GONE);
+        }
+        if (view == Help) {
+            startActivity(new Intent(this, ContributorHelp.class));
+
         }
     }
 

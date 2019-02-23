@@ -7,10 +7,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //import com.android.billingclient.api.BillingClient;
@@ -22,6 +25,7 @@ import com.warkiz.widget.IndicatorStayLayout;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreditsPurchase extends AppCompatActivity implements BillingProcessor.IBillingHandler, View.OnClickListener {
@@ -46,11 +50,18 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
 
     public String creditvalue = "90";
 
+    //vars
+    private ArrayList<String> mCreditVal = new ArrayList<>();
+    private ArrayList<String> mCreditPrice = new ArrayList<>();
+    private ArrayList<String> mDescription = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credits_purchase);
+
+        getCredtiVal();
 
         // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
@@ -197,5 +208,34 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
             bp.release();
         }
         super.onDestroy();
+    }
+
+    private void getCredtiVal() {
+        Log.d(TAG, "getCredtVal: preparing text.");
+
+        mCreditVal.add("35 Credits");
+        mCreditPrice.add("$.99");
+        mDescription.add("Lasts 1 - 3 days");
+
+        mCreditVal.add("70 Credits");
+        mCreditPrice.add("$1.99");
+        mDescription.add("Lasts 3 - 7 days");
+
+        mCreditVal.add("110 Credits");
+        mCreditPrice.add("$2.99");
+        mDescription.add("Lasts about a week");
+
+        initRCV();
+
+    }
+
+    private void initRCV(){
+        Log.d(TAG, "initRCV: initRCV.");
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView recyclerView = findViewById(R.id.creditsRCV);
+        recyclerView.setLayoutManager(layoutManager);
+        CreditsRCVAdapter adapter = new CreditsRCVAdapter(this, mCreditPrice, mCreditVal, mDescription);
+        recyclerView.setAdapter(adapter);
     }
 }

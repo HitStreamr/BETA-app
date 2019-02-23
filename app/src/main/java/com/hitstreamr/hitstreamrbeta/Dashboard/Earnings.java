@@ -22,7 +22,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
 
-public class Earnings extends Fragment {
+public class Earnings extends Fragment{
 
     private FirebaseUser current_user;
     private Long viewCount = new Long(0);
@@ -80,7 +80,6 @@ public class Earnings extends Fragment {
                     }
                 }
                 videoViewCount.setText(String.valueOf(viewCount));
-                //totalEarn = Math.round(totalEarn*100)/100.00;
                 artistEarnings.setText(String.valueOf(totalEarn));
                 artistBalance.setText(String.valueOf(artistbal));
                 artistSongs.setText(String.valueOf(myEarnings));

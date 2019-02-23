@@ -148,7 +148,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
 
         // Set the info for the views that show in the notification panel.
         notifB = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.hitstreamr_icon)  // the status icon
+                .setSmallIcon(R.drawable.new_hitstreamr_h_logo_wht_w_)  // the status icon
                 .setTicker(text)  // the status text
                 .setWhen(System.currentTimeMillis())  // the time stamp
                 .setContentTitle("VIDEO UPLOAD")  // the label of the entry

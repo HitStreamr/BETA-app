@@ -58,7 +58,7 @@
     <string name="email_notifications">Email Notifications</string>
     <string name="email_notificaions_descript">Turn on all email notifications or select which to receive individually.</string>
     <string name="invitation_title"><![CDATA[Invite & Earn]]></string>
-    <string name="invite_text">Invite a friend and receive FREE credits \n when they join!</string>
+    <string name="invite_text">Know a friend or artist who would love our app? Invite them to join by clicking the button below!</string>
     <string name="phone_number_text">+1&#8211;000&#8211;000&#8211;0000</string>
     <string name="type_basic">BASIC</string>
     <string name="video_selection">Video Selected</string>
@@ -112,4 +112,10 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="sponsored">SPONSORED</string>
     <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
     <string name="label_info_text">text here</string>
+    <string name="contributorHelp">Add the usernane of your contributor. \n\nDon\'t see your contributor(s)? \n\nInvite fellow artists to join the app via the \'Invite A Friend\' tab in the menu!</string>
+    <string name="rate_dialog_title">Rate Us!</string>
+    <string name="rate_dialog_message">If you enjoy this app, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
+    <string name="rate_dialog_ok">Rate Us!</string>
+    <string name="rate_dialog_cancel">Remind Me Later</string>
+    <string name="rate_dialog_no">No, Thanks</string>
 </resources>
