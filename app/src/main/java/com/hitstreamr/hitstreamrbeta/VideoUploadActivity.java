@@ -245,7 +245,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         addContributorBtn = findViewById(R.id.AddContributorButton);
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
         ContributorCancelBtn =findViewById(R.id.ContributorCancel);
-        Help = findViewById(R.id.help);
+        //Help = (ImageButton) findViewById(R.id.help);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);

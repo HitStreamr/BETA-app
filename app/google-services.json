@@ -47,6 +47,14 @@
           }
         },
         {
+          "client_id": "160384263988-sl6vvgm1uv19ubi3dkofjutfo69e07jn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hitstreamr.hitstreamrbeta",
+            "certificate_hash": "526b1a4b5a63d075d35ebe28d4754e04bbfa70e1"
+          }
+        },
+        {
           "client_id": "160384263988-7fr417ka4ngjij4oi2rrdh0q4c5jdppp.apps.googleusercontent.com",
           "client_type": 3
         }

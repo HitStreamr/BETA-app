@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,8 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class InviteAFriendFragment extends Fragment {
-
-    private static final int Request_Code = 100;
+    private static final String TAG = "InviteAFriendFragment";
+    private static final int REQUEST_INVITE = 100;
     private Button inviteBtn;
 
     @Nullable
@@ -28,61 +29,42 @@ public class InviteAFriendFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_inviteafriend, container, false);
 
-        inviteBtn = (Button) view.findViewById(R.id.invite_button);
-
-        inviteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                onInviteClicked();
-            }
+        inviteBtn = view.findViewById(R.id.invite_button);
+        inviteBtn.setOnClickListener(v -> onInviteClicked());
+        Button close = view.findViewById(R.id.closeBtn);
+        close.setOnClickListener(v -> {
+            Log.e(TAG, "on invite click"+getArguments().getString("TYPE") );
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            intent.putExtra("TYPE", getArguments().getString("TYPE"));
+            startActivity(intent);
         });
-
-        Button close = (Button) view.findViewById(R.id.closeBtn);
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("TYPE", getArguments().getString("TYPE"));
-                startActivity(intent);
-            }
-        });
-
-
 
         return view;
     }
 
     private void onInviteClicked() {
-        Intent intent = new AppInviteInvitation.IntentBuilder("Invite A Friend")
-                .setMessage("Hey there, check out this cool app....")
-                .setDeepLink(Uri.parse("http://google.com"))
-                .setCallToActionText("Invitation CTA")
-
-
+        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
+                .setMessage(getString(R.string.invitation_message))
+                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
+                .setCallToActionText(getString(R.string.invitation_cta))
                 .build();
-
-        startActivityForResult(intent, Request_Code);
+        startActivityForResult(intent, REQUEST_INVITE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Request_Code)
-        {
-            if (resultCode == RESULT_OK)
-            {
-                String [] ids = AppInviteInvitation.getInvitationIds(resultCode,data);
+        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
 
-                for (String id : ids )
-                {
-                    System.out.println("InviteAFriendFragment.onActivityResult:"+ id);
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                // Get the invitation IDs of all sent messages
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+                for (String id : ids) {
+                    Log.d(TAG, "onActivityResult: sent invitation " + id);
                 }
-            }
-            else
-            {
-                //error
-
+            } else {
+                Log.e(TAG, "Error occurred while sending a message");
             }
         }
     }

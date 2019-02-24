@@ -195,7 +195,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ContributorHelp"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
     </application>
 

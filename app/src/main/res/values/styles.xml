@@ -43,4 +43,8 @@
         <item name="android:colorControlActivated">@color/colorPrimary</item>
     </style>
 
+    <style name = "AlertDialog" parent = "Theme.AppCompat.DayNight.Dialog" >
+         <item name = "android:textColor" >#ff13ae</item >
+    </style >
+
 </resources>
