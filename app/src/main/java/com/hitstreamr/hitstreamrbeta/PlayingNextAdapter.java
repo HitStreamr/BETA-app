@@ -25,11 +25,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
-import java.util.Random;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
-public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdapter.RelatedVideosHolder> {
+public class PlayingNextAdapter extends RecyclerView.Adapter<PlayingNextAdapter.NextInQueVideoHolder> {
 
     private List<Video> videoList;
     private Context mContext;
@@ -39,7 +38,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     /**
      * Constructor
      */
-    public RelatedVideosAdapter(List<Video> videoList, Context mContext, Intent mIntent) {
+    public PlayingNextAdapter(List<Video> videoList, Context mContext, Intent mIntent) {
         this.videoList = videoList;
         this.mContext = mContext;
         this.mIntent = mIntent;
@@ -49,23 +48,14 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
 
     @NonNull
     @Override
-    public RelatedVideosHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NextInQueVideoHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.search_results_video, parent, false);
-        return new RelatedVideosHolder(itemView);
+        return new NextInQueVideoHolder(itemView);
     }
 
     @Override
-    public int getItemCount() {
-        if (videoList != null) {
-            return videoList.size();
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull RelatedVideosHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NextInQueVideoHolder holder, int position) {
         holder.videoTitle.setText(videoList.get(position).getTitle());
         holder.videoYear.setText(String.valueOf(videoList.get(position).getPubYear()));
         holder.videoDuration.setText(videoList.get(position).getDuration());
@@ -140,17 +130,13 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
                 });
     }
 
-    /**
-     * Get the first video on the list.
-     * @return video
-     */
-    public Video getNextFromList() {
-        if (videoList.size() != 0) {
-            Random random = new Random();
-            int index = random.nextInt(videoList.size());
-            return videoList.get(index);
+    @Override
+    public int getItemCount() {
+        if (videoList != null) {
+            return videoList.size();
+        } else {
+            return 0;
         }
-        return null;
     }
 
     /**
@@ -185,15 +171,15 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     }
 
     /**
-     * Related Videos Holder - Inner Class
+     * Next In Que Videos Holder - Inner Class
      */
-    public class RelatedVideosHolder extends RecyclerView.ViewHolder {
+    public class NextInQueVideoHolder extends RecyclerView.ViewHolder {
 
-        public TextView videoTitle, videoUsername, videoYear, videoDuration, videoViews;
-        public ImageView videoThumbnail, videoMenu;
-        public LinearLayout videoCard;
+        TextView videoTitle, videoUsername, videoYear, videoDuration, videoViews;
+        ImageView videoThumbnail, videoMenu;
+        LinearLayout videoCard;
 
-        public RelatedVideosHolder(View itemView) {
+        public NextInQueVideoHolder(View itemView) {
             super(itemView);
 
             videoTitle = itemView.findViewById(R.id.videoTitle);

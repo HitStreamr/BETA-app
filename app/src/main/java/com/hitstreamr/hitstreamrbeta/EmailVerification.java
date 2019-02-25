@@ -14,6 +14,6 @@ public class EmailVerification extends AppCompatActivity {
         setContentView(R.layout.activity_email_verification);
 
         verifText = findViewById(R.id.verificationText);
-        verifText.setText("A Verification Email has been sent to" + );
+        verifText.setText("A Verification Email has been sent to");
     }
 }

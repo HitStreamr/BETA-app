@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,6 +26,7 @@ public class CreditsRCVAdapter extends RecyclerView.Adapter<CreditsRCVAdapter.Vi
         this.mCreditPrice = mCreditPrice;
         this.mDescription = mDescription;
 //        this.mContext = mContext;
+
     }
 
     @Override
@@ -84,8 +86,8 @@ public class CreditsRCVAdapter extends RecyclerView.Adapter<CreditsRCVAdapter.Vi
         public ViewHolder(View itemView) {
             super(itemView);
 
-            CreditVal = itemView.findViewById(R.id.creditvalue);
-            CreditPrice = itemView.findViewById(R.id.creditprice);
+            CreditVal = itemView.findViewById(R.id.creditprice);
+            CreditPrice = itemView.findViewById(R.id.creditvalue);
             PriceDescript = itemView.findViewById(R.id.priceDescription);
         }
     }

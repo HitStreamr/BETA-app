@@ -26,7 +26,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     private Context mContext;
     private Library.ItemClickListener mlistner;
 
-    public WatchPlaylistAdapter(Context context, ArrayList<Playlist> playlist, Library.ItemClickListener mlistner) {
+    public  WatchPlaylistAdapter(Context context, ArrayList<Playlist> playlist, Library.ItemClickListener mlistner) {
         Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
         this.Playlist = playlist;
         this.mContext = context;
@@ -49,8 +49,11 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
         holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()));
         holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()) + " videos");
         holder.thumbnailPlaylist.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        //Glide.with(getApplicationContext()).load(Uri.parse(Playlist.get(position).getPlayThumbnails())).into(holder.thumbnailPlaylist);
-
+        if(!Playlist.get(position).getPlayVideoIds().isEmpty()) {
+            if (!Playlist.get(position).getPlayThumbnails().isEmpty()) {
+                Glide.with(getApplicationContext()).load(Uri.parse(Playlist.get(position).getPlayThumbnails())).into(holder.thumbnailPlaylist);
+            }
+        }
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override

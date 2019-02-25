@@ -435,32 +435,24 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 .setQuery(query, Video.class)
                 .build();
 
-        trendingNowRef.orderBy("views", Query.Direction.DESCENDING)
-                .limit(2)
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                Log.e(TAG, "SIZE " +task.getResult().getDocuments().size());
-                if(task.getResult().getDocuments().size() == 0){
-                    TrendingNowLinLayout.setVisibility(GONE);
-                }
-            }
-        });
+//        if (options.getSnapshots().size() <= 0)
+//           TrendingNowLinLayout.setVisibility(View.INVISIBLE);
+//        else {
 
-        Log.e(TAG, "trending videos size" + options.getSnapshots().size());
-        adapter = new TrendingAdapter(options, tlistner, mListener);
-        adapter.startListening();
-        recyclerView_Trending.hasFixedSize();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView_Trending.setLayoutManager(layoutManager);
-        recyclerView_Trending.setAdapter(adapter);
-    }
+            adapter = new TrendingAdapter(options, tlistner, mListener);
+            recyclerView_Trending.hasFixedSize();
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            recyclerView_Trending.setLayoutManager(layoutManager);
+            recyclerView_Trending.setAdapter(adapter);
 
+        }
+//    }
 
     @Override
     public void onStart() {
         super.onStart();
         adapter.startListening();
+
     }
 
     @Override
@@ -471,7 +463,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     /**
      * Video menu popup options.
-     *
      * @param item item
      * @return true
      */
@@ -722,7 +713,10 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public void getFreshReleases() {
 
-        Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = newReleaseRef
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -775,6 +769,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_newRelease.setAdapter(newReleaseadapter);
 
     }
+
 
     public interface TrendingItemClickListener {
         void onTrendingVideoClick(Video selectedVideo);

@@ -50,8 +50,8 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
         holder.videoPublishedYear.setText(pubYear);
         holder.videoDuration.setText(playlist.getPlayVideos().get(position).getDuration());
 
-//        Glide.with(getApplicationContext()).load(Uri.parse((playlist.getPlayVideos().get(position)
-//                .getThumbnailUrl()))).into(holder.videoThumbnail);
+        Glide.with(getApplicationContext()).load(Uri.parse((playlist.getPlayVideos().get(position)
+                .getUrl()))).into(holder.videoThumbnail);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override

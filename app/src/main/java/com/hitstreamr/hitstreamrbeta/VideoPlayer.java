@@ -1,8 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +8,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -32,7 +28,6 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -46,33 +41,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -90,7 +65,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.text.DateFormat;
@@ -103,8 +77,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TreeMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -201,10 +173,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private int currentWindow;
     private boolean playWhenReady = true;*/
 
-
-
-
     Video vid;
+    private Video nextVideo;
 
     private String creditValue="";
 
@@ -573,7 +543,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         mDetector = new GestureDetectorCompat(this,this);
 
-        // Populate the recycler view with videos of same genre based on views
+        // Populate the recycler view with videos of same genre/sub-genre/uploader
         loadRelatedVideos();
 
         // Save auto-play switch state for users
@@ -707,7 +677,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     /**
-     * Load related videos to the current displayed one based on its genre, and sorted based on views.
+     * Load related videos to the current displayed one based on its genre/sub-genre/uploader.
      */
     private void loadRelatedVideos() {
         RecyclerView recyclerView = findViewById(R.id.relatedVideos_RCV);
@@ -717,14 +687,16 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos").orderBy("views",
-                com.google.firebase.firestore.Query.Direction.DESCENDING)
+        firebaseFirestore.collection("Videos")/*.orderBy("views",
+                com.google.firebase.firestore.Query.Direction.DESCENDING)*/
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.get("genre").equals(vid.getGenre())) {
+                            if (doc.get("genre").equals(vid.getGenre())
+                                    || doc.get("subGenre").equals(vid.getSubGenre())
+                                    || doc.get("userId").equals(vid.getUserId())) {
                                 if (!vid.getVideoId().equals(doc.getId())) {
                                     videoList.add(doc.toObject(Video.class));
                                     relatedVideosAdapter.notifyDataSetChanged();
@@ -732,13 +704,38 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                 }
                             }
                         }
+                        // Show the next music video to play
+                        nextVideo = relatedVideosAdapter.getNextFromList();
+                        if (nextVideo != null) {
+                            loadNextInQue(nextVideo);
+                        }
                     }
                 });
     }
 
-    //plays the next video when the Service signals
-    public void autoPlayNext(){
-        autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
+    /**
+     * Load the next music video to play, if auto-play is turned on.
+     * @param nextVideo next video
+     */
+    private void loadNextInQue(Video nextVideo) {
+        RecyclerView recyclerView = findViewById(R.id.nextInQue_RCV);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        List<Video> videoList = new ArrayList<>();
+        PlayingNextAdapter playingNextAdapter = new PlayingNextAdapter(videoList, getApplicationContext(), getIntent());
+
+        videoList.add(nextVideo);
+        playingNextAdapter.notifyDataSetChanged();
+        recyclerView.setAdapter(playingNextAdapter);
+    }
+
+    /**
+     * Plays the next video when the Service signals.
+     */
+    public void autoPlayNext() {
+        if (nextVideo != null) {
+            autoPlayNextVideo(nextVideo);
+        }
     }
 
     /**
@@ -1617,11 +1614,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private void checkFollowing(OnDataReceiveCallback callback){
         //get where the following state would be
         // check who the user is following
-        database.getReference().child("following").child(currentFirebaseUser.getUid()).child(vid.getUserId())
-                .addValueEventListener(new ValueEventListener() {
+        database.getReference().child("following").child(currentFirebaseUser.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()){
+                if (dataSnapshot.child(vid.getUserId()).exists()){
                     Log.e(TAG, "Following");
                     callback.onFollowChecked(true);
                 }else{
