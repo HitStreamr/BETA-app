@@ -407,6 +407,8 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                                     p.setPlayVideoIds(a);
                                     Play.add(p);
                                 }
+                                String str = "empty";
+                                Play.get(0).setPlayThumbnails(str);
                             }
                         }
                         if (Play.size() > 0) {

@@ -61,7 +61,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
                     .collection("Videos")
                     .whereEqualTo("videoId", Playlist.get(position).getPlayVideoIds().get(j))
                     .whereEqualTo("delete", "N")
-                    .whereEqualTo("privacy","Private (only you can see)")
+                    .whereEqualTo("privacy","Public (everyone can see)")
                     .get());
         }
 
@@ -73,12 +73,10 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
                     temp++;
                 }
             }
-            holder.videoCountPlaylist.setText(temp);
-            holder.videoCount.setText(temp + " videos");
+            holder.videoCountPlaylist.setText(String.valueOf(temp));
+           holder.videoCount.setText(String.valueOf(temp) + " videos");
         });
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
-        holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()));
-        holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()) + " videos");
         holder.thumbnailPlaylist.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if(!Playlist.get(position).getPlayVideoIds().isEmpty()) {
             if (!Playlist.get(position).getPlayThumbnails().equals("empty")) {

@@ -245,7 +245,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         addContributorBtn = findViewById(R.id.AddContributorButton);
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
         ContributorCancelBtn =findViewById(R.id.ContributorCancel);
-        //Help = (ImageButton) findViewById(R.id.help);
+        Help = (ImageButton) findViewById(R.id.help);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -852,7 +852,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             addContributorLayout.setVisibility(View.GONE);
         }
         if (view == Help) {
-            startActivity(new Intent(this, ContributorHelp.class));
+            Intent helpIntent = new Intent(this, ContributorHelp.class);
+            helpIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+            startActivity(new Intent(helpIntent));
 
         }
     }

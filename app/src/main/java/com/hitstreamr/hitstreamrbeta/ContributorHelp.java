@@ -1,24 +1,19 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.app.Activity;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 
-import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
-
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
-
 
 public class ContributorHelp extends Activity implements View.OnClickListener {
     private static final String TAG = "ContributorHelp";
@@ -59,13 +54,6 @@ public class ContributorHelp extends Activity implements View.OnClickListener {
             FirebaseUser user = mAuth.getCurrentUser();
         }
     }
-    /*private void viewFragment(Fragment fragment, String name){
-        final FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.commit();
-
-    }*/
 
     @Override
     public void onClick(View v) {
@@ -75,12 +63,9 @@ public class ContributorHelp extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.invite:
-                /*Bundle bundle;
-                bundle = new Bundle();
-                bundle.putString("TYPE", getIntent().getStringExtra("TYPE"));
-                InviteAFriendFragment inviteFrag = new InviteAFriendFragment();
-                inviteFrag.setArguments(bundle);
-                viewFragment(inviteFrag,FRAG_OTHER);*/
+                Intent inviteIntent = new Intent(this, InviteFriend.class);
+                inviteIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                startActivity(new Intent(inviteIntent));
                 finish();
                 break;
         }
