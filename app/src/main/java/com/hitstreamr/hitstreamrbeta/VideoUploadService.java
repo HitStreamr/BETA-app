@@ -112,6 +112,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         if (mVUC != null){
             mVUC.unbindUploadService();
         }
+        stopForeground(true);
         stopSelf(startID);
     }
 

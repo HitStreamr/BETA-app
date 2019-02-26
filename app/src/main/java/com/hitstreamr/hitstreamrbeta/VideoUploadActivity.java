@@ -468,15 +468,23 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        unbindUploadService();
+        if(!startedUpload){
+            if (mService != null) {
+                mService.deleteBeforeWork();
+            }
+        }else{
+            unbindUploadService();
+        }
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
         if(!startedUpload){
-            if (mService != null)
+            if (mService != null) {
+                Log.e(TAG, (mService == null) + "");
                 mService.deleteBeforeWork();
+            }
         }else{
             unbindUploadService();
         }
