@@ -37,7 +37,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
+import com.hitstreamr.hitstreamrbeta.EmailVerification;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -260,6 +260,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Register and store the new artist user to the database, send a verification email to confirm
+     * their email.
+     */
     private void registerFirebase() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -275,14 +279,27 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 takenNames.child(artist_object.getUsername()).setValue(true);
                                 Toast.makeText(ArtistSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
                                 finish();
-                                //start next activity
-                                Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
-                                genreIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                startActivity(genreIntent);
+
+                                // Send an email verification
+                                final FirebaseUser current_user = mAuth.getCurrentUser();
+                                if (current_user != null) {
+                                    current_user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                        }
+                                    });
+                                }
+
+                                // Go to verification page, user cannot proceed further until their email is verified
+                                Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                                verificationPage.putExtra("TYPE", getString(R.string.type_artist));
+                                startActivity(verificationPage);
                             } else {
-                                //Display a failure message
-                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+                                // Display a failure message
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -531,7 +548,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 }
                 else if (!dataSnapshot.hasChild(artist.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     artist_object = artist;
 
                     //If validations are ok we will first show progressbar

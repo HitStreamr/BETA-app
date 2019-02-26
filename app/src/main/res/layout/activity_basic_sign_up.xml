@@ -221,7 +221,7 @@
                 android:id="@+id/textviewsignin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alreay have an account? Sign In here!"
+                android:text="Already have an account? Sign In here!"
                 android:textColor="@color/colorAccent"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="30dp"
