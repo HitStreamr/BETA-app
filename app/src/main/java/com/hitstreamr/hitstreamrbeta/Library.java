@@ -484,21 +484,18 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Bundle bundle;
         switch (item.getItemId()) {
             case R.id.home:
-                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                 homeIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 homeIntent.putExtra("OPTIONAL_FRAG", HOME);
                 startActivity(homeIntent);
                 break;
             case R.id.discover:
-                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent discoverIntent = new Intent(getApplicationContext(), MainActivity.class);
                 discoverIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 discoverIntent.putExtra("OPTIONAL_FRAG", DISCOVER);
                 startActivity(discoverIntent);
                 break;
             case R.id.activity:
-                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
                 activityIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 activityIntent.putExtra("OPTIONAL_FRAG", ACTIVITY);

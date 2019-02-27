@@ -1049,10 +1049,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
-                fab.setVisibility(View.VISIBLE);
                 bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
                 Log.e("HOME", "On Close Initiated");
+
+                // Hides the upload button if current user is NOT an artist
+                getUserType();
+                if (accountType.equals("BasicAccounts")) {
+                    fab.setVisibility(View.GONE);
+                } else {
+                    fab.setVisibility(View.VISIBLE);
+                }
+
                 return true;  // return true to collapse action view
             }
 
