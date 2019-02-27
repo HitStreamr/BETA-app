@@ -160,7 +160,6 @@ public class CommentPage extends AppCompatActivity {
         databaseReference.child(commentID).setValue(comment_object).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(CommentPage.this,"Comment has been posted.", Toast.LENGTH_LONG).show();
                 mCommentMessage.setText("");
             }
         })
@@ -266,7 +265,6 @@ public class CommentPage extends AppCompatActivity {
         databaseReference.child(commentID).setValue(comment_object).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(CommentPage.this,"Reply has been posted.", Toast.LENGTH_LONG).show();
                 mCommentMessage.setText("");
                 isReplyingTo = false;
                 replyingToDisplay.setVisibility(View.GONE);

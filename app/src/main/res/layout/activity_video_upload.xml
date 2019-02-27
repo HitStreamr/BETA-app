@@ -144,7 +144,7 @@
                     android:layout_marginTop="15dp"
                     android:background="@drawable/button1"
                     android:text="+ Contributor(s)"
-                    android:textColor="@color/colorAccent" />
+                    android:textColor="@color/colorWhite" />
 
                 <LinearLayout
                     android:id="@+id/add_contributor_layout"
@@ -240,7 +240,7 @@
                         android:layout_marginTop="0dp"
                         android:background="@drawable/button1"
                         android:text="+ ADD"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>

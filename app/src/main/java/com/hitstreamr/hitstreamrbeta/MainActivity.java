@@ -48,7 +48,6 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -341,12 +340,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-//                vv.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
-//                    }
-//                });
+
             }
         }
 
@@ -425,7 +419,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setInstallDays(1)
                 .setLaunchTimes(3)
                 .setRemindInterval(3)
-              //  .setDebug(true)
+                .setDebug(true)
 
 
                 .monitor();
@@ -1095,6 +1089,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
                 Log.e("HOME", "On Close Initiated");
+
+                // Hides the upload button if current user is NOT an artist
+                getUserType();
+                if (accountType.equals("BasicAccounts")) {
+                    fab.setVisibility(View.GONE);
+                } else {
+                    fab.setVisibility(View.VISIBLE);
+                }
+
                 return true;  // return true to collapse action view
             }
 
@@ -1403,7 +1406,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     basicProfile.putExtra("basicUsername", userName);
@@ -1560,7 +1562,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
                     artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     artistProfile.putExtra("artistUsername", userName);
@@ -1863,7 +1864,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
-                Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.discover:
                 bottomNavSetUp(false);
@@ -1872,7 +1872,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 DiscoverFragment discFrag = new DiscoverFragment();
                 discFrag.setArguments(bundle);
                 viewFragment(discFrag,FRAG_OTHER);
-                Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.activity:
                 bottomNavSetUp(false);
@@ -1881,10 +1880,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ActivityFragment actFrag = new ActivityFragment();
                 actFrag.setArguments(bundle);
                 viewFragment(actFrag,FRAG_OTHER);
-                Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.library:
-                Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
                 libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(libraryIntent);

@@ -37,11 +37,13 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
     private ArrayList<String> followersList;
     private Context context;
     private FirebaseUser current_user;
+    private Intent mIntent;
     private Library.ItemClickListener mlistner;
 
-    public FollowersAdapter(Context context, ArrayList<String> bookList) {
+    public FollowersAdapter(Context context, ArrayList<String> bookList, Intent intent) {
         this.followersList = bookList;
         this.context = context;
+        this.mIntent = intent;
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -63,18 +65,55 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             Glide.with(getApplicationContext()).load(artistProfReference).into(holder.image);
         }
 
-
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent artistProfile = new Intent(context, Profile.class);
-                //artistProfile.putExtra("TYPE", .getStringExtra("TYPE"));
-                artistProfile.putExtra("artistUsername", followersList.get(position));
-                //artistProfile.putExtra("SearchType", "ArtistAccounts");
-                context.startActivity(artistProfile);
+
+                        FirebaseDatabase.getInstance().getReference("ArtistAccounts")
+                        .child(followersList.get(position))
+                        .child("username")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String username;
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.getValue(String.class));
+                            username = dataSnapshot.getValue(String.class);
+                            Intent profile = new Intent(context, Profile.class);
+                            profile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                            profile.putExtra("artistUsername",username);
+                            profile.putExtra("SearchType", "ArtistAccounts");
+                            context.startActivity(profile);
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts")
+                                    .child(followersList.get(position)).child("username")
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    String username;
+                                    holder.username.setText(dataSnapshot.getValue(String.class));
+                                    username = dataSnapshot.getValue(String.class);
+                                    Intent profile = new Intent(context, Profile.class);
+                                    profile.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                                    profile.putExtra("basicUsername", username);
+                                    profile.putExtra("SearchType", "BasicAccounts");
+                                    context.startActivity(profile);
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                }
+                            });
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    }
+                });
             }
         });
-
 
         FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position)).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -101,13 +140,13 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             }
         });
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position)).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position)).child("artistname").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     holder.name.setText(dataSnapshot.getValue(String.class));
                 } else {
-                    FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followersList.get(position)).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+                    FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followersList.get(position)).child("fullname").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             holder.name.setText(dataSnapshot.getValue(String.class));
@@ -140,8 +179,6 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
-
-
 
         FirebaseDatabase.getInstance().getReference("following")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(followersList.get(position)).addValueEventListener(new ValueEventListener() {
@@ -194,7 +231,6 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             }
         });
 
-
         holder.unfollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -224,7 +260,44 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             }
         });
 
+        // Check if user is verified
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position))
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                holder.verified.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.verified.setVisibility(View.GONE);
+                            }
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followersList.get(position))
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                                    holder.verified.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    holder.verified.setVisibility(View.GONE);
+                                                }
+                                            }
+                                        }
 
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
 
@@ -236,7 +309,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
     public class FollowersViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
         public TextView username;
-        public ImageView image;
+        public ImageView image, verified;
         public TextView followersCount;
         public Button follow, unfollow;
         LinearLayout cardView;
@@ -250,6 +323,7 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             followersCount = view.findViewById(R.id.count);
             follow = view.findViewById(R.id.follow_button);
             unfollow = itemView.findViewById(R.id.unfollow_button);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }

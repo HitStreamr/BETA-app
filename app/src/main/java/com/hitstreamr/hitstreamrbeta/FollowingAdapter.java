@@ -140,13 +140,13 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
             }
         });
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followingList.get(position)).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followingList.get(position)).child("artistname").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     holder.name.setText(dataSnapshot.getValue(String.class));
                 } else {
-                    FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followingList.get(position)).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+                    FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followingList.get(position)).child("fullname").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             holder.name.setText(dataSnapshot.getValue(String.class));
@@ -180,63 +180,47 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
             }
         });
 
-
-        /*FirebaseDatabase.getInstance().getReference("following")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .child(followingList.get(position))
+        // Check if user is verified
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followingList.get(position))
                 .addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (current_user.getUid().equals(followingList.get(position))) {
-                    holder.follow.setVisibility(View.GONE);
-                    holder.unfollow.setVisibility(View.GONE);
-                } else if (!dataSnapshot.exists()) {
-                    holder.follow.setVisibility(View.VISIBLE);
-                    holder.unfollow.setVisibility(View.GONE);
-                } else if (dataSnapshot.exists()) {
-                    holder.follow.setVisibility(View.GONE);
-                    holder.unfollow.setVisibility(View.VISIBLE);
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                holder.verified.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.verified.setVisibility(View.GONE);
+                            }
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followingList.get(position))
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                if (dataSnapshot.child("verified").getValue(String.class).equals("true")) {
+                                                    holder.verified.setVisibility(View.VISIBLE);
+                                                } else {
+                                                    holder.verified.setVisibility(View.GONE);
+                                                }
+                                            }
+                                        }
 
-                }
-            }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });*/
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
         holder.follow.setVisibility(View.GONE);
         holder.unfollow.setVisibility(View.VISIBLE);
-
-        /*holder.follow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                FirebaseDatabase.getInstance().getReference("following")
-                        .child(current_user.getUid())
-                        .child(followingList.get(position))
-                        .setValue(followingList.get(position))
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                FirebaseDatabase.getInstance().getReference("followers")
-                                        .child(followingList.get(position))
-                                        .child(current_user.getUid())
-                                        .setValue(current_user.getUid())
-                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void aVoid) {
-                                                holder.follow.setVisibility(View.GONE);
-                                                holder.unfollow.setVisibility(View.VISIBLE);
-                                            }
-                                        });
-                            }
-                        });
-            }
-        });*/
-
 
         holder.unfollow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,9 +250,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
                         });
             }
         });
-
     }
-
 
     @Override
     public int getItemCount() {
@@ -286,7 +268,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
     public class FollowingViewHolder extends RecyclerView.ViewHolder {
         public TextView name;
         public TextView username;
-        public ImageView image;
+        public ImageView image, verified;
         public TextView followersCount;
         public Button follow, unfollow;
         LinearLayout cardView;
@@ -300,6 +282,7 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
             followersCount = view.findViewById(R.id.count);
             follow = view.findViewById(R.id.follow_button);
             unfollow = itemView.findViewById(R.id.unfollow_button);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }

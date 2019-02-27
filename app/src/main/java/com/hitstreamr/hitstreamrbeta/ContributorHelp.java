@@ -4,18 +4,20 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 
-import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.InviteAFriendFragment;
 
-
 public class ContributorHelp extends Activity implements View.OnClickListener {
+    private static final String TAG = "ContributorHelp";
+    private static final String FRAG_OTHER = "invite_fragment";
 
     private Button Close, Invite;
     // [START declare_auth]
@@ -61,7 +63,9 @@ public class ContributorHelp extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.invite:
-//                startActivity(new Intent(this, InviteAFriendFragment.class));
+                Intent inviteIntent = new Intent(this, InviteFriend.class);
+                inviteIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                startActivity(new Intent(inviteIntent));
                 finish();
                 break;
         }

@@ -52,7 +52,7 @@
             android:id="@id/exo_position"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorWhite"
             android:textSize="10sp"
             android:textStyle="bold"
             android:layout_weight=".10"/>

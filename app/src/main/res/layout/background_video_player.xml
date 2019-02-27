@@ -32,7 +32,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="songTitle"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textSize="14sp"
                     android:transitionName="title"
                     android:layout_marginTop="5dp"
@@ -101,7 +101,7 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:src= "@drawable/ic_close"
-                        android:tint="@color/colorAccent" />
+                        android:tint="@color/colorWhite" />
 
                     <ImageView
                         android:id="@+id/return_to_full"
@@ -111,7 +111,7 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
-                        android:tint="@color/colorAccent"
+                        android:tint="@color/colorWhite"
                         android:visibility="gone"/>
 
                 </LinearLayout>

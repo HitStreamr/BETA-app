@@ -84,7 +84,7 @@
                         android:layout_height="120dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/com_facebook_profile_picture_blank_portrait"
-                        app:civ_border_color="@color/colorAccent"
+                        app:civ_border_color="@color/colorWhite"
                         app:civ_border_width="2dp"/>
 
                     <Button
@@ -94,7 +94,7 @@
                         android:layout_marginTop="76dp"
                         android:layout_marginStart="38dp"
                         android:background="@drawable/ic_add_a_photo"
-                        android:backgroundTint="@color/colorAccent"
+                        android:backgroundTint="@color/colorWhite"
 
                         android:shadowDy="4"
                         android:shadowDx="4"
@@ -343,8 +343,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="60dp"
-                    android:text="Alreay have an account? Sign In here!"
-                    android:textColor="@color/colorAccent"
+                    android:text="Already have an account? Sign In here!"
+                    android:textColor="@color/colorWhite"
                     android:layout_marginTop="25dp"/>
 
             </LinearLayout>

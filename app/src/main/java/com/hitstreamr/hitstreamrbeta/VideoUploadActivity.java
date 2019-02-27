@@ -852,7 +852,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             addContributorLayout.setVisibility(View.GONE);
         }
         if (view == Help) {
-            startActivity(new Intent(this, ContributorHelp.class));
+            Intent helpIntent = new Intent(this, ContributorHelp.class);
+            helpIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+            startActivity(new Intent(helpIntent));
 
         }
     }

@@ -58,7 +58,7 @@
                     android:layout_marginStart="40dp"
                     android:layout_marginTop="3dp"
                     android:text="Artist Name Here"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textSize="12sp" />
 
                 <TextView
@@ -76,7 +76,7 @@
                     android:scrollHorizontally="true"
                     android:singleLine="true"
                     android:text="Video Title Here"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -96,7 +96,7 @@
                         android:paddingStart="2dp"
                         android:paddingEnd="2dp"
                         android:text="00:00"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorWhite"
                         android:textSize="10sp" />
 
                 </LinearLayout>
@@ -113,7 +113,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="5dp"
                 android:background="@drawable/ic_more_vert"
-                android:backgroundTint="@color/colorAccent" />
+                android:backgroundTint="@color/colorWhite" />
 
 
 

@@ -16,7 +16,7 @@
             app:cardCornerRadius="4dp"
             app:cardMaxElevation="2dp"
             android:layout_gravity="center"
-            app:cardBackgroundColor="@color/colorAccent"
+            app:cardBackgroundColor="@color/colorWhite"
             >
 
             <LinearLayout
@@ -24,7 +24,7 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:orientation="vertical"
-                android:background="@color/colorAccent">
+                android:background="@color/colorWhite">
 
                 <TextView
                     android:id="@+id/creditvalue"

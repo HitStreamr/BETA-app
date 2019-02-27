@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EmailVerification"></activity>
+        <activity android:name=".InviteFriend"></activity>
+        <activity android:name=".EmailVerification" />
         <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -9,11 +9,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
     buildTypes {
         release {
-
             minifyEnabled false
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
