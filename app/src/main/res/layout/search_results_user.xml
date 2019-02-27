@@ -100,16 +100,17 @@
                         android:background="@drawable/gradient1round"
                         android:text="Follow"
                         android:textSize="12sp"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorAccent"
+                        android:visibility="visible"/>
 
                     <Button
                         android:id="@+id/unfollow_button"
-                        android:layout_width="80dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/button1"
+                        android:layout_width="70dp"
+                        android:layout_height="30dp"
+                        android:background="@android:color/transparent"
                         android:text="Unfollow"
                         android:textSize="12sp"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorPrimary"
                         android:visibility="gone"
                         />
 

@@ -140,13 +140,13 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
             }
         });
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position)).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(followersList.get(position)).child("artistname").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     holder.name.setText(dataSnapshot.getValue(String.class));
                 } else {
-                    FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followersList.get(position)).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+                    FirebaseDatabase.getInstance().getReference("BasicAccounts").child(followersList.get(position)).child("fullname").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             holder.name.setText(dataSnapshot.getValue(String.class));

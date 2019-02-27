@@ -70,6 +70,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
     @Override
     public void onBindViewHolder(@NonNull ArtistsToWatchHolder holder, int position) {
         holder.username.setText(artistList.get(position).getUsername());
+        holder.artistName.setText(artistList.get(position).getArtistname());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,7 +176,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
      */
     public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
 
-        TextView username, followerCount;
+        TextView username, followerCount, artistName;
         LinearLayout cardView;
         Button followButton;
         CircleImageView profilePicture;
@@ -186,6 +187,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             super(view);
 
             username = view.findViewById(R.id.user_name);
+            artistName = view.findViewById(R.id.artist_name);
             cardView = view.findViewById(R.id.userCardView);
             followButton = view.findViewById(R.id.follow_button);
             profilePicture = view.findViewById(R.id.searchImage);

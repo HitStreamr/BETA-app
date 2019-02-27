@@ -58,6 +58,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
     @Override
     public void onBindViewHolder(@NonNull MorePopularPeopleHolder holder, int position) {
         holder.userName.setText(userList.get(position).getUsername());
+        holder.fullName.setText(userList.get(position).getFullname());
 
         // Check if user is verified
         if (userList.get(position).getVerified().equals("true")) {
@@ -165,7 +166,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
      */
     public class MorePopularPeopleHolder extends RecyclerView.ViewHolder {
 
-        TextView userName, followerCount;
+        TextView userName, followerCount, fullName;
         LinearLayout cardView;
         CircleImageView profilePicture;
         ImageView verified;
@@ -181,6 +182,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             verified = itemView.findViewById(R.id.verified);
             follow = itemView.findViewById(R.id.follow_button);
             unfollow = itemView.findViewById(R.id.unfollow_button);
+            fullName = itemView.findViewById(R.id.artist_name);
         }
     }
 }

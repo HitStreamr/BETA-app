@@ -54,7 +54,8 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
 
     @Override
     public void onBindViewHolder(@NonNull TopArtistsHolder holder, int position) {
-        holder.artistName.setText(artistList.get(position).getUsername());
+        holder.username.setText(artistList.get(position).getUsername());
+        holder.artistName.setText(artistList.get(position).getArtistname());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,7 +162,7 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
      */
     public class TopArtistsHolder extends RecyclerView.ViewHolder {
 
-        TextView artistName, followerCount;
+        TextView artistName, followerCount, username;
         LinearLayout cardView;
         CircleImageView profilePicture;
         ImageView verified;
@@ -170,7 +171,8 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
         public TopArtistsHolder(View itemView) {
             super(itemView);
 
-            artistName = itemView.findViewById(R.id.user_name);
+            username = itemView.findViewById(R.id.user_name);
+            artistName = itemView.findViewById(R.id.artist_name);
             cardView = itemView.findViewById(R.id.userCardView);
             profilePicture = itemView.findViewById(R.id.searchImage);
             followerCount = itemView.findViewById(R.id.count);
