@@ -393,7 +393,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             WatchList.add(document.toObject(Video.class));
-                            //Log.e(TAG, "Watch Later Video List : " + document.toObject(Video.class).getThumbnailUrl());
                         }
                     }
                 });
@@ -405,30 +404,30 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private void getPlaylistsList() {
         FirebaseDatabase.getInstance().getReference("PlaylistVideos")
                 .child(current_user.getUid())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot each : dataSnapshot.getChildren()) {
-                                Playlist p = new Playlist();
-                                p.setPlaylistname(String.valueOf(each.getKey()));
-                                Log.e(TAG, "each children" + each.getChildren());
-                                ArrayList<String> a = new ArrayList<>();
-                                for (DataSnapshot eachplaylist : each.getChildren()) {
-                                    a.add(eachplaylist.getValue(String.class));
+                            .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (DataSnapshot each : dataSnapshot.getChildren()) {
+                                    Playlist p = new Playlist();
+                                    p.setPlaylistname(String.valueOf(each.getKey()));
+                                    Log.e(TAG, "each children" + each.getChildren());
+                                    ArrayList<String> a = new ArrayList<>();
+                                    for (DataSnapshot eachplaylist : each.getChildren()) {
+                                        a.add(eachplaylist.getValue(String.class));
+                                    }
+                                    p.setPlayVideoIds(a);
+                                    Play.add(p);
                                 }
-                                p.setPlayVideoIds(a);
-                                Play.add(p);
+                                String str = "empty";
+                                Play.get(0).setPlayThumbnails(str);
                             }
-                            String str = "empty";
-                            Play.get(0).setPlayThumbnails(str);
-                        }
-                        if (Play.size() > 0) {
-                            playlistBtn.setVisibility(View.VISIBLE);
-                            getaaaPlayVideos();
+                            if (Play.size() > 0) {
+                                playlistBtn.setVisibility(View.VISIBLE);
+                                getaaaPlayVideos();
 
+                            }
                         }
-                    }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {

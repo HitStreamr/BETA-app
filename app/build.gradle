@@ -117,8 +117,6 @@ dependencies {
     implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
 
     implementation 'com.github.hotchemi:android-rate:1.0.1'
-    /*implementation "com.vorlonsoft:androidrate:1.2.1"*/
-
 
 }
 
