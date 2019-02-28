@@ -17,6 +17,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -27,12 +31,15 @@ public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylist
     private ArrayList<Playlist> Playlist;
     private Context mContext;
     private Profile.ItemClickListener mlistner;
+    private String playlistCreatorID;
 
-    public ProfilePlaylistAdapter(Context context, ArrayList<Playlist> playlist, Profile.ItemClickListener mlistner) {
+    public ProfilePlaylistAdapter(Context context, ArrayList<Playlist> playlist, Profile.ItemClickListener mlistner,
+                                  String playlistCreatorID) {
         Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
         this.Playlist = playlist;
         this.mContext = context;
         this.mlistner = mlistner;
+        this.playlistCreatorID = playlistCreatorID;
     }
 
     @NonNull
@@ -61,7 +68,40 @@ public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylist
                 mlistner.onPlaylistClick(Playlist.get(position));
             }
         });
+
+        // Find the playlist creator's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(playlistCreatorID)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.child("username").getValue(String.class));
+                        } else {
+                            FirebaseDatabase.getInstance().getReference("BasicAccounts").child(playlistCreatorID)
+                                    .addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.exists()) {
+                                                holder.username.setText(dataSnapshot.child("username")
+                                                        .getValue(String.class));
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
+
     @Override
     public int getItemCount() {
         return Playlist.size();

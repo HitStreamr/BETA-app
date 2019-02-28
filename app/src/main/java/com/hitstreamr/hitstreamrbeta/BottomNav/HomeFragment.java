@@ -82,6 +82,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     String userCredits;
     String userID;
     String type;
+    final String publicView = "Public (everyone can see)";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser current_user;
@@ -711,8 +712,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
                                                 if ((documentSnapshot.get("delete").equals("N")) &&
-                                                        (documentSnapshot.get("privacy")
-                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                        (documentSnapshot.get("privacy").equals(publicView))) {
                                                     videoList.add(documentSnapshot.toObject(Video.class));
                                                     homeFragmentWatchAgainAdapter.notifyDataSetChanged();
                                                     recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);

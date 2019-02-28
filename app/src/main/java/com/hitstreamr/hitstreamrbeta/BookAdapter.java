@@ -18,7 +18,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,17 +54,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
     @Override
     public void onBindViewHolder(BookViewHolder holder, int position) {
         holder.title.setText(bookList.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.author.setText(bookList.get(position).getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(bookList.get(position).getUrl()).into(holder.thumbnail);
         holder.duration.setText(bookList.get(position).getDuration());
 
         String viewCount = Long.toString(bookList.get(position).getViews());
         holder.views.setText(viewCount);
-
-        //holder.views.setText(Long.toString((bookList.get(position).getViews())));
-
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         holder.published.setText(dateFormat.format(bookList.get(position).getTimestamp().toDate()));
@@ -79,6 +77,22 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
                 mlistner.onOverflowClick(bookList.get(position), holder.overflowMenu);
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(bookList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     private void RemoveWatchLater(int pos){
@@ -103,11 +117,12 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
         public TextView title;
         public TextView author;
         public ImageView thumbnail;
-        public  TextView duration;
+        public TextView duration;
         public RelativeLayout parent;
         public TextView published;
         public TextView views;
-        private Button overflowMenu;
+        public TextView username;
+        public Button overflowMenu;
 
         public BookViewHolder(View view) {
             super(view);
@@ -119,6 +134,7 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.BookViewHolder
             published = view.findViewById(R.id.watchLaterPublished);
             views = view.findViewById(R.id.watchLaterViews);
             overflowMenu = view.findViewById(R.id.moreBtn);
+            username = itemView.findViewById(R.id.watchLaterAuthor);
         }
     }
 }

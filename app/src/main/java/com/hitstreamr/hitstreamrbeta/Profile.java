@@ -464,7 +464,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         Log.e(TAG, "Entered setup playlist recycler view");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_PublicPlaylists.setLayoutManager(layoutManager);
-        playlistAdapter_playlists = new ProfilePlaylistAdapter(this, Play, mListener);
+
+        // Check if profile viewed is the current user's or others'
+        String playlistCreatorUserID = "";
+        if (userUserID != null) {
+            playlistCreatorUserID = userUserID;
+        } else {
+            playlistCreatorUserID = current_user.getUid();
+        }
+
+        playlistAdapter_playlists = new ProfilePlaylistAdapter(this, Play, mListener, playlistCreatorUserID);
         recyclerView_PublicPlaylists.setAdapter(playlistAdapter_playlists);
     }
 

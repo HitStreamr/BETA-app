@@ -245,7 +245,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Log.e(TAG, "Entered setup playlist recycler view");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_playlists.setLayoutManager(layoutManager);
-        playlistAdapter_playlists = new WatchPlaylistAdapter(this, Play, mlistner);
+        playlistAdapter_playlists = new WatchPlaylistAdapter(this, Play, mlistner, current_user.getUid());
         recyclerView_playlists.setAdapter(playlistAdapter_playlists);
     }
 
