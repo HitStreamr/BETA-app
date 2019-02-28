@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,6 +106,85 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
             holder.follow.setVisibility(View.GONE);
             holder.unfollow.setVisibility(View.GONE);
         }
+
+        FirebaseDatabase.getInstance().getReference("following")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(artistList.get(position).getUserID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (!dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.VISIBLE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.VISIBLE);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+
+        holder.follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance().getReference("following")
+                        .child(current_user.getUid())
+                        .child(artistList.get(position).getUserID())
+                        .setValue(artistList.get(position).getUserID())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance().getReference("followers")
+                                        .child(artistList.get(position).getUserID())
+                                        .child(current_user.getUid())
+                                        .setValue(current_user.getUid())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.GONE);
+                                                holder.unfollow.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
+
+        holder.unfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance()
+                        .getReference("following")
+                        .child(current_user.getUid())
+                        .child(artistList.get(position).getUserID())
+                        .removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance()
+                                        .getReference("followers")
+                                        .child(artistList.get(position).getUserID())
+                                        .child(current_user.getUid())
+                                        .removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.VISIBLE);
+                                                holder.unfollow.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
 
         // Followers count
         // TODO: add thousands/millions k/m feature

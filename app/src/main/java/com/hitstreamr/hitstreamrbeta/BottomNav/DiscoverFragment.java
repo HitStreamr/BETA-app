@@ -46,63 +46,90 @@ public class DiscoverFragment extends Fragment {
 
     private void initImageBitmaps() {
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_new.png?alt=media&token=47980929-057f-4f44-82d5-8eddfc167c88");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_new.png?alt=media&token=1662140a-9893-4a79-bd00-035edffb4267");
         mText.add("NEWLY ADDED");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_trending.png?alt=media&token=d89e0a20-4e35-4028-99fe-641ec90344a4");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_trending.png?alt=media&token=20ae522b-720d-47a0-ad44-77ad7708ea02");
         mText.add("TRENDING NOW");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fartists_to_watch.jpg?alt=media&token=bd2c7fa1-2eb3-42ed-9d23-d01aaf4cbe40");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2F2019-CARDI-B-EP-665X374-4042156030.jpg?alt=media&token=02c8947f-c347-42fd-9cb7-ad5f78f198bd");
         mText.add("ARTISTS TO WATCH");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_hiphop_rap.png?alt=media&token=3a13bd73-00de-42fa-89b2-4f0a83c31724");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_hiphop_rap.png?alt=media&token=3618fd22-2e38-4b92-bb1a-631565127744");
         mText.add("HIP-HOP/RAP");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_rnb_soul.png?alt=media&token=3e38ebfc-eddd-46da-a0af-884231ed1fba");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_rnb_soul.png?alt=media&token=a46317da-48cd-4812-9020-b9dcea518953");
         mText.add("R&B/SOUL");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_pop.png?alt=media&token=fb287067-9ca0-4515-acb6-a5969a8ea5ce");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_pop.png?alt=media&token=828b7b46-9e94-4d86-a23d-7db2b52d2c50");
         mText.add("POP");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_indie.png?alt=media&token=0d2ef8cb-be15-4655-8559-3b4e05d7f712");
-        mText.add("INDIE/ROCK");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_indie.png?alt=media&token=f46a2551-0422-4c4d-bdc3-47d8fed7a772");
+        mText.add("INDIE");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_country.png?alt=media&token=3de8c019-9690-4fcc-892f-ef114339dae9");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_indie.png?alt=media&token=f46a2551-0422-4c4d-bdc3-47d8fed7a772");
+        mText.add("ROCK");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_country.png?alt=media&token=16eee7ec-b183-4f5c-b03e-4033593ad5dd");
         mText.add("COUNTRY");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Ffunk.jpg?alt=media&token=3c23b42a-9a23-4f57-9b92-cfa7ad453326");
-        mText.add("SOUL/FUNK");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_funk.png?alt=media&token=2bb07ea3-93ec-4770-b644-4e72b4594d9a");
+        mText.add("FUNK");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_latin.png?alt=media&token=61ffbe98-5dd3-423d-acea-f0e13f45d1a8");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_latin.png?alt=media&token=95bc2b97-c52f-4d76-8855-6d46604f2512");
         mText.add("LATIN");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_edm.png?alt=media&token=793a4fbe-9085-40de-a801-884dfd22b7ca");
+        // EDM
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_edm.png?alt=media&token=6ff37003-2ee5-43ac-8738-c673824d00ec");
         mText.add("DANCE/ELECTRONIC");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_kpop.jpg?alt=media&token=0e983e80-989d-4efd-a9c5-7b2b89e62a94");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_asian_pop.png?alt=media&token=acf3208e-7aa4-4e9d-a897-fb386f01d24d");
         mText.add("K-POP");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_folk.png?alt=media&token=f29928b8-6155-4ca4-a4ba-34b1cfaa577e");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_folk.png?alt=media&token=19f3f761-b808-4134-b2d2-edc5d2919dda");
         mText.add("FOLK");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_reggae.png?alt=media&token=a57852be-76b5-470f-89d4-f3d44415a46c");
-        mText.add("REGGAE/AFRO");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_afro.png?alt=media&token=b4de5e78-26ef-4cf8-92a3-1d04f28be284");
+        mText.add("REGGAE");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fgospelchoir.jpg?alt=media&token=889c385f-6bbb-4118-a6e2-c4a320c67de9");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_afro.png?alt=media&token=b4de5e78-26ef-4cf8-92a3-1d04f28be284");
+        mText.add("AFRO");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fnot-ashamed-of-the-gospel-bujdcfub-e2250b5dc9f8f2036312c4c51d5e4c36.jpg?alt=media&token=7379135a-d129-4698-ac07-f9247d1f4bd0");
         mText.add("GOSPEL/INSPIRATIONAL");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_blues.png?alt=media&token=3a61cd5e-ed07-468d-b103-089272ec88e6");
-        mText.add("JAZZ/BLUES");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
+        mText.add("JAZZ");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_alternative.png?alt=media&token=baa7b206-e45f-4c4b-9586-30387d9b81f7");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
+        mText.add("BLUES");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_alternative.png?alt=media&token=1dfcab2f-5ea3-49fc-9d50-d55abb7c0d25");
         mText.add("ALTERNATIVE");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_new_age.png?alt=media&token=d579372a-140a-48d5-b7b7-9e332bb343b8");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_new_age.png?alt=media&token=7c042c02-3aad-4e8c-90fe-d20b6bdbb315");
         mText.add("NEW AGE");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/discoverImages%2Fw_genre_opera.png?alt=media&token=33110c32-f564-479c-bb94-56d68ba6e0d2" +
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_opera.png?alt=media&token=716d2ea6-4954-4687-8007-3e81eb1af3e4" +
+                "");
+        mText.add("CLASSICAL");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_opera.png?alt=media&token=716d2ea6-4954-4687-8007-3e81eb1af3e4" +
                 "");
         mText.add("OPERA");
+
+        // Still need images for these genres. Delete later when they're fixed :)
+        mImageUrls.add(null);
+        mText.add("TRAP");
+
+        mImageUrls.add(null);
+        mText.add("EASY LISTENING");
+
+        mImageUrls.add(null);
+        mText.add("WORLD MUSIC");
+
+        mImageUrls.add(null);
+        mText.add("METAL");
     }
 
 }
