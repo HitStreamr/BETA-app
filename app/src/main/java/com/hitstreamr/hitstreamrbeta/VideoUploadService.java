@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.Authentication.Splash;
@@ -77,7 +78,6 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
     private Map<String, Object> artistVideo;
 
     private static final String VIDEO_DOWNLOAD_LINK = "url";
-    private static final String THUMBNAIL_DOWNLOAD_LINK = "thumbnailUrl";
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -119,6 +119,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent.getBooleanExtra("CANCEL", false)){
+            startID = startId;
             cancel = true;
             deleteFail();
             notifB.setContentTitle("Canceling Upload")
@@ -212,9 +213,8 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
             notifB.mActions.clear();
             mNM.notify(notifID, notifB.build());
             artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoURI);
-            db.collection("Videos").document()
-                    //.set(contributorList)
-                    .set(artistVideo)
+            DocumentReference intermediate = db.collection("Videos").document();
+                    intermediate.set(artistVideo, SetOptions.merge())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

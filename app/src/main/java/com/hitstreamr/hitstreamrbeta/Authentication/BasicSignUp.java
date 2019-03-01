@@ -217,7 +217,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 }
                 else if (!dataSnapshot.hasChild(user.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     basicUser = user;
 
                     //If validations are ok we will first show progressbar
@@ -278,8 +278,8 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         String password = mPasswordField.getText().toString().trim();
 
         // TODO: validateFullName
-        if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
-                | !validateToc() | !validateBrowsePhoto())  {
+        if (!validateEmail(email) || !validatePassword(password) || !validateUsername(username)
+                || !validateToc() || !validateBrowsePhoto())  {
             return;
         }
 

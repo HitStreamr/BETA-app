@@ -68,7 +68,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.hdodenhof.circleimageview.CircleImageView;
 public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, VideoUploadCallback, SaveTaskCallback{
 
-    private static final String TAG = "MyVideoUploadService";
+    private static final String TAG = "MyVideoUploadActivity";
 
     private static final String VIDEO_TITLE = "title";
     private static final String VIDEO_DESCRIPTION = "description";
@@ -482,7 +482,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         super.onDestroy();
         if(!startedUpload){
             if (mService != null) {
-                Log.e(TAG, (mService == null) + "");
                 mService.deleteBeforeWork();
             }
         }else{
