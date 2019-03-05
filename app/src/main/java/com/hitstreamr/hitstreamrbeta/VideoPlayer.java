@@ -260,12 +260,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         myRef = database.getReference("VideoLikes");
         playlistExtra = getIntent().getStringExtra("PLAYLIST");
 
-        String[] tempArray = videotype.split(",");
-        videotype = tempArray[0];
-        playlistName = tempArray[1];
 
         // Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

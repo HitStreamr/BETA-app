@@ -748,6 +748,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
             if (nextVideo != null) {
                 loadNextInQue(nextVideo);
             }
+            recyclerView.smoothScrollToPosition(2);
         }
     }
 
