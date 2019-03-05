@@ -217,7 +217,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 }
                 else if (!dataSnapshot.hasChild(user.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     basicUser = user;
 
                     //If validations are ok we will first show progressbar

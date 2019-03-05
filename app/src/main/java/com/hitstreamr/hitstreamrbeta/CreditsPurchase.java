@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //import com.android.billingclient.api.BillingClient;
+//import com.android.billingclient.api.Purchase;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
@@ -28,34 +29,29 @@ import com.warkiz.widget.SeekParams;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreditsPurchase extends AppCompatActivity implements BillingProcessor.IBillingHandler, View.OnClickListener {
+public class CreditsPurchase extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Credits Purchase";
     private IndicatorSeekBar seekBar;
     private IndicatorStayLayout stayLayout;
 
-    // PRODUCT & SUBSCRIPTION IDS
-    private static final String PRODUCT_ID = "com.hitstreamr.hitsreamrbeta";
-   // private static final String SUBSCRIPTION_ID = "com.anjlab.test.iab.subs1";
-    private static final String LICENSE_KEY ="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwD7XQYkNbvhKcrFeCVPsdZDisvYU6DAZsif1XG28uqn7KH7Hdo+yGlmT/+Ch25Vk6BuCzEbLwXkWRAL0ifSV+FgoYFpMEYRPu6A6mFsUUgJtbUzwhI1IEl21Pww59OmnXrblXkSrKfWvKxZg7MrB9sAQxdGIUmV+lQ6/COdR3jvYl83mTUdc+KiMMPNp64WEiESmjYGtZTVD+C9XPDL0DCDgRQNVsw7qmo+1XGUTejhWyxmha4CLgB8dcxCfBKYOTcdtF82DNt2MbRW2XjKbaw6VNwsusHR/xJneC6Pvjd97F7oI/wE9B401mhefkhzkDTK9GsZu34eO0s2HanMIPQIDAQAB";
-    // put your Google merchant id here (as stated in public profile of your Payments Merchant Center)
-    // if filled library will provide protection against Freedom alike Play Market simulators
-    private static final String MERCHANT_ID=null;
 
-    BillingProcessor bp;
-    private boolean readyToPurchase = false;
     private int currentValue = 0;
 
     private Button ConfirmBtn;
     private int responseCode;
 
-    public String creditvalue = "90";
+    public String creditvalue;
+    private MyItemClickListener mListener;
 
-    //vars
+
     private ArrayList<String> mCreditVal = new ArrayList<>();
     private ArrayList<String> mCreditPrice = new ArrayList<>();
     private ArrayList<String> mDescription = new ArrayList<>();
+    private ArrayList<String> mProductId = new ArrayList<>();
     private RecyclerView recyclerView;
     private CreditsRCVAdapter creditAdapter;
+
+    private String purchaseProductId;
 
 
     @Override
@@ -65,6 +61,15 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
 
         recyclerView = findViewById(R.id.creditsRCV);
 
+        mListener = new MyItemClickListener() {
+            @Override
+            public void onCreditsSelected(String sProductId, String sCreditValue) {
+                creditvalue = sCreditValue;
+                purchaseProductId = sProductId;
+            }
+
+        };
+
         getCredtiVal();
 
         // Define the dimension
@@ -72,62 +77,20 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-//        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+
         getWindow().setLayout((int) (width), (int) (height));
         getWindow().setBackgroundDrawable(new ColorDrawable(0x4b000000));
-
-
-       // seekBar = findViewById(R.id.seekBar_credits);
-        //seekBar.setMax(99);
-        //seekBar.setIndicatorTextFormat("$ ${PROGRESS}.99");
 
         ConfirmBtn = findViewById(R.id.confirm_credits_button);
         ConfirmBtn.setOnClickListener(this);
 
-
-        // bp = new BillingProcessor(this, LICENSE_KEY, MERCHANT_ID, new BillingProcessor.IBillingHandler() {
-        bp = new BillingProcessor(this, LICENSE_KEY, this);
-        bp.initialize();
-        boolean isAvailable = bp.isIabServiceAvailable(this);
-
-        Log.e("billing service ","isIabServiceAvailable->" +isAvailable);
-       // SkuDetails sku =  bp.getPurchaseListingDetails("credits_00000002");
-
-
-       /* seekBar.setOnSeekChangeListener(new OnSeekChangeListener() {
-            @Override
-            public void onSeeking(SeekParams seekParams) {
-                currentValue = seekParams.progress;
-                currentValue += 1;
-                String productID = "";
-                // From $0 to $8
-                if (currentValue < 9) {
-                    productID = "credits_0000000" + currentValue;
-                }
-                // From $9 to $98
-                else if (currentValue >= 9 && currentValue <= 98) {
-                    productID = "credits_000000" + currentValue;
-
-                }
-                // For $99
-                else {
-                    productID = "credits_00000" + currentValue;
-                }
-                Log.e("seek bar ","product id ->" +productID);
-            }
-
-            @Override
-            public void onStartTrackingTouch(IndicatorSeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(IndicatorSeekBar seekBar) {
-
-            }
-        });*/
-
     }
+
+        public interface MyItemClickListener {
+           void onCreditsSelected(String sCreditId, String sCreditValue);
+        }
+
+
 
     /**
      * Cancel the purchase session and go back to previous view.
@@ -137,50 +100,14 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         onBackPressed();
     }
 
-    @Override
-    public void onBillingInitialized() {
-
-        Log.e("sku","Inside billing init" );
-        SkuDetails sku =  bp.getPurchaseListingDetails("credits_00000002");
-        String price =sku.priceText;
-        String Title = sku.title;
-        Log.e("sku","price->" +price);
-        Log.e("sku","Title->" +Title);
-       // boolean ispurchase = bp.purchase(this, "credits_00000002");
-        //Log.e("Billing","ispurchase->" +ispurchase);
-
-
-    }
-
-    @Override
-    public void onProductPurchased(@NonNull String productId, @Nullable TransactionDetails details) {
-        Toast.makeText(CreditsPurchase.this, "Credits Purchased Successfully", Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    public void onPurchaseHistoryRestored() {
-
-    }
-
-    @Override
-    public void onBillingError(int errorCode, @Nullable Throwable error) {
-        Toast.makeText(CreditsPurchase.this, "Error Occured", Toast.LENGTH_SHORT).show();
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!bp.handleActivityResult(requestCode, resultCode, data)) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    private void makePurchase() {
+     private void makePurchase() {
 
         Intent newPurchaseIntent = new Intent(getApplicationContext(), BillingManager.class);
-        //newPurchaseIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-        startActivity(newPurchaseIntent);
+        newPurchaseIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        newPurchaseIntent.putExtra("CREDIT", creditvalue);
+         newPurchaseIntent.putExtra("PRDTID", purchaseProductId);
+
+         startActivity(newPurchaseIntent);
 
     }
     public void onClick(View view) {
@@ -189,54 +116,76 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         }
     }
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
-
-   /* public void onPurchasesUpdated(@BillingResponse int responseCode, List purchases) {
-        if (responseCode == BillingResponse.OK
-                && purchases != null) {
-            for (Purchase purchase : purchases) {
-               // handlePurchase(purchase);
-            }
-        } else if (responseCode == BillingResponse.USER_CANCELED) {
-            // Handle an error caused by a user cancelling the purchase flow.
-        } else {
-            // Handle any other error codes.
-        }
-    }*/
-    @Override
-    public void onDestroy() {
-        if (bp != null) {
-            bp.release();
-        }
-        super.onDestroy();
-    }
 
     private void getCredtiVal() {
-        Log.e(TAG, "getCredtVal: preparing text.");
 
-        mCreditVal.add("35 Credits");
+        mCreditVal.add("35");
         mCreditPrice.add("$.99");
-        mDescription.add("Lasts 1 - 3 days");
+        mDescription.add("Lasts 1 - 3 Days");
+        mProductId.add("credits_0000000001");
 
-        mCreditVal.add("70 Credits");
+        mCreditVal.add("90");
         mCreditPrice.add("$1.99");
-        mDescription.add("Lasts 3 - 7 days");
+        mDescription.add("Lasts 3-7 Days");
+        mProductId.add("credits_0000000002");
 
-        mCreditVal.add("110 Credits");
+        mCreditVal.add("140");
         mCreditPrice.add("$2.99");
-        mDescription.add("Lasts about a week");
+        mDescription.add("Lasts about 10 Days");
+        mProductId.add("credits_0000000003");
+
+        mCreditVal.add("190");
+        mCreditPrice.add("$3.99");
+        mDescription.add("Lasts about 2 Weeks");
+        mProductId.add("credits_0000000004");
+
+        mCreditVal.add("240");
+        mCreditPrice.add("$4.99");
+        mDescription.add("Lasts about 2.5 Weeks");
+        mProductId.add("credits_0000000005");
+
+        mCreditVal.add("290");
+        mCreditPrice.add("$5.99");
+        mDescription.add("Lasts about 3 Weeks");
+        mProductId.add("credits_0000000006");
+
+        mCreditVal.add("345");
+        mCreditPrice.add("$6.99");
+        mDescription.add("Lasts 1 Month");
+        mProductId.add("credits_0000000007");
+
+        mCreditVal.add("705");
+        mCreditPrice.add("$13.99");
+        mDescription.add("Last 2 Months\n+15 FREE CREDITS");
+        mProductId.add("credits_0000000014");
+
+        mCreditVal.add("1075");
+        mCreditPrice.add("$20.99");
+        mDescription.add("Lasts 3 Months\n+40 FREE CREDITS");
+        mProductId.add("credits_0000000021");
+
+        mCreditVal.add("2180");
+        mCreditPrice.add("$41.99");
+        mDescription.add("Lasts 6 Months\n+110 FREE CREDITS");
+        mProductId.add("credits_0000000042");
+
+        mCreditVal.add("3300");
+        mCreditPrice.add("$62.99");
+        mDescription.add("Lasts 9 Months\n+195 FREE CREDITS");
+        mProductId.add("credits_0000000063");
+
+        mCreditVal.add("4375");
+        mCreditPrice.add("$83.99");
+        mDescription.add("Lasts 12 Months\n+235 FREE CREDITS");
+        mProductId.add("credits_0000000084");
 
        initRCV();
 
     }
 
     private void initRCV(){
-        Log.e(TAG, "initRCV: initRCV.");
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        creditAdapter = new CreditsRCVAdapter( mCreditPrice, mCreditVal, mDescription);
+        creditAdapter = new CreditsRCVAdapter(this, mCreditVal, mCreditPrice,mDescription, mProductId, mListener);
         creditAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(creditAdapter);
     }

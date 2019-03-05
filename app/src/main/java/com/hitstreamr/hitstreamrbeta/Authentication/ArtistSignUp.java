@@ -531,7 +531,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 }
                 else if (!dataSnapshot.hasChild(artist.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     artist_object = artist;
 
                     //If validations are ok we will first show progressbar

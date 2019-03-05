@@ -52,6 +52,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -106,6 +107,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -167,6 +169,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -206,6 +209,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
