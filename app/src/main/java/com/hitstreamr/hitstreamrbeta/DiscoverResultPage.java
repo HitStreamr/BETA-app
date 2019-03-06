@@ -82,6 +82,7 @@ public class DiscoverResultPage extends AppCompatActivity {
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
 
+        // onClick listener for the toolbar's profile image
         circleImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

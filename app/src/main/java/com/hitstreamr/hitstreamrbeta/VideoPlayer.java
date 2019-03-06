@@ -687,8 +687,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos")/*.orderBy("views",
-                com.google.firebase.firestore.Query.Direction.DESCENDING)*/
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override

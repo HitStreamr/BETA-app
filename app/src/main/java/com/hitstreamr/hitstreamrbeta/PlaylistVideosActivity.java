@@ -69,12 +69,22 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         toolbar.setTitleTextColor(0xFFFFFFFF);
 
         // Set toolbar profile picture to always be the current user
+        CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
         if (current_user.getPhotoUrl() != null) {
-            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        // onClick listener for the toolbar's profile image
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(getApplicationContext(), Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
 
         playlistName = findViewById(R.id.playlist_Name);
         playlist = new Playlist();

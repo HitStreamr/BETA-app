@@ -268,6 +268,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        // onClick listener for the toolbar's profile image
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(Profile.this, Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
     }
 
     public interface ItemClickListener {
@@ -861,11 +871,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                       if (userVideoList.contains(document.getId())) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (userVideoList.contains(document.getId())) {
                             UserVideoId.add(document.toObject(Video.class));
 
                         }
+                    }
                 }
                 //call();
                 getUserFeedDeatils(cUserId);
@@ -963,25 +975,29 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private void setUpRecyclerViewUpload(String cUserId) {
 
         // Private videos are okay for the uploader
-        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.whereEqualTo("delete", "N")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
+
+        // If user IDs don't match, private videos are not allowed
         if (!current_user.getUid().equals(cUserId)) {
-            queryRef = feedRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+            queryRef = queryRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
         }
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    if(userUploadVideoList.size() > 0) {
-                        if (userUploadVideoList.get(0).contains(document.getId())) {
-                            UserUploadVideoId.add(document.toObject(Video.class));
-                            //Log.e(TAG,"video uploaded by user desc 3: "+ UserUploadVideoId);
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        if (userUploadVideoList.size() > 0) {
+                            if (userUploadVideoList.get(0).contains(document.getId())) {
+                                UserUploadVideoId.add(document.toObject(Video.class));
+                            }
                         }
-                    }
 
+                    }
+                    callVideoAdapter();
                 }
-                callVideoAdapter();
             }
         });
     }
