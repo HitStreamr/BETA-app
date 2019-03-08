@@ -126,7 +126,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Defines callbacks for service binding, passed to bindService()
      */
     private ServiceConnection mConnection;
-
     private VideoPlayerService mService;
     private boolean mBound;
     //ExoPlayer

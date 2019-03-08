@@ -20,6 +20,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -736,19 +737,30 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         });
     }
 
+
+
     private void setupRecyclerView(){
         if (videoList.size() > 0) {
             Log.e(TAG, "Entered Recycler View values:" +videoList);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
             RecyclerView recyclerView = findViewById(R.id.relatedVideos_RCV);
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+                @Override protected int getVerticalSnapPreference() {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(2);
             recyclerView.setLayoutManager(layoutManager);
+            layoutManager.startSmoothScroll(smoothScroller);
             relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
             recyclerView.setAdapter(relatedVideosAdapter);
             //nextVideo = relatedVideosAdapter.getNextFromList();
             if (nextVideo != null) {
                 loadNextInQue(nextVideo);
             }
-            recyclerView.smoothScrollToPosition(2);
+            //recyclerView.smoothScrollToPosition(2);
+            //layoutManager.startSmoothScroll(smoothScroller);
         }
     }
 
