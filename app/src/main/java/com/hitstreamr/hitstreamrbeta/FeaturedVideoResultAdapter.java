@@ -95,8 +95,10 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
                 }, vids.get(position).getUserId());
         holder.videoViews.setText(formatt(vids.get(position).getViews()));
         holder.videoTime.setText(vids.get(position).getDuration());
+
         if (vids.get(position).getTimestamp() != null)
             holder.videoPublish.setText(df2.format(vids.get(position).getTimestamp().toDate()));
+
         holder.videoThumbnail.setOnClickListener(v -> mListener.onResultClick(vids.get(position)));
         holder.overflowMenu.setOnClickListener(v -> mListener.onOverflowClick(vids.get(position), holder.overflowMenu));
 
@@ -123,6 +125,22 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(vids.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
                         }
                     }
 

@@ -144,13 +144,23 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
         getUserType();
 
-        // Profile Picture
+        // Set toolbar profile picture to always be the current user
+        CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
         if (current_user.getPhotoUrl() != null) {
-            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        // onClick listener for the toolbar's profile image
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(getApplicationContext(), Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
 
         mlistner = new ItemClickListener() {
             @Override
@@ -245,7 +255,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Log.e(TAG, "Entered setup playlist recycler view");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_playlists.setLayoutManager(layoutManager);
-        playlistAdapter_playlists = new WatchPlaylistAdapter(this, Play, mlistner);
+        playlistAdapter_playlists = new WatchPlaylistAdapter(this, Play, mlistner, current_user.getUid());
         recyclerView_playlists.setAdapter(playlistAdapter_playlists);
     }
 
@@ -393,7 +403,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             WatchList.add(document.toObject(Video.class));
-                            //Log.e(TAG, "Watch Later Video List : " + document.toObject(Video.class).getThumbnailUrl());
                         }
                     }
                 });
@@ -442,7 +451,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
     private void getaaaPlayVideos() {
-        //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
             queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
@@ -456,12 +464,14 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
+                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
-                        Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        //bb = docume.toObject(Video.class).getThumbnailUrl();
+                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        bb.add(docume.toObject(Video.class).getVideoId());
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
+                    Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }

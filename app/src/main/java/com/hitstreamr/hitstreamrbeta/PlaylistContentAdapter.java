@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -42,8 +46,6 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
     @Override
     public void onBindViewHolder(@NonNull PlaylistContentViewHolder holder, int position) {
         holder.videoTitle.setText(playlist.getPlayVideos().get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(playlist.getPlayVideos().get(position).getUsername());
         String viewCount = Long.toString(playlist.getPlayVideos().get(position).getViews()) + " views";
         String pubYear = Long.toString(playlist.getPlayVideos().get(position).getPubYear());
         holder.videoViewsCount.setText(viewCount);
@@ -56,7 +58,7 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mlistner.onPlaylistVideoClick(playlist.getPlayVideos().get(position));
+                mlistner.onPlaylistVideoClick(playlist.getPlayVideos().get(position), playlist.getPlaylistname());
             }
         });
 
@@ -67,6 +69,23 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
             }
         });
 
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(playlist.getPlayVideos()
+                .get(position)
+                .getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

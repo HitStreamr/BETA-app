@@ -65,34 +65,44 @@ public class DiscoverFragment extends Fragment {
         mText.add("POP");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_indie.png?alt=media&token=f46a2551-0422-4c4d-bdc3-47d8fed7a772");
-        mText.add("INDIE/ROCK");
+        mText.add("INDIE");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_indie.png?alt=media&token=f46a2551-0422-4c4d-bdc3-47d8fed7a772");
+        mText.add("ROCK");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_country.png?alt=media&token=16eee7ec-b183-4f5c-b03e-4033593ad5dd");
         mText.add("COUNTRY");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_funk.png?alt=media&token=2bb07ea3-93ec-4770-b644-4e72b4594d9a");
-        mText.add("SOUL/FUNK");
+        mText.add("FUNK");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_latin.png?alt=media&token=95bc2b97-c52f-4d76-8855-6d46604f2512");
         mText.add("LATIN");
 
+        // EDM
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_edm.png?alt=media&token=6ff37003-2ee5-43ac-8738-c673824d00ec");
         mText.add("DANCE/ELECTRONIC");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_asian_pop.png?alt=media&token=acf3208e-7aa4-4e9d-a897-fb386f01d24d");
-        mText.add(" ASIAN POP");
+        mText.add("K-POP");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_folk.png?alt=media&token=19f3f761-b808-4134-b2d2-edc5d2919dda");
         mText.add("FOLK");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_afro.png?alt=media&token=b4de5e78-26ef-4cf8-92a3-1d04f28be284");
-        mText.add("REGGAE/AFRO");
+        mText.add("REGGAE");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_afro.png?alt=media&token=b4de5e78-26ef-4cf8-92a3-1d04f28be284");
+        mText.add("AFRO");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fnot-ashamed-of-the-gospel-bujdcfub-e2250b5dc9f8f2036312c4c51d5e4c36.jpg?alt=media&token=7379135a-d129-4698-ac07-f9247d1f4bd0");
         mText.add("GOSPEL/INSPIRATIONAL");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
-        mText.add("JAZZ/BLUES");
+        mText.add("JAZZ");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
+        mText.add("BLUES");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_alternative.png?alt=media&token=1dfcab2f-5ea3-49fc-9d50-d55abb7c0d25");
         mText.add("ALTERNATIVE");
@@ -102,7 +112,24 @@ public class DiscoverFragment extends Fragment {
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_opera.png?alt=media&token=716d2ea6-4954-4687-8007-3e81eb1af3e4" +
                 "");
+        mText.add("CLASSICAL");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_opera.png?alt=media&token=716d2ea6-4954-4687-8007-3e81eb1af3e4" +
+                "");
         mText.add("OPERA");
+
+        // Still need images for these genres. Delete later when they're fixed :)
+        mImageUrls.add(null);
+        mText.add("TRAP");
+
+        mImageUrls.add(null);
+        mText.add("EASY LISTENING");
+
+        mImageUrls.add(null);
+        mText.add("WORLD MUSIC");
+
+        mImageUrls.add(null);
+        mText.add("METAL");
     }
 
 }

@@ -32,7 +32,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAdapter.TopArtistsHolder> {
-    private static final String TAG = "ArtistToWatchAdapter";
 
     private List<ArtistUser> artistList;
     private Context mContext;
@@ -56,7 +55,8 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
 
     @Override
     public void onBindViewHolder(@NonNull TopArtistsHolder holder, int position) {
-        holder.artistName.setText(artistList.get(position).getUsername());
+        holder.username.setText(artistList.get(position).getUsername());
+        holder.artistName.setText(artistList.get(position).getArtistname());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,6 +101,11 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
             }
         });
 
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
+        }
 
         FirebaseDatabase.getInstance().getReference("following")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(artistList.get(position).getUserID()).addValueEventListener(new ValueEventListener() {
@@ -122,7 +127,6 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
 
@@ -153,7 +157,6 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
             }
         });
 
-
         holder.unfollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -182,7 +185,6 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
                         });
             }
         });
-
 
         // Followers count
         // TODO: add thousands/millions k/m feature
@@ -240,7 +242,7 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
      */
     public class TopArtistsHolder extends RecyclerView.ViewHolder {
 
-        TextView artistName, followerCount;
+        TextView artistName, followerCount, username;
         LinearLayout cardView;
         CircleImageView profilePicture;
         ImageView verified;
@@ -249,7 +251,8 @@ public class ArtistsToWatchAdapter extends RecyclerView.Adapter<ArtistsToWatchAd
         public TopArtistsHolder(View itemView) {
             super(itemView);
 
-            artistName = itemView.findViewById(R.id.user_name);
+            username = itemView.findViewById(R.id.user_name);
+            artistName = itemView.findViewById(R.id.artist_name);
             cardView = itemView.findViewById(R.id.userCardView);
             profilePicture = itemView.findViewById(R.id.searchImage);
             followerCount = itemView.findViewById(R.id.count);

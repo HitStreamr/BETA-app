@@ -31,7 +31,6 @@ public class GeneralSettingsFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 

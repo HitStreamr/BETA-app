@@ -415,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             binder();
         }
 
+        //Rate this app pop up
         AppRate.with(this)
                 .setInstallDays(1)
                 .setLaunchTimes(3)
@@ -426,11 +427,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         AppRate.showRateDialogIfMeetsConditions(this);
         AppRate.with(this).clearAgreeShowDialog();
-
-//        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.custom_dialog, (ViewGroup)findViewById(R.id.layout_root));
-//        AppRate.with(this).setView(view).monitor();
-
 
 
     }

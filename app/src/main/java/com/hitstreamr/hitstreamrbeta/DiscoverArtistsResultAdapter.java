@@ -34,7 +34,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverArtistsResultAdapter.ArtistsToWatchHolder> {
-    private static final String TAG = "DiscoverArtistsResultAdapter";
 
     private List<ArtistUser> artistList;
     private Context mContext;
@@ -72,6 +71,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
     @Override
     public void onBindViewHolder(@NonNull ArtistsToWatchHolder holder, int position) {
         holder.username.setText(artistList.get(position).getUsername());
+        holder.artistName.setText(artistList.get(position).getArtistname());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,12 +158,23 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             }
         });
 
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
+        }
 
         // Check if user is verified
         if (artistList.get(position).getVerified().equals("true")) {
             holder.verified.setVisibility(View.VISIBLE);
         } else {
             holder.verified.setVisibility(View.GONE);
+        }
+
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
         }
 
         FirebaseDatabase.getInstance().getReference("following")
@@ -186,7 +197,6 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
 
@@ -217,7 +227,6 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             }
         });
 
-
         holder.unfollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -246,8 +255,6 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
                         });
             }
         });
-
-
     }
 
     /**
@@ -255,7 +262,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
      */
     public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
 
-        TextView username, followerCount;
+        TextView username, followerCount, artistName;
         LinearLayout cardView;
         Button followButton;
         CircleImageView profilePicture;
@@ -266,6 +273,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             super(view);
 
             username = view.findViewById(R.id.user_name);
+            artistName = view.findViewById(R.id.artist_name);
             cardView = view.findViewById(R.id.userCardView);
             followButton = view.findViewById(R.id.follow_button);
             profilePicture = view.findViewById(R.id.searchImage);

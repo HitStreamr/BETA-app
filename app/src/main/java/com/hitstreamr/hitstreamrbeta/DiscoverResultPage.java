@@ -31,6 +31,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -113,15 +114,11 @@ public class DiscoverResultPage extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                        if(!Strings.isNullOrEmpty(currentCredit)){
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
 
                             creditValue = currentCredit;
-                        }
-                        else
+                        } else
                             creditValue = "0";
-
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -156,34 +153,18 @@ public class DiscoverResultPage extends AppCompatActivity {
             category = "R&B/Soul";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Indie/rock")) {
-            category = "Indie/Rock";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Soul/funk")) {
-            category = "Soul/Funk";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
         } else if (category.equals("Dance/electronic")) {
             category = "Dance/Electronic";
             getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+            query = query.whereEqualTo("genre", "EDM");
         } else if (category.equals("K-pop")) {
             category = "K-Pop";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Reggae/afro")) {
-            category = "Reggae/Afro";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
         } else if (category.equals("Gospel/inspirational")) {
             category = "Gospel/Inspirational";
             getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Jazz/blues")) {
-            category = "Jazz/Blues";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+            query = query.whereEqualTo("genre", "Gospel");
         } else {
             // For all other genres
             query = query.whereEqualTo("genre", category);
@@ -201,8 +182,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull DiscoverResultHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                //TODO needs to be a callback (or however follows are done)
-//                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
@@ -256,6 +235,22 @@ public class DiscoverResultPage extends AppCompatActivity {
                         });
                     }
                 });
+
+                // Get the uploader's username
+                FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(model.getUserId())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
             }
 
             @NonNull

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPeopleAdapter.MorePopularPeopleHolder> {
-    private static final String TAG = "MorePopularPeopleAdapter";
 
     private List<User> userList;
     private Context mContext;
@@ -60,6 +58,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
     @Override
     public void onBindViewHolder(@NonNull MorePopularPeopleHolder holder, int position) {
         holder.userName.setText(userList.get(position).getUsername());
+        holder.fullName.setText(userList.get(position).getFullname());
 
         // Check if user is verified
         if (userList.get(position).getVerified().equals("true")) {
@@ -146,6 +145,11 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             }
         });
 
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(userList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
+        }
 
         FirebaseDatabase.getInstance().getReference("following")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userList.get(position).getUserID()).addValueEventListener(new ValueEventListener() {
@@ -167,7 +171,6 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
 
@@ -198,7 +201,6 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             }
         });
 
-
         holder.unfollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,10 +229,6 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
                         });
             }
         });
-
-
-
-
     }
 
     @Override
@@ -247,7 +245,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
      */
     public class MorePopularPeopleHolder extends RecyclerView.ViewHolder {
 
-        TextView userName, followerCount;
+        TextView userName, followerCount, fullName;
         LinearLayout cardView;
         CircleImageView profilePicture;
         ImageView verified;
@@ -263,6 +261,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             verified = itemView.findViewById(R.id.verified);
             follow = itemView.findViewById(R.id.follow_button);
             unfollow = itemView.findViewById(R.id.unfollow_button);
+            fullName = itemView.findViewById(R.id.artist_name);
         }
     }
 }

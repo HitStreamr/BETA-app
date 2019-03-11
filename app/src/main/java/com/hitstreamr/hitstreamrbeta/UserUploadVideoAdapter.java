@@ -12,9 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-
 
 public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideoAdapter.VideoUploadHolder> {
     ArrayList<Video> vids;
@@ -42,8 +45,6 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
 
         requestBuilder.load(vids.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(vids.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(vids.get(position).getUsername());
         holder.videoViews.setText(String.valueOf(vids.get(position).getViews()) + " views");
         holder.videoTime.setText(vids.get(position).getDuration());
         holder.videoYear.setText(String.valueOf(vids.get(position).getPubYear()));
@@ -65,6 +66,22 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
                 mListener.onResultClick(vids.get(position));
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(vids.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

@@ -79,6 +79,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     Video selectedFeaturedVideo;
     Query featuredVideosQuery;
     Task<QuerySnapshot> featuredResults;
+    Task<QuerySnapshot> newResults;
     ArrayList<Video> featuredVideos;
     FirestoreRecyclerOptions<Video> featuredArtistOptions;
     private FeaturedVideoResultAdapter resultAdapter;
@@ -86,6 +87,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     String userCredits;
     String userID;
     String type;
+    final String publicView = "Public (everyone can see)";
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseUser current_user;
@@ -143,6 +145,12 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         recyclerView_Trending = view.findViewById(R.id.trendingNowRCV);
         trendingMoreBtn = view.findViewById(R.id.trendingMore);
         //setupRecyclerView();
+
+        Query queryRef = newReleaseRef.whereEqualTo("delete", "N").whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("timestamp", Query.Direction.DESCENDING);
+
+        newResults = queryRef.get();
+
 
         swipeRefreshLayout = view.findViewById(R.id.swipe);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -675,8 +683,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                                             if (documentSnapshot.exists()) {
                                                 if ((documentSnapshot.get("delete").equals("N")) &&
-                                                        (documentSnapshot.get("privacy")
-                                                                .equals(getResources().getStringArray(R.array.Privacy)[0]))) {
+                                                        (documentSnapshot.get("privacy").equals(publicView))) {
                                                     videoList.add(documentSnapshot.toObject(Video.class));
                                                     homeFragmentWatchAgainAdapter.notifyDataSetChanged();
                                                     recyclerView_watchAgain.setAdapter(homeFragmentWatchAgainAdapter);
@@ -727,12 +734,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public void getFreshReleases() {
 
-        Query queryRef = newReleaseRef
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
-                .whereEqualTo("delete", "N")
-                .orderBy("timestamp", Query.Direction.DESCENDING);
-
-        queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        newResults.addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
