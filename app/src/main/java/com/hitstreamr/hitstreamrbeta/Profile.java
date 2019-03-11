@@ -953,7 +953,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
 
         if (!current_user.getUid().equals(cUserId)) {
-            queryRef = feedRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+            queryRef = queryRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
         }
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
