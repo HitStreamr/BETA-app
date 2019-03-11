@@ -7,10 +7,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //import com.android.billingclient.api.BillingClient;
@@ -22,11 +26,12 @@ import com.warkiz.widget.IndicatorStayLayout;
 import com.warkiz.widget.OnSeekChangeListener;
 import com.warkiz.widget.SeekParams;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreditsPurchase extends AppCompatActivity implements BillingProcessor.IBillingHandler, View.OnClickListener {
     private static final String TAG = "Credits Purchase";
-    private IndicatorSeekBar seekBar;
+ //   private IndicatorSeekBar seekBar;
     private IndicatorStayLayout stayLayout;
 
     // PRODUCT & SUBSCRIPTION IDS
@@ -46,11 +51,20 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
 
     public String creditvalue = "90";
 
+    //vars
+    private ArrayList<String> mCreditVal = new ArrayList<>();
+    private ArrayList<String> mCreditPrice = new ArrayList<>();
+    private ArrayList<String> mDescription = new ArrayList<>();
+
+    private CardView cardview;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_credits_purchase);
+
+        getCredtiVal();
 
         // Define the dimension
         DisplayMetrics dm = new DisplayMetrics();
@@ -62,12 +76,14 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
         getWindow().setBackgroundDrawable(new ColorDrawable(0x4b000000));
 
 
-        seekBar = findViewById(R.id.seekBar_credits);
-        seekBar.setMax(99);
-        seekBar.setIndicatorTextFormat("$ ${PROGRESS}.99");
+//        seekBar = findViewById(R.id.seekBar_credits);
+//        seekBar.setMax(99);
+//        seekBar.setIndicatorTextFormat("$ ${PROGRESS}.99");
 
         ConfirmBtn = findViewById(R.id.confirm_credits_button);
         ConfirmBtn.setOnClickListener(this);
+
+        cardview = findViewById(R.id.creditsCardView);
 
 
         // bp = new BillingProcessor(this, LICENSE_KEY, MERCHANT_ID, new BillingProcessor.IBillingHandler() {
@@ -79,38 +95,38 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
        // SkuDetails sku =  bp.getPurchaseListingDetails("credits_00000002");
 
 
-        seekBar.setOnSeekChangeListener(new OnSeekChangeListener() {
-            @Override
-            public void onSeeking(SeekParams seekParams) {
-                currentValue = seekParams.progress;
-                currentValue += 1;
-                String productID = "";
-                // From $0 to $8
-                if (currentValue < 9) {
-                    productID = "credits_0000000" + currentValue;
-                }
-                // From $9 to $98
-                else if (currentValue >= 9 && currentValue <= 98) {
-                    productID = "credits_000000" + currentValue;
-
-                }
-                // For $99
-                else {
-                    productID = "credits_00000" + currentValue;
-                }
-                Log.e("seek bar ","product id ->" +productID);
-            }
-
-            @Override
-            public void onStartTrackingTouch(IndicatorSeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(IndicatorSeekBar seekBar) {
-
-            }
-        });
+//        seekBar.setOnSeekChangeListener(new OnSeekChangeListener() {
+//            @Override
+//            public void onSeeking(SeekParams seekParams) {
+//                currentValue = seekParams.progress;
+//                currentValue += 1;
+//                String productID = "";
+//                // From $0 to $8
+//                if (currentValue < 9) {
+//                    productID = "credits_0000000" + currentValue;
+//                }
+//                // From $9 to $98
+//                else if (currentValue >= 9 && currentValue <= 98) {
+//                    productID = "credits_000000" + currentValue;
+//
+//                }
+//                // For $99
+//                else {
+//                    productID = "credits_00000" + currentValue;
+//                }
+//                Log.e("seek bar ","product id ->" +productID);
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(IndicatorSeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(IndicatorSeekBar seekBar) {
+//
+//            }
+//        });
 
     }
 
@@ -126,11 +142,11 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
     public void onBillingInitialized() {
 
         Log.e("sku","Inside billing init" );
-        SkuDetails sku =  bp.getPurchaseListingDetails("credits_00000002");
-        String price = sku.priceText;
-        String Title = sku.title;
-        Log.e("sku","price->" +price);
-        Log.e("sku","Title->" +Title);
+//        SkuDetails sku =  bp.getPurchaseListingDetails("credits_00000002");
+//        String price =sku.priceText;
+//        String Title = sku.title;
+//        Log.e("sku","price->" +price);
+//        Log.e("sku","Title->" +Title);
        // boolean ispurchase = bp.purchase(this, "credits_00000002");
         //Log.e("Billing","ispurchase->" +ispurchase);
 
@@ -197,5 +213,71 @@ public class CreditsPurchase extends AppCompatActivity implements BillingProcess
             bp.release();
         }
         super.onDestroy();
+    }
+
+    private void getCredtiVal() {
+        Log.d(TAG, "getCredtVal: preparing text.");
+
+        mCreditVal.add("35");
+        mCreditPrice.add("$.99");
+        mDescription.add("Lasts 1-3 Days");
+
+        mCreditVal.add("90");
+        mCreditPrice.add("$1.99");
+        mDescription.add("Lasts 3-7 Days");
+
+        mCreditVal.add("140");
+        mCreditPrice.add("$2.99");
+        mDescription.add("Lasts about 10 Days");
+
+        mCreditVal.add("190");
+        mCreditPrice.add("$3.99");
+        mDescription.add("Lasts about 2 Weeks");
+
+        mCreditVal.add("240");
+        mCreditPrice.add("$4.99");
+        mDescription.add("Lasts about 2.5 Weeks");
+
+        mCreditVal.add("290");
+        mCreditPrice.add("$5.99");
+        mDescription.add("Lasts about 3 Weeks");
+
+        mCreditVal.add("345");
+        mCreditPrice.add("$6.99");
+        mDescription.add("Lasts 1 Month");
+
+        mCreditVal.add("705");
+        mCreditPrice.add("$13.99");
+        mDescription.add("Last 2 Months\n+15 FREE CREDITS");
+
+        mCreditVal.add("1075");
+        mCreditPrice.add("$20.99");
+        mDescription.add("Lasts 3 Months\n+40 FREE CREDITS");
+
+        mCreditVal.add("2180");
+        mCreditPrice.add("$41.99");
+        mDescription.add("Lasts 6 Months\n+110 FREE CREDITS");
+
+        mCreditVal.add("3300");
+        mCreditPrice.add("$62.99");
+        mDescription.add("Lasts 9 Months\n+195 FREE CREDITS");
+
+        mCreditVal.add("4375");
+        mCreditPrice.add("$83.99");
+        mDescription.add("Lasts 12 Months\n+235 FREE CREDITS");
+
+
+        initRCV();
+
+    }
+
+    private void initRCV(){
+        Log.d(TAG, "initRCV: initRCV.");
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView recyclerView = findViewById(R.id.creditsRCV);
+        recyclerView.setLayoutManager(layoutManager);
+        CreditsRCVAdapter adapter = new CreditsRCVAdapter(this, mCreditPrice, mCreditVal, mDescription);
+        recyclerView.setAdapter(adapter);
     }
 }

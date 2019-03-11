@@ -456,14 +456,12 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
-                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
-                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class).getVideoId());
+                        Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        //bb = docume.toObject(Video.class).getThumbnailUrl();
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
-                    Play.get(x).setPlayVideoIds(bb);
                     Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
@@ -484,21 +482,18 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         Bundle bundle;
         switch (item.getItemId()) {
             case R.id.home:
-                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
                 homeIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 homeIntent.putExtra("OPTIONAL_FRAG", HOME);
                 startActivity(homeIntent);
                 break;
             case R.id.discover:
-                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent discoverIntent = new Intent(getApplicationContext(), MainActivity.class);
                 discoverIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 discoverIntent.putExtra("OPTIONAL_FRAG", DISCOVER);
                 startActivity(discoverIntent);
                 break;
             case R.id.activity:
-                Toast.makeText(Library.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent activityIntent = new Intent(getApplicationContext(), MainActivity.class);
                 activityIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 activityIntent.putExtra("OPTIONAL_FRAG", ACTIVITY);

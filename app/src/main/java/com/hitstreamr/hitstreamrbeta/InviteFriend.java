@@ -1,47 +1,32 @@
-package com.hitstreamr.hitstreamrbeta.DrawerMenuFragments;
+package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-
 import com.google.android.gms.appinvite.AppInviteInvitation;
-import com.hitstreamr.hitstreamrbeta.MainActivity;
-import com.hitstreamr.hitstreamrbeta.R;
 
-import static android.app.Activity.RESULT_OK;
-
-
-public class InviteAFriendFragment extends Fragment {
+public class InviteFriend extends AppCompatActivity {
     private static final String TAG = "InviteAFriendFragment";
     private static final int REQUEST_INVITE = 100;
     private Button inviteBtn;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_inviteafriend, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_invite_friend);
 
-        inviteBtn = view.findViewById(R.id.invite_button);
+        inviteBtn = findViewById(R.id.invite_button);
         inviteBtn.setOnClickListener(v -> onInviteClicked());
-        Button close = view.findViewById(R.id.closeBtn);
+        Button close = findViewById(R.id.closeBtn);
         close.setOnClickListener(v -> {
-            Log.e(TAG, "on invite click"+getArguments().getString("TYPE") );
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            intent.putExtra("TYPE", getArguments().getString("TYPE"));
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
             startActivity(intent);
         });
-
-        return view;
     }
-
     private void onInviteClicked() {
         Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
                 .setMessage(getString(R.string.invitation_message))
@@ -69,4 +54,3 @@ public class InviteAFriendFragment extends Fragment {
         }
     }
 }
-

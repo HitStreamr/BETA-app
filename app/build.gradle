@@ -75,6 +75,7 @@ dependencies {
     implementation 'android.arch.paging:runtime:1.0.1'
     implementation 'com.firebaseui:firebase-ui-firestore:4.2.0'
     implementation 'com.firebaseui:firebase-ui-database:4.1.0'
+    implementation 'android.arch.paging:runtime:1.0.1'
     implementation 'com.github.Q42:AndroidScrollingImageView:1.3.3'
 
     // Recycler View
@@ -93,7 +94,6 @@ dependencies {
 
     // Expandable Layout
     implementation 'com.github.aakira:expandable-layout:1.6.0@aar'
-
     //Exo Player
     implementation 'com.google.android.exoplayer:exoplayer:2.8.0'
     implementation 'com.transloadit.android.sdk:transloadit-android:0.0.2'
@@ -114,6 +114,8 @@ dependencies {
 
     // Indicator Seek Bar
     implementation 'com.github.warkiz.widget:indicatorseekbar:2.1.0'
+
+    implementation 'com.github.hotchemi:android-rate:1.0.1'
 
 }
 

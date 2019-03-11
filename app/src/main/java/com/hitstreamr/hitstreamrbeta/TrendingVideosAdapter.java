@@ -14,10 +14,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -42,10 +38,12 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
     protected void onBindViewHolder(@NonNull TrendingVideosAdapter.TrendingVideosHolder holder, int position, @NonNull Video model) {
 
         holder.videoTitle.setText(model.getTitle());
+        //TODO needs to be a callback (or however follows are done)
+//        holder.videoUsername.setText(model.getUsername());
         String viewCount = Long.toString(model.getViews()) + " views";
         String pubYear = Long.toString(model.getPubYear());
         holder.videoViewsCount.setText(viewCount);
-        holder.videoYear.setText(pubYear);
+        holder.videoPublishedYear.setText(pubYear);
         Glide.with(getApplicationContext()).load(Uri.parse((model.getUrl()))).into(holder.videoThumbnail);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,22 +63,6 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         holder.videoYear.setText(dateFormat.format(model.getTimestamp().toDate()));*/
 
         holder.videoDuration.setText(model.getDuration());
-
-        // Get the uploader's username
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(model.getUserId())
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
     }
 
     @NonNull
@@ -97,6 +79,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         private TextView videoUsername;
         private ImageView videoThumbnail;
         private TextView videoViewsCount;
+        private TextView videoPublishedYear;
         private LinearLayout parentLayout;
         private TextView videoYear;
         private TextView videoDuration;
@@ -110,6 +93,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
             videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
             videoThumbnail.setSelected(true);
             videoViewsCount = itemView.findViewById(R.id.videoViews);
+            videoPublishedYear = itemView.findViewById(R.id.videoTime);
             parentLayout = itemView.findViewById(R.id.videoCard);
             videoYear = itemView.findViewById(R.id.videoYear);
             videoDuration = itemView.findViewById(R.id.videoTime);

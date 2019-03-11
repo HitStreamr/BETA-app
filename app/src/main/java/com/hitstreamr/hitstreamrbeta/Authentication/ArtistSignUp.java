@@ -123,13 +123,18 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         // Views
         mFirstName = findViewById(R.id.artistFirstName);
+        mFirstName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mLastName = findViewById(R.id.artistLastName);
+        mLastName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mArtistName = findViewById(R.id.artistName);
+        mArtistName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mEmail = findViewById(R.id.artistEmail);
         mPassword = findViewById(R.id.artistPassword);
         mUsername = findViewById(R.id.artistUsername);
         mAddress = findViewById(R.id.artistAddressLine1);
+        mAddress.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mCity = findViewById(R.id.artistCity);
+        mCity.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mState = findViewById(R.id.artistState);
         mZipcode = findViewById(R.id.artistZip);
         mCountry = findViewById(R.id.artistCountry);
@@ -261,6 +266,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Register and store the new artist user to the database, send a verification email to confirm
+     * their email.
+     */
     private void registerFirebase() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -276,14 +285,27 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 takenNames.child(artist_object.getUsername()).setValue(true);
                                 Toast.makeText(ArtistSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
                                 finish();
-                                //start next activity
-                                Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
-                                genreIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                startActivity(genreIntent);
+
+                                // Send an email verification
+                                final FirebaseUser current_user = mAuth.getCurrentUser();
+                                if (current_user != null) {
+                                    current_user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                        }
+                                    });
+                                }
+
+                                // Go to verification page, user cannot proceed further until their email is verified
+                                Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                                verificationPage.putExtra("TYPE", getString(R.string.type_artist));
+                                startActivity(verificationPage);
                             } else {
-                                //Display a failure message
-                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+                                // Display a failure message
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -532,7 +554,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 }
                 else if (!dataSnapshot.hasChild(artist.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     artist_object = artist;
 
                     //If validations are ok we will first show progressbar

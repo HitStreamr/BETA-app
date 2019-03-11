@@ -40,6 +40,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.core.OrderBy;
+//import com.google.firestore.v1beta1.StructuredQuery;
 import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
@@ -119,6 +121,16 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         featuredVideosSetup(view);
+
+        // Layouts
+        FeaturedVideosLinLayout = view.findViewById(R.id.featuredVideosLinLayout);
+        FreshReleasesLinLayout = view.findViewById(R.id.freshReleasesLinLayout);
+        TrendingNowLinLayout = view.findViewById(R.id.trendingNowLinLayout);
+//        SponsoredVideosLinLayout = view.findViewById(R.id.sponsoredVideosLinLayout);
+        WatchAgainLinLayout = view.findViewById(R.id.watchAgainLinLayout);
+        ArtistWatchLinLayout = view.findViewById(R.id.artistWatchLinLayout);
+        PopularUsersLinLayout = view.findViewById(R.id.popularUsersLinLayout);
+        //       HotPlaylistsLinLayout = view.findViewById(R.id.hotPlaylistsLinLayout);
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
         userGenreList = new ArrayList<>();
@@ -422,7 +434,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void onStart() {
         super.onStart();
         adapter.startListening();
-
     }
 
     @Override
@@ -433,6 +444,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     /**
      * Video menu popup options.
+     *
      * @param item item
      * @return true
      */
@@ -473,6 +485,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     public interface ItemClickListener {
         void onResultClick(Video title);
+
         void onOverflowClick(Video title, View v);
     }
 
@@ -485,6 +498,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     /**
      * Load top artists.
+     *
      * @param view view
      */
     private void showArtistsToWatch(View view) {
@@ -708,7 +722,11 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
 
                 }
-                callToAdapter();
+                if (userGenreList.size() <= 0)
+                    FreshReleasesLinLayout.setVisibility(GONE);
+                else {
+                    callToAdapter();
+                }
             }
         });
 

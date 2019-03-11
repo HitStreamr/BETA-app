@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorAccent">
+    android:background="@color/colorWhite">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:src="@mipmap/ic_launcher_round"
-                app:civ_border_color="@color/colorAccent"
+                app:civ_border_color="@color/colorWhite"
                 app:civ_border_width="2dp"
                 android:layout_marginEnd="5dp"/>
 
@@ -45,7 +45,7 @@
             android:background="@drawable/button1"
             android:text="post"
             android:textSize="12sp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorWhite"
             android:onClick="onPostingCommentReply"/>
 
     </LinearLayout>

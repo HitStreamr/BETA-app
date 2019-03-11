@@ -87,7 +87,7 @@
                     android:layout_height="20dp"
                     android:text="Upload Photo"
                     android:textStyle="bold"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:background="@android:color/transparent"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="15dp"/>
@@ -296,7 +296,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Alreay have an account? SignIn here!"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:layout_gravity="center_horizontal"
                     />
 

@@ -399,22 +399,21 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                                 if(a.contains(String.valueOf(each.getKey()))){
                                     Playlist p = new Playlist();
                                     p.setPlaylistname(String.valueOf(each.getKey()));
-                                    Log.e(TAG, "each children" + each.getChildren());
                                     ArrayList<String> a = new ArrayList<>();
                                     for (DataSnapshot eachplaylist : each.getChildren()) {
                                         a.add(eachplaylist.getValue(String.class));
+                                        Log.e(TAG, "each children" + eachplaylist.getValue(String.class));
                                     }
                                     p.setPlayVideoIds(a);
                                     Play.add(p);
                                 }
+                                String str = "empty";
+                                Play.get(0).setPlayThumbnails(str);
                             }
                         }
                         if (Play.size() > 0) {
                             getaaaPlayVideos();
-
                         }
-                        //setUpPlaylistRecyclerView();
-
                     }
 
                     @Override
@@ -440,13 +439,14 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                 int x = 0;
                 ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
+                    //ArrayList<String> bb = new ArrayList<>();
                     for (DocumentSnapshot docume : document.getDocuments()) {
                         //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class).getVideoId());
+                        //bb.add(docume.toObject(Video.class).getVideoId());
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
-                    Play.get(x).setPlayVideoIds(bb);
-                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
+                    //Play.get(x).setPlayVideoIds(bb);
+                    Log.e(TAG, "Entered onsuceess" + Play.get(0).getPlayThumbnails());
                     x++;
                 }
                 setUpPlaylistRecyclerView();

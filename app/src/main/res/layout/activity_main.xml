@@ -97,7 +97,7 @@
                 android:layout_height="56dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentStart="true"
-                android:background="@color/colorAccent"
+                android:background="@color/colorWhite"
                 app:menu="@menu/bottom_nav_items">
             </android.support.design.widget.BottomNavigationView>
 
@@ -140,7 +140,7 @@
         android:id="@+id/nav_view"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu"
-        android:background="@color/colorAccent"
+        android:background="@color/colorWhite"
         app:itemIconTint="@color/colorPrimary"
         />
 

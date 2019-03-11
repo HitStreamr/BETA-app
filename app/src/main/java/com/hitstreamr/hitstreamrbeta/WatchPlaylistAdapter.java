@@ -17,7 +17,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.ArrayList;
+import java.util.List;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdapter.WatchPlaylistViewHolder> {
@@ -26,7 +35,7 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
     private Context mContext;
     private Library.ItemClickListener mlistner;
 
-    public WatchPlaylistAdapter(Context context, ArrayList<Playlist> playlist, Library.ItemClickListener mlistner) {
+    public  WatchPlaylistAdapter(Context context, ArrayList<Playlist> playlist, Library.ItemClickListener mlistner) {
         Log.e(TAG, "Entered Watch Playlist recycler view"+ playlist.get(0).getPlaylistname() + "  " + playlist.size());
         this.Playlist = playlist;
         this.mContext = context;
@@ -45,12 +54,32 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
 
     @Override
     public void onBindViewHolder(@NonNull WatchPlaylistViewHolder holder, int position) {
+
+        ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
+        for (int j = 0; j < Playlist.get(position).getPlayVideoIds().size(); j++) {
+            queryy.add(FirebaseFirestore.getInstance()
+                    .collection("Videos")
+                    .whereEqualTo("videoId", Playlist.get(position).getPlayVideoIds().get(j))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy","Public (everyone can see)")
+                    .get());
+        }
+
+        Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
+        task.addOnCompleteListener(task1 -> {
+            int temp = 0;
+            for (QuerySnapshot document : task1.getResult()) {
+                for (DocumentSnapshot docume : document.getDocuments()) {
+                    temp++;
+                }
+            }
+            holder.videoCountPlaylist.setText(String.valueOf(temp));
+           holder.videoCount.setText(String.valueOf(temp) + " videos");
+        });
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
-        holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()));
-        holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()) + " videos");
         holder.thumbnailPlaylist.setScaleType(ImageView.ScaleType.CENTER_CROP);
         if(!Playlist.get(position).getPlayVideoIds().isEmpty()) {
-            if (!Playlist.get(position).getPlayThumbnails().isEmpty()) {
+            if (!Playlist.get(position).getPlayThumbnails().equals("empty")) {
                 Glide.with(getApplicationContext()).load(Uri.parse(Playlist.get(position).getPlayThumbnails())).into(holder.thumbnailPlaylist);
             }
         }
