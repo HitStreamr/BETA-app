@@ -982,6 +982,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         // If user IDs don't match, private videos are not allowed
         if (!current_user.getUid().equals(cUserId)) {
             queryRef = queryRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        } else {
+            // User IDs match, show videos with the same userID
+            queryRef = queryRef.whereEqualTo("userId", current_user.getUid());
         }
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

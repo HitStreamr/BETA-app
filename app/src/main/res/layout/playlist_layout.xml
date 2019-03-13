@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorAccent">
+    android:background="@color/colorWhite">
 
     <LinearLayout
         android:id="@+id/playlistCard"
@@ -51,7 +51,7 @@
                         android:id="@+id/videoCount"
                         android:layout_width="50dp"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorWhite"
                         android:text="0"
                         android:textAlignment="center"
                         android:layout_marginTop="20dp"/>
@@ -60,7 +60,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="@drawable/ic_playlist"
-                        android:backgroundTint="@color/colorAccent"
+                        android:backgroundTint="@color/colorWhite"
                         android:layout_marginStart="15dp"
                         android:layout_below="@+id/videoCount"
                         />

@@ -179,29 +179,29 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     public void getFreshReleases(){
 
-        Query queryRef = newReleaseRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = newReleaseRef.whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    if ((document.get("privacy").equals(getResources().getStringArray(R.array.Privacy)[0]))) {
-                        if (userGenreList.size() > 0) {
-                            for (int itr = 0; itr < userGenreList.size(); itr++) {
-                                String userGenre = userGenreList.get(itr);
-                                userGenre = userGenre.replaceAll("_"," ");
+                    if (userGenreList.size() > 0) {
+                        for (int itr = 0; itr < userGenreList.size(); itr++) {
+                            String userGenre = userGenreList.get(itr);
+                            userGenre = userGenre.replaceAll("_"," ");
 
-                                if (userGenre.contains(document.get("genre").toString().toLowerCase())) {
-                                    UserGenreVideos.add(document.toObject(Video.class));
-                                    break;
-                                } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
-                                    UserGenreVideos.add(document.toObject(Video.class));
-                                    break;
-                                }
+                            if (userGenre.contains(document.get("genre").toString().toLowerCase())) {
+                                UserGenreVideos.add(document.toObject(Video.class));
+                                break;
+                            } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
+                                UserGenreVideos.add(document.toObject(Video.class));
+                                break;
                             }
-                        } else {
-                            UserGenreVideos.add(document.toObject(Video.class));
                         }
+                    } else {
+                        UserGenreVideos.add(document.toObject(Video.class));
                     }
                 }
                 callToAdapter();

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="15dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorWhite"
         android:elevation="4dp"
         >
 
@@ -48,7 +48,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:background="@color/colorAccent"
+                android:background="@color/colorWhite"
                 android:padding="15dp">
 
                 <android.support.v7.widget.SwitchCompat

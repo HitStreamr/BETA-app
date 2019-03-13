@@ -11,7 +11,7 @@
     <Button
         android:id="@+id/update_account"
         android:text="SAVE"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorWhite"
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"

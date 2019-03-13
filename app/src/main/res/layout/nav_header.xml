@@ -20,7 +20,7 @@
             android:id="@+id/profilePicture"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            app:civ_border_color="@color/colorAccent"
+            app:civ_border_color="@color/colorWhite"
             app:civ_border_width="2dp"
             android:onClick="openProfile"/>
 
@@ -38,7 +38,7 @@
                 android:text="Add Credits"
                 android:textSize="11dp"
                 android:textStyle="bold"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:onClick="addCredits"
                 android:elevation="20dp"/>
 

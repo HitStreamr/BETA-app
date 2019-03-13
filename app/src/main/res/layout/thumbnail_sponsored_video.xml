@@ -71,7 +71,7 @@
                     android:marqueeRepeatLimit="marquee_forever"
                     android:scrollHorizontally="true"
                     android:singleLine="true"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textAlignment="center"
                     android:textSize="22sp"
                     android:textStyle="bold"
@@ -83,7 +83,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/scrollingTitle"
                     android:layout_centerHorizontal="true"
-                    android:textColor="@color/colorAccent" />
+                    android:textColor="@color/colorWhite" />
 
                 <TextView
                     android:id="@+id/duration"
@@ -92,7 +92,7 @@
                     android:layout_marginStart="150dp"
                     android:layout_marginTop="88dp"
                     android:background="@android:color/black"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textSize="8sp"
                     android:paddingStart="2dp"
                     android:paddingEnd="2dp"/>
@@ -109,7 +109,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sponsored"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold|italic"
                 android:rotation="-40"
                 android:layout_marginTop="15dp"

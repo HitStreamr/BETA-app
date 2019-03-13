@@ -44,9 +44,9 @@
                 android:id="@id/exo_ffwd"
                 style="@style/ExoMediaButton.FastForward" />
 
-            <!--<ImageButton-->
-                <!--android:id="@id/exo_next"-->
-                <!--style="@style/ExoMediaButton.Next" />-->
+            <!--<ImageButton
+                android:id="@id/exo_next"
+                style="@style/ExoMediaButton.Next" />-->
 
         </LinearLayout>
 
@@ -74,7 +74,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_keyboard_arrow_up_black_24dp"
-                android:tint="@color/colorAccent"
+                android:tint="@color/colorWhite"
                 android:visibility="gone"/>
 
             <TextView
@@ -127,7 +127,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_fullscreen_expand"
-                android:tint="@color/colorAccent"/>
+                android:tint="@color/colorWhite"/>
             <ImageView
                 android:id="@+id/fullscreen_shrink"
                 android:layout_width="24dp"
@@ -136,7 +136,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_fullscreen_shrink"
-                android:tint="@color/colorAccent"/>
+                android:tint="@color/colorWhite"/>
 
 
 
@@ -167,7 +167,7 @@
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_keyboard_arrow_down_black_24dp"
-            android:tint="@color/colorAccent"
+            android:tint="@color/colorWhite"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"/>
     </LinearLayout>
