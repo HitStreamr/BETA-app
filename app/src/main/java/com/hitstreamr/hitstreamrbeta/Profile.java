@@ -413,10 +413,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                                 if(a.contains(String.valueOf(each.getKey()))){
                                     Playlist p = new Playlist();
                                     p.setPlaylistname(String.valueOf(each.getKey()));
+                                    Log.e(TAG, "each children" + each.getChildren());
                                     ArrayList<String> a = new ArrayList<>();
                                     for (DataSnapshot eachplaylist : each.getChildren()) {
                                         a.add(eachplaylist.getValue(String.class));
-                                        Log.e(TAG, "each children" + eachplaylist.getValue(String.class));
                                     }
                                     p.setPlayVideoIds(a);
                                     Play.add(p);
@@ -981,6 +981,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         // If user IDs don't match, private videos are not allowed
         if (!current_user.getUid().equals(cUserId)) {
             queryRef = queryRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        } else {
+            // User IDs match, show videos with the same userID
+            queryRef = queryRef.whereEqualTo("userId", current_user.getUid());
         }
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {

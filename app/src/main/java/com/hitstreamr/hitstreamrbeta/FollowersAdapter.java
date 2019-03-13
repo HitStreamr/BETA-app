@@ -303,7 +303,11 @@ public class FollowersAdapter extends RecyclerView.Adapter<FollowersAdapter.Foll
 
     @Override
     public int getItemCount() {
-        return followersList.size();
+        if (followersList != null) {
+            return followersList.size();
+        } else {
+            return 0;
+        }
     }
 
     public class FollowersViewHolder extends RecyclerView.ViewHolder {
