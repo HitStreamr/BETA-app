@@ -1875,16 +1875,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         startActivity(intent, options.toBundle());
     }
 
-
-    /**DRAG VIDEO **/
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
-
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2,
                            float velocityX, float velocityY) {

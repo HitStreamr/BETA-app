@@ -210,6 +210,7 @@ public class PlayStats extends Fragment {
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
                 .whereEqualTo("privacy", "Public (everyone can see)")
+                .whereEqualTo("userId", current_user.getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {

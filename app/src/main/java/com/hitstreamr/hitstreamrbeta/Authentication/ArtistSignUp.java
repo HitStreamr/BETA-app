@@ -231,6 +231,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 uploadFromUri(selectedImagePath);
                             } else {
+                                progressDialog.dismiss();
                                 Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
