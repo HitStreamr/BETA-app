@@ -67,7 +67,7 @@ public class DiscoverFragment extends Fragment {
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_indie.png?alt=media&token=f46a2551-0422-4c4d-bdc3-47d8fed7a772");
         mText.add("INDIE");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_indie.png?alt=media&token=f46a2551-0422-4c4d-bdc3-47d8fed7a772");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_rock.png?alt=media&token=8eb4ee4a-c416-4318-bebf-48d94b38c649");
         mText.add("ROCK");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_country.png?alt=media&token=16eee7ec-b183-4f5c-b03e-4033593ad5dd");
@@ -75,6 +75,9 @@ public class DiscoverFragment extends Fragment {
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_funk.png?alt=media&token=2bb07ea3-93ec-4770-b644-4e72b4594d9a");
         mText.add("FUNK");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_trap.png?alt=media&token=1dfc1681-0acd-47a2-95b5-440e6593553f");
+        mText.add("TRAP");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_latin.png?alt=media&token=95bc2b97-c52f-4d76-8855-6d46604f2512");
         mText.add("LATIN");
@@ -89,8 +92,11 @@ public class DiscoverFragment extends Fragment {
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_folk.png?alt=media&token=19f3f761-b808-4134-b2d2-edc5d2919dda");
         mText.add("FOLK");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_afro.png?alt=media&token=b4de5e78-26ef-4cf8-92a3-1d04f28be284");
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_reggae.png?alt=media&token=7d7a0979-22a4-489f-86ba-e6412e11f816");
         mText.add("REGGAE");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fmetal.jpg?alt=media&token=7f067335-5cd2-4e30-bbae-a634fd0c10d7");
+        mText.add("METAL");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_afro.png?alt=media&token=b4de5e78-26ef-4cf8-92a3-1d04f28be284");
         mText.add("AFRO");
@@ -98,19 +104,25 @@ public class DiscoverFragment extends Fragment {
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fnot-ashamed-of-the-gospel-bujdcfub-e2250b5dc9f8f2036312c4c51d5e4c36.jpg?alt=media&token=7379135a-d129-4698-ac07-f9247d1f4bd0");
         mText.add("GOSPEL/INSPIRATIONAL");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
-        mText.add("JAZZ");
-
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
-        mText.add("BLUES");
-
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_alternative.png?alt=media&token=1dfcab2f-5ea3-49fc-9d50-d55abb7c0d25");
         mText.add("ALTERNATIVE");
 
         mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_new_age.png?alt=media&token=7c042c02-3aad-4e8c-90fe-d20b6bdbb315");
         mText.add("NEW AGE");
 
-        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_opera.png?alt=media&token=716d2ea6-4954-4687-8007-3e81eb1af3e4" +
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Feasy%20listening.jpg?alt=media&token=b7036ca4-4ffd-40eb-b3c4-e6a794aee892");
+        mText.add("EASY LISTENING");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fworld-music-1-830x600.jpeg?alt=media&token=c7e1fc49-c30f-4b61-868f-0922209ced88");
+        mText.add("WORLD MUSIC");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_jazz.png?alt=media&token=29942595-1f5c-498d-a27c-38bdeb6622a4");
+        mText.add("JAZZ");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2Fw_genre_blues.png?alt=media&token=20d34b17-aef7-4fde-a3a1-6bb83559a7df");
+        mText.add("BLUES");
+
+        mImageUrls.add("https://firebasestorage.googleapis.com/v0/b/hitstreamr-beta.appspot.com/o/DisocverImages%2FClassical-Music-Wallpaper.jpg?alt=media&token=2017ad09-c087-4d98-99e3-c387fc619a66" +
                 "");
         mText.add("CLASSICAL");
 
@@ -118,18 +130,6 @@ public class DiscoverFragment extends Fragment {
                 "");
         mText.add("OPERA");
 
-        // Still need images for these genres. Delete later when they're fixed :)
-        mImageUrls.add(null);
-        mText.add("TRAP");
-
-        mImageUrls.add(null);
-        mText.add("EASY LISTENING");
-
-        mImageUrls.add(null);
-        mText.add("WORLD MUSIC");
-
-        mImageUrls.add(null);
-        mText.add("METAL");
     }
 
 }
