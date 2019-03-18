@@ -387,7 +387,9 @@ public class ActivityFragment extends Fragment {
     }*/
 
     public void getVideoFirestore() {
-        Query queryRef = videosCollectionRef;
+        Query queryRef = videosCollectionRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

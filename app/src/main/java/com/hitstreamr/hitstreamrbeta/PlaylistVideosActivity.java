@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -108,11 +109,13 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
         mlistner = new ItemClickListener() {
             @Override
-            public void onPlaylistVideoClick(Video selectVideo) {
-                Intent videoPlayerIntent = new Intent(PlaylistVideosActivity.this, VideoPlayer.class);
+            public void onPlaylistVideoClick(Video selectVideo, String playlistName) {
+                Log.e(TAG, "playlist selected is "+ playlist.getPlaylistname());
+                Intent videoPlayerIntent = new Intent(PlaylistVideosActivity.this, PlaylistVideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", selectVideo);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
+                videoPlayerIntent.putExtra("PLAYLISTNAME", playlistName);
                 startActivity(videoPlayerIntent);
             }
 
@@ -226,7 +229,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     }
 
     public interface ItemClickListener {
-        void onPlaylistVideoClick(Video selectVideo);
+        void onPlaylistVideoClick(Video selectVideo, String playlistName);
         void onOverflowClick(Video video, View view);
     }
 

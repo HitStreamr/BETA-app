@@ -57,7 +57,7 @@ public class FollowersActivity extends AppCompatActivity {
         }
 
         userId = getIntent().getStringExtra("USER");
-        type = getIntent().getStringExtra("TYPE");
+        type =getIntent().getStringExtra("TYPE");
         recyclerView_Followers = findViewById(R.id.recyclerView_followers);
 
         followersUsers = new ArrayList<>();

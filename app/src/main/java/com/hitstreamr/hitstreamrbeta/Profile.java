@@ -437,7 +437,6 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
-                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     //ArrayList<String> bb = new ArrayList<>();
                     for (DocumentSnapshot docume : document.getDocuments()) {

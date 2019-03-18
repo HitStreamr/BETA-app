@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
@@ -32,10 +33,11 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
     private TextView createPlaylist;
     private PlaylistAdapter adapter;
     private RecyclerView recyclerView_playlist;
+    private DatabaseReference myplaylistRef;
 
     private ItemClickListener mlistner;
 
-    //Video vid;
+    Video vid;
 
     String videoId;
 
@@ -60,8 +62,8 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             }
         };
 
-        Video video = getIntent().getParcelableExtra("VIDEO");
-        videoId = video.getVideoId();
+        vid = getIntent().getParcelableExtra("VIDEO");
+
         Log.e(TAG, "Video id is :" +videoId);
 
         cancel = (Button) findViewById(R.id.cancel);
@@ -118,13 +120,33 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
 
     }
 
+    private long playlistKey;
+
+    private void getPlaylistKey(){
+        FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                .child(current_user.getUid()).child(playlistSelected).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //playlistKey = Math.toIntExact(dataSnapshot.getChildrenCount());
+                        playlistKey = dataSnapshot.getChildrenCount();
+                        registerVideoToPlaylist();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+    }
+
     private  void registerVideoToPlaylist(){
         FirebaseDatabase.getInstance()
                 .getReference("PlaylistVideos")
                 .child(current_user.getUid())
                 .child(playlistSelected)
-                .child(videoId)
-                .setValue(videoId)
+                .child(Long.toString(playlistKey))
+                .setValue(vid.getVideoId())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -144,14 +166,17 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
             case R.id.cancel:
                 finish();
                 break;
+
             case R.id.confirm:
-                registerVideoToPlaylist();
+                getPlaylistKey();
+                //registerVideoToPlaylist();
                 Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
                 finish();
                 break;
+
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
+                break;
         }
     }
 }
-//

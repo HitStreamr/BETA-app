@@ -9,9 +9,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
     }
     buildTypes {
         release {
+
             minifyEnabled false
             buildConfigField 'String', "Transloadit_API_KEY", TRANSLOADIT_KEY
             buildConfigField 'String', "Transloadit_API_SECRET", TRANSLOADIT_SECRET
@@ -44,14 +46,15 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2' //fails to resolve
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // Mobile Client for initializing the SDK
+    //implementation('com.amazonaws:aws-android-sdk-mobile-client:2.6.+@aar') { transitive = true }
 
     // Cognito UserPools for SignIn
-
     //implementation 'com.android.support:support-v4:27.1.1' // duplicate
 
     // Sign in UI Library
-
     //implementation 'com.android.support:appcompat-v7:27.1.1' // duplicate
 
     // Facebook SignIn
@@ -68,6 +71,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:18.0.1'
     implementation 'com.google.firebase:firebase-invites:16.1.0'
     implementation 'com.google.firebase:firebase-storage:16.0.5'
+    implementation 'com.firebaseui:firebase-ui-storage:4.2.1'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-iid:17.0.4'
 

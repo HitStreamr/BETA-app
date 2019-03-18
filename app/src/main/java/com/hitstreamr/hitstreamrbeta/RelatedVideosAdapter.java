@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     private Context mContext;
     private Intent mIntent;
     private FirebaseUser current_user;
+    private Video vid;
 
     /**
      * Constructor
@@ -43,6 +45,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
         this.videoList = videoList;
         this.mContext = mContext;
         this.mIntent = mIntent;
+        vid = mIntent.getParcelableExtra("VIDEO");
 
         current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
@@ -82,10 +85,11 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
         holder.videoCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent videoPlayerPage = new Intent(mContext, VideoPlayer.class);
+                Intent videoPlayerPage = new Intent(mContext, PlaylistVideoPlayer.class);
                 videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
                 videoPlayerPage.putExtra("VIDEO", videoList.get(position));
                 videoPlayerPage.putExtra("CREDIT", mIntent.getStringExtra("CREDIT"));
+                videoPlayerPage.putExtra("PLAYLISTNAME", mIntent.getStringExtra("PLAYLISTNAME"));
                 mContext.startActivity(videoPlayerPage);
             }
         });
@@ -138,6 +142,10 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
 
                     }
                 });
+
+        if(videoList.get(position).getVideoId().equals(vid.getVideoId())){
+            holder.videoCard.setBackgroundColor(Color.parseColor("#e35bec"));
+        }
     }
 
     /**

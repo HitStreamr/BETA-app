@@ -2,6 +2,8 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.TypedArray;
@@ -33,6 +35,7 @@ import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,28 +59,10 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.text.Subtitle;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -93,8 +78,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
@@ -109,23 +92,20 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFra
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
+//import com.vorlonsoft.android.rate.AppRate;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hotchemi.android.rate.AppRate;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, PlayerServiceCallback{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, PlayerServiceCallback {
     private final String HOME = "home";
     private final String DISCOVER = "discover";
     private final String ACTIVITY = "activity";
@@ -176,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String name;
     Uri photoUrl;
 
-    RequestManager  glideRequests;
+    RequestManager glideRequests;
 
     FirebaseUser user;
     public final String TAG = "HomeActivity";
@@ -185,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
     private com.google.firebase.database.Query myRefforName; // for Firebase Database
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>  firebaseRecyclerAdapter_artist;
+    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder> firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
 
     private TabLayout mTabLayout;
@@ -302,19 +282,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         CirImageViewProPic.setVisibility(View.VISIBLE);
 
 
-        if(photoUrl == null){
+        if (photoUrl == null) {
             //CirImageViewProPic.setImageDrawable(R.drawable.artist);
-            Log.e(TAG, "username is::" +name);
+            Log.e(TAG, "username is::" + name);
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
-        }
-        else{
+        } else {
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("") || name.equals(null)){
+        if (name.equals("") || name.equals(null)) {
             String tempname = "Username";
             TextViewUsername.setText(tempname);
-        }
-        else{
+        } else {
             TextViewUsername.setText(name);
         }
        /* else{
@@ -381,10 +359,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Make sure credits actually has a value
         //setting the fragments
-        if(getIntent().hasExtra("OPTIONAL_FRAG"))
-        {
+        if (getIntent().hasExtra("OPTIONAL_FRAG")) {
             String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
-            switch(frag){
+            switch (frag) {
                 case HOME:
                     bottomNavView.setSelectedItemId(R.id.home);
                     break;
@@ -395,11 +372,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     bottomNavView.setSelectedItemId(R.id.activity);
                     break;
             }
-        }else{
+        } else {
             //FRAG not set; default to home
             bottomNavView.setSelectedItemId(R.id.home);
         }
-
 
 
         relBG = findViewById(R.id.BGRel);
@@ -409,10 +385,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         controls = findViewById(R.id.controls);
         closeMini = findViewById(R.id.closeMini);
         //Setup Miniplayer
-        if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+        if (getIntent().getBooleanExtra("MINI_VISIBLE", false)) {
             relBG.setVisibility(View.VISIBLE);
             initMiniPlayer();
-            BGText.setText(((Video)getIntent().getParcelableExtra("VIDEO")).getTitle());
+            BGText.setText(((Video) getIntent().getParcelableExtra("VIDEO")).getTitle());
             binder();
         }
 
@@ -420,20 +396,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setInstallDays(1)
                 .setLaunchTimes(3)
                 .setRemindInterval(3)
-                .setDebug(true)
+                .setDebug(true);
 
+        //AppRate.showRateDialogIfMeetsConditions(this);
 
-                .monitor();
-
+        //AppRate.with(this).clearAgreeShowDialog();
+        //AppRate.with(this).setTextRateNow(0); //setThemeResId(int);
+        AppRate.with(getAlertDialogContext(this)).monitor();
         AppRate.showRateDialogIfMeetsConditions(this);
-        AppRate.with(this).clearAgreeShowDialog();
 
 //        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 //        View view = inflater.inflate(R.layout.custom_dialog, (ViewGroup)findViewById(R.id.layout_root));
 //        AppRate.with(this).setView(view).monitor();
 
+    }
 
-
+    public static ContextThemeWrapper getAlertDialogContext(Context context){
+        return new ContextThemeWrapper(context, R.style.AlertDialog);
     }
 
     private void initMiniPlayer(){

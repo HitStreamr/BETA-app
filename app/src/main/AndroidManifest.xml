@@ -14,8 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".InviteFriend"></activity>
-        <activity android:name=".EmailVerification" />
+        <activity android:name=".PlaylistVideoPlayer"></activity>
+        <activity android:name=".InviteFriend"
+            android:screenOrientation="portrait" />
+        <activity android:name=".EmailVerification"
+            android:screenOrientation="portrait" />
         <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -188,6 +191,10 @@
             android:exported="false" />
         <service
             android:name=".VideoUploadService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".PlaylistVideoPlayerService"
             android:enabled="true"
             android:exported="false" />
 
