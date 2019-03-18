@@ -58,6 +58,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
     @Override
     public void onBindViewHolder(@NonNull MorePopularPeopleHolder holder, int position) {
         holder.userName.setText(userList.get(position).getUsername());
+        holder.fullName.setText(userList.get(position).getFullname());
 
         // Check if user is verified
         if (userList.get(position).getVerified().equals("true")) {
@@ -149,6 +150,85 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             holder.follow.setVisibility(View.GONE);
             holder.unfollow.setVisibility(View.GONE);
         }
+
+        FirebaseDatabase.getInstance().getReference("following")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(userList.get(position).getUserID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (current_user.getUid().equals(userList.get(position).getUserID())) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (!dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.VISIBLE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.VISIBLE);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+
+        holder.follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance().getReference("following")
+                        .child(current_user.getUid())
+                        .child(userList.get(position).getUserID())
+                        .setValue(userList.get(position).getUserID())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance().getReference("followers")
+                                        .child(userList.get(position).getUserID())
+                                        .child(current_user.getUid())
+                                        .setValue(current_user.getUid())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.GONE);
+                                                holder.unfollow.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
+
+        holder.unfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance()
+                        .getReference("following")
+                        .child(current_user.getUid())
+                        .child(userList.get(position).getUserID())
+                        .removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance()
+                                        .getReference("followers")
+                                        .child(userList.get(position).getUserID())
+                                        .child(current_user.getUid())
+                                        .removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.VISIBLE);
+                                                holder.unfollow.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
     }
 
     @Override
@@ -165,7 +245,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
      */
     public class MorePopularPeopleHolder extends RecyclerView.ViewHolder {
 
-        TextView userName, followerCount;
+        TextView userName, followerCount, fullName;
         LinearLayout cardView;
         CircleImageView profilePicture;
         ImageView verified;
@@ -181,6 +261,7 @@ public class MorePopularPeopleAdapter extends RecyclerView.Adapter<MorePopularPe
             verified = itemView.findViewById(R.id.verified);
             follow = itemView.findViewById(R.id.follow_button);
             unfollow = itemView.findViewById(R.id.unfollow_button);
+            fullName = itemView.findViewById(R.id.artist_name);
         }
     }
 }

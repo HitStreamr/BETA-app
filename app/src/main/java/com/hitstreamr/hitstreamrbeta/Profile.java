@@ -268,6 +268,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        // onClick listener for the toolbar's profile image
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(Profile.this, Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
     }
 
     public interface ItemClickListener {
@@ -411,14 +421,13 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                                     p.setPlayVideoIds(a);
                                     Play.add(p);
                                 }
+                                String str = "empty";
+                                Play.get(0).setPlayThumbnails(str);
                             }
                         }
                         if (Play.size() > 0) {
                             getaaaPlayVideos();
-
                         }
-                        //setUpPlaylistRecyclerView();
-
                     }
 
                     @Override
@@ -442,15 +451,15 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
-                ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
+                    //ArrayList<String> bb = new ArrayList<>();
                     for (DocumentSnapshot docume : document.getDocuments()) {
-                        //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class).getVideoId());
+                        Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
+                        //bb.add(docume.toObject(Video.class).getVideoId());
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
-                    Play.get(x).setPlayVideoIds(bb);
-                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
+                    //Play.get(x).setPlayVideoIds(bb);
+                    Log.e(TAG, "Entered onsuceess" + Play.get(0).getPlayThumbnails());
                     x++;
                 }
                 setUpPlaylistRecyclerView();
@@ -464,7 +473,16 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         Log.e(TAG, "Entered setup playlist recycler view");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView_PublicPlaylists.setLayoutManager(layoutManager);
-        playlistAdapter_playlists = new ProfilePlaylistAdapter(this, Play, mListener);
+
+        // Check if profile viewed is the current user's or others'
+        String playlistCreatorUserID = "";
+        if (userUserID != null) {
+            playlistCreatorUserID = userUserID;
+        } else {
+            playlistCreatorUserID = current_user.getUid();
+        }
+
+        playlistAdapter_playlists = new ProfilePlaylistAdapter(this, Play, mListener, playlistCreatorUserID);
         recyclerView_PublicPlaylists.setAdapter(playlistAdapter_playlists);
     }
 
@@ -852,10 +870,12 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                        if (userVideoList.contains(document.getId())) {
                             UserVideoId.add(document.toObject(Video.class));
 
+                        }
                         }
                 }
                 //call();
@@ -954,25 +974,32 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     private void setUpRecyclerViewUpload(String cUserId) {
 
         // Private videos are okay for the uploader
-        Query queryRef = feedRef.whereEqualTo("delete", "N").orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = feedRef.whereEqualTo("delete", "N")
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
+
+        // If user IDs don't match, private videos are not allowed
         if (!current_user.getUid().equals(cUserId)) {
-            queryRef = feedRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+            queryRef = queryRef.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        } else {
+            // User IDs match, show videos with the same userID
+            queryRef = queryRef.whereEqualTo("userId", current_user.getUid());
         }
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if(userUploadVideoList.size() > 0) {
                         if (userUploadVideoList.get(0).contains(document.getId())) {
                             UserUploadVideoId.add(document.toObject(Video.class));
-                            //Log.e(TAG,"video uploaded by user desc 3: "+ UserUploadVideoId);
                         }
                     }
 
                 }
                 callVideoAdapter();
+            }
             }
         });
     }

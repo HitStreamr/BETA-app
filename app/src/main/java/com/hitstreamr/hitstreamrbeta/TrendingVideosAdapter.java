@@ -45,7 +45,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         String viewCount = Long.toString(model.getViews()) + " views";
         String pubYear = Long.toString(model.getPubYear());
         holder.videoViewsCount.setText(viewCount);
-        holder.videoYear.setText(pubYear);
+        holder.videoPublishedYear.setText(pubYear);
         Glide.with(getApplicationContext()).load(Uri.parse((model.getUrl()))).into(holder.videoThumbnail);
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,6 +97,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
         private TextView videoUsername;
         private ImageView videoThumbnail;
         private TextView videoViewsCount;
+        private TextView videoPublishedYear;
         private LinearLayout parentLayout;
         private TextView videoYear;
         private TextView videoDuration;
@@ -110,6 +111,7 @@ public class TrendingVideosAdapter extends FirestoreRecyclerAdapter<Video, Trend
             videoThumbnail = itemView.findViewById(R.id.videoThumbnail);
             videoThumbnail.setSelected(true);
             videoViewsCount = itemView.findViewById(R.id.videoViews);
+            videoPublishedYear = itemView.findViewById(R.id.videoTime);
             parentLayout = itemView.findViewById(R.id.videoCard);
             videoYear = itemView.findViewById(R.id.videoYear);
             videoDuration = itemView.findViewById(R.id.videoTime);

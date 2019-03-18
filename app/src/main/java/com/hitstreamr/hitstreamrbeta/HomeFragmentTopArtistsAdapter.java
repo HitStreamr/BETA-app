@@ -104,7 +104,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             }
         });
 
-        // Listener for watch button
+        // Listener for view profile button
         holder.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

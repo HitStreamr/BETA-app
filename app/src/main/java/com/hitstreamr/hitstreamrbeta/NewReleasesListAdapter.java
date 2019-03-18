@@ -120,7 +120,7 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
             videoTitle = itemView.findViewById(R.id.videoTitle);
             videoUsername = itemView.findViewById(R.id.videoUsername);
             videoViews = itemView.findViewById(R.id.videoViews);
-            videoYear = itemView.findViewById(R.id.videoYear);
+            videoYear = itemView.findViewById(R.id.published);
             videoTime = itemView.findViewById(R.id.videoTime);
             moreMenu = itemView.findViewById(R.id.moreMenu);
             mainSection = itemView.findViewById(R.id.mainBody);

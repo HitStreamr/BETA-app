@@ -19,7 +19,9 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.hitstreamr.hitstreamrbeta.DiscoverResultPage;
 import com.hitstreamr.hitstreamrbeta.Payouts;
+import com.hitstreamr.hitstreamrbeta.Profile;
 import com.hitstreamr.hitstreamrbeta.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -55,12 +57,22 @@ public class Dashboard extends AppCompatActivity {
 
         // Set toolbar profile picture to always be the current user
         FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
-        if (current_user.getPhotoUrl() != null) {
             CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
+        if (current_user.getPhotoUrl() != null) {
             circleImageView.setVisibility(View.VISIBLE);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        // onClick listener for the toolbar's profile image
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(getApplicationContext(), Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.

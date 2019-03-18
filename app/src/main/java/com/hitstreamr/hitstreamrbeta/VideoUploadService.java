@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.Authentication.Splash;
@@ -112,12 +113,14 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         if (mVUC != null){
             mVUC.unbindUploadService();
         }
+        stopForeground(true);
         stopSelf(startID);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if(intent.getBooleanExtra("CANCEL", false)){
+            startID = startId;
             cancel = true;
             deleteFail();
             notifB.setContentTitle("Canceling Upload")
@@ -148,7 +151,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
 
         // Set the info for the views that show in the notification panel.
         notifB = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.hitstreamr_icon)  // the status icon
+                .setSmallIcon(R.drawable.new_hitstreamr_h_logo_wht_w_)  // the status icon
                 .setTicker(text)  // the status text
                 .setWhen(System.currentTimeMillis())  // the time stamp
                 .setContentTitle("VIDEO UPLOAD")  // the label of the entry
@@ -211,9 +214,8 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
             notifB.mActions.clear();
             mNM.notify(notifID, notifB.build());
             artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoURI);
-            db.collection("Videos").document()
-                    //.set(contributorList)
-                    .set(artistVideo)
+            DocumentReference intermediate = db.collection("Videos").document();
+                    intermediate.set(artistVideo, SetOptions.merge())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

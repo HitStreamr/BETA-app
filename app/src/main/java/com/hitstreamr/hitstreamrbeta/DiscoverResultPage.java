@@ -31,6 +31,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -116,12 +117,8 @@ public class DiscoverResultPage extends AppCompatActivity {
                         if(!Strings.isNullOrEmpty(currentCredit)){
 
                             creditValue = currentCredit;
-                        }
-                        else
+                        } else
                             creditValue = "0";
-
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -156,34 +153,18 @@ public class DiscoverResultPage extends AppCompatActivity {
             category = "R&B/Soul";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Indie/rock")) {
-            category = "Indie/Rock";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Soul/funk")) {
-            category = "Soul/Funk";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
         } else if (category.equals("Dance/electronic")) {
             category = "Dance/Electronic";
             getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+            query = query.whereEqualTo("genre", "EDM");
         } else if (category.equals("K-pop")) {
             category = "K-Pop";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Reggae/afro")) {
-            category = "Reggae/Afro";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
         } else if (category.equals("Gospel/inspirational")) {
             category = "Gospel/Inspirational";
             getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Jazz/blues")) {
-            category = "Jazz/Blues";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+            query = query.whereEqualTo("genre", "Gospel");
         } else {
             // For all other genres
             query = query.whereEqualTo("genre", category);

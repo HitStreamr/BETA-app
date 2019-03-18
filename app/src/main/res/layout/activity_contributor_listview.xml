@@ -72,7 +72,7 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/button1"
                         android:text="delete"
-                        android:textColor="@color/colorAccent"/>
+                        android:textColor="@color/colorWhite"/>
 
                 </LinearLayout>
             </LinearLayout>

@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -68,7 +69,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import de.hdodenhof.circleimageview.CircleImageView;
 public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, VideoUploadCallback, SaveTaskCallback{
 
-    private static final String TAG = "MyVideoUploadService";
+    private static final String TAG = "MyVideoUploadActivity";
 
     private static final String VIDEO_TITLE = "title";
     private static final String VIDEO_DESCRIPTION = "description";
@@ -90,6 +91,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private static final String VIDEO_CONTRIBUTOR_NAME = "contributorName";
     private static final String VIDEO_CONTRIBUTOR_PERCENTAGE = "percentage";
     private static final String VIDEO_CONTRIBUTOR_TYPE = "type";
+    private static final String VIDEO_CONTRIBUTOR_USERID = "contributorUserId";
 
     private static final String VIDEO_TITLE_TERMS = "terms";
 
@@ -109,6 +111,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button addContributorBtn;
     private Button retryUploadBtn;
     private Button ContributorCancelBtn;
+    private ImageButton Help;
 
     //EditText Inputs
     private EditText EdittextTitle;
@@ -242,6 +245,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         addContributorBtn = findViewById(R.id.AddContributorButton);
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
         ContributorCancelBtn =findViewById(R.id.ContributorCancel);
+        Help = findViewById(R.id.help);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -294,6 +298,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         addContributorBtn.setOnClickListener(this);
         retryUploadBtn.setOnClickListener(this);
         ContributorCancelBtn.setOnClickListener(this);
+        Help.setOnClickListener(this);
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -467,15 +472,22 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        if(!startedUpload){
+            if (mService != null) {
+                mService.deleteBeforeWork();
+            }
+        }else{
         unbindUploadService();
+    }
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
         if(!startedUpload){
-            if (mService != null)
+            if (mService != null) {
                 mService.deleteBeforeWork();
+            }
         }else{
         unbindUploadService();
     }
@@ -549,6 +561,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             Contributor.put(VIDEO_CONTRIBUTOR_NAME, tempArray[0]);
             Contributor.put(VIDEO_CONTRIBUTOR_PERCENTAGE, tempArray[1]);
             Contributor.put(VIDEO_CONTRIBUTOR_TYPE, tempArray[2]);
+            Contributor.put(VIDEO_CONTRIBUTOR_USERID, tempArray[3]);
             sample.add(Contributor);
         }
 
@@ -743,6 +756,50 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         }
         return true;
     }
+    String aa;
+
+    private void getContributorUserId(){
+
+        FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                .child(EdittextContributorName.getText().toString().trim())
+                .child("tempUserId")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    aa = dataSnapshot.getValue(String.class);
+                    continueGetContributor();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+
+    }
+
+    private void continueGetContributor(){
+        final String name = EdittextContributorName.getText().toString().trim();
+        final String percentage = EdittextContributorPercentage.getText().toString().trim();
+        final String type = SpinnerContributorType.getSelectedItem().toString().trim();
+
+            contributorVideo.put(VIDEO_CONTRIBUTOR_NAME, name);
+            contributorVideo.put(VIDEO_CONTRIBUTOR_PERCENTAGE, percentage);
+            contributorVideo.put(VIDEO_CONTRIBUTOR_TYPE, type);
+
+            Contributor contributor1 = new Contributor(name, percentage, type);
+        contributorFirestoreList.add(name + "," + percentage + "," + type + "," + aa);
+            contributorList.add(contributor1);
+            contributorPercentageList.add(percentage);
+
+            contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList, this);
+            ContributorValuesLV.setAdapter(contributorAdapter);
+            contributorAdapter.notifyDataSetChanged();
+            //TextViewContributorName.setText(name);
+            //TextViewContributorPercentage.setText(percentage);
+            //TextViewContributorType.setText(type);
+            ContributorSuccess = true;
+        }
 
     private void GetContributor() {
 
@@ -756,22 +813,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
         } else {
 
-            contributorVideo.put(VIDEO_CONTRIBUTOR_NAME, name);
-            contributorVideo.put(VIDEO_CONTRIBUTOR_PERCENTAGE, percentage);
-            contributorVideo.put(VIDEO_CONTRIBUTOR_TYPE, type);
-
-            Contributor contributor1 = new Contributor(name, percentage, type);
-            contributorFirestoreList.add(name + "," + percentage + "," + type);
-            contributorList.add(contributor1);
-            contributorPercentageList.add(percentage);
-
-            contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList, this);
-            ContributorValuesLV.setAdapter(contributorAdapter);
-            contributorAdapter.notifyDataSetChanged();
-            //TextViewContributorName.setText(name);
-            //TextViewContributorPercentage.setText(percentage);
-            //TextViewContributorType.setText(type);
-            ContributorSuccess = true;
+            getContributorUserId();
         }
     }
 
@@ -815,6 +857,12 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         if(view == ContributorCancelBtn){
             resetContributor();
             addContributorLayout.setVisibility(View.GONE);
+        }
+        if (view == Help) {
+            Intent helpIntent = new Intent(this, ContributorHelp.class);
+            helpIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+            startActivity(new Intent(helpIntent));
+
         }
     }
 

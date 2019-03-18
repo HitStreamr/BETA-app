@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,11 +51,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(HistoryAdapter.HistoryViewHolder holder, int position) {
         holder.title.setText(HistoryList.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.author.setText(HistoryList.get(position).getUsername());
         holder.thumbnail.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Glide.with(holder.thumbnail).load(HistoryList.get(position).getUrl()).into(holder.thumbnail);
         holder.duration.setText(HistoryList.get(position).getDuration());
+
+        String viewCount = Long.toString(HistoryList.get(position).getViews());
+        holder.views.setText(viewCount);
 
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         holder.published.setText(dateFormat.format(HistoryList.get(position).getTimestamp().toDate()));
@@ -69,6 +75,21 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             }
         });
 
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(HistoryList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
        }
 
     @Override
@@ -83,7 +104,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         public  TextView duration;
         public RelativeLayout parent;
         public TextView published;
-        private Button overflowMenu;
+        public Button overflowMenu;
+        public TextView views;
+        public TextView username;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -94,6 +117,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             parent = view.findViewById(R.id.parentRLayout);
             published = view.findViewById(R.id.watchLaterPublished);
             overflowMenu = view.findViewById(R.id.moreBtn);
+            views = view.findViewById(R.id.watchLaterViews);
+            username = itemView.findViewById(R.id.watchLaterAuthor);
         }
     }
 

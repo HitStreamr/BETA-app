@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="15dp"
-        android:background="@color/colorAccent">
+        android:background="@color/colorWhite">
 
         <Button
             android:id="@+id/closeBtn"

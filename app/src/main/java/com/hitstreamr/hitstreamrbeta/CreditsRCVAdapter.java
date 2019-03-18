@@ -50,7 +50,7 @@ public class CreditsRCVAdapter extends RecyclerView.Adapter<CreditsRCVAdapter.Cr
         holder.CreditPrice.setText(mCreditPrice.get(position));
         holder.PriceDescript.setText(mDescription.get(position));
         if(selected_position == position) {
-                holder.mCreditDtls.setCardBackgroundColor(Color.RED);
+                holder.mCreditDtls.setCardBackgroundColor(Color.BLUE);
                     mListener.onCreditsSelected(mProductIds.get(position).toString(), mCreditVal.get(position).toString());
                 }
         else{

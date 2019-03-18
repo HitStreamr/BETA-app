@@ -629,9 +629,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         if (artistname.isEmpty()) {
             EditTextName.setError("Field can't be empty");
             return false;
-        } else if (artistname.length() <= 26) {
+        } else if (artistname.length() <= 30) {
             if (!(checkAlphaNumericSymbol(artistname))) {
-                EditTextName.setError("Name must be less than 26 Characters");
+                EditTextName.setError("Name cannot exceed 30 Characters");
                 return false;
             }
             return true;

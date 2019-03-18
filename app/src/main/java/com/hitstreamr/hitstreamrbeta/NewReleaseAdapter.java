@@ -67,6 +67,7 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
         holder.videoYear.setText(dateFormat.format(objects1.get(position).getTimestamp().toDate()));
 
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

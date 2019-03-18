@@ -77,7 +77,7 @@
                     android:layout_height="120dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/com_facebook_profile_picture_blank_portrait"
-                    app:civ_border_color="@color/colorAccent"
+                    app:civ_border_color="@color/colorWhite"
                     app:civ_border_width="2dp"/>
                 <!--<ImageView
                     android:id="@+id/basicProfilePhoto"
@@ -93,7 +93,7 @@
                     android:layout_marginTop="76dp"
                     android:layout_marginStart="38dp"
                     android:background="@drawable/ic_add_a_photo"
-                    android:backgroundTint="@color/colorAccent"
+                    android:backgroundTint="@color/colorWhite"
                     />
 
 
@@ -221,8 +221,8 @@
                 android:id="@+id/textviewsignin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Alreay have an account? Sign In here!"
-                android:textColor="@color/colorAccent"
+                android:text="Already have an account? Sign In here!"
+                android:textColor="@color/colorWhite"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="30dp"
                 />

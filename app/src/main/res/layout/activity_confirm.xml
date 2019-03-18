@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:background="@android:color/transparent"
                 android:layout_marginEnd="100dp"/>
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/ok"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textStyle="bold"
                 android:background="@android:color/transparent"/>
 

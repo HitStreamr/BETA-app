@@ -35,7 +35,7 @@
                     android:layout_marginStart="15dp"
                     android:layout_marginTop="149dp"
                     android:text="New Releases"
-                    android:textColor="@color/colorAccent"
+                    android:textColor="@color/colorWhite"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:id="@+id/discovertext"

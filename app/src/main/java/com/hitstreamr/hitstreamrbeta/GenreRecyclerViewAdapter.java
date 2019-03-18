@@ -88,8 +88,7 @@ public class GenreRecyclerViewAdapter extends RecyclerView.Adapter<GenreRecycler
         }
         //set the content description and image
         holder.genre.setContentDescription(mImageNames[position]);
-        holder.genre.setImageResource(holder.itemView.getResources().getIdentifier(mImageNames[position],
-                "drawable", holder.genre.getContext().getPackageName()));
+        holder.genre.setImageResource(holder.itemView.getResources().getIdentifier(mImageNames[position], "drawable", holder.genre.getContext().getPackageName()));
     }
 
     @Override

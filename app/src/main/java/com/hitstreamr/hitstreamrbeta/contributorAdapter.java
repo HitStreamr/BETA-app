@@ -62,7 +62,6 @@ public class contributorAdapter extends ArrayAdapter<Contributor> {
         deleteContributorBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "button is clicked" + position, Toast.LENGTH_SHORT).show();
                 deleteInter.deleteposition(position);
 
             }

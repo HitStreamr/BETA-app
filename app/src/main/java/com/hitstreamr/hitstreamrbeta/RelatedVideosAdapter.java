@@ -145,9 +145,12 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
      * @return video
      */
     public Video getNextFromList() {
+        if (videoList.size() != 0) {
         Random random = new Random();
         int index = random.nextInt(videoList.size());
         return videoList.get(index);
+    }
+        return null;
     }
 
     /**

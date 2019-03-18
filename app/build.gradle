@@ -118,6 +118,8 @@ dependencies {
     // Range seek Bar
     implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
 
+    implementation 'com.github.hotchemi:android-rate:1.0.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

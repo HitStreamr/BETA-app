@@ -52,7 +52,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
-                .whereEqualTo("privacy", "Public (everyone can see)")
+                .whereEqualTo("userId", current_user.getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -107,7 +107,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
-                .whereEqualTo("privacy", "Public (everyone can see)")
+                .whereEqualTo("userId", current_user.getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -144,7 +144,8 @@ public class PlayStats extends Fragment {
         TextView follows = view.findViewById(R.id.playStats_follows);
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference("followers").child(current_user.getUid()).addValueEventListener(new ValueEventListener() {
+        firebaseDatabase.getReference("followers").child(current_user.getUid())
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String followCount = dataSnapshot.getChildrenCount() + "";
@@ -169,7 +170,7 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
-                .whereEqualTo("privacy", "Public (everyone can see)")
+                .whereEqualTo("userId", current_user.getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -209,12 +210,11 @@ public class PlayStats extends Fragment {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
                 .whereEqualTo("delete", "N")
-                .whereEqualTo("privacy", "Public (everyone can see)")
+                .whereEqualTo("userId", current_user.getUid())
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 for (DocumentSnapshot doc : queryDocumentSnapshots.getDocuments()) {
-                    if (doc.get("userId").equals(current_user.getUid())) {
                         if (doc.get("views") != null) {
                             int viewCount = Integer.parseInt(doc.get("views").toString());
                             int temp = Integer.parseInt(totalViews.getText().toString());
@@ -223,7 +223,6 @@ public class PlayStats extends Fragment {
                         }
                     }
                 }
-            }
         });
     }
 

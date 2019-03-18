@@ -387,10 +387,14 @@ public class ActivityFragment extends Fragment {
     }*/
 
     public void getVideoFirestore() {
-        Query queryRef = videosCollectionRef;
+        Query queryRef = videosCollectionRef
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
                 if (videoFeed.size() > 0) {
                     for (int i = 0; i < videoFeed.size(); i++) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -403,8 +407,7 @@ public class ActivityFragment extends Fragment {
                                 String temp;
                                 if(VideoLikesCount == 0){
                                     temp = formatt(VideoLikesCount);
-                                }
-                                else {
+                                    } else {
                                     temp = formatt(VideoLikesCount-1);
                                 }
                                 likesCount.add(temp);
@@ -413,6 +416,7 @@ public class ActivityFragment extends Fragment {
                         }
                     }
                     callToAdapter();
+                }
                 }
                 Log.e(TAG, "Video objects are" + UserVideos);
 

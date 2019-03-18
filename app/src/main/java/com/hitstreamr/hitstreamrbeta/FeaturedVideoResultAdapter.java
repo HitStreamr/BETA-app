@@ -15,12 +15,15 @@ import android.widget.TextView;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -82,11 +85,20 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
 
         holder.videoTitle.setText(vids.get(position).getTitle());
         //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(vids.get(position).getUsername());
+       //set up UI for following
+                holder.findUserName(new FeaturedVideoResultAdapter.onDataReceiveCallback() {
+                    @Override
+                    public void foundName(String name) {
+                        holder.videoUsername.setText(name);
+                    }
+
+                }, vids.get(position).getUserId());
         holder.videoViews.setText(formatt(vids.get(position).getViews()));
         holder.videoTime.setText(vids.get(position).getDuration());
+
         if (vids.get(position).getTimestamp() != null)
             holder.videoPublish.setText(df2.format(vids.get(position).getTimestamp().toDate()));
+
         holder.videoThumbnail.setOnClickListener(v -> mListener.onResultClick(vids.get(position)));
         holder.overflowMenu.setOnClickListener(v -> mListener.onOverflowClick(vids.get(position), holder.overflowMenu));
 
@@ -113,6 +125,22 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(vids.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
                         }
                     }
 
@@ -185,6 +213,26 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
             videoReposts = itemView.findViewById(R.id.repostAmount);
             this.mListener = mListener;
         }
+
+        public void findUserName(FeaturedVideoResultAdapter.onDataReceiveCallback callback, String userID){
+            FirebaseDatabase.getInstance()
+                    .getReference("ArtistAccounts")
+                    .child(userID)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                ArtistUser temp = dataSnapshot.getValue(ArtistUser.class);
+                                callback.foundName(temp.getUsername());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+            });
+        }
     }
 
     private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
@@ -212,4 +260,10 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
+
+    public interface onDataReceiveCallback{
+        void foundName(String name);
+    }
+
+
 }

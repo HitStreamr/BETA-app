@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
     @Override
     public void onBindViewHolder(@NonNull ArtistsToWatchHolder holder, int position) {
         holder.username.setText(artistList.get(position).getUsername());
+        holder.artistName.setText(artistList.get(position).getArtistname());
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +170,91 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
         } else {
             holder.verified.setVisibility(View.GONE);
         }
+
+        // Remove follow/un-follow button if it's your own account
+        if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+            holder.follow.setVisibility(View.GONE);
+            holder.unfollow.setVisibility(View.GONE);
+        }
+
+        FirebaseDatabase.getInstance().getReference("following")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child(artistList.get(position).getUserID()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (current_user.getUid().equals(artistList.get(position).getUserID())) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (!dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.VISIBLE);
+                    holder.unfollow.setVisibility(View.GONE);
+                } else if (dataSnapshot.exists()) {
+                    holder.follow.setVisibility(View.GONE);
+                    holder.unfollow.setVisibility(View.VISIBLE);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+            }
+        });
+
+        holder.follow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance().getReference("following")
+                        .child(current_user.getUid())
+                        .child(artistList.get(position).getUserID())
+                        .setValue(artistList.get(position).getUserID())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance().getReference("followers")
+                                        .child(artistList.get(position).getUserID())
+                                        .child(current_user.getUid())
+                                        .setValue(current_user.getUid())
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.GONE);
+                                                holder.unfollow.setVisibility(View.VISIBLE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
+
+        holder.unfollow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                FirebaseDatabase.getInstance()
+                        .getReference("following")
+                        .child(current_user.getUid())
+                        .child(artistList.get(position).getUserID())
+                        .removeValue()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                FirebaseDatabase.getInstance()
+                                        .getReference("followers")
+                                        .child(artistList.get(position).getUserID())
+                                        .child(current_user.getUid())
+                                        .removeValue()
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                holder.follow.setVisibility(View.VISIBLE);
+                                                holder.unfollow.setVisibility(View.GONE);
+                                            }
+                                        });
+                            }
+                        });
+            }
+        });
     }
 
     /**
@@ -175,7 +262,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
      */
     public class ArtistsToWatchHolder extends RecyclerView.ViewHolder {
 
-        TextView username, followerCount;
+        TextView username, followerCount, artistName;
         LinearLayout cardView;
         Button followButton;
         CircleImageView profilePicture;
@@ -186,6 +273,7 @@ public class DiscoverArtistsResultAdapter extends RecyclerView.Adapter<DiscoverA
             super(view);
 
             username = view.findViewById(R.id.user_name);
+            artistName = view.findViewById(R.id.artist_name);
             cardView = view.findViewById(R.id.userCardView);
             followButton = view.findViewById(R.id.follow_button);
             profilePicture = view.findViewById(R.id.searchImage);
