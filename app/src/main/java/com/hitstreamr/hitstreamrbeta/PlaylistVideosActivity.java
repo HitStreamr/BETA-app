@@ -43,7 +43,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private Playlist playlist;
     private RecyclerView recyclerView_PlaylistVideos;
     private PlaylistContentAdapter playlistContent;
-    Playlist temp;
     private TextView playlistName;
     private ItemClickListener mlistner;
     private String CreditVal;
@@ -54,6 +53,11 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private Video onClickedVideo;
 
     @Override
+    /**
+     * Initializes the Activity while optionally using <code> savedInstanceState </code>
+     *
+     * @param savedInstanceState dynamic data about the state of activity
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_videos);
@@ -77,10 +81,9 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         }
 
         playlistName = findViewById(R.id.playlist_Name);
-        playlist = new Playlist();
-        temp = getIntent().getParcelableExtra("PlaylistVideos");
-        playlistName.setText(temp.getPlaylistname());
-        getSupportActionBar().setTitle(temp.getPlaylistname());
+        playlist = getIntent().getParcelableExtra("PlaylistVideos");
+        playlistName.setText(playlist.getPlaylistname());
+        getSupportActionBar().setTitle(playlist.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
 
         getUserType();
@@ -91,12 +94,8 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                        if (!Strings.isNullOrEmpty(currentCredit)) {
-
-                            CreditVal = currentCredit;
-                        } else
-                            CreditVal = "0";
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
+                        if (!Strings.isNullOrEmpty(currentCredit)) {CreditVal = currentCredit;}
+                            else{ CreditVal = "0";}
                     }
 
                     @Override
@@ -104,9 +103,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
                     }
                 });
-        Log.e(TAG, "Profile credit val " + CreditVal);
-
-        Log.e(TAG, "temp value is " + temp.getPlayVideoIds());
 
         getUserType();
 
@@ -164,17 +160,19 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                 });
             }
         };
-        Log.e(TAG, "Playlist Content activity" + getIntent().getStringExtra("PlaylistName") + getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
+        //Log.e(TAG, "Playlist Content activity" + getIntent().getStringExtra("PlaylistName") + getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
         recyclerView_PlaylistVideos = findViewById(R.id.recyclerView_singlePlaylistContent);
         getPlayVideos();
     }
 
+    /**
+     * Sets the <code>accountType</code> of the current user
+     * Sets the accountType(passed as an extra to the other activities)
+     */
     private void getUserType() {
         Bundle extras = getIntent().getExtras();
 
         if (extras.containsKey("TYPE") && getIntent().getStringExtra("TYPE") != null) {
-            //type = getIntent().getStringExtra("TYPE");
-
             if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_basic))) {
                 accountType = "BasicAccounts";
             } else if (getIntent().getStringExtra("TYPE").equals(getString(R.string.type_artist))) {
@@ -183,16 +181,14 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                 accountType = "LabelAccounts";
             }
         }
-        Log.e(TAG, "account type selected :"+accountType);
     }
 
 
 
     private void getPlayVideos() {
-        //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
-        for (int j = 0; j < temp.getPlayVideoIds().size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", temp.getPlayVideoIds().get(j))
+        for (int j = 0; j < playlist.getPlayVideoIds().size(); j++) {
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", playlist.getPlayVideoIds().get(j))
                     .whereEqualTo("delete", "N")
                     .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
                     .get());
@@ -204,22 +200,27 @@ public class PlaylistVideosActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 ArrayList<Video> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
-                    for (DocumentSnapshot docume : document.getDocuments()) {
-                        Log.e(TAG, "Playlist videos " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class));
+                    if(task.isSuccessful()){
+                        for (DocumentSnapshot docume : document.getDocuments()) {
+                            //Log.e(TAG, "Playlist videos " + docume.toObject(Video.class).getVideoId());
+                            bb.add(docume.toObject(Video.class));
+                        }
+                    }else{
+                        //Task was not successful
                     }
+
                 }
-                temp.setPlayVideos(bb);
+                playlist.setPlayVideos(bb);
                 setupRecyclerView();
             }
         });
     }
 
     private void setupRecyclerView() {
-        if (temp.getPlayVideos().size() > 0) {
+        if (playlist.getPlayVideos().size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             recyclerView_PlaylistVideos.setLayoutManager(layoutManager);
-            playlistContent = new PlaylistContentAdapter(this, temp, mlistner);
+            playlistContent = new PlaylistContentAdapter(this, playlist, mlistner);
             recyclerView_PlaylistVideos.setAdapter(playlistContent);
         }
     }
