@@ -11,13 +11,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.exoplayer2.upstream.Loader;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -55,7 +53,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
     @Override
     /**
-     * Initializes the Activity while optionally using <code> savedInstanceState </code>
+     * Initializes the Activity while optionally using <code> savedInstanceState </code>Which
      *
      * @param savedInstanceState dynamic data about the state of activity
      */

@@ -48,8 +48,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -67,7 +65,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.text.DateFormat;
@@ -286,6 +283,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
         FirebaseFirestore.getInstance().collection("Videos")
                 .whereEqualTo("videoId", vid.getVideoId())
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -696,8 +695,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos")/*.orderBy("views",
-                com.google.firebase.firestore.Query.Direction.DESCENDING)*/
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
@@ -1028,14 +1028,19 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Get the video's view count.
      */
     private void checkViewCount() {
-
         FirebaseFirestore.getInstance().collection("Videos")
-                .document(vid.getVideoId())
-                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                .whereEqualTo("videoId", vid.getVideoId())
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    TextViewViewCount.setText(documentSnapshot.get("views").toString());
+            public void onSuccess(QuerySnapshot queryDocumentSnapshot) {
+                if (!queryDocumentSnapshot.isEmpty()){
+                    for (DocumentSnapshot doc : queryDocumentSnapshot) {
+                        if (doc.exists()) {
+                            TextViewViewCount.setText(doc.get("views").toString());
+                        }
+                    }
                 }
             }
         });
