@@ -11,6 +11,9 @@ import android.widget.TextView;
 
 import com.hitstreamr.hitstreamrbeta.R;
 
+/**
+ * The type Account type.
+ */
 public class AccountType extends AppCompatActivity implements View.OnClickListener {
 
     private Button basicAcctBtn, artistAcctBtn;
@@ -18,7 +21,11 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
     private TextView labelAcct;
 
 
-
+    /**
+     * Initializes the Activity while optionally using <code> savedInstanceState </code>
+     *
+     * @param savedInstanceState dynamic data about the state of activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +44,10 @@ public class AccountType extends AppCompatActivity implements View.OnClickListen
 
     }
 
+    /**
+     * Sets callback results for any input that uses this activity as a listener
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         switch (v.getId()){

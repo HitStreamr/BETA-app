@@ -64,7 +64,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     // Buttons
     private Button signup, profilePictureBtn;
     private RadioButton termsCond;
-
     private Button goBack;
 
     //ImageView
@@ -113,6 +112,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private static final Pattern VALID_ZIP_REGEX =
             Pattern.compile(("[0-9]{5}"));
 
+    /**
+     * Initializes the Activity while optionally using <code> savedInstanceState </code>
+     *
+     * @param savedInstanceState dynamic data about the state of activity
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,9 +162,14 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
        takenNames  = FirebaseDatabase.getInstance().getReference("TakenUserNames");
 
-        Log.e(TAG, "URI value:" +selectedImagePath);
+        //Log.e(TAG, "URI value:" +selectedImagePath);
     }
 
+    /**
+     * Upload Image at <code> fileUri </code> to gcs
+     * Uplaods image of given <code> fileUri </code> and calls <code>updateAuthentication </code>
+     * @param fileUri file to be uploaded to google cloud storage
+     */
     private void uploadFromUri(final Uri fileUri) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -219,6 +228,12 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 city, state, country, phone, zip, null, null, "false"), password);
     }
 
+    /**
+     * Registers user with given credentials
+     * Registers user with given credentials and calls <code> uploadFromUri </code> on successful creation
+     * @param email user's provided email
+     * @param password user's provided password
+     */
     private void registerAuthentication(String email, String password) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -242,6 +257,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Updates registered user's profile to include link to profile picture
+     *  Updates registered user's profile to include link to profile picture Creates <code>UsernameUserIdPair</code>
+     *  Calls <code>registerFirebase2</code>
+     */
     private void updateAuthentication() {
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -268,6 +288,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
+     * Register and store new artist and send verification email
      * Register and store the new artist user to the database, send a verification email to confirm
      * their email.
      */
@@ -314,6 +335,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Store user's <code>UsernameUserIdPair</code> into Firebase Database
+     */
     private void registerFirebase2(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase.getInstance().getReference("UsernameUserId")
@@ -412,6 +436,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Check if state input is valid.
+     *
+     * @return true if valid, otherwise false and display an error message
+     */
     private boolean validateState() {
         if (mState.getSelectedItem().toString().trim().equals("Select State")) {
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
@@ -420,6 +449,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    /**
+     * Check if country input is valid.
+     *
+     * @return true if valid, otherwise false and display an error message
+     */
     private boolean validateCountry() {
         if (mCountry.getSelectedItem().toString().trim().equals("Select Country")) {
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
@@ -544,6 +578,13 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Validate User Information and calls <code>registerAuthentication</code>
+     *  Validates user calls register Authentication onSuccess displays error message
+     *  if the username already exists in the database.
+     * @param artist current user's informationin <code>ArtistUser</code> POJO
+     * @param password current user's password
+     */
     private void validateUserNameFirebase(ArtistUser artist, String password){
         takenNames.addValueEventListener(new ValueEventListener() {
             @Override
@@ -575,6 +616,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    /**
+     * Checks if a valid profile picture has been selected
+     * @return  true if <code>selectedImagePath</code> is not null else false with an error Toast
+     */
     private boolean validateProfilePicture() {
         if (selectedImagePath != null) {
             return true;
@@ -585,16 +630,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             return false;
         }
     }
-
-    // not working yet
-    // private boolean validateState(String state) {
-    //     if (!state.equals("Select a State")) {
-    //         Toast.makeText(this, "Please select a state.", Toast.LENGTH_SHORT).show();
-    //         return false;
-    //     } else {
-    //         return true;
-    //     }
-    // }
 
     /**
      * Check if the user agrees to Terms and Conditions
@@ -637,8 +672,12 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
+     * Supports <code>checkAlphabet</code> by checking for false values in given arrray
      * Method to support the above Method named checkAlphabet in accomplishing the task
      * to validate the input String for Alphabetical characters only.
+     * @param boolarray array of results on whether a character is an alphanumeric or approved char
+     * @return true if bool contains no false values, else false
+     *
      */
     private boolean checkStringCmpvalues(boolean[] boolarray) {
         boolean flag = false;
@@ -654,8 +693,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Method to validate the Street Address of any unwanted characters
-     */
+     * Method to validate given string is only alphanumeric characters and space
+     *
+     * @param s given string to check
+     * @return returns true if string only contains alphanumeric values (including space)
+     * */
     public boolean checkAlphaNumeric(String s) {
 
         String AlphaNumeric = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 ";
@@ -675,8 +717,11 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Method to validate the Street Address of any unwanted characters
-     */
+     * Method to validate given string (used with artistName) is only alphanumeric characters and approved symbols
+     *
+     * @param s given string to check
+     * @return returns true if string only contains alphanumeric values and approved symbols
+     * */
     public boolean checkAlphaArtistname(String s) {
 
         String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{};':'<>,./? ";
@@ -694,7 +739,12 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
         return checkStringCmpvalues(value_for_each_comparison);
     }
-
+ /**
+     * Method to validate given string (used with userName) is only lowercase alphanumeric characters and _
+     *
+     * @param s given string to check
+     * @return returns true if string only contains alphanumeric values and _
+     * */
     public boolean checkUsername(String s) {
 
         String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
@@ -713,6 +763,9 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         return checkStringCmpvalues(value_for_each_comparison);
     }
 
+    /**
+     * Start Image Chooser Activity
+     */
     private void chooseImage() {
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
@@ -720,6 +773,12 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(Intent.createChooser(intent, "Select your profile picture"), REQUEST_CODE);
     }
 
+    /**
+     * Overridden Callback for handling <code>startActivity For Result</code> in <code>chooseImage</code>
+     * @param requestCode Class defined request code to identify where image Request came from
+     * @param resultCode Code indicated if the process is a success or failure
+     * @param data Intent containing the reults of image selection
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
