@@ -174,7 +174,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                 });
             }
         };
-        Log.e(TAG, "Playlist Content activity" + getIntent().getStringExtra("PlaylistName") + getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
+        //Log.e(TAG, "Playlist Content activity" + getIntent().getStringExtra("PlaylistName") + getIntent().getExtras().getParcelableArrayList("PlaylistVideos"));
         recyclerView_PlaylistVideos = findViewById(R.id.recyclerView_singlePlaylistContent);
         getPlayVideos();
     }

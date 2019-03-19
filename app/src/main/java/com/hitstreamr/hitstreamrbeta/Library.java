@@ -403,7 +403,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             WatchList.add(document.toObject(Video.class));
-                            //Log.e(TAG, "Watch Later Video List : " + document.toObject(Video.class).getThumbnailUrl());
                         }
                     }
                 });
@@ -452,7 +451,6 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     }
 
     private void getaaaPlayVideos() {
-        //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < Play.size(); j++) {
             queryy.add(videosCollectionRef.whereEqualTo("videoId", Play.get(j).getPlayVideoIds().get(0))
@@ -466,15 +464,15 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
-                ArrayList<String> bb = new ArrayList<>();
+                //ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
                         //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class).getVideoId());
+                        //bb.add(docume.toObject(Video.class).getVideoId());
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
-                    Play.get(x).setPlayVideoIds(bb);
-                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
+                    //Play.get(x).setPlayVideoIds(bb);
+                    //Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
                 setUpPlaylistRecyclerView();
