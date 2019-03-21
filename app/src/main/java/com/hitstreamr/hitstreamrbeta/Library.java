@@ -246,7 +246,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         if (WatchLaterList.size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerView_watchLater.setLayoutManager(layoutManager);
-            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner);
+            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner, getIntent());
             recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
         }
     }

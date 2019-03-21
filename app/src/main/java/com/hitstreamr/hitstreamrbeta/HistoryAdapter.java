@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,7 @@ import java.util.ArrayList;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>{
     private static final String TAG = "HistoryAdapter";
     private ArrayList<Video> HistoryList;
-    private Context context;
+    private Context mContext;
     private Library.ItemClickListener mlistner;
     private Intent mIntent;
 
@@ -36,7 +37,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         Log.e(TAG, "Enterd History adapter" );
         this.HistoryList = HistoryList;
         this.mlistner = mlistner;
-        this.context = context;
+        this.mContext = context;
         this.mIntent = type;
     }
 
@@ -68,10 +69,27 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             }
         });
 
+        // onClick listeners for History's popup menu
         holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mlistner.onOverflowClick(HistoryList.get(position), holder.overflowMenu);
+                //mlistner.onOverflowClick(HistoryList.get(position), holder.overflowMenu);
+                PopupMenu popupMenu = new PopupMenu(mContext, view);
+                MenuInflater menuInflater = popupMenu.getMenuInflater();
+                menuInflater.inflate(R.menu.history_menu, popupMenu.getMenu());
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.addToPlaylist_history:
+                                addToPlaylist(HistoryList.get(position));
+                                break;
+                        }
+                        return true;
+                    }
+                });
             }
         });
 
@@ -90,6 +108,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
                     }
                 });
+    }
+
+    /**
+     * Add the video to the playlist.
+     * @param video video
+     */
+    private void addToPlaylist(Video video) {
+        Intent playlistIntent = new Intent(mContext, AddToPlaylist.class);
+        playlistIntent.putExtra("VIDEO", video);
+        playlistIntent.putExtra("TYPE", mIntent.getExtras().getString("TYPE"));
+        mContext.startActivity(playlistIntent);
     }
 
     @Override

@@ -134,40 +134,24 @@ public class PlaylistVideosActivity extends AppCompatActivity {
             public void onOverflowClick(Video video, View view) {
                 onClickedVideo = video;
                 PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
-                popupMenu.inflate(R.menu.video_menu_pop_up);
+                popupMenu.inflate(R.menu.playlist_popup_menu);
                 popupMenu.show();
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
-                            case R.id.addToWatchLater_videoMenu:
-                                FirebaseDatabase.getInstance()
-                                        .getReference("WatchLater")
-                                        .child(current_user.getUid())
+                            case R.id.remove_playlistPopup:
+                                FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child(temp.playlistname)
                                         .child(onClickedVideo.getVideoId())
-                                        .child("VideoId")
-                                        .setValue(onClickedVideo.getVideoId())
+                                        .removeValue()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
-                                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
-                                                        Toast.LENGTH_SHORT).show();
+
                                             }
                                         });
-                                break;
-
-                            case R.id.addToPlaylist_videoMenu:
-                                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
-                                playlistIntent.putExtra("VIDEO", onClickedVideo);
-                                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
-                                startActivity(playlistIntent);
-                                break;
-
-                            case R.id.report_videoMenu:
-                                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
-                                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
-                                startActivity(reportVideo);
-                                break;
                         }
                         return true;
                     }
