@@ -15,6 +15,10 @@ import android.widget.TextView;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,19 +62,25 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
     @Override
     public void onBindViewHolder(@NonNull VideoResultsHolder holder, int position) {
 
-        requestBuilder.load(vids.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(vids.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(vids.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.videoUsername.setText(vids.get(position).getUsername());
-        holder.videoViews.setText("TODO");
+
+        String viewCount = Long.toString(vids.get(position).getViews()) + " views";
+        holder.videoViews.setText(viewCount);
+
         holder.videoTime.setText(vids.get(position).getDuration());
         holder.videoYear.setText(String.valueOf(vids.get(position).getPubYear()));
+
+        // onClick listeners
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onResultClick(vids.get(position));
             }
         });
+
+        // Currently hidden as it's not implemented yet.
+        holder.overflowMenu.setVisibility(View.GONE);
         holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,6 +88,21 @@ public class VideoResultAdapter extends RecyclerView.Adapter<VideoResultAdapter.
             }
         });
 
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(vids.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
