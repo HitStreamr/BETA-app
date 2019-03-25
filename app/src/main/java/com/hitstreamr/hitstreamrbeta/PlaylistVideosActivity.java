@@ -114,6 +114,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 videoPlayerIntent.putExtra("PLAYLISTNAME", playlistName);
+                videoPlayerIntent.putExtra("PLAYLIST", playlist);
                 startActivity(videoPlayerIntent);
             }
 

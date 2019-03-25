@@ -3,7 +3,6 @@ package com.hitstreamr.hitstreamrbeta;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.TypedArray;
@@ -11,9 +10,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
@@ -24,7 +21,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +35,6 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -92,18 +87,17 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.NotificationSettingsFra
 import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
-//import com.vorlonsoft.android.rate.AppRate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 import hotchemi.android.rate.AppRate;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+
+//import com.vorlonsoft.android.rate.AppRate;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, PlayerServiceCallback {
     private final String HOME = "home";
@@ -129,8 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private PlayerView relBGView;
     private ExoPlayer player;
     private TextView BGText;
-    private int playerPos;
-    private int currPos;
+    private boolean playlist;
 
 
     FloatingActionButton fab;
@@ -175,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String creditValue;
     private ServiceConnection mConnection;
     private VideoPlayerService mService;
+    private PlaylistVideoPlayerService mPlaylistService;
     private boolean runCheck;
     private boolean mBound;
     private ArrayList userUploadVideoList;
@@ -255,7 +249,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent videoPlayerIntent = new Intent(MainActivity.this, VideoPlayer.class);
                 videoPlayerIntent.putExtra("VIDEO", video);
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
-                //videoPlayerIntent.putExtra("CREDIT", userCredits.getText());
                 startActivity(videoPlayerIntent);
             }
 
@@ -387,7 +380,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Setup Miniplayer
         if (getIntent().getBooleanExtra("MINI_VISIBLE", false)) {
             relBG.setVisibility(View.VISIBLE);
-            initMiniPlayer();
+            if(getIntent().getParcelableExtra("PLAYLIST") == null){
+                Log.e(TAG, "PLAYLIST WAS NULL");
+                initMiniPlayer();
+            }else{
+                playlist = true;
+                initMiniPlaylistPlayer();
+            }
             BGText.setText(((Video) getIntent().getParcelableExtra("VIDEO")).getTitle());
             binder();
         }
@@ -396,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setInstallDays(1)
                 .setLaunchTimes(3)
                 .setRemindInterval(3)
-                .setDebug(true);
+                .setDebug(false);
 
         //AppRate.showRateDialogIfMeetsConditions(this);
 
@@ -425,7 +424,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
                 mService = binder.getService();
                 mService.setCallbacks(MainActivity.this);
-                mBound = true;
                 mService.resetPlayer();
             }
 
@@ -466,10 +464,70 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    private void initMiniPlaylistPlayer(){
+        mConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                PlaylistVideoPlayerService.LocalBinder binder = (PlaylistVideoPlayerService.LocalBinder) service;
+                mPlaylistService = binder.getService();
+                mPlaylistService.setCallbacks(MainActivity.this);
+
+                mPlaylistService.resetPlayer();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+                mPlaylistService = null;
+
+            }
+        };
+        BGText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
+                Intent fullscreen = new Intent(MainActivity.this, PlaylistVideoPlayer.class);
+                fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                fullscreen.putExtra("PLAYLIST", (Playlist) getIntent().getParcelableExtra("PLAYLIST"));
+                fullscreen.putExtra("PLAYLISTNAME", ((Playlist) getIntent().getParcelableExtra("PLAYLIST")).getPlaylistname());
+                fullscreen.putExtra("RETURN", true);
+                startActivity(fullscreen);
+            }
+        });
+
+        closeMini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relBG.setVisibility(View.GONE);
+                releasePlayer();
+            }
+        });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
     private void binder(){
         Log.d(TAG, "Bind Service");
-        bindService(new Intent(MainActivity.this, VideoPlayerService.class),mConnection, 0);
+        Log.d(TAG, "" + playlist);
+        if(playlist){
+            bindService(new Intent(MainActivity.this,PlaylistVideoPlayerService.class),mConnection,0);
+        }else {
+            bindService(new Intent(MainActivity.this, VideoPlayerService.class), mConnection, 0);
+        }
+        mBound = true;
     }
+
+
 
     @Override
     public void stopPlayer(){
@@ -488,8 +546,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void setPlayerView() {
-        playerView.setPlayer(VideoPlayerService.player);
-        controls.setPlayer(VideoPlayerService.player);
+        if (playlist){
+            playerView.setPlayer(PlaylistVideoPlayerService.player);
+            controls.setPlayer(PlaylistVideoPlayerService.player);
+        }else{
+            playerView.setPlayer(VideoPlayerService.player);
+            controls.setPlayer(VideoPlayerService.player);
+        }
+
     }
 
     @Override
@@ -1956,8 +2020,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService.stopVideoService();
-            mService = null;
+            if(playlist){
+                mPlaylistService.stopVideoService();
+                mPlaylistService = null;
+            }else{
+                mService.stopVideoService();
+                mService = null;
+            }
+
         }
     }
 
@@ -1965,8 +2035,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService.setCallbacks(null);
-            mService = null;
+            if(playlist){
+                mPlaylistService.setCallbacks(null);
+                mPlaylistService = null;
+            }else{
+                mService.setCallbacks(null);
+                mService = null;
+            }
         }
     }
     /**

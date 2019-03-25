@@ -34,15 +34,16 @@ public class PlayingNextAdapter extends RecyclerView.Adapter<PlayingNextAdapter.
     private Context mContext;
     private Intent mIntent;
     private FirebaseUser current_user;
+    private DeleteActivityListener deleteListener;
 
     /**
      * Constructor
      */
-    public PlayingNextAdapter(List<Video> videoList, Context mContext, Intent mIntent) {
+    public PlayingNextAdapter(List<Video> videoList, Context mContext, Intent mIntent,DeleteActivityListener deleteListener) {
         this.videoList = videoList;
         this.mContext = mContext;
         this.mIntent = mIntent;
-
+        this.deleteListener = deleteListener;
         current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
@@ -72,10 +73,22 @@ public class PlayingNextAdapter extends RecyclerView.Adapter<PlayingNextAdapter.
         holder.videoCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent videoPlayerPage = new Intent(mContext, VideoPlayer.class);
-                videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
-                videoPlayerPage.putExtra("VIDEO", videoList.get(position));
-                videoPlayerPage.putExtra("CREDIT", mIntent.getStringExtra("CREDIT"));
+                Intent videoPlayerPage;
+                if (mIntent.getParcelableExtra("PLAYLIST") != null){
+                    videoPlayerPage = new Intent(mContext, PlaylistVideoPlayer.class);
+                    videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                    videoPlayerPage.putExtra("VIDEO", videoList.get(position));
+                    videoPlayerPage.putExtra("PLAYLISTNAME", mIntent.getStringExtra("PLAYLISTNAME"));
+                    videoPlayerPage.putExtra("PLAYLIST",(Playlist)mIntent.getParcelableExtra("PLAYLIST"));
+
+                }else {
+                    videoPlayerPage = new Intent(mContext, VideoPlayer.class);
+                    videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                    videoPlayerPage.putExtra("VIDEO", videoList.get(position));
+                    videoPlayerPage.putExtra("CREDIT", mIntent.getStringExtra("CREDIT"));
+                    videoPlayerPage.putExtra("PLAYLISTNAME", mIntent.getStringExtra("PLAYLISTNAME"));
+                }
+                deleteListener.callFinish();
                 mContext.startActivity(videoPlayerPage);
             }
         });

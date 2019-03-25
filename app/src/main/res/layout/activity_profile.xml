@@ -280,24 +280,18 @@
                     android:id="@+id/listView_Feed"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:visibility="visible" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/listView_Upload"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:visibility="visible" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/playlist_RC"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
                     android:visibility="visible" />
 
             </LinearLayout>
