@@ -216,7 +216,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
 
         validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address,
-                city, state, country, phone, zip, "", null, "false"), password);
+                city, state, country, phone, zip, "", "", "false"), password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -532,10 +532,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mUsername.setError("Field can't be empty");
             return false;
         } else if (!checkUsername(artist)) {
-            mAddress.setError("Username cannot contain special characters.");
+            mUsername.setError("Username cannot contain special characters.");
             return false;
         } else if (artist.length() <= 6) {
-            mAddress.setError("Username is too short.");
+            mUsername.setError("Username is too short.");
             return false;
         } else {
             mUsername.setError(null);

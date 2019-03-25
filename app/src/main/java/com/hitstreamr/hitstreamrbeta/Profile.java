@@ -15,10 +15,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -459,7 +461,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
                     //Play.get(x).setPlayVideoIds(bb);
-                    Log.e(TAG, "Entered onsuceess" + Play.get(0).getPlayThumbnails());
+                    //Log.e(TAG, "Entered onsuceess" + Play.get(0).getPlayThumbnails());
                     x++;
                 }
                 setUpPlaylistRecyclerView();
@@ -487,7 +489,10 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
     }
 
 
-    private void setTabDetails(){
+    /**
+     * Set up the profile tabs details and listeners, hide upload tab for basic users.
+     */
+    private void setTabDetails() {
         // Set up tab layout & items
         TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
         TabItem feed_tab = findViewById(R.id.feed_tab);
@@ -497,7 +502,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         if (Strings.isNullOrEmpty(userUserID)) {
             // Hide uploads for basic users
             if (getIntent().getStringExtra("TYPE").equals("BASIC")) {
-                mTabLayout.removeTabAt(1);
+                ((ViewGroup) mTabLayout.getChildAt(0)).getChildAt(1).setVisibility(View.GONE);
             }
         }
 
@@ -512,11 +517,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         view_UserFeed.setVisibility(View.VISIBLE);
                         view_UserUpload.setVisibility(View.GONE);
                         if (!Strings.isNullOrEmpty(userUserID)) {
-                           // getUserFeedDeatils(userUserID);
                             getUserFeed(userUserID);
                         }
-                        else{
-                           // getUserFeedDeatils(current_user.getUid());
+                        else {
                             getUserFeed(current_user.getUid());
                         }
 
@@ -528,7 +531,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         if (!Strings.isNullOrEmpty(userUserID)) {
                             getUserUploadVideoId(userUserID);
                         }
-                        else{
+                        else {
                             getUserUploadVideoId(current_user.getUid());
                         }
 
@@ -541,7 +544,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                         if (!Strings.isNullOrEmpty(userUserID)) {
                             getPublicPlaylistsList(userUserID);
                         }
-                        else{
+                        else {
                             getPublicPlaylistsList(current_user.getUid());
                         }
                         break;
@@ -577,7 +580,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         if (searchType.equals("BasicAccounts")) {
             // Hide uploads for basic users
             TabLayout mTabLayout = findViewById(R.id.tabLayout_profile);
-            mTabLayout.removeTabAt(1);
+            ((ViewGroup) mTabLayout.getChildAt(0)).getChildAt(1).setVisibility(View.GONE);
         }
 
         FirebaseDatabase.getInstance()

@@ -49,8 +49,6 @@ public class HomeFragmentWatchAgainAdapter extends RecyclerView.Adapter<HomeFrag
     @Override
     public void onBindViewHolder(@NonNull WatchAgainViewHolder holder, int position) {
         holder.title.setText(videoList.get(position).getTitle());
-        //TODO needs to be a callback (or however follows are done)
-//        holder.username.setText(videoList.get(position).getUsername());
         holder.views.setText(String.valueOf(videoList.get(position).getViews()));
         holder.duration.setText(videoList.get(position).getDuration());
 
@@ -106,6 +104,22 @@ public class HomeFragmentWatchAgainAdapter extends RecyclerView.Adapter<HomeFrag
                 mListener.onOverflowClick(videoList.get(position), holder.overflowMenu);
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(videoList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.username.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

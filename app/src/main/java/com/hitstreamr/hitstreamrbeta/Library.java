@@ -246,7 +246,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
         if (WatchLaterList.size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
             recyclerView_watchLater.setLayoutManager(layoutManager);
-            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner);
+            bookAdapter_watchLater = new BookAdapter(this, WatchList, mlistner, getIntent());
             recyclerView_watchLater.setAdapter(bookAdapter_watchLater);
         }
     }
@@ -464,15 +464,15 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
             @Override
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 int x = 0;
-                ArrayList<String> bb = new ArrayList<>();
+                //ArrayList<String> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
                     for (DocumentSnapshot docume : document.getDocuments()) {
                         //Log.e(TAG, "11111111111111 " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class).getVideoId());
+                        //bb.add(docume.toObject(Video.class).getVideoId());
                         Play.get(x).setPlayThumbnails(docume.toObject(Video.class).getUrl());
                     }
-                    Play.get(x).setPlayVideoIds(bb);
-                    Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
+                    //Play.get(x).setPlayVideoIds(bb);
+                    //Log.e(TAG, "Entered onsuceess" + Play.get(x).getPlayThumbnails());
                     x++;
                 }
                 setUpPlaylistRecyclerView();

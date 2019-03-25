@@ -36,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hitstreamr.hitstreamrbeta.EmailVerification;
 import com.hitstreamr.hitstreamrbeta.LabelDashboard;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
@@ -229,10 +230,12 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser !=null){
+        // Make sure the user is signed in (not null) and their email is verified.
+        // If email is not yet verified, user will have to go through the normal sign in process by
+        // clicking the sign in button.
+        if (currentUser != null && currentUser.isEmailVerified()) {
             updateUI();
         }
-
     }
 
     private void updateUI() {
@@ -306,10 +309,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    //user exists in basic user table, do something
-                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                    startActivity(homeIntent);
+                    // User exists in basic user table, do something
+                    // Check if their email is verified, to prevent them to access the app if not
+                    if (!mAuth.getCurrentUser().isEmailVerified()) {
+                        // Go to verification page, user cannot proceed further until their email is verified
+                        Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                        verificationPage.putExtra("TYPE", getString(R.string.type_basic));
+                        startActivity(verificationPage);
+                    } else {
+                        // User is signed in, authorized, and verified.
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                        startActivity(homeIntent);
+                    }
+
                     // Sign in success, update UI with the signed-in user's information
                     finish();
                 }
@@ -326,10 +339,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    //user exists in basic user table, do something
-                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                    startActivity(homeIntent);
+                    // User exists in basic user table, do something
+                    // Check if their email is verified, to prevent them to access the app if not
+                    if (!mAuth.getCurrentUser().isEmailVerified()) {
+                        // Go to verification page, user cannot proceed further until their email is verified
+                        Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                        verificationPage.putExtra("TYPE", getString(R.string.type_artist));
+                        startActivity(verificationPage);
+                    } else {
+                        // User is signed in, authorized, and verified.
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                        startActivity(homeIntent);
+                    }
+
                     // Sign in success, update UI with the signed-in user's information
                     finish();
                 }
@@ -346,10 +369,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    //user exists in basic user table, do something
-                    Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
-                    labelIntent.putExtra("TYPE", getString(R.string.type_label));
-                    startActivity(labelIntent);
+                    // User exists in basic user table, do something
+                    // Check if their email is verified, to prevent them to access the app if not
+                    if (!mAuth.getCurrentUser().isEmailVerified()) {
+                        // Go to verification page, user cannot proceed further until their email is verified
+                        Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                        verificationPage.putExtra("TYPE", getString(R.string.type_label));
+                        startActivity(verificationPage);
+                    } else {
+                        // User is signed in, authorized, and verified.
+                        Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
+                        labelIntent.putExtra("TYPE", getString(R.string.type_label));
+                        startActivity(labelIntent);
+                    }
+
                     // Sign in success, update UI with the signed-in user's information
                     finish();
                 }

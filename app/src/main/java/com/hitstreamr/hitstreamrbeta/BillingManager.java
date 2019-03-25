@@ -203,7 +203,7 @@ public class BillingManager extends AppCompatActivity  implements BillingProcess
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(BillingManager.this, "Your account is  credited with " +newCreditvalue + " credits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BillingManager.this, "You now have " +newCreditvalue + " credits", Toast.LENGTH_SHORT).show();
                     }
                 });
         finish();
@@ -219,7 +219,7 @@ public class BillingManager extends AppCompatActivity  implements BillingProcess
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(BillingManager.this, "Your account is  credited with " +newCreditvalue + " credits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BillingManager.this, "You now have " +newCreditvalue + " credits", Toast.LENGTH_SHORT).show();
                     }
                 });
         finish();

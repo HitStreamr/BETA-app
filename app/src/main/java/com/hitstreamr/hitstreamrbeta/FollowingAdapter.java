@@ -254,7 +254,11 @@ public class FollowingAdapter extends RecyclerView.Adapter<FollowingAdapter.Foll
 
     @Override
     public int getItemCount() {
+        if (followingList != null) {
         return followingList.size();
+        } else {
+            return 0;
+        }
     }
 
     public void clear() {

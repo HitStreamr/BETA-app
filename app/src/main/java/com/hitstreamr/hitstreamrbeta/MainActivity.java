@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setInstallDays(1)
                 .setLaunchTimes(3)
                 .setRemindInterval(3)
-                .setDebug(true)
+//                .setDebug(true)
 
 
                 .monitor();

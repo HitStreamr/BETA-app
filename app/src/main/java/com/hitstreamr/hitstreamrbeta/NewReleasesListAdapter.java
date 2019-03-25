@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 
 import java.text.DateFormat;
@@ -49,8 +53,6 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
 
         requestBuilder.load(objects1.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        //TODO needs to be a callback
-//        holder.videoUsername.setText(objects1.get(position).getUsername());
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
         holder.videoTime.setText(objects1.get(position).getDuration());
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()) + " views");
@@ -71,6 +73,21 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
             }
         });
 
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(objects1.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -103,7 +120,7 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
             videoTitle = itemView.findViewById(R.id.videoTitle);
             videoUsername = itemView.findViewById(R.id.videoUsername);
             videoViews = itemView.findViewById(R.id.videoViews);
-            videoYear = itemView.findViewById(R.id.published);
+            videoYear = itemView.findViewById(R.id.videoYear);
             videoTime = itemView.findViewById(R.id.videoTime);
             moreMenu = itemView.findViewById(R.id.moreMenu);
             mainSection = itemView.findViewById(R.id.mainBody);
