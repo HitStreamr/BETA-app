@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
 public class BillingManager extends AppCompatActivity  implements BillingProcessor.IBillingHandler, View.OnClickListener {
 
@@ -62,7 +63,6 @@ public class BillingManager extends AppCompatActivity  implements BillingProcess
 
 
         newCreditvalue = getIntent().getStringExtra("CREDIT");
-        Log.e("Billing "," inside credit value "+newCreditvalue);
 
         purchaseProductId = getIntent().getStringExtra("PRDTID");
         Log.e("Billing "," inside product id "+purchaseProductId);
@@ -203,12 +203,11 @@ public class BillingManager extends AppCompatActivity  implements BillingProcess
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(BillingManager.this, "Your account is  credited with " +newCreditvalue + " credits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BillingManager.this, "You have " +newCreditvalue + " credits now", Toast.LENGTH_SHORT).show();
+
                     }
                 });
         finish();
-
-
     }
     private void createCredits(){
         FirebaseDatabase.getInstance()
@@ -219,9 +218,10 @@ public class BillingManager extends AppCompatActivity  implements BillingProcess
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(BillingManager.this, "Your account is  credited with " +newCreditvalue + " credits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(BillingManager.this, "You have " +newCreditvalue + " credits now", Toast.LENGTH_SHORT).show();
                     }
-                });
+
+               });
         finish();
 
     }
