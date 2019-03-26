@@ -36,7 +36,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hitstreamr.hitstreamrbeta.LabelDashboard;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
@@ -66,7 +65,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     CountDownTimer timer;
     final int TIMEOUT_PASSWORD = 900000;
     volatile Boolean locked_out;
-
+    String lastEmailEntered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +94,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         //get shared preferences
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         checkTimer();
+        lastEmailEntered = null;
 
         //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -266,6 +266,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog.setMessage("Welcome");
         progressDialog.show();
 
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -276,17 +277,22 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
-
+                            if (lastEmailEntered == null || email.equals(lastEmailEntered)) {
                                 loginAttempts++;
-                                int temp = MAX_LOGIN - loginAttempts;
-                                if (temp <= 0){
-                                    //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
-                                    Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
-                                    startTimer(TIMEOUT_PASSWORD);
-                                }else{
-                                    Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
-                                }
+                                lastEmailEntered = email;
+                            }else{
+                                loginAttempts = 1;
+                                lastEmailEntered = email;
+                            }
+                            int temp = MAX_LOGIN - loginAttempts;
+                            if (temp <= 0){
+                                //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
+                                Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
+                                startTimer(TIMEOUT_PASSWORD);
+                            }else{
+                                Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
+                            }
 
                             }
                         }
@@ -337,7 +343,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, databaseError.toString());
             }
         });
-
+/**
         mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -357,6 +363,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, databaseError.toString());
             }
         });
+ **/
 
     }
 
