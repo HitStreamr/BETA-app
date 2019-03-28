@@ -234,6 +234,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (currentUser != null && currentUser.isEmailVerified()) {
             updateUI();
         }
+
     }
 
     private void updateUI() {

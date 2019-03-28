@@ -78,6 +78,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
     private Map<String, Object> artistVideo;
 
     private static final String VIDEO_DOWNLOAD_LINK = "url";
+    private static final String THUMBNAIL_DOWNLOAD_LINK = "thumbnailUrl";
 
     /**
      * Class used for the client Binder.  Because we know this service always

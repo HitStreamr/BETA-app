@@ -43,7 +43,7 @@ public class Splash extends AppCompatActivity {
                 // [END initialize_auth]
                 Log.e(TAG, mAuth.getCurrentUser()+"");
                 if(mAuth.getCurrentUser() != null){
-                    //store the notification token/override if different
+                    //store the notification token/overirde if different
 
                     //find the refto user notif
                     DatabaseReference notifRef = FirebaseDatabase.getInstance().getReference().child("FirebaseNotificationTokens").child(mAuth.getCurrentUser().getUid());
@@ -79,7 +79,7 @@ public class Splash extends AppCompatActivity {
                             }
                             else{
                                 //user has no notification tokens
-                                //Instance id stuff
+                                //Instace id stuff
                                 FirebaseInstanceId.getInstance().getInstanceId()
                                         .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                                             @Override

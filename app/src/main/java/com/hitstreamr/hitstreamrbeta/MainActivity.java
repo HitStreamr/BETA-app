@@ -264,6 +264,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getUserType();
 
+
         //Listener for RCVs
         mListener = new ItemClickListener() {
             @Override
@@ -1160,6 +1161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mSearchView.clearFocus();
                 mTabLayout.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.GONE);
+                fab.setVisibility(View.VISIBLE);
                 bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
                 Log.e("HOME", "On Close Initiated");
