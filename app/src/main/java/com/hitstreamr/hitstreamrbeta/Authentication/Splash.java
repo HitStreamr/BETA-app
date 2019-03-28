@@ -153,7 +153,7 @@ public class Splash extends AppCompatActivity {
                 Log.e(TAG, databaseError.toString());
             }
         });
-
+/**
         mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -174,5 +174,7 @@ public class Splash extends AppCompatActivity {
                 Log.e(TAG, databaseError.toString());
             }
         });
+ **/
     }
+
 }

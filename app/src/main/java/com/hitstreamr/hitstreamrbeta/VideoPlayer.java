@@ -83,7 +83,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.lang.Math.toIntExact;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback {
+public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback, DeleteActivityListener {
     private static final String TAG = "PlayerActivity";
 
     // bandwidth meter to measure and estimate bandwidth
@@ -309,6 +309,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                             intent.putExtra("TYPE", context.getString(R.string.type_artist));
                                             intent.putExtra("artistUsername", contributor.get("contributorName"));
                                             context.startActivity(intent);
+                                            finish();
                                         }
                                     });
 
@@ -576,6 +577,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         autoplay_switch.setChecked(autoplay_state);
     }
 
+    @Override
+    public void callFinish() {
+        finish();
+    }
+
     private void startService() {
         serviceIntent = new Intent(this, VideoPlayerService.class);
         serviceIntent.putExtra("CREDITS", credit);
@@ -692,7 +698,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Video> videoList = new ArrayList<>();
-        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
+        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent(), this);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("Videos")
@@ -731,7 +737,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Video> videoList = new ArrayList<>();
-        PlayingNextAdapter playingNextAdapter = new PlayingNextAdapter(videoList, getApplicationContext(), getIntent());
+        PlayingNextAdapter playingNextAdapter = new PlayingNextAdapter(videoList, getApplicationContext(), getIntent(),this);
 
         videoList.add(nextVideo);
         playingNextAdapter.notifyDataSetChanged();
@@ -758,6 +764,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         nextVideoPage.putExtra("VIDEO", nextVideo);
         nextVideoPage.putExtra("CREDIT", currentCreditVal);
         startActivity(nextVideoPage);
+        finish();
     }
 
     public interface MyCallback {
@@ -1449,6 +1456,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 Intent reportAct = new Intent(getApplicationContext(), ReportVideoPopup.class);
                 reportAct.putExtra("VideoId", vid.getVideoId());
                 startActivity(reportAct);
+                finish();
                 break;
             case R.id.addWatchLater:
                 registerWatchLater();
@@ -1462,126 +1470,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     }
 
-
-   /*private class ComponentListener extends Player.DefaultEventListener implements
-            VideoRendererEventListener, AudioRendererEventListener {
-
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            String stateString;
-            switch (playbackState) {
-                case Player.STATE_IDLE:
-                    stateString = "ExoPlayer.STATE_IDLE      -";
-                    break;
-                case Player.STATE_BUFFERING:
-                    stateString = "ExoPlayer.STATE_BUFFERING -";
-                    break;
-                case Player.STATE_READY:
-                    stateString = "ExoPlayer.STATE_READY     -";
-                    if (!(player.equals(""))) {
-                        if (player.getCurrentPosition() == 0) {
-                            if (!(uploadbyUser) && !iscontributor){
-                                timerCounter();
-                            }
-                        }
-                    }
-
-                    break;
-
-                case Player.STATE_ENDED:
-                    stateString = "ExoPlayer.STATE_ENDED     -";
-                    if (!(Integer.parseInt(currentCreditVal) > 0)) {
-                        callPurchase();
-                    }
-
-                    // Play the next video ONLY IF we have finished playing the whole video
-                    // and the auto-play switch is turned on
-                    else if (wholeVideo & autoplay_switchState) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
-                            }
-                        }, 1500);
-                    }
-                    break;
-                default:
-                    stateString = "UNKNOWN_STATE             -";
-                    break;
-            }
-            Log.d(TAG, "changed state to " + stateString + " playWhenReady: " + playWhenReady);
-        }
-
-        // Implementing VideoRendererEventListener.
-
-        @Override
-        public void onVideoEnabled(DecoderCounters counters) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onVideoInputFormatChanged(Format format) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onDroppedFrames(int count, long elapsedMs) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onRenderedFirstFrame(Surface surface) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onVideoDisabled(DecoderCounters counters) {
-            // Do nothing.
-        }
-
-        // Implementing AudioRendererEventListener.
-
-        @Override
-        public void onAudioEnabled(DecoderCounters counters) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onAudioSessionId(int audioSessionId) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onAudioInputFormatChanged(Format format) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
-            // Do nothing.
-        }
-
-        @Override
-        public void onAudioDisabled(DecoderCounters counters) {
-            // Do nothing.
-        }
-
-    }
 
     /* Following Code
         Save Following - the former saves the user id to the artist they are following
@@ -1737,6 +1625,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             playListAct.putExtra("VIDEO", vid);
             playListAct.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
             startActivity(playListAct);
+
         }
     }
 
@@ -1886,6 +1775,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, TextViewTitle, "title");
         startActivity(intent, options.toBundle());
+        finish();
     }
 
     @Override

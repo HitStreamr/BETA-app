@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,15 +44,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class PlaylistVideoPlayerService extends Service {
 
@@ -83,6 +87,9 @@ public class PlaylistVideoPlayerService extends Service {
     private boolean uploadbyUser;
     private boolean isContributor;
     private boolean autoplay_switchState;
+    Playlist currPlaylist;
+    private Video nextVideo;
+    private ArrayList<String> userContributor;
 
 
     /**
@@ -213,6 +220,7 @@ public class PlaylistVideoPlayerService extends Service {
         credits = intent.getStringExtra("CREDITS");
         uploadbyUser = intent.getBooleanExtra("UPLOAD", false);
         isContributor = intent.getBooleanExtra("CONTRIBUTOR", false);
+        currPlaylist = intent.getParcelableExtra("PLAYLIST");
         Log.e(TAG, "inside service isuploaded " + uploadbyUser + "  ::: isContributor  " + isContributor);
         //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         return START_STICKY;
@@ -224,6 +232,7 @@ public class PlaylistVideoPlayerService extends Service {
 
     public void setPlayer(Video newVid, boolean clipped, String credits) {
         vid = newVid;
+        nextVideo = nextVideoHelper();
         this.clipped = clipped;
         this.credits = credits;
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
@@ -248,6 +257,15 @@ public class PlaylistVideoPlayerService extends Service {
 
     public void stopVideoService() {
         stopSelf();
+    }
+
+    public void checkuploaded() {
+        if (nextVideo.getUserId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            uploadbyUser = true;
+        } else {
+            uploadbyUser = false;
+        }
+
     }
 
     // This method is to check the player position every second and after 15 seconds initiate the DB call
@@ -408,6 +426,117 @@ public class PlaylistVideoPlayerService extends Service {
         }
     }
 
+    /**
+     * Helps find next Video in given playlist
+     * @return next video if possible or null if at end of playlist
+     */
+    private Video nextVideoHelper(){
+
+        ArrayList<Video> tmp = currPlaylist.getPlayVideos();
+        for (int i = 0; i < tmp.size(); i++){
+            if (tmp.get(i).getVideoId().equals(vid.getVideoId()) && (i+1 < tmp.size())){
+                return tmp.get(i + 1);
+            }else if (tmp.get(i).getVideoId().equals(vid.getVideoId()) && (i+1 < tmp.size())){
+                return null;
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Plays the next video when the Service signals.
+     */
+    public void autoPlayNext() {
+        if (nextVideo != null) {
+            autoPlayNextVideo(nextVideo);
+        }
+    }
+
+    /**
+     * Play the next video on the list.
+     *
+     * @param nextVideo next video
+     */
+    private void autoPlayNextVideo(Video nextVideo) {
+        userContributor = new ArrayList<>();
+
+        FirebaseFirestore.getInstance().collection("Videos")
+                .whereEqualTo("videoId", vid.getVideoId())
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                ArrayList<HashMap<String, String>> temp = (ArrayList<HashMap<String, String>>) document.get("contributors");
+                                for (HashMap<String, String> contributor : temp) {
+                                    userContributor.add(contributor.get("contributorUserId"));
+                                }
+                            }
+
+                            nextVideoCreditCheck();
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+    }
+
+    private void nextVideoCreditCheck(){
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("creditvalue")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Main activity credit val " + currentCredit);
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
+                            currentCreditVal = currentCredit;
+                        } else {
+                            //userCredits.setText("0");
+                            currentCreditVal = "0";
+                        }
+                        setupNextVideo();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // ...
+                    }
+                });
+
+    }
+
+    private void setupNextVideo(){
+
+        isContributor = userContributor.contains(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        checkuploaded();
+
+        if (uploadbyUser) {
+            //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+            setPlayer(vid, false, currentCreditVal);
+        } else if (isContributor) {
+            //Log.e(TAG, "player before inside else if  contributor" + isContributor);
+            setPlayer(vid, false, currentCreditVal);
+        } else if (Integer.parseInt(currentCreditVal) > 0) {
+            //Log.e(TAG, "player before inside if ");
+            // Log.e(TAG, "player before initializePlayer success ");
+            setPlayer(vid, false, currentCreditVal);
+        } else {
+            setPlayer(vid, true, currentCreditVal);
+            runCheck = true;
+        }
+
+    }
+
+
     private class ComponentListener extends Player.DefaultEventListener implements
             VideoRendererEventListener, AudioRendererEventListener {
 
@@ -443,6 +572,8 @@ public class PlaylistVideoPlayerService extends Service {
                                 if (serviceCallback != null) {
                                     Log.e(TAG, "AUTOPLAY CALLED");
                                     serviceCallback.autoPlayNext();
+                                }else{
+                                    autoPlayNext();
                                 }
                             }
                         }, 1500);

@@ -11,6 +11,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -85,7 +87,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.lang.Math.toIntExact;
 
-public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback {
+public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback, DeleteActivityListener {
 
     private static final String TAG = "PlaylistVideoPlayer";
 
@@ -220,7 +222,10 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
     private String videotype;
     private String playlistName;
     private String playlistExtra;
+
+    private Playlist currPlaylist;
     private CollectionReference videosCollectionRef;
+
 
 
     @Override
@@ -229,7 +234,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_playlist_video_player);
 
         vid = getIntent().getParcelableExtra("VIDEO");
-        Log.e(TAG, "Video object :" +vid);
+        //Log.e(TAG, "Video object :" +vid);
         videosCollectionRef = db.collection("Videos");
 
         userUploadVideoList = new ArrayList<>();
@@ -237,6 +242,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("VideoLikes");
         playlistName = getIntent().getStringExtra("PLAYLISTNAME");
+        currPlaylist = getIntent().getParcelableExtra("PLAYLIST");
 
         // Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -289,6 +295,8 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
 
         FirebaseFirestore.getInstance().collection("Videos")
                 .whereEqualTo("videoId", vid.getVideoId())
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -572,6 +580,34 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
         boolean autoplay_state = preferences.getBoolean("autoplay_switch", false);
         autoplay_switch.setChecked(autoplay_state);
+
+        nextVideo = nextVideoHelper();
+        if (nextVideo != null) {
+            loadNextInQue(nextVideo);
+        }
+        //recyclerView.smoothScrollToPosition(2);
+        //layoutManager.startSmoothScroll(smoothScroller);
+    }
+
+    /**
+     * Helps find next Video in given playlist
+     * @return next video if possible or null if at end of playlist
+     */
+    private Video nextVideoHelper(){
+        ArrayList<Video> tmp = currPlaylist.getPlayVideos();
+        for (int i = 0; i < tmp.size(); i++){
+            if (tmp.get(i).getVideoId().equals(vid.getVideoId()) && (i+1 < tmp.size())){
+                return tmp.get(i + 1);
+            }else if (tmp.get(i).getVideoId().equals(vid.getVideoId()) && (i+1 < tmp.size())){
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void callFinish() {
+        finish();
     }
 
     private void startService() {
@@ -580,6 +616,8 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         serviceIntent.putExtra("CREDITS", credit);
         serviceIntent.putExtra("UPLOAD", uploadbyUser);
         serviceIntent.putExtra("CONTRIBUTOR", iscontributor);
+        serviceIntent.putExtra("PLAYLIST", currPlaylist);
+
 
         startService(serviceIntent);
         (new Handler()).postDelayed(this::binder, 500);
@@ -711,7 +749,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
 
     private void getaaaPlayVideos() {
 
-        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
+        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent(),this);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < PlaylistList.size(); j++) {
             queryy.add(videosCollectionRef
@@ -736,18 +774,25 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         });
     }
 
+
+
     private void setupRecyclerView(){
         if (videoList.size() > 0) {
             Log.e(TAG, "Entered Recycler View values:" +videoList);
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
             RecyclerView recyclerView = findViewById(R.id.relatedVideos_RCV);
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+                @Override protected int getVerticalSnapPreference() {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(2);
             recyclerView.setLayoutManager(layoutManager);
-            relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent());
+            layoutManager.startSmoothScroll(smoothScroller);
+            relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent(),this);
             recyclerView.setAdapter(relatedVideosAdapter);
             //nextVideo = relatedVideosAdapter.getNextFromList();
-            if (nextVideo != null) {
-                loadNextInQue(nextVideo);
-            }
         }
     }
 
@@ -761,7 +806,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Video> videoList = new ArrayList<>();
-        PlayingNextAdapter playingNextAdapter = new PlayingNextAdapter(videoList, getApplicationContext(), getIntent());
+        PlayingNextAdapter playingNextAdapter = new PlayingNextAdapter(videoList, getApplicationContext(), getIntent(),this);
 
         videoList.add(nextVideo);
         playingNextAdapter.notifyDataSetChanged();
@@ -787,6 +832,8 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         nextVideoPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
         nextVideoPage.putExtra("VIDEO", nextVideo);
         nextVideoPage.putExtra("CREDIT", currentCreditVal);
+        nextVideoPage.putExtra("PLAYLISTNAME", playlistName);
+        nextVideoPage.putExtra("PLAYLIST", currPlaylist);
         startActivity(nextVideoPage);
     }
 
@@ -1932,6 +1979,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         intent.putExtra("MINI_VISIBLE", true);
         intent.putExtra("VIDEO", vid);
         intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        intent.putExtra("PLAYLIST", currPlaylist);
         //intent.putExtra("Playback_Position",  playbackPosition);
         //intent.putExtra("CurrentWindow", currentWindow);
         // Pass data object in the bundle and populate details activity.

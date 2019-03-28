@@ -43,7 +43,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private Playlist playlist;
     private RecyclerView recyclerView_PlaylistVideos;
     private PlaylistContentAdapter playlistContent;
-    Playlist temp;
     private TextView playlistName;
     private ItemClickListener mlistner;
     private String CreditVal;
@@ -54,6 +53,11 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private Video onClickedVideo;
 
     @Override
+    /**
+     * Initializes the Activity while optionally using <code> savedInstanceState </code>Which
+     *
+     * @param savedInstanceState dynamic data about the state of activity
+     */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist_videos);
@@ -87,10 +91,9 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         });
 
         playlistName = findViewById(R.id.playlist_Name);
-        playlist = new Playlist();
-        temp = getIntent().getParcelableExtra("PlaylistVideos");
-        playlistName.setText(temp.getPlaylistname());
-        getSupportActionBar().setTitle(temp.getPlaylistname());
+        playlist = getIntent().getParcelableExtra("PlaylistVideos");
+        playlistName.setText(playlist.getPlaylistname());
+        getSupportActionBar().setTitle(playlist.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
 
         getUserType();
@@ -114,9 +117,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
 
                     }
                 });
-        Log.e(TAG, "Profile credit val " + CreditVal);
-
-        Log.e(TAG, "temp value is " + temp.getPlayVideoIds());
 
         getUserType();
 
@@ -129,6 +129,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                 videoPlayerIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
                 videoPlayerIntent.putExtra("CREDIT", CreditVal);
                 videoPlayerIntent.putExtra("PLAYLISTNAME", playlistName);
+                videoPlayerIntent.putExtra("PLAYLIST", playlist);
                 startActivity(videoPlayerIntent);
             }
 
@@ -145,7 +146,7 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                             case R.id.remove_playlistPopup:
                                 FirebaseDatabase.getInstance().getReference("PlaylistVideos")
                                         .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                        .child(temp.playlistname)
+                                        .child(playlist.playlistname)
                                         .child(onClickedVideo.getVideoId())
                                         .removeValue()
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -187,8 +188,8 @@ public class PlaylistVideosActivity extends AppCompatActivity {
     private void getPlayVideos() {
         //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
-        for (int j = 0; j < temp.getPlayVideoIds().size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", temp.getPlayVideoIds().get(j))
+        for (int j = 0; j < playlist.getPlayVideoIds().size(); j++) {
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", playlist.getPlayVideoIds().get(j))
                     .whereEqualTo("delete", "N")
                     .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
                     .get());
@@ -200,22 +201,27 @@ public class PlaylistVideosActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
                 ArrayList<Video> bb = new ArrayList<>();
                 for (QuerySnapshot document : task.getResult()) {
-                    for (DocumentSnapshot docume : document.getDocuments()) {
-                        Log.e(TAG, "Playlist videos " + docume.toObject(Video.class).getVideoId());
-                        bb.add(docume.toObject(Video.class));
+                    if(task.isSuccessful()){
+                        for (DocumentSnapshot docume : document.getDocuments()) {
+                            //Log.e(TAG, "Playlist videos " + docume.toObject(Video.class).getVideoId());
+                            bb.add(docume.toObject(Video.class));
+                        }
+                    }else{
+                        //Task was not successful
                     }
+
                 }
-                temp.setPlayVideos(bb);
+                playlist.setPlayVideos(bb);
                 setupRecyclerView();
             }
         });
     }
 
     private void setupRecyclerView() {
-        if (temp.getPlayVideos().size() > 0) {
+        if (playlist.getPlayVideos().size() > 0) {
             LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
             recyclerView_PlaylistVideos.setLayoutManager(layoutManager);
-            playlistContent = new PlaylistContentAdapter(this, temp, mlistner);
+            playlistContent = new PlaylistContentAdapter(this, playlist, mlistner);
             recyclerView_PlaylistVideos.setAdapter(playlistContent);
         }
     }

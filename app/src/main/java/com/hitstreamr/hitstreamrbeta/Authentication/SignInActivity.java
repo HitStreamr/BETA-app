@@ -67,21 +67,18 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     CountDownTimer timer;
     final int TIMEOUT_PASSWORD = 900000;
     volatile Boolean locked_out;
-
+    String lastEmailEntered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
-
-
         progressDialog = new ProgressDialog(this);
 
         //Buttons
         backbutton = (ImageButton) findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
-
 
         //Views
         ETemail = (EditText) findViewById(R.id.Email);
@@ -99,6 +96,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         //get shared preferences
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         checkTimer();
+        lastEmailEntered = null;
 
         //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -185,7 +183,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == RESET_PASSWORD) {
             if (resultCode == RESULT_OK) {
                 loginAttempts = 0;
-                Toast.makeText(SignInActivity.this, "Password Rest Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "Password Reset Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(SignInActivity.this, "Email failed to send. Please try again.", Toast.LENGTH_SHORT).show();
             }
@@ -236,6 +234,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (currentUser != null && currentUser.isEmailVerified()) {
             updateUI();
         }
+
     }
 
     private void updateUI() {
@@ -272,6 +271,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog.setMessage("Welcome");
         progressDialog.show();
 
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -282,17 +282,22 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
-
+                            if (lastEmailEntered == null || email.equals(lastEmailEntered)) {
                                 loginAttempts++;
-                                int temp = MAX_LOGIN - loginAttempts;
-                                if (temp <= 0){
-                                    //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
-                                    Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
-                                    startTimer(TIMEOUT_PASSWORD);
-                                }else{
-                                    Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
-                                }
+                                lastEmailEntered = email;
+                            }else{
+                                loginAttempts = 1;
+                                lastEmailEntered = email;
+                            }
+                            int temp = MAX_LOGIN - loginAttempts;
+                            if (temp <= 0){
+                                //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
+                                Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
+                                startTimer(TIMEOUT_PASSWORD);
+                            }else{
+                                Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
+                            }
 
                             }
                         }
@@ -363,26 +368,16 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, databaseError.toString());
             }
         });
-
+/**
         mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    // User exists in basic user table, do something
-                    // Check if their email is verified, to prevent them to access the app if not
-                    if (!mAuth.getCurrentUser().isEmailVerified()) {
-                        // Go to verification page, user cannot proceed further until their email is verified
-                        Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
-                        verificationPage.putExtra("TYPE", getString(R.string.type_label));
-                        startActivity(verificationPage);
-                    } else {
-                        // User is signed in, authorized, and verified.
-                        Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
-                        labelIntent.putExtra("TYPE", getString(R.string.type_label));
-                        startActivity(labelIntent);
-                    }
-
+                    //user exists in basic user table, do something
+                    Intent labelIntent = new Intent(getApplicationContext(), LabelDashboard.class);
+                    labelIntent.putExtra("TYPE", getString(R.string.type_label));
+                    startActivity(labelIntent);
                     // Sign in success, update UI with the signed-in user's information
                     finish();
                 }
@@ -393,6 +388,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, databaseError.toString());
             }
         });
+ **/
 
     }
 
