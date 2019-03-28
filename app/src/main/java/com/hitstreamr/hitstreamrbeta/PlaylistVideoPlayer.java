@@ -19,7 +19,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
@@ -48,6 +50,8 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -83,8 +87,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import static java.lang.Math.toIntExact;
 
-public class VideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback, DeleteActivityListener {
-    private static final String TAG = "PlayerActivity";
+public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnClickListener, PopupMenu.OnMenuItemClickListener, GestureDetector.OnGestureListener, PlayerServiceCallback, DeleteActivityListener {
+
+    private static final String TAG = "PlaylistVideoPlayer";
 
     // bandwidth meter to measure and estimate bandwidth
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
@@ -97,7 +102,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Defines callbacks for service binding, passed to bindService()
      */
     private ServiceConnection mConnection;
-    private VideoPlayerService mService;
+
+    private PlaylistVideoPlayerService mService;
     private boolean mBound;
     //ExoPlayer
     //private ExoPlayer player;
@@ -170,6 +176,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private boolean iscontributor = false;
     private ArrayList<String> userContributor;
 
+    /*private long playbackPosition;
+    private int currentWindow;
+    private boolean playWhenReady = true;*/
 
     Video vid;
     private Video nextVideo;
@@ -213,26 +222,30 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     private String videotype;
     private String playlistName;
     private String playlistExtra;
+
+    private Playlist currPlaylist;
     private CollectionReference videosCollectionRef;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_player);
+        setContentView(R.layout.activity_playlist_video_player);
 
         vid = getIntent().getParcelableExtra("VIDEO");
+        //Log.e(TAG, "Video object :" +vid);
         videosCollectionRef = db.collection("Videos");
 
         userUploadVideoList = new ArrayList<>();
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("VideoLikes");
-        playlistExtra = getIntent().getStringExtra("PLAYLIST");
-
+        playlistName = getIntent().getStringExtra("PLAYLISTNAME");
+        currPlaylist = getIntent().getParcelableExtra("PLAYLIST");
 
         // Toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -247,7 +260,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             //circleImageView.setVisibility(View.VISIBLE);
             photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
-            //Glide.with(getApplicationContext()).load(photoURL).into(circleImageView_comment);
         }
 
         FirebaseDatabase.getInstance().getReference("Credits")
@@ -309,7 +321,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                                             intent.putExtra("TYPE", context.getString(R.string.type_artist));
                                             intent.putExtra("artistUsername", contributor.get("contributorName"));
                                             context.startActivity(intent);
-                                            finish();
                                         }
                                     });
 
@@ -342,8 +353,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             public void onCallback(ArrayList value) {
                 if (value.size() > 0) {
                     checkuploaded();
+                    Log.e(TAG, "Entered on Callback if");
                 }
                 iscontributor = userContributor.contains(currentFirebaseUser.getUid());
+                Log.e(TAG, "Entered on Callback service");
                 startService();
             }
         });
@@ -484,7 +497,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         unfollow.setVisibility(View.GONE);
 
         //set up UI for following
-        checkFollowing(new OnDataReceiveCallback() {
+        checkFollowing(new PlaylistVideoPlayer.OnDataReceiveCallback() {
             @Override
             public void onFollowChecked(boolean following) {
                 if (following) {
@@ -540,20 +553,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         TextViewDate.setText(df.format(vid.getTimestamp().toDate()));
 
-        // Getting the credit value of user. If credits available initialize normal video else initialize clipped video of 15 sec
-       /* if (credit != null) {
-            Log.e(TAG ,"inside credit not null "+credit);
-            currentCreditVal = credit;
-        }
-        else {
-            currentCreditVal = "0";
-            Log.e(TAG ,"inside credit null "+credit);
-        }*/
 
         mDetector = new GestureDetectorCompat(this, this);
 
-        // Populate the recycler view with videos of same genre/sub-genre/uploader
-        loadRelatedVideos();
+
+        loadPlaylistVideos();
+
 
         // Save auto-play switch state for users
         Switch autoplay_switch = findViewById(R.id.autoPlay_videoPlayer);
@@ -575,6 +580,29 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         SharedPreferences preferences = getSharedPreferences("UserSwitchPrefs", 0);
         boolean autoplay_state = preferences.getBoolean("autoplay_switch", false);
         autoplay_switch.setChecked(autoplay_state);
+
+        nextVideo = nextVideoHelper();
+        if (nextVideo != null) {
+            loadNextInQue(nextVideo);
+        }
+        //recyclerView.smoothScrollToPosition(2);
+        //layoutManager.startSmoothScroll(smoothScroller);
+    }
+
+    /**
+     * Helps find next Video in given playlist
+     * @return next video if possible or null if at end of playlist
+     */
+    private Video nextVideoHelper(){
+        ArrayList<Video> tmp = currPlaylist.getPlayVideos();
+        for (int i = 0; i < tmp.size(); i++){
+            if (tmp.get(i).getVideoId().equals(vid.getVideoId()) && (i+1 < tmp.size())){
+                return tmp.get(i + 1);
+            }else if (tmp.get(i).getVideoId().equals(vid.getVideoId()) && (i+1 < tmp.size())){
+                return null;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -583,10 +611,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void startService() {
-        serviceIntent = new Intent(this, VideoPlayerService.class);
+        Log.e(TAG, "Entered service");
+        serviceIntent = new Intent(this, PlaylistVideoPlayerService.class);
         serviceIntent.putExtra("CREDITS", credit);
         serviceIntent.putExtra("UPLOAD", uploadbyUser);
         serviceIntent.putExtra("CONTRIBUTOR", iscontributor);
+        serviceIntent.putExtra("PLAYLIST", currPlaylist);
+
 
         startService(serviceIntent);
         (new Handler()).postDelayed(this::binder, 500);
@@ -600,9 +631,9 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             public void onServiceConnected(ComponentName className,
                                            IBinder service) {
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
+                PlaylistVideoPlayerService.LocalBinder binder = (PlaylistVideoPlayerService.LocalBinder) service;
                 mService = binder.getService();
-                mService.setCallbacks(VideoPlayer.this);
+                mService.setCallbacks(PlaylistVideoPlayer.this);
                 mBound = true;
                 mService.resetPlayer();
             }
@@ -618,6 +649,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
 
     private void startConnection() {
+        Log.e(TAG, "on start connection");
+
         /* Video Player Service */
         mConnection = new ServiceConnection() {
 
@@ -625,12 +658,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             public void onServiceConnected(ComponentName className,
                                            IBinder service) {
                 // We've bound to LocalService, cast the IBinder and get LocalService instance
-                VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
+                PlaylistVideoPlayerService.LocalBinder binder = (PlaylistVideoPlayerService.LocalBinder) service;
                 mService = binder.getService();
-                mService.setCallbacks(VideoPlayer.this);
+                mService.setCallbacks(PlaylistVideoPlayer.this);
                 mBound = true;
 
-                readData(new MyCallback() {
+                readData(new PlaylistVideoPlayer.MyCallback() {
                     @Override
                     public void onCallback(ArrayList value) {
 
@@ -677,10 +710,8 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void setPlayerView() {
-        //ClippingMediaSource clippingSource = new ClippingMediaSource(mediaSource1, 0, 15_000_000);
-        //player.prepare(clippingSource, true, false);
         Log.d(TAG, "Set PlayerView");
-        playerView.setPlayer(VideoPlayerService.player);
+        playerView.setPlayer(PlaylistVideoPlayerService.player);
         playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
     }
 
@@ -690,46 +721,84 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         this.finish();
     }
 
-    /**
-     * Load related videos to the current displayed one based on its genre/sub-genre/uploader.
-     */
-    private void loadRelatedVideos() {
-        RecyclerView recyclerView = findViewById(R.id.relatedVideos_RCV);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    ArrayList<String> PlaylistList = new ArrayList<>();
 
-        List<Video> videoList = new ArrayList<>();
-        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent(), this);
-
+    private void loadPlaylistVideos() {
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-        firebaseFirestore.collection("Videos")
-                .whereEqualTo("delete", "N")
-                .whereEqualTo("privacy", "Public (everyone can see)")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+        FirebaseDatabase.getInstance().getReference("PlaylistVideos")
+                .child(current_user.getUid())
+                .child(playlistName)
+                .addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
-                            if (doc.get("genre").equals(vid.getGenre())
-                                    || doc.get("subGenre").equals(vid.getSubGenre())
-                                    || doc.get("userId").equals(vid.getUserId())) {
-                                if (!vid.getVideoId().equals(doc.getId())) {
-                                    videoList.add(doc.toObject(Video.class));
-                                    relatedVideosAdapter.notifyDataSetChanged();
-                                    recyclerView.setAdapter(relatedVideosAdapter);
-                                }
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            for (DataSnapshot eachplaylist : dataSnapshot.getChildren()) {
+                                PlaylistList.add(eachplaylist.getValue(String.class));
                             }
                         }
-                        // Show the next music video to play
-                        nextVideo = relatedVideosAdapter.getNextFromList();
-                        if (nextVideo != null) {
-                            loadNextInQue(nextVideo);
-                        }
+                        Log.e(TAG, "Playlist values:" +PlaylistList);
+                        getaaaPlayVideos();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                     }
                 });
+    }
+    List<Video> videoList = new ArrayList<>();
+
+    private void getaaaPlayVideos() {
+
+        relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent(),this);
+        ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
+        for (int j = 0; j < PlaylistList.size(); j++) {
+            queryy.add(videosCollectionRef
+                    .whereEqualTo("videoId", PlaylistList.get(j))
+                    .whereEqualTo("delete", "N")
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .get());
+        }
+
+        Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
+        task.addOnCompleteListener(new OnCompleteListener<List<QuerySnapshot>>() {
+            @Override
+            public void onComplete(@NonNull Task<List<QuerySnapshot>> task) {
+                int x = 0;
+                for (QuerySnapshot document : task.getResult()) {
+                    for (DocumentSnapshot docume : document.getDocuments()) {
+                        videoList.add(docume.toObject(Video.class));
+                    }
+                }
+                setupRecyclerView();
+            }
+        });
+    }
+
+
+
+    private void setupRecyclerView(){
+        if (videoList.size() > 0) {
+            Log.e(TAG, "Entered Recycler View values:" +videoList);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+            RecyclerView recyclerView = findViewById(R.id.relatedVideos_RCV);
+            RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(context) {
+                @Override protected int getVerticalSnapPreference() {
+                    return LinearSmoothScroller.SNAP_TO_START;
+                }
+            };
+            smoothScroller.setTargetPosition(2);
+            recyclerView.setLayoutManager(layoutManager);
+            layoutManager.startSmoothScroll(smoothScroller);
+            relatedVideosAdapter = new RelatedVideosAdapter(videoList, getApplicationContext(), getIntent(),this);
+            recyclerView.setAdapter(relatedVideosAdapter);
+            //nextVideo = relatedVideosAdapter.getNextFromList();
+        }
     }
 
     /**
      * Load the next music video to play, if auto-play is turned on.
+     *
      * @param nextVideo next video
      */
     private void loadNextInQue(Video nextVideo) {
@@ -759,12 +828,13 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * @param nextVideo next video
      */
     private void autoPlayNextVideo(Video nextVideo) {
-        Intent nextVideoPage = new Intent(getApplicationContext(), VideoPlayer.class);
+        Intent nextVideoPage = new Intent(getApplicationContext(), PlaylistVideoPlayer.class);
         nextVideoPage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
         nextVideoPage.putExtra("VIDEO", nextVideo);
         nextVideoPage.putExtra("CREDIT", currentCreditVal);
+        nextVideoPage.putExtra("PLAYLISTNAME", playlistName);
+        nextVideoPage.putExtra("PLAYLIST", currPlaylist);
         startActivity(nextVideoPage);
-        finish();
     }
 
     public interface MyCallback {
@@ -819,6 +889,40 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void updateCreditText(String credit) {
         Log.d(TAG, "Credits Decresed:  " + credit);
+    }
+
+    //This method is called after 15 secs for users with credits watch to check if they watched the video before
+    private void checkViewTime() throws ParseException {
+
+        FirebaseDatabase.getInstance().getReference("VideoViews")
+                .child(vid.getVideoId()).child(currentFirebaseUser.getUid()).child("TimeLimit")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        sTimeStamp = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Your video date from db check view time " + sTimeStamp);
+                        if (!Strings.isNullOrEmpty(sTimeStamp)) {
+                            try {
+                                checkTimeStamp();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                updatevideoview();
+                                updateCreditValue();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     // This method is to compare the current time with 4 hrs specified time limit for particular user
@@ -1035,19 +1139,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
      * Get the video's view count.
      */
     private void checkViewCount() {
+
         FirebaseFirestore.getInstance().collection("Videos")
-                .whereEqualTo("videoId", vid.getVideoId())
-                .whereEqualTo("delete", "N")
-                .whereEqualTo("privacy", "Public (everyone can see)")
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .document(vid.getVideoId())
+                .get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshot) {
-                if (!queryDocumentSnapshot.isEmpty()){
-                    for (DocumentSnapshot doc : queryDocumentSnapshot) {
-                        if (doc.exists()) {
-                            TextViewViewCount.setText(doc.get("views").toString());
-                        }
-                    }
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    TextViewViewCount.setText(documentSnapshot.get("views").toString());
                 }
             }
         });
@@ -1083,13 +1182,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*
         if (mBound) {
             mService.setCallbacks(null);
             unbindService(mConnection);
             mBound = false;
         }
-        */
     }
 
 
@@ -1115,7 +1212,10 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onStop() {
         super.onStop();
-        if (mConnection != null && mBound){
+        //  if (Util.SDK_INT > 23) {
+        //    releasePlayer();
+        //}
+        if (mConnection != null && mBound) {
             unbindService(mConnection);
             mBound = false;
             mService.setCallbacks(null);
@@ -1345,7 +1445,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                         Log.w(TAG, "Failed to read value.", error.toException());
                     }
                 });*/
-        Toast.makeText(VideoPlayer.this, "Video has been faved.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PlaylistVideoPlayer.this, "Video has been faved.", Toast.LENGTH_SHORT).show();
     }
 
     private void repostVideo() {
@@ -1439,12 +1539,12 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
     private void finishedWatchLater() {
-        Toast.makeText(VideoPlayer.this, "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PlaylistVideoPlayer.this, "Video has been added to Watch Later", Toast.LENGTH_SHORT).show();
 
     }
 
     private void finishedRepost() {
-        Toast.makeText(VideoPlayer.this, "Video has been reposted.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PlaylistVideoPlayer.this, "Video has been reposted.", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -1456,7 +1556,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 Intent reportAct = new Intent(getApplicationContext(), ReportVideoPopup.class);
                 reportAct.putExtra("VideoId", vid.getVideoId());
                 startActivity(reportAct);
-                finish();
                 break;
             case R.id.addWatchLater:
                 registerWatchLater();
@@ -1471,13 +1570,133 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     }
 
 
-    /* Following Code
-        Save Following - the former saves the user id to the artist they are following
+    /*private class ComponentListener extends Player.DefaultEventListener implements
+             VideoRendererEventListener, AudioRendererEventListener {
 
-        Save Unfollowing and Record Unfollow - the former removes the user id from the artist they are following
-     */
+         @Override
+         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+             String stateString;
+             switch (playbackState) {
+                 case Player.STATE_IDLE:
+                     stateString = "ExoPlayer.STATE_IDLE      -";
+                     break;
+                 case Player.STATE_BUFFERING:
+                     stateString = "ExoPlayer.STATE_BUFFERING -";
+                     break;
+                 case Player.STATE_READY:
+                     stateString = "ExoPlayer.STATE_READY     -";
+                     if (!(player.equals(""))) {
+                         if (player.getCurrentPosition() == 0) {
+                             if (!(uploadbyUser) && !iscontributor){
+                                 timerCounter();
+                             }
+                         }
+                     }
+
+                     break;
+
+                 case Player.STATE_ENDED:
+                     stateString = "ExoPlayer.STATE_ENDED     -";
+                     if (!(Integer.parseInt(currentCreditVal) > 0)) {
+                         callPurchase();
+                     }
+
+                     // Play the next video ONLY IF we have finished playing the whole video
+                     // and the auto-play switch is turned on
+                     else if (wholeVideo & autoplay_switchState) {
+                         new Handler().postDelayed(new Runnable() {
+                             @Override
+                             public void run() {
+                                 autoPlayNextVideo(relatedVideosAdapter.getFirstFromList());
+                             }
+                         }, 1500);
+                     }
+                     break;
+                 default:
+                     stateString = "UNKNOWN_STATE             -";
+                     break;
+             }
+             Log.d(TAG, "changed state to " + stateString + " playWhenReady: " + playWhenReady);
+         }
+
+         // Implementing VideoRendererEventListener.
+
+         @Override
+         public void onVideoEnabled(DecoderCounters counters) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onVideoDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onVideoInputFormatChanged(Format format) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onDroppedFrames(int count, long elapsedMs) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onRenderedFirstFrame(Surface surface) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onVideoDisabled(DecoderCounters counters) {
+             // Do nothing.
+         }
+
+         // Implementing AudioRendererEventListener.
+
+         @Override
+         public void onAudioEnabled(DecoderCounters counters) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onAudioSessionId(int audioSessionId) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onAudioDecoderInitialized(String decoderName, long initializedTimestampMs, long initializationDurationMs) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onAudioInputFormatChanged(Format format) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onAudioSinkUnderrun(int bufferSize, long bufferSizeMs, long elapsedSinceLastFeedMs) {
+             // Do nothing.
+         }
+
+         @Override
+         public void onAudioDisabled(DecoderCounters counters) {
+             // Do nothing.
+         }
+
+     }
+
+     /* Following Code
+         Save Following - the former saves the user id to the artist they are following
+
+         Save Unfollowing and Record Unfollow - the former removes the user id from the artist they are following
+      */
     //TODO update these to more fault tolerant firebase updates?
-    private void checkFollowing(OnDataReceiveCallback callback) {
+    private void checkFollowing(PlaylistVideoPlayer.OnDataReceiveCallback callback) {
         //get where the following state would be
         // check who the user is following
         database.getReference().child("following").child(currentFirebaseUser.getUid()).child(vid.getUserId())
@@ -1625,7 +1844,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
             playListAct.putExtra("VIDEO", vid);
             playListAct.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
             startActivity(playListAct);
-
         }
     }
 
@@ -1638,12 +1856,14 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
          *   Method that notifies the ui that the Data was received
          */
         void onFollowChecked(boolean following);
+
         void onCheckUpdateFailed();
     }
 
 
     /**
      * Handles the back button on toolbar.
+     *
      * @return true
      */
     @Override
@@ -1654,10 +1874,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     /**
      * Open the comments page.
+     *
      * @param view view
      */
     public void viewAllComments(View view) {
-        Intent commentPageIntent = new Intent(VideoPlayer.this, CommentPage.class);
+        Intent commentPageIntent = new Intent(PlaylistVideoPlayer.this, CommentPage.class);
         commentPageIntent.putExtra("VIDEO", vid);
         commentPageIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
         startActivity(commentPageIntent);
@@ -1737,7 +1958,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         });
     }
 
-    private void initMiniButton(){
+    private void initMiniButton() {
         minimizeButton = controlView.findViewById(R.id.shrink_into_backBtn);
         minimizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1745,22 +1966,11 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
                 makeMiniPlayer();
             }
         });
-
-}
-
-    /**DRAG VIDEO **/
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if (this.mDetector.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
     }
 
-    public void makeMiniPlayer(){
+    public void makeMiniPlayer() {
         Intent intent = new Intent(this, MainActivity.class);
-        if (mConnection != null && mBound){
+        if (mConnection != null && mBound) {
             unbindService(mConnection);
             mBound = false;
             mService.setCallbacks(null);
@@ -1769,19 +1979,31 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         intent.putExtra("MINI_VISIBLE", true);
         intent.putExtra("VIDEO", vid);
         intent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+        intent.putExtra("PLAYLIST", currPlaylist);
         //intent.putExtra("Playback_Position",  playbackPosition);
         //intent.putExtra("CurrentWindow", currentWindow);
         // Pass data object in the bundle and populate details activity.
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, TextViewTitle, "title");
         startActivity(intent, options.toBundle());
-        finish();
+    }
+
+
+    /**
+     * DRAG VIDEO
+     **/
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (this.mDetector.onTouchEvent(event)) {
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 
     @Override
     public boolean onFling(MotionEvent event1, MotionEvent event2,
                            float velocityX, float velocityY) {
-        Log.d(DEBUG_TAG, "onFling: " );
+        Log.d(DEBUG_TAG, "onFling: ");
         makeMiniPlayer();
         return true;
     }
@@ -1810,5 +2032,6 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
     public void onLongPress(MotionEvent event) {
         Log.d(DEBUG_TAG, "onLongPress: " + event.toString());
     }
+
 
 }

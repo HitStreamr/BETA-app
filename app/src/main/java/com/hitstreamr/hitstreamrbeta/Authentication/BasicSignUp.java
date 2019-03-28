@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -89,6 +90,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
         // Views
         mFullName = findViewById(R.id.fullName);
+        mFullName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mUsername = findViewById(R.id.Username);
         mEmailField = findViewById(R.id.Email);
         mPasswordField = findViewById(R.id.Password);

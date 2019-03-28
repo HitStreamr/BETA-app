@@ -35,8 +35,6 @@ public class Welcome extends AppCompatActivity implements View.OnClickListener {
 
     final String TAG = "WELCOME";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

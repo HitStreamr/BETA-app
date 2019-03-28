@@ -295,7 +295,7 @@
                     android:id="@+id/textviewsignin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Already have an account? SignIn here!"
+                    android:text="Alreay have an account? SignIn here!"
                     android:textColor="@color/colorWhite"
                     android:layout_gravity="center_horizontal"
                     />

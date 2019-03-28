@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -122,13 +123,18 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         // Views
         mFirstName = findViewById(R.id.artistFirstName);
+        mFirstName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mLastName = findViewById(R.id.artistLastName);
+        mLastName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mArtistName = findViewById(R.id.artistName);
+        mArtistName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mEmail = findViewById(R.id.artistEmail);
         mPassword = findViewById(R.id.artistPassword);
         mUsername = findViewById(R.id.artistUsername);
         mAddress = findViewById(R.id.artistAddressLine1);
+        mAddress.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mCity = findViewById(R.id.artistCity);
+        mCity.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mState = findViewById(R.id.artistState);
         mZipcode = findViewById(R.id.artistZip);
         mCountry = findViewById(R.id.artistCountry);
@@ -210,7 +216,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
 
         validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address,
-                city, state, country, phone, zip, "", null, "false"), password);
+                city, state, country, phone, zip, "", "", "false"), password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -526,10 +532,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mUsername.setError("Field can't be empty");
             return false;
         } else if (!checkUsername(artist)) {
-            mAddress.setError("Username cannot contain special characters.");
+            mUsername.setError("Username cannot contain special characters.");
             return false;
         } else if (artist.length() <= 6) {
-            mAddress.setError("Username is too short.");
+            mUsername.setError("Username is too short.");
             return false;
         } else {
             mUsername.setError(null);

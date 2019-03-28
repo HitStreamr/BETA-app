@@ -2,6 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.TypedArray;
@@ -29,9 +30,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -120,6 +123,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hotchemi.android.rate.AppRate;
 
 import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
@@ -147,8 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private PlayerView relBGView;
     private ExoPlayer player;
     private TextView BGText;
-    private int playerPos;
-    private int currPos;
+    private boolean playlist;
 
 
     FloatingActionButton fab;
@@ -174,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String name;
     Uri photoUrl;
 
-    RequestManager  glideRequests;
+    RequestManager glideRequests;
 
     FirebaseUser user;
     public final String TAG = "HomeActivity";
@@ -183,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
     private com.google.firebase.database.Query myRefforName; // for Firebase Database
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>  firebaseRecyclerAdapter_artist;
+    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder> firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
 
     private TabLayout mTabLayout;
@@ -193,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String creditValue;
     private ServiceConnection mConnection;
     private VideoPlayerService mService;
+    private PlaylistVideoPlayerService mPlaylistService;
     private boolean runCheck;
     private boolean mBound;
     private ArrayList userUploadVideoList;
@@ -244,13 +248,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         //prevent from crashing due to setting the settings again
-        if (savedInstanceState == null) {
-            db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        /*if (savedInstanceState == null) {
+
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setTimestampsInSnapshotsEnabled(true)
                     .build();
             db.setFirestoreSettings(settings);
         }
+        */
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
@@ -297,19 +304,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         CirImageViewProPic.setVisibility(View.VISIBLE);
 
 
-        if(photoUrl == null){
+        if (photoUrl == null) {
             //CirImageViewProPic.setImageDrawable(R.drawable.artist);
-            Log.e(TAG, "username is::" +name);
+            Log.e(TAG, "username is::" + name);
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
-        }
-        else{
+        } else {
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("") || name.equals(null)){
+        if (name.equals("") || name.equals(null)) {
             String tempname = "Username";
             TextViewUsername.setText(tempname);
-        }
-        else{
+        } else {
             TextViewUsername.setText(name);
         }
        /* else{
@@ -376,10 +381,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //Make sure credits actually has a value
         //setting the fragments
-        if(getIntent().hasExtra("OPTIONAL_FRAG"))
-        {
+        if (getIntent().hasExtra("OPTIONAL_FRAG")) {
             String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
-            switch(frag){
+            switch (frag) {
                 case HOME:
                     bottomNavView.setSelectedItemId(R.id.home);
                     break;
@@ -390,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     bottomNavView.setSelectedItemId(R.id.activity);
                     break;
             }
-        }else{
+        } else {
             //FRAG not set; default to home
             bottomNavView.setSelectedItemId(R.id.home);
         }
@@ -405,12 +409,41 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         returnPlayerView = relBG.findViewById(R.id.return_to_full);
         closeMini = findViewById(R.id.closeMini);
         //Setup Miniplayer
-        if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+        if (getIntent().getBooleanExtra("MINI_VISIBLE", false)) {
             relBG.setVisibility(View.VISIBLE);
-            initMiniPlayer();
-            BGText.setText(((Video)getIntent().getParcelableExtra("VIDEO")).getTitle());
+            if(getIntent().getParcelableExtra("PLAYLIST") == null){
+                Log.e(TAG, "PLAYLIST WAS NULL");
+                initMiniPlayer();
+            }else{
+                playlist = true;
+                initMiniPlaylistPlayer();
+            }
+            BGText.setText(((Video) getIntent().getParcelableExtra("VIDEO")).getTitle());
             binder();
         }
+
+        //Rate this app pop up
+        AppRate.with(this)
+                .setInstallDays(1)
+                .setLaunchTimes(3)
+                .setRemindInterval(3)
+                .setDebug(false);
+
+        //AppRate.showRateDialogIfMeetsConditions(this);
+
+        //AppRate.with(this).clearAgreeShowDialog();
+        //AppRate.with(this).setTextRateNow(0); //setThemeResId(int);
+        AppRate.with(getAlertDialogContext(this)).monitor();
+        AppRate.showRateDialogIfMeetsConditions(this);
+
+//        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+//        View view = inflater.inflate(R.layout.custom_dialog, (ViewGroup)findViewById(R.id.layout_root));
+//        AppRate.with(this).setView(view).monitor();
+
+    }
+
+    public static ContextThemeWrapper getAlertDialogContext(Context context){
+        return new ContextThemeWrapper(context, R.style.AlertDialog);
     }
 
     private void initMiniPlayer(){
@@ -423,7 +456,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
                 mService = binder.getService();
                 mService.setCallbacks(MainActivity.this);
-                mBound = true;
                 mService.resetPlayer();
             }
 
@@ -444,7 +476,58 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
                 fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 fullscreen.putExtra("RETURN", true);
-                fullscreen.putExtra("CREDIT", creditValue);
+                startActivity(fullscreen);
+            }
+        });
+
+        closeMini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relBG.setVisibility(View.GONE);
+                releasePlayer();
+            }
+        });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void initMiniPlaylistPlayer(){
+        mConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                PlaylistVideoPlayerService.LocalBinder binder = (PlaylistVideoPlayerService.LocalBinder) service;
+                mPlaylistService = binder.getService();
+                mPlaylistService.setCallbacks(MainActivity.this);
+
+                mPlaylistService.resetPlayer();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+                mPlaylistService = null;
+
+            }
+        };
+        BGText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
+                Intent fullscreen = new Intent(MainActivity.this, PlaylistVideoPlayer.class);
+                fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                fullscreen.putExtra("PLAYLIST", (Playlist) getIntent().getParcelableExtra("PLAYLIST"));
+                fullscreen.putExtra("PLAYLISTNAME", ((Playlist) getIntent().getParcelableExtra("PLAYLIST")).getPlaylistname());
+                fullscreen.putExtra("RETURN", true);
                 startActivity(fullscreen);
             }
         });
@@ -467,8 +550,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void binder(){
         Log.d(TAG, "Bind Service");
-        bindService(new Intent(MainActivity.this, VideoPlayerService.class),mConnection, 0);
+        Log.d(TAG, "" + playlist);
+        if(playlist){
+            bindService(new Intent(MainActivity.this,PlaylistVideoPlayerService.class),mConnection,0);
+        }else {
+            bindService(new Intent(MainActivity.this, VideoPlayerService.class), mConnection, 0);
+        }
+        mBound = true;
     }
+
+
 
     @Override
     public void stopPlayer(){
@@ -487,8 +578,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void setPlayerView() {
-        playerView.setPlayer(VideoPlayerService.player);
-        controls.setPlayer(VideoPlayerService.player);
+        if (playlist){
+            playerView.setPlayer(PlaylistVideoPlayerService.player);
+            controls.setPlayer(PlaylistVideoPlayerService.player);
+        }else{
+            playerView.setPlayer(VideoPlayerService.player);
+            controls.setPlayer(VideoPlayerService.player);
+        }
+
     }
 
     @Override
@@ -997,6 +1094,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     search_input = newText;
                     switch (tab_position) {
                         case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                             //searchVideos(newText);
                             //firestoreRecyclerAdapter_video.startListening();
                             searchVideoFirestore(autocompleteQuery(newText));
@@ -1005,11 +1103,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             return true;
 
                         case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                             searchArtistAccounts(newText);
                             firebaseRecyclerAdapter_artist.startListening();
                             return true;
 
                         case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                             searchBasicAccounts(newText);
                             firebaseRecyclerAdapter_basic.startListening();
                             return true;
@@ -1017,6 +1117,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 if (newText.trim().isEmpty()) {
+                    switch (tab_position) {
+                        case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                            return true;
+                        case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                            return true;
+                        case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                            return true;
+                    }
                     stopAdapters();
                     if (suggestionAdapter != null){
                         suggestionAdapter.stopListening();
@@ -1091,22 +1202,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     stopAdapters();
                     switch (tab_position) {
                         case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                             searchVideoFirestore(autocompleteQuery(search_input));
                             suggestionAdapter.startListening();
                             break;
 
                         case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                             searchArtistAccounts(search_input);
                             firebaseRecyclerAdapter_artist.startListening();
                             break;
 
                         case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
                             searchBasicAccounts(search_input);
                             firebaseRecyclerAdapter_basic.startListening();
                             break;
                     }
                 } else {
-                    stopAdapters();
+
+                        switch (tab_position) {
+                            case 0:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                                break;
+                            case 1:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                                break;
+                            case 2:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                                break;
+
+                        }
+                        stopAdapters();
                 }
             }
 
@@ -1925,8 +2052,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService.stopVideoService();
-            mService = null;
+            if(playlist){
+                mPlaylistService.stopVideoService();
+                mPlaylistService = null;
+            }else{
+                mService.stopVideoService();
+                mService = null;
+            }
+
         }
     }
 
@@ -1934,8 +2067,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService.setCallbacks(null);
-            mService = null;
+            if(playlist){
+                mPlaylistService.setCallbacks(null);
+                mPlaylistService = null;
+            }else{
+                mService.setCallbacks(null);
+                mService = null;
+            }
         }
     }
 

@@ -103,7 +103,7 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
         if (radioGroup.getCheckedRadioButtonId() == -1) {
             Toast.makeText(this, "Please choose ONE reason for reporting.", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this, "Video is reported", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "video has been reported", Toast.LENGTH_SHORT).show();
             FirebaseDatabase.getInstance()
                     .getReference("Report")
                     .child(videoId)

@@ -50,9 +50,9 @@ public class CreditsRCVAdapter extends RecyclerView.Adapter<CreditsRCVAdapter.Cr
         holder.CreditPrice.setText(mCreditPrice.get(position));
         holder.PriceDescript.setText(mDescription.get(position));
         if(selected_position == position) {
-            holder.mCreditDtls.setCardBackgroundColor(Color.RED);
-            mListener.onCreditsSelected(mProductIds.get(position).toString(), mCreditVal.get(position).toString());
-        }
+                holder.mCreditDtls.setCardBackgroundColor(Color.BLUE);
+                    mListener.onCreditsSelected(mProductIds.get(position).toString(), mCreditVal.get(position).toString());
+                }
         else{
             holder.mCreditDtls.setCardBackgroundColor(Color.GRAY);
         }
@@ -79,7 +79,7 @@ public class CreditsRCVAdapter extends RecyclerView.Adapter<CreditsRCVAdapter.Cr
             PriceDescript = itemView.findViewById(R.id.priceDescription);
             mCreditDtls = itemView.findViewById(R.id.selected);
             this.mListener = mListener;
-            // selected_position = getAdapterPosition();
+           // selected_position = getAdapterPosition();
             //Log.e("credit ","selected position  adapter"+selected_position);
             mCreditDtls.setOnClickListener(new View.OnClickListener() {
                 @Override

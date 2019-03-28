@@ -157,7 +157,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/agree_tos_privacy"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/colorWhite"
                 android:textAlignment="center"
                 android:textSize="10sp"
                 android:layout_marginBottom="25dp"

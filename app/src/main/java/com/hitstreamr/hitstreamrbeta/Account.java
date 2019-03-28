@@ -621,9 +621,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         if (artistname.isEmpty()) {
             EditTextName.setError("Field can't be empty");
             return false;
-        } else if (artistname.length() <= 26) {
+        } else if (artistname.length() <= 30) {
             if (!(checkAlphaNumericSymbol(artistname))) {
-                EditTextName.setError("Name must be less than 26 Characters");
+                EditTextName.setError("Name cannot exceed 30 Characters");
                 return false;
             }
             return true;
@@ -850,7 +850,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
      */
     public boolean checkAlphaNumericSymbol(String s) {
 
-        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{}<>,./";
+        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{}<>,./ ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {

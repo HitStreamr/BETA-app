@@ -98,11 +98,11 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
             holder.activity.setText(postTypeFeed.get(position) + "  a video");
         }
         else {
-            holder.activity.setText(" and " + postLikeFeed.get(position)+"ed" + " others " + postTypeFeed.get(position) + "ed  a video");
+            holder.activity.setText(" and " + postLikeFeed.get(position)+"d" + " others " + postTypeFeed.get(position) + "ed  a video");
         }
 
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postVideoFeed.get(position).getUserId()).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postVideoFeed.get(position).getUserId()).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
@@ -116,7 +116,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
 
 
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postUserFeed.get(position)).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postUserFeed.get(position)+"ed").child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){

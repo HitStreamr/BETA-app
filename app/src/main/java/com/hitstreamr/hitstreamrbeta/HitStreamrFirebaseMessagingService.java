@@ -248,7 +248,7 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.hitstreamr_icon)
+                        .setSmallIcon(R.drawable.new_hitstreamr_h_logo_wht_w_)
                         .setContentTitle(message.get("title"))
                         .setContentText(message.get("body"))
                         .setAutoCancel(true)

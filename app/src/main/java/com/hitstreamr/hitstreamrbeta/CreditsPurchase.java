@@ -112,7 +112,13 @@ public class CreditsPurchase extends AppCompatActivity implements View.OnClickLi
     }
     public void onClick(View view) {
         if (view == ConfirmBtn) {
-            makePurchase();
+            if( creditvalue != null) {
+                makePurchase();
+            }
+            else{
+                Toast.makeText(getApplicationContext(), "Please select a credit value", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
     }
 

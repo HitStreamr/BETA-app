@@ -58,7 +58,7 @@ public class PlaylistContentAdapter extends RecyclerView.Adapter<PlaylistContent
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mlistner.onPlaylistVideoClick(playlist.getPlayVideos().get(position));
+                mlistner.onPlaylistVideoClick(playlist.getPlayVideos().get(position), playlist.getPlaylistname());
             }
         });
 
