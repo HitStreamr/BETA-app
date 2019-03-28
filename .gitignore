@@ -9,3 +9,10 @@
 /build
 /captures
 .externalNativeBuild
+.idea/vcs.xml
+/.idea/caches
+.firebaserc
+/functions
+firebase.json
+*.ser
+appengine/
