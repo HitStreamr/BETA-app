@@ -74,8 +74,8 @@ public class PlaylistVideoPlayerService extends Service {
     private String sTimeStamp = "";
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-    private static final String TAG = "Video Player Service";
-    private static final String CHANNEL_ID = "HS_VIDEO_PLAYER";
+    private static final String TAG = "Playlist Video Player Service";
+    private static final String CHANNEL_ID = "PLAYLIST_VIDEO_PLAYER";
 
     private static final int NOTIFICATION_ID = 1023456789;
     private PlaylistVideoPlayerService.ComponentListener componentListener;
@@ -232,7 +232,9 @@ public class PlaylistVideoPlayerService extends Service {
 
     public void setPlayer(Video newVid, boolean clipped, String credits) {
         vid = newVid;
+        Log.e(TAG, "Current" + vid+ "\n");
         nextVideo = nextVideoHelper();
+        Log.e(TAG, "Next Video" + nextVideo + "\n");
         this.clipped = clipped;
         this.credits = credits;
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
@@ -521,16 +523,16 @@ public class PlaylistVideoPlayerService extends Service {
 
         if (uploadbyUser) {
             //Log.e(TAG, "player before inside else if  "+uploadbyUser);
-            setPlayer(vid, false, currentCreditVal);
+            setPlayer(nextVideo, false, currentCreditVal);
         } else if (isContributor) {
             //Log.e(TAG, "player before inside else if  contributor" + isContributor);
-            setPlayer(vid, false, currentCreditVal);
+            setPlayer(nextVideo, false, currentCreditVal);
         } else if (Integer.parseInt(currentCreditVal) > 0) {
             //Log.e(TAG, "player before inside if ");
             // Log.e(TAG, "player before initializePlayer success ");
-            setPlayer(vid, false, currentCreditVal);
+            setPlayer(nextVideo, false, currentCreditVal);
         } else {
-            setPlayer(vid, true, currentCreditVal);
+            setPlayer(nextVideo, true, currentCreditVal);
             runCheck = true;
         }
 

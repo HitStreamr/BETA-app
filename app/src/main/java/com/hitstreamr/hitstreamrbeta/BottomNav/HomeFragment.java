@@ -73,7 +73,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     //Featured Artist
     RecyclerView featuredArtistRCV;
     Button featuredMore;
-    Video selectedFeaturedVideo;
     Query featuredVideosQuery;
     Task<QuerySnapshot> featuredResults;
     ArrayList<Video> featuredVideos;
@@ -380,15 +379,15 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                         //Open Video Player for song
                         Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                         videoPlayerIntent.putExtra("VIDEO", video);
-                        Log.e(TAG, video.toString());
+                        videoPlayerIntent.putExtra("VID", video);
+                        //Log.e(TAG, video.toString());
                         videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                         startActivity(videoPlayerIntent);
-
                     }
 
                     @Override
                     public void onOverflowClick(Video video, View v) {
-                        selectedFeaturedVideo = video;
+                        onClickedVideo = video;
                         showOverflow(v);
                     }
                 };
@@ -671,7 +670,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void getUserGenre() {
         FirebaseDatabase.getInstance().getReference("SelectedGenres")
                 .child(current_user.getUid())
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {

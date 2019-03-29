@@ -527,7 +527,9 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                userAdapter.clear();
+                if (userAdapter != null) {
+                    userAdapter.clear();
+                }
                 if (userVideoAdapter != null) {
                     userVideoAdapter.clear();
                 }
@@ -812,12 +814,18 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
                     .addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Log.e(TAG,"down uri: "+uri);
+                            //Log.e(TAG,"down uri: "+uri);
                             ImageViewBackground.setScaleType(ImageView.ScaleType.CENTER_CROP);
                             Glide.with(getApplicationContext()).load(uri).into(ImageViewBackground);
                         }
 
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
                     });
+
         }
     }
 
