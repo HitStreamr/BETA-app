@@ -127,6 +127,9 @@ public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylist
 
                     }
                 });
+
+        // Removed for now
+        holder.MoreBtn.setVisibility(View.GONE);
     }
 
     @Override

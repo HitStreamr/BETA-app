@@ -54,12 +54,18 @@ public class UserUploadVideoAdapter extends RecyclerView.Adapter<UserUploadVideo
                 mListener.onResultClick(vids.get(position));
             }
         });
+
+        // Removed for now
+        holder.overflowMenu.setVisibility(View.GONE);
+        /*
         holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onOverflowClick(vids.get(position), holder.moreMenu);
             }
         });
+        */
+
         holder.videoThumbnail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

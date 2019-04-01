@@ -149,6 +149,7 @@ public class Uploads extends Fragment {
 
                                     case R.id.deleteVideo:
                                         Intent deleteVideo = new Intent(getApplicationContext(), VideoDelete.class);
+                                        deleteVideo.putExtra("VideoId", model.getVideoId());
                                         startActivity(deleteVideo);
                                         break;
 

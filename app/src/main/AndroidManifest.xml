@@ -14,6 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".PlaylistVideoPlayer"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+                  android:noHistory="true"
+            ></activity>
+        <activity android:name=".InviteFriend"
+            android:screenOrientation="portrait" />
+        <activity android:name=".EmailVerification"
+            android:screenOrientation="portrait" />
         <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -80,6 +88,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".VideoPlayer"
+            android:noHistory="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
@@ -186,17 +195,22 @@
             android:name=".VideoUploadService"
             android:enabled="true"
             android:exported="false" />
+        <service
+            android:name=".PlaylistVideoPlayerService"
+            android:enabled="true"
+            android:exported="false" />
 
         <activity
             android:name=".Payouts"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
-
         <activity
             android:name=".BottomNav.FeaturedVideoRCV"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".EmailVerification"></activity>
+        <activity
+            android:name=".ContributorHelp"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
     </application>
 
 </manifest>

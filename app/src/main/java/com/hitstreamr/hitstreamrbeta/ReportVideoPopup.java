@@ -115,7 +115,7 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
                         public void onSuccess(Void aVoid) {
                             Log.e(TAG, "Video is reported");
                             finish();
-                            startActivity(new Intent(getApplicationContext(), ReportSubmission.class));
+                            //startActivity(new Intent(getApplicationContext(), ReportSubmission.class));
                         }
                     });
         }
