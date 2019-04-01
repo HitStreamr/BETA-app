@@ -2,7 +2,7 @@ package com.hitstreamr.hitstreamrbeta;
 
 public class Comment {
 
-    private String username, message, userID, timePosted, commentID, photoURI;
+    private String username, message, userID, timePosted, commentID;
 
     /**
      * Constructor #1
@@ -56,7 +56,6 @@ public class Comment {
                 ", userID='" + userID + '\'' +
                 ", timePosted='" + timePosted + '\'' +
                 ", commentID='" + commentID + '\'' +
-                ", photoURI='" + photoURI + '\'' +
                 '}';
     }
 }

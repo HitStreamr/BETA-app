@@ -60,12 +60,21 @@ public class NewReleasesListAdapter extends RecyclerView.Adapter<NewReleasesList
         DateFormat dateFormat = new SimpleDateFormat("yyyy");
         holder.videoYear.setText(dateFormat.format(objects1.get(position).getTimestamp().toDate()));
 
+        // onClick Listeners
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mListener.onResultClick(objects1.get(position));
             }
         });
+
+        holder.videoThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onResultClick(objects1.get(position));
+            }
+        });
+
         holder.overflowMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
