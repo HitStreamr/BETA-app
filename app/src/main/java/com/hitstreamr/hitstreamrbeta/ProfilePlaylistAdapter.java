@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,7 @@ public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylist
             holder.videoCountPlaylist.setText(String.valueOf(temp));
             holder.videoCount.setText(String.valueOf(temp) + " videos");
         });
+
         holder.singlePlaylist.setText(Playlist.get(position).getPlaylistname());
         holder.videoCountPlaylist.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()));
         holder.videoCount.setText(String.valueOf(Playlist.get(position).getPlayVideoIds().size()) + " videos");
@@ -128,8 +130,29 @@ public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylist
                     }
                 });
 
-        // Removed for now
-        holder.MoreBtn.setVisibility(View.GONE);
+        // onClick listener for menu
+        holder.MoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                MenuInflater menuInflater = popupMenu.getMenuInflater();
+                menuInflater.inflate(R.menu.playlist_menu, popupMenu.getMenu());
+                popupMenu.show();
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.editPlaylist:
+                                Intent editPlaylist = new Intent(mContext, EditPlaylist.class);
+                                editPlaylist.putExtra("playlist", Playlist.get(position));
+                                mContext.startActivity(editPlaylist);
+                        }
+                        return true;
+                    }
+                });
+            }
+        });
     }
 
     @Override

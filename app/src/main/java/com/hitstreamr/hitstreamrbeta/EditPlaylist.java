@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -84,13 +85,17 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
         });
         helper.attachToRecyclerView(recyclerView_EditPlaylistVideos);
 
+        // Prevent keyboard from showing automatically
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
 
     private void getPlayVideos() {
-        //Log.e(TAG, "Entered onsuceess" +Play);
         ArrayList<Task<QuerySnapshot>> queryy = new ArrayList<>();
         for (int j = 0; j < p.getPlayVideoIds().size(); j++) {
-            queryy.add(videosCollectionRef.whereEqualTo("videoId", p.getPlayVideoIds().get(j)).get());
+            queryy.add(videosCollectionRef.whereEqualTo("videoId", p.getPlayVideoIds().get(j))
+                    .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                    .whereEqualTo("delete", "N")
+                    .get());
         }
 
         Task<List<QuerySnapshot>> task = Tasks.whenAllSuccess(queryy);
