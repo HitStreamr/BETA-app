@@ -17,12 +17,16 @@
         <activity android:name=".PlaylistVideoPlayer"
                   android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                   android:noHistory="true"
+                  android:excludeFromRecents="true"
+                  android:parentActivityName=".Authentication.Splash"
             ></activity>
         <activity android:name=".InviteFriend"
             android:screenOrientation="portrait" />
         <activity android:name=".EmailVerification"
             android:screenOrientation="portrait" />
-        <activity android:name=".Authentication.Splash">
+        <activity android:name=".Authentication.Splash"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -90,6 +94,8 @@
             android:name=".VideoPlayer"
             android:noHistory="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:excludeFromRecents="true"
+            android:parentActivityName=".Authentication.Splash"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".Profile"

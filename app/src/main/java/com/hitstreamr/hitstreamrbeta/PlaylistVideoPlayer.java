@@ -616,7 +616,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         serviceIntent.putExtra("UPLOAD", uploadbyUser);
         serviceIntent.putExtra("CONTRIBUTOR", iscontributor);
         serviceIntent.putExtra("PLAYLIST", currPlaylist);
-
+        serviceIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
 
         startService(serviceIntent);
         (new Handler()).postDelayed(this::binder, 500);

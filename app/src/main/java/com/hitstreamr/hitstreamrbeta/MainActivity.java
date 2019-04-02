@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (getIntent().getBooleanExtra("MINI_VISIBLE", false)) {
             relBG.setVisibility(View.VISIBLE);
             if(getIntent().getParcelableExtra("PLAYLIST") == null){
-                Log.e(TAG, "PLAYLIST WAS NULL");
+                //Log.e(TAG, "PLAYLIST WAS NULL");
                 initMiniPlayer();
             }else{
                 playlist = true;
