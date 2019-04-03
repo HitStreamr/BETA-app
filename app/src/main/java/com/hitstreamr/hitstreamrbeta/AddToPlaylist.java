@@ -53,16 +53,13 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
 
         mlistner = new ItemClickListener() {
             @Override
-            public void onResultClick(String selectedPlaytList) {
-                playlistSelected = selectedPlaytList;
-                Log.e(TAG, "playlist selected using interface" +playlistSelected);
-
+            public void onResultClick(String selectedPlayList) {
+                playlistSelected = selectedPlayList;
             }
         };
 
         Video video = getIntent().getParcelableExtra("VIDEO");
         videoId = video.getVideoId();
-        Log.e(TAG, "Video id is :" +videoId);
 
         cancel = (Button) findViewById(R.id.cancel);
         ok = (Button) findViewById(R.id.confirm);
@@ -118,24 +115,36 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
 
     }
 
-    private  void registerVideoToPlaylist(){
-        FirebaseDatabase.getInstance()
-                .getReference("PlaylistVideos")
-                .child(current_user.getUid())
-                .child(playlistSelected)
-                .child(videoId)
-                .setValue(videoId)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.e(TAG, "Video is added to playlist and registered");
-                    }
-                });
+    /**
+     * Add the video to the selected playlist.
+     * Check if a playlist is selected.
+     * If none is selected, display a message and cancel the action.
+     */
+    private void registerVideoToPlaylist() {
+        // Check if a playlist has been selected
+        if (playlistSelected != null) {
+            FirebaseDatabase.getInstance()
+                    .getReference("PlaylistVideos")
+                    .child(current_user.getUid())
+                    .child(playlistSelected)
+                    .child(videoId)
+                    .setValue(videoId)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getApplicationContext(), "Video is added to " + playlistSelected,
+                                    Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                    });
+        } else {
+            Toast.makeText(getApplicationContext(), "Please select a playlist.", Toast.LENGTH_LONG).show();
+        }
     }
 
 
     public interface ItemClickListener {
-        void onResultClick(String selectedPlaytList);
+        void onResultClick(String selectedPlayList);
     }
 
     @Override
@@ -146,12 +155,10 @@ public class AddToPlaylist extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.confirm:
                 registerVideoToPlaylist();
-                Toast.makeText(this, "video added to " + playlistSelected, Toast.LENGTH_LONG).show();
-                finish();
                 break;
             case R.id.createplaylist:
                 startActivity(new Intent(getApplicationContext(), CreateNewPlaylist.class));
+                break;
         }
     }
 }
-//

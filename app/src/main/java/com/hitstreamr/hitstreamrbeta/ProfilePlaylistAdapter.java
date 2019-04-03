@@ -147,6 +147,13 @@ public class ProfilePlaylistAdapter extends RecyclerView.Adapter<ProfilePlaylist
                                 Intent editPlaylist = new Intent(mContext, EditPlaylist.class);
                                 editPlaylist.putExtra("playlist", Playlist.get(position));
                                 mContext.startActivity(editPlaylist);
+                                break;
+
+                            case R.id.deletePlaylist:
+                                Intent deletePlaylsit = new Intent(mContext, DeletePlaylist.class);
+                                deletePlaylsit.putExtra("PLAYLIST", Playlist.get(position));
+                                mContext.startActivity(deletePlaylsit);
+                                break;
                         }
                         return true;
                     }

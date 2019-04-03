@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
@@ -87,6 +88,27 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
 
         // Prevent keyboard from showing automatically
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
+        // Toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        toolbar.setTitleTextColor(0xFFFFFFFF);
+
+        // Set the toolbar's title
+        getSupportActionBar().setTitle(p.getPlaylistname());
+    }
+
+    /**
+     * Implement the back button on toolbar.
+     * @return true, if pressed
+     */
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void getPlayVideos() {
@@ -142,11 +164,14 @@ public class EditPlaylist extends AppCompatActivity implements View.OnClickListe
                 Collections.swap(p.playVideoIds , drag.get(i), targ.get(i));
             }
         }
+
         Task<List<Void>> task = Tasks.whenAllSuccess(queryy);
         task.addOnCompleteListener(new OnCompleteListener<List<Void>>() {
             @Override
             public void onComplete(@NonNull Task<List<Void>> task) {
-                startActivity(new Intent(getApplicationContext(), Library.class));
+                Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
+                libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(libraryIntent);
             }
         });
 

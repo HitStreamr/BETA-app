@@ -91,8 +91,9 @@ public class PlaylistVideosActivity extends AppCompatActivity {
         });
 
         playlistName = findViewById(R.id.playlist_Name);
+        playlistName.setVisibility(View.GONE);
         playlist = getIntent().getParcelableExtra("PlaylistVideos");
-        playlistName.setText(playlist.getPlaylistname());
+
         getSupportActionBar().setTitle(playlist.getPlaylistname());
         videosCollectionRef = db.collection("Videos");
 
@@ -109,7 +110,6 @@ public class PlaylistVideosActivity extends AppCompatActivity {
                             CreditVal = currentCredit;
                         } else
                             CreditVal = "0";
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
                     }
 
                     @Override
