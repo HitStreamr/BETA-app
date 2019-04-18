@@ -21,6 +21,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -94,15 +96,21 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         //holder.username.setText(postVideoFeed.get(position).getUsername() );
         holder.duration.setText(postVideoFeed.get(position).getDuration());
         holder.title.setText(postVideoFeed.get(position).getTitle());
-        if(postLikeFeed.get(position).equals("0")){
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.published.setText(dateFormat.format(postVideoFeed.get(position).getTimestamp().toDate()));
+
+        if(postTypeFeed.get(position).equalsIgnoreCase("Post")) {
+            holder.activity.setText(" Posted  a video");
+        }
+        else if(postLikeFeed.get(position).equals("0")){
             holder.activity.setText(postTypeFeed.get(position) + "  a video");
         }
         else {
-            holder.activity.setText(" and " + postLikeFeed.get(position)+"ed" + " others " + postTypeFeed.get(position) + "ed  a video");
+            holder.activity.setText(" and " + postLikeFeed.get(position)+"d" + " others " + postTypeFeed.get(position) + "ed  a video");
         }
 
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postVideoFeed.get(position).getUserId()).child("firstname").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postVideoFeed.get(position).getUserId()).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
@@ -116,7 +124,7 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
 
 
 
-        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postUserFeed.get(position)).child("username").addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(postUserFeed.get(position)+"ed").child("username").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){

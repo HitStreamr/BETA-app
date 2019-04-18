@@ -14,9 +14,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PlaylistVideoPlayer"></activity>
-        <activity android:name=".InviteFriend" />
-        <activity android:name=".EmailVerification" />
+        <activity android:name=".DeletePlaylist"></activity>
+        <activity
+            android:name=".PlaylistVideoPlayer"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:noHistory="true" />
+        <activity
+            android:name=".InviteFriend"
+            android:screenOrientation="portrait" />
+        <activity android:name=".EmailVerification"
+            android:screenOrientation="portrait" />
         <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -83,6 +90,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".VideoPlayer"
+            android:noHistory="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
@@ -199,8 +207,8 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu"/>
         <activity
-            android:name=".BottomNav.FeaturedVideoRCV"
-            android:screenOrientation="portrait"/>
+        android:name=".BottomNav.FeaturedVideoRCV"
+        android:screenOrientation="portrait"/>
         <activity
             android:name=".ContributorHelp"
             android:screenOrientation="portrait"
