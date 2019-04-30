@@ -270,7 +270,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         TextViewSizeLabel = findViewById(R.id.sizeLabel);
         TextViewProgressLabel = findViewById(R.id.progressLabel);
 
-        TextViewContributorName = findViewById(R.id.firstName);
+        TextViewContributorName = findViewById(R.id.firstLine);
         TextViewContributorPercentage = findViewById(R.id.thirdLine);
         TextViewContributorType = findViewById(R.id.secondLine);
 

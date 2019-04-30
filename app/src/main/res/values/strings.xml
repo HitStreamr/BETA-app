@@ -116,7 +116,7 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="invitation_deep_link">https://hitstreamr.page.link/invite</string>
     <!--<string name="invitation_custom_image"></string>-->
     <string name="invitation_cta">Invitation CTA</string>
-    <string name="contributorHelp">Add the usernane of your contributor. \n\nDon\'t see your contributor(s)? \n\nInvite fellow artists to join the app via the \'Invite A Friend\' tab in the menu!</string>
+    <string name="contributorHelp">Add the username of your contributor. \n\nDon\'t see your contributor(s)? \n\nInvite fellow artists to join the app via the \'Invite A Friend\' tab in the menu!</string>
     <string name="rate_dialog_title">Rate Us!</string>
     <string name="rate_dialog_message">If you enjoy this app, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
     <string name="rate_dialog_ok">Rate Us!</string>
