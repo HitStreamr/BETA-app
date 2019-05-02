@@ -84,7 +84,7 @@ public class CreditsRCVAdapter extends RecyclerView.Adapter<CreditsRCVAdapter.Cr
             mCreditDtls.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    selected_position = getAdapterPosition();;
+                    selected_position = getAdapterPosition();
                     notifyDataSetChanged();
                 }
 

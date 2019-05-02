@@ -390,8 +390,9 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                         selectedVideoPath = data.getData();
                         try {
 
-                            selectVideoBtn.setBackgroundColor(Color.GREEN);
+                            selectVideoBtn.setBackgroundColor(0xFF00DDFF);
                             selectVideoBtn.setText(R.string.video_selection);
+                            selectVideoBtn.setTextColor(Color.WHITE);
                             String path = data.getData().toString();
                             artistUploadVideo.setVideoPath(path);
                             artistUploadVideo.requestFocus();

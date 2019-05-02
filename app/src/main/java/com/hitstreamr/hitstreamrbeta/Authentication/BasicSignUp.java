@@ -286,12 +286,12 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         String password = mPasswordField.getText().toString().trim();
 
         // TODO: validateFullName
-        if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
-                | !validateToc() | !validateBrowsePhoto())  {
+        if (!validateEmail(email) || !validatePassword(password) || !validateUsername(username)
+                || !validateToc() || !validateBrowsePhoto())  {
             return;
         }
 
-        validateUserNameFirebase(new User(username, email, null, fullName, "", "false"), password);
+        validateUserNameFirebase(new User(username, email, "", fullName, "", "false"), password);
 
     }
 

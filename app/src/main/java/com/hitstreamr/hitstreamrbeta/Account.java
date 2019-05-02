@@ -34,6 +34,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.Authentication.SignInActivity;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
@@ -100,6 +101,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private Button ChangePwdBtn;
     private Button ChangePhotoBtn;
     private Button ChangeBackgroundBtn;
+    private Button DeleteMyAccount;
 
     //Object
     ArtistUser artist;
@@ -178,11 +180,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SaveAccountBtn.setOnClickListener(this);
         ChangePhotoBtn = findViewById(R.id.accountChangePhoto);
         ChangeBackgroundBtn = findViewById(R.id.accountChangeBackground);
+        DeleteMyAccount = findViewById(R.id.deleteAccount);
 
         ChangePwdBtn = findViewById(R.id.ChangePassword);
         ChangePwdBtn.setOnClickListener(this);
         ChangePhotoBtn.setOnClickListener(this);
         ChangeBackgroundBtn.setOnClickListener(this);
+        DeleteMyAccount.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -930,6 +934,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         startActivityForResult(Intent.createChooser(intent, "Select your Background picture"), 1234);
     }
 
+    private void deleteAccount(){
+        mAuth.signOut();
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.hitstreamr.com/delete-account"));
+        startActivity(browserIntent);
+        finish();
+    }
+
+
     @Override
     public void onClick(View view) {
         if (view == SaveAccountBtn) {
@@ -944,6 +957,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             choosePhoto();
         } else if(view == ChangeBackgroundBtn){
             chooseBackgroundPhoto();
+        } else if (view == DeleteMyAccount){
+            deleteAccount();
+
+
         }
     }
 

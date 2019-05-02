@@ -312,7 +312,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
 
 
     private void getHistoryList() {
-        HistoryRef.orderByChild("timestamp").limitToFirst(100).addValueEventListener(new ValueEventListener() {
+        HistoryRef.orderByChild("timestamp").limitToLast(100).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot eachVideoObject : dataSnapshot.getChildren()) {
@@ -359,7 +359,7 @@ public class Library extends AppCompatActivity implements BottomNavigationView.O
     private void setupHistoryRecyclerView() {
         if (HistoryVideos.size() > 0) {
             Log.e(TAG, "Entered setup history" + HistoryVideos);
-            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
             recyclerView_history.setLayoutManager(layoutManager);
             historyAdapter_history = new HistoryAdapter(this, HistoryVideos, mlistner, getIntent());
             recyclerView_history.setAdapter(historyAdapter_history);

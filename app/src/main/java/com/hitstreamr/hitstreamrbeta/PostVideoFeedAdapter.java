@@ -21,6 +21,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -94,7 +96,13 @@ public class PostVideoFeedAdapter extends RecyclerView.Adapter<PostVideoFeedAdap
         //holder.username.setText(postVideoFeed.get(position).getUsername() );
         holder.duration.setText(postVideoFeed.get(position).getDuration());
         holder.title.setText(postVideoFeed.get(position).getTitle());
-        if(postLikeFeed.get(position).equals("0")){
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.published.setText(dateFormat.format(postVideoFeed.get(position).getTimestamp().toDate()));
+
+        if(postTypeFeed.get(position).equalsIgnoreCase("Post")) {
+            holder.activity.setText(" Posted  a video");
+        }
+        else if(postLikeFeed.get(position).equals("0")){
             holder.activity.setText(postTypeFeed.get(position) + "  a video");
         }
         else {

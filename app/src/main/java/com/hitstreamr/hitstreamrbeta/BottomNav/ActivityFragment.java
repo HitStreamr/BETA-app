@@ -290,7 +290,9 @@ public class ActivityFragment extends Fragment {
         myRepostRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e(TAG, "Entered repost method");
                 repostDatasnapshot = dataSnapshot;
+                Log.e(TAG, "Entered repostDatasnapshot method" +repostDatasnapshot);
 
             }
 

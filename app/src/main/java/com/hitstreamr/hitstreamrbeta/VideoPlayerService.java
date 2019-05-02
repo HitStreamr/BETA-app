@@ -3,7 +3,6 @@ package com.hitstreamr.hitstreamrbeta;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -17,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Surface;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -27,21 +27,15 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,11 +45,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.Authentication.Splash;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,7 +72,6 @@ public class VideoPlayerService extends Service {
     private boolean runCheck;
     private boolean reset;
     private String credits;
-    private String currentCreditVal;
 
     private String sTimeStamp = "";
 
@@ -88,6 +89,10 @@ public class VideoPlayerService extends Service {
     private boolean uploadbyUser;
     private boolean isContributor;
     private boolean autoplay_switchState;
+    Video nextVideo;
+    private ArrayList<Video> videoList;
+    private ArrayList<String> userContributor;
+    private String type;
 
 
     /**
@@ -170,7 +175,14 @@ public class VideoPlayerService extends Service {
                     @Nullable
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
-                        return null;
+
+                            Intent notifyIntent = new Intent(VideoPlayerService.this, Splash.class);
+
+                            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            return PendingIntent.getActivity(
+                                    VideoPlayerService.this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
                     }
 
                     public Bitmap getPlaceholderBitmap(){
@@ -214,10 +226,11 @@ public class VideoPlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        videoList = new ArrayList<>();
         lastID = startId;
-        credits = intent.getStringExtra("CREDITS");
         uploadbyUser = intent.getBooleanExtra("UPLOAD", false);
         isContributor = intent.getBooleanExtra("CONTRIBUTOR", false);
+        type = intent.getStringExtra("TYPE");
         Log.e(TAG ,"inside service isuploaded "+uploadbyUser+"  ::: isContributor  "+isContributor);
         //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         return START_STICKY;
@@ -225,6 +238,45 @@ public class VideoPlayerService extends Service {
 
     public void setCallbacks(PlayerServiceCallback callback) {
         serviceCallback = callback;
+        if(serviceCallback == null){
+            loadRelatedVideos();
+        }
+    }
+
+    /**
+     * Load related videos to the current displayed one based on its genre/sub-genre/uploader.
+     */
+    private void loadRelatedVideos() {
+        FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseFirestore.collection("Videos")
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                            if (doc.get("genre").equals(vid.getGenre())
+                                    || doc.get("subGenre").equals(vid.getSubGenre())
+                                    || doc.get("userId").equals(vid.getUserId())) {
+                                if (!vid.getVideoId().equals(doc.getId())) {
+                                    videoList.add(doc.toObject(Video.class));
+                                }
+                            }
+                        }
+                        // Show the next music video to play
+                        nextVideo = getNextFromList();
+                    }
+                });
+    }
+
+    public Video getNextFromList() {
+        if (videoList.size() != 0) {
+            Random random = new Random();
+            int index = random.nextInt(videoList.size());
+            return videoList.get(index);
+        }
+        return null;
     }
 
     public void setPlayer(Video newVid, boolean clipped, String credits) {
@@ -354,13 +406,6 @@ public class VideoPlayerService extends Service {
 
     // to update the user id and time frame (current time + 4hrs) values into VideoView DB
     private void updatevideoview(FirebaseUser currentFirebaseUser) throws ParseException {
-
-       /* long currentTimeMillis = System.currentTimeMillis();
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date date = new Date(currentTimeMillis);
-        String currentTime = dateFormat.format(date);
-        Log.e(TAG, "Your video date format :" + currentTime);*/
         if (!uploadbyUser && !isContributor) {
             Calendar now = Calendar.getInstance();
             Calendar tmp = (Calendar) now.clone();
@@ -392,6 +437,7 @@ public class VideoPlayerService extends Service {
         return false;
     }
 
+
     //To reduce 1 user credit for watching a video
     private void updateCreditValue(FirebaseUser currentFirebaseUser) {
         if (!uploadbyUser && !isContributor) {
@@ -411,6 +457,109 @@ public class VideoPlayerService extends Service {
             }
         }
     }
+
+    /**
+     * Play the next video on the list.
+     *
+     * @param nextVideo next video
+     */
+    private void autoPlayNextVideo(Video nextVideo) {
+        userContributor = new ArrayList<>();
+
+        FirebaseFirestore.getInstance().collection("Videos")
+                .whereEqualTo("videoId", vid.getVideoId())
+                .whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", "Public (everyone can see)")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                ArrayList<HashMap<String, String>> temp = (ArrayList<HashMap<String, String>>) document.get("contributors");
+                                for (HashMap<String, String> contributor : temp) {
+                                    userContributor.add(contributor.get("contributorUserId"));
+                                }
+                            }
+
+                            nextVideoCreditCheck();
+
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+    }
+
+    private void nextVideoCreditCheck(){
+        FirebaseDatabase.getInstance().getReference("Credits")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("creditvalue")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String currentCredit = dataSnapshot.getValue(String.class);
+                        Log.e(TAG, "Main activity credit val " + currentCredit);
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
+                            credits= currentCredit;
+                        } else {
+                            //userCredits.setText("0");
+                            credits = "0";
+                        }
+                        setupNextVideo();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // ...
+                    }
+                });
+
+    }
+
+    public void checkuploaded() {
+        if (nextVideo.getUserId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            uploadbyUser = true;
+        } else {
+            uploadbyUser = false;
+        }
+    }
+
+    private void setupNextVideo(){
+
+        isContributor = userContributor.contains(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        checkuploaded();
+
+        if (uploadbyUser) {
+            //Log.e(TAG, "player before inside else if  "+uploadbyUser);
+            setPlayer(nextVideo, false, credits);
+        } else if (isContributor) {
+            //Log.e(TAG, "player before inside else if  contributor" + isContributor);
+            setPlayer(nextVideo, false, credits);
+        } else if (Integer.parseInt(credits) > 0) {
+            //Log.e(TAG, "player before inside if ");
+            // Log.e(TAG, "player before initializePlayer success ");
+            setPlayer(nextVideo, false, credits);
+        } else {
+            setPlayer(nextVideo, true, credits);
+            runCheck = true;
+        }
+
+    }
+
+    /**
+     * Plays the next video when the Service signals.
+     */
+    public void autoPlayNext() {
+        if (nextVideo != null) {
+            autoPlayNextVideo(nextVideo);
+        }else {
+            Toast.makeText(this, "Error playing next video.", Toast.LENGTH_LONG).show();
+        }
+    }
+
 
     private class ComponentListener extends Player.DefaultEventListener implements
             VideoRendererEventListener, AudioRendererEventListener {
@@ -441,16 +590,21 @@ public class VideoPlayerService extends Service {
                     // and the auto-play switch is turned on
                     if (!clipped & checkAutoplay()) {
                         Log.e(TAG, "AUTOPLAY entering IF");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (serviceCallback != null){
-                                Log.e(TAG, "AUTOPLAY CALLED");
-                                serviceCallback.autoPlayNext();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (serviceCallback != null){
+                                    Log.e(TAG, "AUTOPLAY CALLED");
+                                    serviceCallback.autoPlayNext();
+                                }else{
+                                    autoPlayNext();
+                                }
                             }
-                        }
-                    }, 1500);
-                }
+                        }, 1500);
+                    }else if (clipped) {
+                        stopVideoService();
+                        startActivity(new Intent(VideoPlayerService.this, CreditsPurchase.class));
+                    }
                     break;
                 default:
                     stateString = "UNKNOWN_STATE             -";

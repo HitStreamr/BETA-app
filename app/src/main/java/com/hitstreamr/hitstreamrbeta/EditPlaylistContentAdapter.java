@@ -42,7 +42,7 @@ public class EditPlaylistContentAdapter extends RecyclerView.Adapter<EditPlaylis
     @Override
     public void onBindViewHolder(@NonNull EditPlaylistContentAdapter.EditPlaylistContentViewHolder holder, int position) {
         holder.videoTitle.setText(playlist.getPlayVideos().get(position).getTitle());
-        Glide.with(getApplicationContext()).load(Uri.parse((playlist.getPlayVideos().get(position).getThumbnailUrl()))).into(holder.videoThumbnail);
+        Glide.with(getApplicationContext()).load(Uri.parse((playlist.getPlayVideos().get(position).getUrl()))).into(holder.videoThumbnail);
 
     }
 

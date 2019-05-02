@@ -5,14 +5,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
@@ -23,7 +23,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,7 +37,6 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -58,28 +56,13 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetSequence;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.text.Subtitle;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -95,8 +78,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
@@ -112,15 +93,9 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import hotchemi.android.rate.AppRate;
@@ -139,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Button logout;
     private DrawerLayout drawer;
-    private LinearLayout contentHolder;
+    private LinearLayout contentHolder, drawerTap;
     private ViewGroup.LayoutParams defaultParams;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
@@ -223,6 +198,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean firstStart = prefs.getBoolean("firstStart", true);
+
+        if (firstStart) {
+            tutorialTapTarget();
+        }
+
+
+
+
         main = this;
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -294,6 +279,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.e(TAG, "Your profile" + name + photoUrl + user);
 
         drawer = findViewById(R.id.drawer_layout);
+        drawerTap = findViewById(R.id.drawer_tap);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
@@ -401,7 +387,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-
         relBG = findViewById(R.id.BGRel);
         relBGView = relBG.findViewById(R.id.background_video_player);
         BGText = relBG.findViewById(R.id.songTitleBG);
@@ -413,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (getIntent().getBooleanExtra("MINI_VISIBLE", false)) {
             relBG.setVisibility(View.VISIBLE);
             if(getIntent().getParcelableExtra("PLAYLIST") == null){
-                Log.e(TAG, "PLAYLIST WAS NULL");
+                //Log.e(TAG, "PLAYLIST WAS NULL");
                 initMiniPlayer();
             }else{
                 playlist = true;
@@ -426,21 +411,121 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Rate this app pop up
         AppRate.with(this)
                 .setInstallDays(1)
-                .setLaunchTimes(3)
-                .setRemindInterval(3)
-                .setDebug(false);
+                .setLaunchTimes(5)
+                .setRemindInterval(2)
+                .monitor();
 
-        //AppRate.showRateDialogIfMeetsConditions(this);
-
-        //AppRate.with(this).clearAgreeShowDialog();
-        //AppRate.with(this).setTextRateNow(0); //setThemeResId(int);
-        AppRate.with(getAlertDialogContext(this)).monitor();
         AppRate.showRateDialogIfMeetsConditions(this);
 
-//        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.custom_dialog, (ViewGroup)findViewById(R.id.layout_root));
-//        AppRate.with(this).setView(view).monitor();
+    }
 
+    private void tutorialTapTarget() {
+        TapTargetView.showFor(this,
+                TapTarget.forView(findViewById(R.id.home), "This is Home", "Find all the things you love here!")
+                        .tintTarget(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap1();
+
+                        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("firstStart", false);
+                        editor.apply();
+                    }
+                });
+    }
+
+    private void nextTap1() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.discover), "Discover More", "Find out what's new and exciting here!")
+                        .tintTarget(true)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+        new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+            @Override
+            public void onTargetClick(TapTargetView view) {
+                super.onTargetClick(view);      // This call is optional
+                nextTap2();
+            }
+        });
+    }
+
+    private void nextTap2() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.activity), "Activity Feed", "See who's active. See what's trendy!")
+                        .tintTarget(true)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap3();
+                    }
+                });
+    }
+
+    private void nextTap3() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.library), "The Library", "Your History, Watch Later, and Custom Playlists are stored here!")
+                        .tintTarget(true)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap4();
+                    }
+                });
+    }
+
+    private void nextTap4() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.search), "Search", "You can find Videos, Artists and Friends here.")
+                        .tintTarget(true)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap5();
+                    }
+                });
+    }
+
+    private void nextTap5() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.profilePicMenu), "Profile", "Quickly Navigate to your profile from here!")
+                        .tintTarget(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap6();
+                    }
+                });
+    }
+
+    private void nextTap6() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.drawer_tap), "Menu", "Edit account info and settings from here!")
+                        .tintTarget(true)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                    }
+                });
     }
 
     public static ContextThemeWrapper getAlertDialogContext(Context context){
@@ -1902,6 +1987,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             case R.id.help_center:
+//                Intent hcIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.hitstreamr.com/help-desk"));
+//                hcIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+//                startActivity(hcIntent);
                 sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);

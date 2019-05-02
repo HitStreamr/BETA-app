@@ -183,7 +183,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                 });
 
         tlistner = selectedVideo -> {
-            Log.e(TAG, "entered video trenf=ding" + selectedVideo.getVideoId());
+            Log.e(TAG, "entered video trending" + selectedVideo.getVideoId());
             Intent videoPlayerIntent = new Intent(getContext(), VideoPlayer.class);
             videoPlayerIntent.putExtra("VIDEO", selectedVideo);
             videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
@@ -401,7 +401,8 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
                         //Open Video Player for song
                         Intent videoPlayerIntent = new Intent(getActivity(), VideoPlayer.class);
                         videoPlayerIntent.putExtra("VIDEO", video);
-                        Log.e(TAG, video.toString());
+                        videoPlayerIntent.putExtra("VID", video);
+                        //Log.e(TAG, video.toString());
                         videoPlayerIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
                         videoPlayerIntent.putExtra("CREDIT", userCredits);
                         startActivity(videoPlayerIntent);
@@ -410,7 +411,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
                     @Override
                     public void onOverflowClick(Video video, View v) {
-                        selectedFeaturedVideo = video;
+                        onClickedVideo = video;
                         showOverflow(v);
                     }
                 };
@@ -712,7 +713,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void getUserGenre() {
         FirebaseDatabase.getInstance().getReference("SelectedGenres")
                 .child(current_user.getUid())
-                .addValueEventListener(new ValueEventListener() {
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {

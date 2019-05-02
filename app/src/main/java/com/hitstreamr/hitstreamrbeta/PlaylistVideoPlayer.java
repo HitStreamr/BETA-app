@@ -19,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
@@ -617,7 +616,7 @@ public class PlaylistVideoPlayer extends AppCompatActivity implements View.OnCli
         serviceIntent.putExtra("UPLOAD", uploadbyUser);
         serviceIntent.putExtra("CONTRIBUTOR", iscontributor);
         serviceIntent.putExtra("PLAYLIST", currPlaylist);
-
+        serviceIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
 
         startService(serviceIntent);
         (new Handler()).postDelayed(this::binder, 500);

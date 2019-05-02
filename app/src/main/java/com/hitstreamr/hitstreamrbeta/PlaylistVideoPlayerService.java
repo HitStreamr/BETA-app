@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Surface;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
@@ -47,6 +48,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.hitstreamr.hitstreamrbeta.Authentication.Splash;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -74,8 +76,8 @@ public class PlaylistVideoPlayerService extends Service {
     private String sTimeStamp = "";
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
-    private static final String TAG = "Video Player Service";
-    private static final String CHANNEL_ID = "HS_VIDEO_PLAYER";
+    private static final String TAG = "Playlist Video Player Service";
+    private static final String CHANNEL_ID = "PLAYLIST_VIDEO_PLAYER";
 
     private static final int NOTIFICATION_ID = 1023456789;
     private PlaylistVideoPlayerService.ComponentListener componentListener;
@@ -90,6 +92,7 @@ public class PlaylistVideoPlayerService extends Service {
     Playlist currPlaylist;
     private Video nextVideo;
     private ArrayList<String> userContributor;
+    private String type;
 
 
     /**
@@ -172,7 +175,15 @@ public class PlaylistVideoPlayerService extends Service {
                     @Nullable
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
-                        return null;
+                        // Create an Intent for the activity you want to start
+
+                            Intent notifyIntent = new Intent(PlaylistVideoPlayerService.this, Splash.class);
+
+                            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            return PendingIntent.getActivity(
+                                    PlaylistVideoPlayerService.this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+
                     }
 
                     public Bitmap getPlaceholderBitmap() {
@@ -221,6 +232,7 @@ public class PlaylistVideoPlayerService extends Service {
         uploadbyUser = intent.getBooleanExtra("UPLOAD", false);
         isContributor = intent.getBooleanExtra("CONTRIBUTOR", false);
         currPlaylist = intent.getParcelableExtra("PLAYLIST");
+        type = intent.getStringExtra("TYPE");
         Log.e(TAG, "inside service isuploaded " + uploadbyUser + "  ::: isContributor  " + isContributor);
         //playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
         return START_STICKY;
@@ -232,7 +244,9 @@ public class PlaylistVideoPlayerService extends Service {
 
     public void setPlayer(Video newVid, boolean clipped, String credits) {
         vid = newVid;
+        //Log.e(TAG, "Current" + vid+ "\n");
         nextVideo = nextVideoHelper();
+        //Log.e(TAG, "Next Video" + nextVideo + "\n");
         this.clipped = clipped;
         this.credits = credits;
         DefaultHttpDataSourceFactory dataSourceFactory = new DefaultHttpDataSourceFactory("exoplayer_video");
@@ -450,6 +464,8 @@ public class PlaylistVideoPlayerService extends Service {
     public void autoPlayNext() {
         if (nextVideo != null) {
             autoPlayNextVideo(nextVideo);
+        }else {
+            Toast.makeText(this, "Error playing next video.", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -521,16 +537,16 @@ public class PlaylistVideoPlayerService extends Service {
 
         if (uploadbyUser) {
             //Log.e(TAG, "player before inside else if  "+uploadbyUser);
-            setPlayer(vid, false, currentCreditVal);
+            setPlayer(nextVideo, false, currentCreditVal);
         } else if (isContributor) {
             //Log.e(TAG, "player before inside else if  contributor" + isContributor);
-            setPlayer(vid, false, currentCreditVal);
+            setPlayer(nextVideo, false, currentCreditVal);
         } else if (Integer.parseInt(currentCreditVal) > 0) {
             //Log.e(TAG, "player before inside if ");
             // Log.e(TAG, "player before initializePlayer success ");
-            setPlayer(vid, false, currentCreditVal);
+            setPlayer(nextVideo, false, currentCreditVal);
         } else {
-            setPlayer(vid, true, currentCreditVal);
+            setPlayer(nextVideo, true, currentCreditVal);
             runCheck = true;
         }
 
@@ -577,6 +593,9 @@ public class PlaylistVideoPlayerService extends Service {
                                 }
                             }
                         }, 1500);
+                    }else if(clipped){
+                        stopVideoService();
+                        startActivity(new Intent(PlaylistVideoPlayerService.this, CreditsPurchase.class));
                     }
                     break;
                 default:

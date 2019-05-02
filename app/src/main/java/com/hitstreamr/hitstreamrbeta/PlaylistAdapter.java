@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,6 +17,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
     private static final String TAG = "PlayListAdapter";
     private ArrayList<String> Playlists;
     private Context mContext;
+    private int selectedPlaylistIndex = -1;
 
     private AddToPlaylist.ItemClickListener mlistner;
 
@@ -42,20 +42,19 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
     public void onBindViewHolder(@NonNull PlayListHolder holder, int position) {
         holder.singlePlaylist.setText(Playlists.get(position));
 
+        // Check if the selected playlist is the only one that is highlighted
+        if (selectedPlaylistIndex == position) {
+            holder.parentLayout.setBackgroundColor(Color.parseColor("#FF13AE"));
+        } else {
+            holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
+
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("TAG", "Itemclicked and selcted");
-
-                for(int i = 0; i<Playlists.size(); i++){
-                    holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-                holder.parentLayout.setBackgroundColor(Color.parseColor("#ff13ae"));
-                holder.singlePlaylist.setTextColor(Color.parseColor("#FFFFFF"));
-
-
+                selectedPlaylistIndex = position;
+                notifyDataSetChanged();
                 mlistner.onResultClick(Playlists.get(position));
-
             }
         });
     }

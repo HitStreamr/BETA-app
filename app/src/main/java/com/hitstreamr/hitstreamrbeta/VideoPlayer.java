@@ -212,7 +212,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
 
     private String videotype;
     private String playlistName;
-    private String playlistExtra;
+    //private String playlistExtra;
     private CollectionReference videosCollectionRef;
 
 
@@ -228,7 +228,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("VideoLikes");
-        playlistExtra = getIntent().getStringExtra("PLAYLIST");
+        //playlistExtra = getIntent().getStringExtra("PLAYLIST");
 
 
         // Toolbar
@@ -587,6 +587,7 @@ public class VideoPlayer extends AppCompatActivity implements View.OnClickListen
         serviceIntent.putExtra("CREDITS", credit);
         serviceIntent.putExtra("UPLOAD", uploadbyUser);
         serviceIntent.putExtra("CONTRIBUTOR", iscontributor);
+        serviceIntent.putExtra("TYPE",getIntent().getStringExtra("TYPE"));
 
         startService(serviceIntent);
         (new Handler()).postDelayed(this::binder, 500);

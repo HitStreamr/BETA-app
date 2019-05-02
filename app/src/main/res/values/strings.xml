@@ -33,7 +33,7 @@
     <string name="cancel">Cancel</string>
     <string name="ok">Ok</string>
     <string name="clear_user_data">Clear user data? \n You will have to reconnect your HitStreamr account.</string>
-    <string name="help_center_text">For technical help please refer all \n questions to \n support@hitstreamr.com. \n A support team specialist will reach \n out to you promptly within 72 hours. \n \n If you have an immediate request,\n please refer to our in depth help desk.\n Thank you.</string>
+    <string name="help_center_text">We are currently working on an in-app help center for your convenience. \n\n In the meantime, please refer to our online help desk.\n\n Thank you.</string>
     <string name="help_desk_button">Help Desk</string>
     <string name="terms_of_service">Terms of Service</string>
     <string name="privacy_policy">Privacy Policy</string>
@@ -57,7 +57,7 @@
     <string name="push_notifications_descript">Turn on all mobile notifications or select which to receive individually.</string>
     <string name="email_notifications">Email Notifications</string>
     <string name="email_notificaions_descript">Turn on all email notifications or select which to receive individually.</string>
-    <string name="invitation_title"><![CDATA[Invite & Earn]]></string>
+    <string name="invitation_title"><![CDATA[Invite A Friend]]></string>
     <string name="invite_text">Know a friend or artist who would love our app? Invite them to join by clicking the button below!</string>
     <string name="phone_number_text">+1&#8211;000&#8211;000&#8211;0000</string>
     <string name="type_basic">BASIC</string>
@@ -109,10 +109,11 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="verification3">Submitting a request for verification does not guarantee that your account will be verified.</string>
     <string name="verification4">-Email/Username \n-First/Last Name \n-Known As \n-Photo ID front and back</string>
     <string name="delete_vid_confirmation">Wait! \n \n Are you sure you want to delete this video?</string>
+    <string name="delete_playlist_confirmation">Are you sure? \n\n Once the playlist is deleted, this action cannot be undone.</string>
     <string name="sponsored">SPONSORED</string>
     <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
     <string name="label_info_text">text here</string>
-    <string name="invitation_message">Hey there, check out this cool app....</string>
+    <string name="invitation_message">Hey, check out this new streaming app called HitStreamr. \nIt\'s ad-free with no subscriptions! </string>
     <string name="invitation_deep_link">https://hitstreamr.page.link/invite</string>
     <!--<string name="invitation_custom_image"></string>-->
     <string name="invitation_cta">Invitation CTA</string>

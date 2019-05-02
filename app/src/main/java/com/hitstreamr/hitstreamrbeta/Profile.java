@@ -250,7 +250,7 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
             }
 
             @Override
-            public void onOverflowClick(Video title, View v) { showOverflow(v);
+            public void onOverflowClick(Video title, View view) { showOverflow(view, title);
             }
 
             @Override
@@ -1014,11 +1014,42 @@ public class Profile extends AppCompatActivity implements View.OnClickListener, 
         view_UserUpload.setAdapter(userVideoAdapter);
     }
 
-    public void showOverflow(View v) {
-        PopupMenu popupMenu = new PopupMenu(this, v);
+    /**
+     * Implement the menu option for videos in Uploads tab.
+     * @param view view
+     */
+    public void showOverflow(View view, Video video) {
+        PopupMenu popupMenu = new PopupMenu(this, view);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.dashboard_uploads_menu);
         popupMenu.show();
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.editVideo:
+                        Intent editVideo = new Intent(getApplicationContext(), VideoEdit.class);
+                        editVideo.putExtra("VIDEO", video);
+                        startActivity(editVideo);
+                        break;
+
+                    case R.id.deleteVideo:
+                        Intent deleteVideo = new Intent(getApplicationContext(), VideoDelete.class);
+                        deleteVideo.putExtra("VideoId", video.getVideoId());
+                        startActivity(deleteVideo);
+                        break;
+
+                    case R.id.addToPlaylist_dashboardUploads:
+                        Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                        playlistIntent.putExtra("VIDEO", video);
+                        playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                        startActivity(playlistIntent);
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
     @Override

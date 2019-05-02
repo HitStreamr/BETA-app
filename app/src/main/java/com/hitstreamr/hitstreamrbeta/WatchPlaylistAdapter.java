@@ -109,13 +109,16 @@ public class WatchPlaylistAdapter extends RecyclerView.Adapter<WatchPlaylistAdap
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.editPlaylist:
-                                Log.e(TAG, "selected " +Playlist.get(position));
+                                //Log.e(TAG, "selected " +Playlist.get(position));
                                 Intent editPlaylistIntent = new Intent(mContext, EditPlaylist.class);
                                 editPlaylistIntent.putExtra("playlist", Playlist.get(position));
                                 mContext.startActivity(editPlaylistIntent);
                                 break;
 
-                            default:
+                            case R.id.deletePlaylist:
+                                Intent deletePlaylsit = new Intent(mContext, DeletePlaylist.class);
+                                deletePlaylsit.putExtra("PLAYLIST", Playlist.get(position));
+                                mContext.startActivity(deletePlaylsit);
                                 break;
                         }
                         return false;

@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -209,6 +210,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         });
     }
 
+    @SuppressLint("RestrictedApi")
     private void registerFirebase() {
         if (!cancel) {
             notifB.mActions.clear();
@@ -321,6 +323,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         mNM.notify(notifID, notifB.build());
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onUploadPogress(long uploadedBytes, long totalBytes) {
         if (cancel){
@@ -335,6 +338,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onAssemblyFinished(AssemblyResponse response) {
         try {
@@ -360,6 +364,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         }
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onUploadFailed(Exception exception) {
         successVideoUpload.set(false);
