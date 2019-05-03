@@ -219,7 +219,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 });
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -238,8 +237,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         startActivity(homeIntent);
         finish();
     }
-
-
 
     private void UserLogin(){
         String email = ETemail.getText().toString().trim();

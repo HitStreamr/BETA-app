@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">HitStreamr BETA</string>
-
+    <string name="package_name">com.hitstreamr.hitstreamrbeta</string>
     <string name="logo_wht" />
     <string name="logo_white">TODO</string>
     <string name="welcome2">Uninterrupted music and ad-free \n videos with more control.</string>
@@ -113,7 +113,8 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
     <string name="label_info_text">text here</string>
     <string name="invitation_message">Hey there, check out this cool app....</string>
-    <string name="invitation_deep_link">https://hitstreamr.page.link/invite</string>
+    <string name="domain_url">https://hitstreamr.page.link</string>
+    <string name="google_store_link">https://play.google.com/store/apps/details?id=com.hitstreamr.hitstreamrbeta</string>
     <!--<string name="invitation_custom_image"></string>-->
     <string name="invitation_cta">Invitation CTA</string>
     <string name="contributorHelp">Add the username of your contributor. \n\nDon\'t see your contributor(s)? \n\nInvite fellow artists to join the app via the \'Invite A Friend\' tab in the menu!</string>

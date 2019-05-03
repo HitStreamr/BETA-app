@@ -12,17 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.firebase.dynamiclinks.DynamicLink;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
-
-import static android.app.Activity.RESULT_OK;
 
 
 public class InviteAFriendFragment extends Fragment {
     private static final String TAG = "InviteAFriendFragment";
-    private static final int REQUEST_INVITE = 100;
     private Button inviteBtn;
+    private Uri dynamicLink;
+    private Intent sendIntent;
+
 
     @Nullable
     @Override
@@ -30,6 +31,8 @@ public class InviteAFriendFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_inviteafriend, container, false);
 
         inviteBtn = view.findViewById(R.id.invite_button);
+        sendIntent = new Intent();
+        dynamicLink = buildLongLink();
         inviteBtn.setOnClickListener(v -> onInviteClicked());
         Button close = view.findViewById(R.id.closeBtn);
         close.setOnClickListener(v -> {
@@ -42,31 +45,28 @@ public class InviteAFriendFragment extends Fragment {
         return view;
     }
 
-    private void onInviteClicked() {
-        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title))
-                .setMessage(getString(R.string.invitation_message))
-                .setDeepLink(Uri.parse(getString(R.string.invitation_deep_link)))
-                .setCallToActionText(getString(R.string.invitation_cta))
-                .build();
-        startActivityForResult(intent, REQUEST_INVITE);
+    private Uri buildLongLink(){
+        return FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse(getString(R.string.google_store_link)))
+                .setDomainUriPrefix(getString(R.string.domain_url))
+                .setAndroidParameters(
+                        new DynamicLink.AndroidParameters.Builder(getString(R.string.package_name))
+                                .setMinimumVersion(1)
+                                .build())
+                .setSocialMetaTagParameters(
+                        new DynamicLink.SocialMetaTagParameters.Builder()
+                                .setTitle(getString(R.string.invitation_title))
+                                .setDescription(getString(R.string.invitation_message))
+                                .build())
+                .buildDynamicLink()
+                .getUri();
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "onActivityResult: requestCode=" + requestCode + ", resultCode=" + resultCode);
-
-        if (requestCode == REQUEST_INVITE) {
-            if (resultCode == RESULT_OK) {
-                // Get the invitation IDs of all sent messages
-                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
-                for (String id : ids) {
-                    Log.d(TAG, "onActivityResult: sent invitation " + id);
-                }
-            } else {
-                Log.e(TAG, "Error occurred while sending a message");
-            }
-        }
+    private void onInviteClicked() {
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invitation_message) + dynamicLink.toString());
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.invitation_title));
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, getString(R.string.invitation_title)));
     }
 }
 
