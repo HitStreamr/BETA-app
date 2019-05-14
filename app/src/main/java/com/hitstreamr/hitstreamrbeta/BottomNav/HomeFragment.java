@@ -111,8 +111,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     private LinearLayout WatchAgainLinLayout;
     private LinearLayout ArtistWatchLinLayout;
     private LinearLayout PopularUsersLinLayout;
-//    private LinearLayout HotPlaylistsLinLayout;
-
     SwipeRefreshLayout swipeRefreshLayout;
 
 
@@ -482,12 +480,6 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         return true;
     }
 
-    public interface ItemClickListener {
-        void onResultClick(Video title);
-
-        void onOverflowClick(Video title, View v);
-    }
-
     public void showOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(getContext(), v);
         popupMenu.setOnMenuItemClickListener(this);
@@ -749,9 +741,14 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
     }
 
-
     public interface TrendingItemClickListener {
         void onTrendingVideoClick(Video selectedVideo);
+    }
+
+    public interface ItemClickListener {
+        void onResultClick(Video title);
+
+        void onOverflowClick(Video title, View v);
     }
 
 }
