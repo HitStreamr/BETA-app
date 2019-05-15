@@ -156,6 +156,9 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+//                Intent swipe = new Intent(getContext(), HomeFragment.class);
+//                startActivity(swipe);
+
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -191,18 +194,18 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
             startActivity(videoPlayerIntent);
         };
 
-        swipeRefreshLayout = view.findViewById(R.id.swipe);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 3000);
-            }
-        });
+//        swipeRefreshLayout = view.findViewById(R.id.swipe);
+//        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        swipeRefreshLayout.setRefreshing(false);
+//                    }
+//                }, 3000);
+//            }
+//        });
 
         trendingMoreBtn.setOnClickListener(new View.OnClickListener() {
             @Override

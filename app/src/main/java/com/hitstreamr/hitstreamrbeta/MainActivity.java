@@ -215,10 +215,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        toolbar.setLogo(R.drawable.hitstreamr_logo_app_header_3);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        getSupportActionBar().setTitle("Beta");
-        getSupportActionBar().setSubtitle("HitStreamr");
+        getSupportActionBar().setTitle("");
+//        getSupportActionBar().setSubtitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
