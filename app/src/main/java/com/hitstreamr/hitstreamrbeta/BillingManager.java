@@ -1,6 +1,5 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -112,6 +110,7 @@ public class BillingManager extends AppCompatActivity implements View.OnClickLis
 
 
     }
+
     private void createCredits(){
         FirebaseDatabase.getInstance()
                 .getReference("Credits")
@@ -127,7 +126,6 @@ public class BillingManager extends AppCompatActivity implements View.OnClickLis
         finish();
 
     }
-
 
     public void onClick(View view) {
         if(view == confirmBtn ){
