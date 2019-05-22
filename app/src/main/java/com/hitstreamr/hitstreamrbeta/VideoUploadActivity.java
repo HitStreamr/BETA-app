@@ -1,6 +1,5 @@
 package com.hitstreamr.hitstreamrbeta;
 
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -22,21 +21,14 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -44,21 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
-import com.transloadit.android.sdk.AndroidAsyncAssembly;
-import com.transloadit.android.sdk.AndroidTransloadit;
-import com.transloadit.sdk.async.AssemblyProgressListener;
-import com.transloadit.sdk.response.AssemblyResponse;
 
-import org.json.JSONException;
-
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -67,7 +46,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, VideoUploadCallback, SaveTaskCallback{
+public class VideoUploadActivity extends AppCompatActivity implements View.OnClickListener, contributorAdapter.deleteinterface, VideoUploadCallback{
 
     private static final String TAG = "MyVideoUploadActivity";
 
@@ -100,9 +79,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     //Video View
     private VideoView artistUploadVideo;
 
-    //Image View
-    private ImageView thumbnailImage;
-
     //Buttons
     private Button uploadBtn;
     private Button selectVideoBtn;
@@ -127,22 +103,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Spinner SpinnerPrivacy;
     private Spinner SpinnerContributorType;
 
-    //progressBar
-    private ProgressBar progressBar;
-
     //Layout
     private LinearLayout addContributorLayout;
     private LinearLayout videoLayout;
     private LinearLayout videoCancelLayout;
-
-    //Text View
-    private TextView TextViewVideoFilename;
-    private TextView TextViewSizeLabel;
-    private TextView TextViewProgressLabel;
-
-    private TextView TextViewContributorName;
-    private TextView TextViewContributorPercentage;
-    private TextView TextViewContributorType;
 
     //Data Lists
     ArrayList<String> contributorPercentageList;
@@ -156,36 +120,19 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private ListView ContributorValuesLV;
 
     private static final int VID_REQUEST_CODE = 1234;
-    private static final int IMG_REQUEST_CODE = 5678;
 
     private Uri selectedVideoPath = null;
-    private Uri selectedImagePath = null;
     private long duration;
     private boolean ContributorSuccess = false;
 
     private boolean startedUpload;
 
-    private String downloadVideoUri;
-    private String thumbnailVideoUri;
-    private AtomicBoolean successVideoUpload;
-    private AtomicBoolean successFirestoreUpload;
     private AtomicBoolean videoSelected;
 
     //Firestore Database
     private FirebaseFirestore db;
     DatabaseReference database;
     FirebaseUser currentFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-
-    //Firebase Storage
-    private FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference mStorageRef;
-    private StorageTask mstorageTask;
-    private StorageReference videoRef = null;
-    private StorageReference thumbnailRef = null;
-
-    //Transloadit
-    AndroidTransloadit transloadit;
-    AndroidAsyncAssembly assembly;
 
     int i, sum = 0, tempvalue = 0;
     String temp;
@@ -226,11 +173,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
 
         //FireStore Database
         db = FirebaseFirestore.getInstance();
-        mStorageRef = storage.getReference();
 
         //Boolean Status Checks
-        successVideoUpload = new AtomicBoolean(false);
-        successFirestoreUpload = new AtomicBoolean(false);
         videoSelected = new AtomicBoolean(false);
 
         //Layout
@@ -265,15 +209,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         SpinnerPrivacy = findViewById(R.id.Privacy);
         SpinnerContributorType = findViewById(R.id.ContributorTypeSpinner);
 
-        //Text View
-        TextViewVideoFilename = findViewById(R.id.filenameText);
-        TextViewSizeLabel = findViewById(R.id.sizeLabel);
-        TextViewProgressLabel = findViewById(R.id.progressLabel);
-
-        TextViewContributorName = findViewById(R.id.firstLine);
-        TextViewContributorPercentage = findViewById(R.id.thirdLine);
-        TextViewContributorType = findViewById(R.id.secondLine);
-
         //List View
         ContributorValuesLV = findViewById(R.id.ContributorListView);
 
@@ -283,9 +218,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorList = new ArrayList<>();
         contributorVideo = new HashMap<>();
         artistVideo = new HashMap<>();
-
-        //progressBar
-        progressBar = findViewById(R.id.uploadProgress);
 
         //visibility
         addContributorLayout.setVisibility(View.GONE);
@@ -360,7 +292,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         startVideoUploadService();
 
         /* Transloadit Credentials */
-        transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
+        //DELETE ME
+        //transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
     }
 
     /*
@@ -368,15 +301,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
      */
     private void selectVideo() {
         videoSelected.set(false);
-        /*Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        i.setType("video/*");
-        startActivityForResult(i, SELECT_VIDEO); //, getApplicationContext(), VideoUploadActivity.class*/
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT, android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        //Intent intent = new Intent();
-        intent.setType("video/*");
-        //intent.setAction(intent.ACTION_GET_CONTENT);
-        //startActivityForResult(intent, VID_REQUEST_CODE);
-
+        intent.setType("video/mp4");
         startActivityForResult(Intent.createChooser(intent, "Select your video"), VID_REQUEST_CODE);
     }
 
@@ -435,9 +361,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 VideoUploadService.LocalBinder binder = (VideoUploadService.LocalBinder) service;
                 mService = binder.getService();
                 mService.setCallbacks(VideoUploadActivity.this);
-                assembly = transloadit.newAssembly(mService, VideoUploadActivity.this);
+                //DELETE ME
+                //assembly = transloadit.newAssembly(mService, VideoUploadActivity.this);
                 //set template Id
-                assembly.addOption("template_id", BuildConfig.Transloadit_TEMPLATE_ID);
+                //assembly.addOption("template_id", BuildConfig.Transloadit_TEMPLATE_ID);
             }
 
             @Override
@@ -496,7 +423,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void binder(){
-        Log.d(TAG, "Bind Service");
+        //Log.d(TAG, "Bind Service");
         if (bindService(serviceIntent,mConnection, 0)) {
             mBound = true;
         } else {
@@ -535,7 +462,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             }
 
             startedUpload = true;
-            uploadFromUri(selectedVideoPath);
+            final String storagetitle = EdittextTitle.getText().toString().trim();
+            mService.uploadVideo(selectedVideoPath, storagetitle);
         }
     }
 
@@ -570,8 +498,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         artistVideo.put(VIDEO_GENRE, genre);
         artistVideo.put(VIDEO_SUBGENRE, subGenre);
         artistVideo.put(VIDEO_PRIVACY, privacy);
-        artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoUri);
-        artistVideo.put(THUMBNAIL_DOWNLOAD_LINK, thumbnailVideoUri);
+        artistVideo.put(VIDEO_DOWNLOAD_LINK, "");
+        artistVideo.put(THUMBNAIL_DOWNLOAD_LINK, "");
         artistVideo.put(VIDEO_PUB_YEAR, pubYear);
         artistVideo.put(VIDEO_CONTRIBUTOR, sample);
         artistVideo.put(USER_ID, CurrentUserID);
@@ -589,34 +517,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             terms.put(res.get(i), true);
         }
         artistVideo.put(VIDEO_TITLE_TERMS,terms);
-    }
-
-    private void uploadFromUri(final Uri videoUri){
-        if (assembly != null) {
-            final String storagetitle = EdittextTitle.getText().toString().trim();
-            videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storagetitle);
-            String storage = "videos/" + currentFirebaseUser.getUid() + "/mp4" + "/" + storagetitle;
-            String original = "videos/" + currentFirebaseUser.getUid() + "/original" + "/" + storagetitle;
-
-            try {
-                assembly.addFile(getContentResolver().openInputStream(videoUri), storagetitle);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            Map<String, Object> exportOptions = new HashMap<>();
-            exportOptions.put("path", storage);
-            assembly.addStep("store_encoded", "/google/store", exportOptions);
-
-            Map<String, Object> exportOriginalOptions = new HashMap<>();
-            exportOriginalOptions.put("path", original);
-            assembly.addStep("store_original", "/google/store", exportOriginalOptions);
-
-            SaveTask save = new SaveTask(this, assembly, this);
-            save.execute(true);
-        }else{
-            Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
-        }
     }
 
     private boolean validateBrowseVideo() {
@@ -795,9 +695,6 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         contributorAdapter = new contributorAdapter(this, R.layout.activity_contributor_listview, contributorList, this);
         ContributorValuesLV.setAdapter(contributorAdapter);
         contributorAdapter.notifyDataSetChanged();
-        //TextViewContributorName.setText(name);
-        //TextViewContributorPercentage.setText(percentage);
-        //TextViewContributorType.setText(type);
         ContributorSuccess = true;
     }
 
@@ -845,9 +742,13 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         }
 
         if (view == uploadBtn) {
-            if (videoSelected.get()){
+            if (videoSelected.get() && !startedUpload){
                 registerVideo();
-            }else {
+            }else if (videoSelected.get() && !startedUpload){
+                Toast.makeText(this, "Current Upload is being processed.", Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
                 if (!videoSelected.get()) {
                     Toast.makeText(this, "Please Select a Video.", Toast.LENGTH_SHORT).show();
                 }
