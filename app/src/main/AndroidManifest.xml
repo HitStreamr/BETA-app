@@ -24,9 +24,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".EmailVerification"
             android:screenOrientation="portrait" />
-        <activity android:name=".Authentication.Splash"
-            android:taskAffinity=""
-            android:excludeFromRecents="true">
+        <activity android:name=".Authentication.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
