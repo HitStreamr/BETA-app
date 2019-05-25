@@ -24,7 +24,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/invite_a_friend"
+            android:text="Invite A Friend"
             android:textSize="30sp"
             android:textColor="@android:color/black"
             android:textStyle="bold"

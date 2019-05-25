@@ -51,7 +51,7 @@ public class InviteFriend extends AppCompatActivity {
     }
     private void onInviteClicked() {
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invitation_message) + dynamicLink.toString());
+        sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invitation_message) +  dynamicLink.toString());
         sendIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.invitation_title));
         sendIntent.setType("text/plain");
         startActivity(Intent.createChooser(sendIntent, getString(R.string.invitation_title)));

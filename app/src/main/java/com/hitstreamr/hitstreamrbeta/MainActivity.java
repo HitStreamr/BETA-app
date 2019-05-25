@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        toolbar.setLogo(R.drawable.hitstreamr_logo_app_header_3);
+        toolbar.setLogo(R.drawable.hitstreamr_logo_app_header_3);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("");
 //        getSupportActionBar().setSubtitle("HitStreamr");
@@ -444,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.discover), "Discover More", "Find out what's new and exciting here!")
                         .tintTarget(true)
-                        .cancelable(false)
+//                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels

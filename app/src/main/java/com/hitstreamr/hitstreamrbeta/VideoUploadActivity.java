@@ -3,6 +3,7 @@ package com.hitstreamr.hitstreamrbeta;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -29,6 +30,8 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -291,9 +294,119 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         startConnection();
         startVideoUploadService();
 
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean secondStart = prefs.getBoolean("secondStart", true);
+
+        if (secondStart) {
+            tutorialUpload();
+        }
+
         /* Transloadit Credentials */
         //DELETE ME
         //transloadit = new AndroidTransloadit(BuildConfig.Transloadit_API_KEY, BuildConfig.Transloadit_API_SECRET);
+    }
+
+    //First Start upload tutorial
+    private void tutorialUpload() {
+        TapTargetView.showFor(this,
+                TapTarget.forView(findViewById(R.id.selectVideo), "Upload Here", "Get start by selecting your music video. Must be MP4 format.")
+                        .tintTarget(false)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        next1();
+
+                        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("secondStart", false);
+                        editor.apply();
+                    }
+
+                });
+
+    }
+
+    private void next1() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.Title), "Title / Description", "Add the title and description of your videos here!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        next2();
+                    }
+                });
+    }
+
+    private void next2() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.Genre), "Genre", "Categorize your music by selecting the Genre and Sub-genre here!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        next3();
+                    }
+                });
+    }
+
+    private void next3() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.ContributorBtn), "Contributors", "All any collaberators here. We'll pay them on your behalf!")
+                        .tintTarget(false)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        next4();
+                    }
+                });
+    }
+
+    private void next4() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.Privacy), "Privacy Settings", "Go public orkeep it private. The choice is yours!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        next5();
+                    }
+                });
+    }
+
+    private void next5() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.uploadVideo), "Upload", "Finally, upload the button and go live! That's it, now you ready to upload!")
+                        .tintTarget(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+
+                    }
+                });
     }
 
     /*
