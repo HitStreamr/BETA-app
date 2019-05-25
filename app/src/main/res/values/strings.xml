@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">HitStreamr BETA</string>
-
+    <string name="package_name">com.hitstreamr.hitstreamrbeta</string>
     <string name="logo_wht" />
     <string name="logo_white">TODO</string>
     <string name="welcome2">Uninterrupted music and ad-free \n videos with more control.</string>
@@ -114,13 +114,15 @@ please follow \n these directions to submit a copyright \n infrengment notice.</
     <string name="hs_player_channel_id">Hitstreamr Player Channel</string>
     <string name="label_info_text">text here</string>
     <string name="invitation_message">Hey, check out this new streaming app called HitStreamr. \nIt\'s ad-free with no subscriptions! </string>
-    <string name="invitation_deep_link">https://hitstreamr.page.link/invite</string>
+    <string name="domain_url">https://hitstreamr.page.link</string>
+    <string name="google_store_link">https://play.google.com/store/apps/details?id=com.hitstreamr.hitstreamrbeta</string>
     <!--<string name="invitation_custom_image"></string>-->
     <string name="invitation_cta">Invitation CTA</string>
-    <string name="contributorHelp">Add the usernane of your contributor. \n\nDon\'t see your contributor(s)? \n\nInvite fellow artists to join the app via the \'Invite A Friend\' tab in the menu!</string>
+    <string name="contributorHelp">Add the username of your contributor. \n\nDon\'t see your contributor(s)? \n\nInvite fellow artists to join the app via the \'Invite A Friend\' tab in the menu!</string>
     <string name="rate_dialog_title">Rate Us!</string>
     <string name="rate_dialog_message">If you enjoy this app, would you mind taking a moment to rate it? It won\'t take more than a minute. Thanks for your support!</string>
     <string name="rate_dialog_ok">Rate Us!</string>
     <string name="rate_dialog_cancel">Remind Me Later</string>
     <string name="rate_dialog_no">No, Thanks</string>
+    <string name="new_user_credits_verbiage">Welcome to HitStreamr! Enjoy ad-free music videos and background video play forever! As a token of our appreciation, here\'s 150 streaming credits on us!</string>
 </resources>

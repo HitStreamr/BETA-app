@@ -29,7 +29,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,10 +40,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.core.OrderBy;
-//import com.google.firestore.v1beta1.StructuredQuery;
 import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.ArtistsToWatch;
+import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentPopularPeopleAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentTopArtistsAdapter;
 import com.hitstreamr.hitstreamrbeta.HomeFragmentWatchAgainAdapter;
@@ -53,7 +51,6 @@ import com.hitstreamr.hitstreamrbeta.MoreWatchAgain;
 import com.hitstreamr.hitstreamrbeta.NewReleaseAdapter;
 import com.hitstreamr.hitstreamrbeta.NewReleases;
 import com.hitstreamr.hitstreamrbeta.R;
-import com.hitstreamr.hitstreamrbeta.FeaturedVideoResultAdapter;
 import com.hitstreamr.hitstreamrbeta.ReportVideoPopup;
 import com.hitstreamr.hitstreamrbeta.TrendingAdapter;
 import com.hitstreamr.hitstreamrbeta.TrendingVideos;
@@ -64,11 +61,11 @@ import com.hitstreamr.hitstreamrbeta.VideoClickListener;
 import com.hitstreamr.hitstreamrbeta.VideoPlayer;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.view.View.GONE;
+
+//import com.google.firestore.v1beta1.StructuredQuery;
 
 public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickListener {
 
@@ -126,6 +123,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         featuredVideosSetup(view);
+
 
         // Layouts
         FeaturedVideosLinLayout = view.findViewById(R.id.featuredVideosLinLayout);
@@ -225,6 +223,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         // Populate the Watch Again recycler view
         loadWatchAgain(view);
+
 
         // More top artists
         Button showMoreArtists = view.findViewById(R.id.showMoreArtists);

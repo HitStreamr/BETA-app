@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -57,7 +56,6 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.getkeepsafe.taptargetview.TapTarget;
-import com.getkeepsafe.taptargetview.TapTargetSequence;
 import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerControlView;
@@ -215,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.hitstreamr_logo_app_header_3);
+//        toolbar.setLogo(R.drawable.hitstreamr_logo_app_header_3);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
         getSupportActionBar().setTitle("");
 //        getSupportActionBar().setSubtitle("HitStreamr");
@@ -423,6 +421,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,
                 TapTarget.forView(findViewById(R.id.home), "This is Home", "Find all the things you love here!")
                         .tintTarget(false)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
@@ -436,28 +435,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         editor.putBoolean("firstStart", false);
                         editor.apply();
                     }
+
                 });
+
     }
 
     private void nextTap1() {
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.discover), "Discover More", "Find out what's new and exciting here!")
                         .tintTarget(true)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
-        new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
-            @Override
-            public void onTargetClick(TapTargetView view) {
-                super.onTargetClick(view);      // This call is optional
-                nextTap2();
-            }
-        });
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap2();
+                    }
+                });
     }
 
     private void nextTap2() {
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.activity), "Activity Feed", "See who's active. See what's trendy!")
                         .tintTarget(true)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
@@ -473,6 +476,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.library), "The Library", "Your History, Watch Later, and Custom Playlists are stored here!")
                         .tintTarget(true)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
@@ -488,6 +492,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.search), "Search", "You can find Videos, Artists and Friends here.")
                         .tintTarget(true)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
@@ -503,6 +508,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.profilePicMenu), "Profile", "Quickly Navigate to your profile from here!")
                         .tintTarget(false)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
@@ -518,15 +524,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.drawer_tap), "Menu", "Edit account info and settings from here!")
                         .tintTarget(true)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
                     @Override
                     public void onTargetClick(TapTargetView view) {
-                        super.onTargetClick(view);      // This call is optional
+                        super.onTargetClick(view);
+                        freeCreditsPop();
                     }
                 });
     }
+
+    private void freeCreditsPop(){
+        Intent FreeCredits = new Intent(this, FreeCreditsPopUp.class);
+        startActivity(FreeCredits);
+    }
+
+
 
     public static ContextThemeWrapper getAlertDialogContext(Context context){
         return new ContextThemeWrapper(context, R.style.AlertDialog);

@@ -10,15 +10,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -26,26 +24,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.hitstreamr.hitstreamrbeta.Authentication.Splash;
-import com.transloadit.android.sdk.AndroidAsyncAssembly;
-import com.transloadit.android.sdk.AndroidTransloadit;
-import com.transloadit.sdk.async.AssemblyProgressListener;
-import com.transloadit.sdk.response.AssemblyResponse;
+import com.google.firebase.storage.UploadTask;
 
-import org.json.JSONException;
-
-import java.io.FileNotFoundException;
-import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class VideoUploadService extends Service implements AssemblyProgressListener {
+public class VideoUploadService extends Service{
     private static final String TAG = "Video Upload Service";
     private static final String CHANNEL_ID = "VIDEO UPLOAD NOTIFICATION";
     private final IBinder mBinder = new VideoUploadService.LocalBinder();
@@ -62,7 +51,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
 
     private AtomicBoolean successVideoUpload;
     private AtomicBoolean successFirestoreUpload;
-    private AtomicBoolean downloadURI;
+    private AtomicBoolean downloadURISet;
     private boolean cancel;
     private String storageTitle;
 
@@ -79,7 +68,6 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
     private Map<String, Object> artistVideo;
 
     private static final String VIDEO_DOWNLOAD_LINK = "url";
-    private static final String THUMBNAIL_DOWNLOAD_LINK = "thumbnailUrl";
 
     /**
      * Class used for the client Binder.  Because we know this service always
@@ -99,13 +87,12 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         mVUC = vupc;
     }
 
-
     @Override
     public void onCreate() {
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
         successVideoUpload = new AtomicBoolean(false);
         successFirestoreUpload = new AtomicBoolean(false);
-        downloadURI = new AtomicBoolean(false);
+        downloadURISet = new AtomicBoolean(false);
         // Display a notification about us starting.  We put an icon in the status bar.
         showNotification();
     }
@@ -120,21 +107,9 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(intent.getBooleanExtra("CANCEL", false)){
-            startID = startId;
-            cancel = true;
-            deleteFail();
-            notifB.setContentTitle("Canceling Upload")
-                    .setContentText("Canceling Upload")
-                    .setProgress(0,0,true);
-            mNM.notify(intent.getIntExtra("NOTIF", 0), notifB.build());
-            return super.onStartCommand(intent,flags,startId);
-        }else{
             Log.i(TAG, "Received start id " + startId + ": " + intent);
             startID = startId;
             return START_STICKY;
-        }
-
     }
 
     /**
@@ -145,10 +120,6 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         // In this sample, we'll use the same text for the ticker and the expanded notification
         CharSequence text = "Preparing to Upload Your Video...";
         notifID = UploadNotificationIdGenerator.getID(this);
-        /*// The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, Splash.class), 0);*/
-
 
         // Set the info for the views that show in the notification panel.
         notifB = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -159,9 +130,6 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
                 .setContentText(text)
                 .setOnlyAlertOnce(true)
                 .setOngoing(true);// the contents of the entry
-                //.addAction(act);
-                //.setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                //.setProgress(PROGRESS_MAX, PROGRESS_START, false);
 
         notification = notifB.build();
 
@@ -188,31 +156,8 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         storageTitle = title;
     }
 
-    private void getDownloadURL(){
-
-        mStorageRef = storage.getReference();
-        videoRef = mStorageRef.child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(storageTitle);
-        videoRef.getDownloadUrl()
-                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        downloadVideoURI = uri.toString();
-                        downloadURI.set(true);
-                        registerFirebase();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                downloadURI.set(false);
-                deleteFail();
-                //Toast.makeText(getApplicationContext(), "Something went wrong. Please try again.",Toast.LENGTH_LONG).show();
-            }
-        });
-    }
-
     @SuppressLint("RestrictedApi")
     private void registerFirebase() {
-        if (!cancel) {
             notifB.mActions.clear();
             mNM.notify(notifID, notifB.build());
             artistVideo.put(VIDEO_DOWNLOAD_LINK, downloadVideoURI);
@@ -227,6 +172,7 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
                             if (mVUC != null){
                                 mVUC.unbindUploadService();
                             }
+                            stopForeground(true);
                             stopSelf(startID);
                         }
                     })
@@ -236,15 +182,12 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
                             Log.w(TAG, "Error writing document", e);
                             successFirestoreUpload.set(false);
                             deleteFail();
-                            //Toast.makeText(VideoUploadService.this, "Video not uploaded, please try again", Toast.LENGTH_SHORT).show();
-                            //Delete storage refs and firestore ref
                         }
                     });
         }
-    }
 
     private void deleteFail(){
-        if(successVideoUpload.get() && (!downloadURI.get() || !successFirestoreUpload.get())){
+        if(successVideoUpload.get() && (!downloadURISet.get() || !successFirestoreUpload.get())){
             //Assembly Completed Successfully
             // Create a storage reference from our app
             StorageReference storageRef = storage.getReference();
@@ -311,79 +254,64 @@ public class VideoUploadService extends Service implements AssemblyProgressListe
         }
     }
 
-    //TRANSLOADIT IMPLEMENTATION
-
-    @Override
-    public void onUploadFinished() {
-        Log.e(TAG, "Your AndroidAsyncAssembly Upload is done and it's now executing");
+    public void uploadVideo(final Uri fileUri, String title){
         cancelAction();
         notifB.setContentTitle("Storing Video")
                 .setContentText("Storing Video")
                 .setProgress(0,0,true);
         mNM.notify(notifID, notifB.build());
+
+        if(mVUC != null){
+            mVUC.goBack();
+        }
+
+        final StorageReference videoRef = FirebaseStorage.getInstance().getReference().child("videos").child(currentFirebaseUser.getUid()).child("mp4").child(title);
+
+        videoRef.putFile(fileUri)
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        showProgress(taskSnapshot.getBytesTransferred(), taskSnapshot.getTotalByteCount());
+                    }
+                })
+                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                        // Forward any exceptions
+                        if (!task.isSuccessful()) {
+                            throw task.getException();
+                        }
+
+                        //Log.d(TAG, "uploadFromUri: upload success");
+
+                        // Request the public download URL
+                        return videoRef.getDownloadUrl();
+                    }
+                })
+                .addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(@NonNull Uri downloadUri) {
+                        // Upload succeeded
+                        Log.d(TAG, "uploadFromUri: getDownloadUri success");
+                        downloadVideoURI = downloadUri.toString();
+                        downloadURISet.set(true);
+                        registerFirebase();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Upload failed
+                        Log.w(TAG, "uploadFromUri:onFailure", exception);
+                        deleteFail();
+                    }
+                });
     }
 
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onUploadPogress(long uploadedBytes, long totalBytes) {
-        if (cancel){
-            notifB.setContentTitle("Preparing to Cancel Upload")
-                    .setContentText("Preparing to Cancel Upload");
-            notifB.mActions.clear();
-            mNM.notify(notifID, notifB.build());
-        }else {
+    public void showProgress(long uploadedBytes, long totalBytes) {
             int PROGRESS_CURRENT = (int) (((double) uploadedBytes) / totalBytes * 100.0);
             notifB.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
             mNM.notify(notifID, notifB.build());
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onAssemblyFinished(AssemblyResponse response) {
-        try {
-            String res = response.json().getString("ok");
-            Log.e(TAG , "Your AndroidAsyncAssembly is done executing with status: " + res);
-            if (res.equalsIgnoreCase("ASSEMBLY_COMPLETED")){
-                if (cancel){
-                    notifB.setContentTitle("Preparing to Cancel Upload")
-                            .setContentText("Preparing to Cancel Upload");
-                    notifB.mActions.clear();
-                    mNM.notify(notifID, notifB.build());
-                    deleteFail();
-                }else{
-                    successVideoUpload.set(true);
-                    getDownloadURL();
-                }
-            }else {
-                successVideoUpload.set(false);
-            }
-        } catch (JSONException e) {
-            successVideoUpload.set(false);
-            e.printStackTrace();
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    @Override
-    public void onUploadFailed(Exception exception) {
-        successVideoUpload.set(false);
-        notifB.setContentTitle("Upload Failed")
-                .setContentText("Upload Failed");
-        notifB.mActions.clear();
-        mNM.notify(notifID, notifB.build());
-        deleteFail();
-        Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
-        Log.e(TAG , "Upload Failed: " + exception.getMessage());
-    }
-
-    @Override
-    public void onAssemblyStatusUpdateFailed(Exception exception) {
-        successVideoUpload.set(false);
-        Toast.makeText(getApplicationContext(), "Upload Failed. Please Try Again.",Toast.LENGTH_LONG).show();
-        Log.e(TAG , "Assembly Status Update Failed: " + exception.getMessage());
-        exception.printStackTrace();
-
     }
 
     @Override

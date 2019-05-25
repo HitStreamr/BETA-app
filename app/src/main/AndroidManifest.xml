@@ -14,25 +14,33 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DeletePlaylist"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".PlaylistVideoPlayer"
-                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-                  android:noHistory="true"
-                  android:excludeFromRecents="true"
-                  android:parentActivityName=".Authentication.Splash" />
-
-        <activity android:name=".InviteFriend"
+        <activity android:name=".FreeCreditsPopUp"></activity>
+        <activity
+            android:name=".DeletePlaylist"
             android:screenOrientation="portrait" />
-        <activity android:name=".EmailVerification"
+        <activity
+            android:name=".PlaylistVideoPlayer"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:parentActivityName=".Authentication.Splash" />
+        <activity
+            android:name=".InviteFriend"
             android:screenOrientation="portrait" />
-        <activity android:name=".Authentication.Splash"
-            android:taskAffinity=""
-            android:excludeFromRecents="true">
+        <activity
+            android:name=".EmailVerification"
+            android:screenOrientation="portrait" />
+        <activity  android:name=".Authentication.Splash"
+            android:screenOrientation="portrait"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="hitstreamr.page.link"
+                    android:scheme="https"/>
             </intent-filter>
         </activity>
         <activity
@@ -94,9 +102,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".VideoPlayer"
-            android:noHistory="true"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:excludeFromRecents="true"
+            android:noHistory="true"
             android:parentActivityName=".Authentication.Splash"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
@@ -207,7 +215,6 @@
             android:name=".PlaylistVideoPlayerService"
             android:enabled="true"
             android:exported="false" />
-
         <activity
             android:name=".Payouts"
             android:screenOrientation="portrait"

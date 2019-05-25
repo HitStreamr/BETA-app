@@ -4,7 +4,16 @@
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
+/.idea/caches/build_file_checksums.ser
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+.idea/vcs.xml
+/.idea/caches
+.firebaserc
+/functions
+firebase.json
+*.ser
+appengine/
+.idea/caches/build_file_checksums.ser

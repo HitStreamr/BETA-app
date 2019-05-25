@@ -36,7 +36,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.FeedData;
-import com.hitstreamr.hitstreamrbeta.Library;
 import com.hitstreamr.hitstreamrbeta.PostVideoFeedAdapter;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.RecentArtistsUploadedAdapter;
@@ -56,6 +55,17 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class ActivityFragment extends Fragment {
     private static final String TAG = "ActivityFragment";
+
+    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
+
+    static {
+        suffixes.put(1_000L, "k");
+        suffixes.put(1_000_000L, "M");
+        suffixes.put(1_000_000_000L, "G");
+        suffixes.put(1_000_000_000_000L, "T");
+        suffixes.put(1_000_000_000_000_000L, "P");
+        suffixes.put(1_000_000_000_000_000_000L, "E");
+    }
 
     private DatabaseReference database, myRef, myFeedRef, myVideosRef;
     private FirebaseFirestore db;
@@ -269,8 +279,6 @@ public class ActivityFragment extends Fragment {
                 });
     }
 
-
-
     private void getVideoLikes() {
         myLikesRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -290,9 +298,7 @@ public class ActivityFragment extends Fragment {
         myRepostRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e(TAG, "Entered repost method");
                 repostDatasnapshot = dataSnapshot;
-                Log.e(TAG, "Entered repostDatasnapshot method" +repostDatasnapshot);
 
             }
 
@@ -331,7 +337,6 @@ public class ActivityFragment extends Fragment {
             }
         });
     }
-
 
     private void getFeedData() {
         Query queryRef = feedDataCollectionRef.orderBy("timestamp", Query.Direction.DESCENDING);
@@ -374,67 +379,40 @@ public class ActivityFragment extends Fragment {
         });
     }
 
-    /*public void getVideoFirestore() {
-        if (videoFeed.size() > 0) {
-            for (int i = 0; i < videoFeed.size(); i++) {
-                videoDatasnapshot.child(videoFeed.get(i)).getValue();
-                UserVideos.add(videoDatasnapshot.child(videoFeed.get(i)).getValue(Video.class));
-                long VideoLikesCount = likesDatasnapshot.child(videoFeed.get(i)).getChildrenCount();
-                String temp = formatt(VideoLikesCount);
-                likesCount.add(temp);
-                Log.e(TAG, "Video Count likes : " + likesCount);
-            }
-        }
-        callToAdapter();
-    }*/
-
     public void getVideoFirestore() {
         Query queryRef = videosCollectionRef
                 .whereEqualTo("delete", "N")
                 .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
-
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    if (videoFeed.size() > 0) {
-                        for (int i = 0; i < videoFeed.size(); i++) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                //if (videoFeed.contains(document.getId())) {
-                                if ((videoFeed.get(i)).contains(document.getId())) {
-                                    UserVideos.add(document.toObject(Video.class));
-                                    Log.e(TAG, "video Ids are " + document.getId());
+                if (videoFeed.size() > 0) {
+                    for (int i = 0; i < videoFeed.size(); i++) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            //if (videoFeed.contains(document.getId())) {
+                            if ((videoFeed.get(i)).contains(document.getId())) {
+                                UserVideos.add(document.toObject(Video.class));
+                                Log.e(TAG, "video Ids are " + document.getId());
 
-                                    long VideoLikesCount = likesDatasnapshot.child(videoFeed.get(i)).getChildrenCount();
-                                    String temp;
-                                    if (VideoLikesCount == 0) {
-                                        temp = formatt(VideoLikesCount);
-                                    } else {
-                                        temp = formatt(VideoLikesCount - 1);
-                                    }
-                                    likesCount.add(temp);
-                                    Log.e(TAG, "Video Count likes : " + likesCount);
+                                long VideoLikesCount = likesDatasnapshot.child(videoFeed.get(i)).getChildrenCount();
+                                String temp;
+                                if(VideoLikesCount == 0){
+                                    temp = formatt(VideoLikesCount);
                                 }
+                                else {
+                                    temp = formatt(VideoLikesCount-1);
+                                }
+                                likesCount.add(temp);
+                                Log.e(TAG, "Video Count likes : " + likesCount);
                             }
                         }
-                        callToAdapter();
                     }
+                    callToAdapter();
                 }
                 Log.e(TAG, "Video objects are" + UserVideos);
 
             }
         });
-    }
-
-    private static final NavigableMap<Long, String> suffixes = new TreeMap<>();
-
-    static {
-        suffixes.put(1_000L, "k");
-        suffixes.put(1_000_000L, "M");
-        suffixes.put(1_000_000_000L, "G");
-        suffixes.put(1_000_000_000_000L, "T");
-        suffixes.put(1_000_000_000_000_000L, "P");
-        suffixes.put(1_000_000_000_000_000_000L, "E");
     }
 
     public static String formatt(long value) {
