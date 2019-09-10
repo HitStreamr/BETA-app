@@ -3,12 +3,6 @@ package com.hitstreamr.hitstreamrbeta.BottomNav;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,6 +12,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -440,7 +441,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
         Query query = trendingNowRef
                 .whereEqualTo("delete", "N")
                 .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
-                .orderBy("views", Query.Direction.DESCENDING).limit(20);
+                .orderBy("views", Query.Direction.DESCENDING).limit(8);
 
         FirestoreRecyclerOptions<Video> options = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)
@@ -550,7 +551,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("ArtistsLikes").orderBy("likes", Query.Direction.DESCENDING)
-                .limit(20).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .limit(10).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (queryDocumentSnapshots.size() <= 0) {
@@ -605,7 +606,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection("PopularPeople").orderBy("followers", Query.Direction.DESCENDING)
-                .limit(20).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                .limit(10).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 if (queryDocumentSnapshots.size() <= 0) {
@@ -660,7 +661,7 @@ public class HomeFragment extends Fragment implements PopupMenu.OnMenuItemClickL
 
         FirebaseDatabase.getInstance().getReference("History").child(current_user.getUid())
                 .orderByChild("timestamp")
-                .limitToLast(20)
+                .limitToLast(10)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

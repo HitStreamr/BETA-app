@@ -6,7 +6,7 @@
     android:id="@+id/discover_layout"
     android:padding="10dp">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
@@ -44,7 +44,7 @@
                     android:shadowDy="4"
                     android:shadowRadius="4"
                     />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
 
 

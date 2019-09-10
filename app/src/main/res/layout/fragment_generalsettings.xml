@@ -47,7 +47,7 @@
             android:layout_marginTop="15dp"
             >
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/update_over_wifi_button"
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/update_over_wifi_descript"/>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/clear_application_cache"
@@ -83,7 +83,7 @@
             android:background="@color/colorWhite"
             android:layout_marginTop="15dp">
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings"
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings_descript"/>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/crash_log_settings"

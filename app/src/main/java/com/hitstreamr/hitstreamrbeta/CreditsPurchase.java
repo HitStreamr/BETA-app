@@ -1,33 +1,23 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 //import com.android.billingclient.api.BillingClient;
 //import com.android.billingclient.api.Purchase;
-import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.SkuDetails;
-import com.anjlab.android.iab.v3.TransactionDetails;
 import com.warkiz.widget.IndicatorSeekBar;
 import com.warkiz.widget.IndicatorStayLayout;
-import com.warkiz.widget.OnSeekChangeListener;
-import com.warkiz.widget.SeekParams;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CreditsPurchase extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "Credits Purchase";

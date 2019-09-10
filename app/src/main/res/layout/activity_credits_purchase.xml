@@ -34,7 +34,7 @@
             android:text="Swipe and select the amount of credits you wish to purchase."
              />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/creditsRCV"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:layout_marginVertical="30dp">
 
 
-        </android.support.v7.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
 
 
         <LinearLayout

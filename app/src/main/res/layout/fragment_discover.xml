@@ -3,12 +3,12 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="@color/colorWhite">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/disc_recycler_view"
         android:layout_marginBottom="50dp">
 
-    </android.support.v7.widget.RecyclerView>
+    </androidx.recyclerview.widget.RecyclerView>
 
 </RelativeLayout>

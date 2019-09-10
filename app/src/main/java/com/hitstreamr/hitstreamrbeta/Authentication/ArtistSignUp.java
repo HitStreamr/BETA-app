@@ -6,10 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +16,11 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -697,7 +698,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     public boolean checkUsername(String s) {
 
-        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
+        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {

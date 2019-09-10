@@ -1,5 +1,6 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -12,22 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -48,6 +33,19 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
@@ -66,6 +64,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -98,7 +100,7 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import hotchemi.android.rate.AppRate;
 
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+import static androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, PlayerServiceCallback{
     private final String HOME = "home";
@@ -191,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
      *
      * @param savedInstanceState state
      */
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
         boolean firstStart = prefs.getBoolean("firstStart", true);
 
-        if (firstStart) {
+       if (firstStart) {
             tutorialTapTarget();
         }
 
@@ -293,6 +296,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //CirImageViewProPic.setImageDrawable(R.drawable.artist);
             Log.e(TAG, "username is::" + name);
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
+           // Picasso.get().load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
         } else {
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
@@ -444,7 +448,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TapTargetView.showFor(this,                 // `this` is an Activity
                 TapTarget.forView(findViewById(R.id.discover), "Discover More", "Find out what's new and exciting here!")
                         .tintTarget(true)
-//                        .cancelable(false)
+                        .cancelable(false)
                         .descriptionTextColor(R.color.colorWhite)
                         .outerCircleColor(R.color.colorPrimary),
                 new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
@@ -1123,7 +1127,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mSearchView.setQueryHint("Search");
 
         // Modify text colors
-        EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        EditText searchEditText = (EditText) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(Color.WHITE);
         searchEditText.setHintTextColor(Color.WHITE);
 
@@ -1241,6 +1245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         mSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             // Stop adapters from listening so recent searches are removed
             public boolean onMenuItemActionCollapse(MenuItem item) {
@@ -1277,6 +1282,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;  // return true to collapse action view
             }
 
+            @SuppressLint("RestrictedApi")
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 MainActivity.this.setItemsVisibility(menu, mSearch, false);
@@ -2071,6 +2077,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+
+    @SuppressLint("RestrictedApi")
     private void bottomNavSetUp(boolean fabvisibility){
         getSupportActionBar().show();
         if(fabvisibility){
@@ -2091,6 +2099,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @SuppressLint("RestrictedApi")
     private void sideNavSetup(){
         MarginLayoutParams params;
         params = (MarginLayoutParams) contentHolder.getLayoutParams();

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
+<androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,7 +24,7 @@
         <!--<include layout="@layout/toolbar"-->
             <!--android:id="@+id/toolbar"/>-->
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar"
@@ -57,7 +57,7 @@
                         android:visibility="gone"
                         />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view"
                         android:layout_width="match_parent"
                         android:layout_height="416dp"
@@ -80,7 +80,7 @@
 
 
 
-        <android.support.design.widget.FloatingActionButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                 android:visibility = "gone"
                 />
 
-            <android.support.design.widget.BottomNavigationView
+            <com.google.android.material.bottomnavigation.BottomNavigationView
                 android:id="@+id/bottomNav"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
@@ -106,9 +106,9 @@
                 android:layout_alignParentStart="true"
                 android:background="@color/colorWhite"
                 app:menu="@menu/bottom_nav_items">
-            </android.support.design.widget.BottomNavigationView>
+            </com.google.android.material.bottomnavigation.BottomNavigationView>
 
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/search_tabs"
             android:layout_width="match_parent"
             android:layout_height="38dp"
@@ -119,28 +119,28 @@
             app:tabTextColor="@android:color/white"
             app:tabSelectedTextColor="@android:color/white">
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:id="@+id/tab_videos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Videos" />
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:id="@+id/tab_artists"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Artists" />
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:id="@+id/tab_listeners"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Listeners" />
-        </android.support.design.widget.TabLayout>
+        </com.google.android.material.tabs.TabLayout>
 
     </RelativeLayout>
 
-    <android.support.design.widget.NavigationView
+    <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
@@ -151,4 +151,4 @@
         app:itemIconTint="@color/colorPrimary"
         />
 
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

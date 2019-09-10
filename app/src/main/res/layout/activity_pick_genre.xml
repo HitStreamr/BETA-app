@@ -33,7 +33,7 @@
             android:text="@string/genre_subheading"
             android:textColor="@color/common_google_signin_btn_text_dark_focused" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/genreView"
             android:layout_width="match_parent"
             android:layout_height="460dp"

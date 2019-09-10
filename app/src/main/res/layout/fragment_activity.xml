@@ -27,7 +27,7 @@
             android:orientation="horizontal"
             android:paddingHorizontal="10dp">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/artistsActivity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,21 +37,21 @@
         </LinearLayout>
 
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="60dp">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/activityRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            </android.support.v7.widget.RecyclerView>
+            </androidx.recyclerview.widget.RecyclerView>
 
 
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 

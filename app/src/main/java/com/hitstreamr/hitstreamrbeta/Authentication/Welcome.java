@@ -1,19 +1,12 @@
 package com.hitstreamr.hitstreamrbeta.Authentication;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewAnimationUtils;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -21,8 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hitstreamr.hitstreamrbeta.R;
-
-import static android.view.View.VISIBLE;
 
 public class Welcome extends AppCompatActivity implements View.OnClickListener {
 

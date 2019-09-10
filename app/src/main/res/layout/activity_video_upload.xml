@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".VideoUploadActivity">
+
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar" />
@@ -36,14 +36,32 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/black"
+                    >
 
-                        <VideoView
-                            android:id="@+id/videoView"
-                            android:layout_width="match_parent"
-                            android:layout_height="234dp"
-                            android:layout_gravity="center"
-                            />
+                    <VideoView
+                        android:id="@+id/videoView"
+                        android:layout_width="match_parent"
+                        android:layout_height="234dp"
+                        android:layout_centerInParent="true"
+                        />
 
+                    <TextView
+                        android:id="@+id/tapPreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:padding="20dp"
+                        android:text="Tap here to preview"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
 
                 <Button
                     android:id="@+id/selectVideo"
@@ -54,7 +72,7 @@
 
 
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:counterEnabled="true"
@@ -70,9 +88,9 @@
                         android:singleLine="true"
                         android:maxLength="100"
                         />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <android.support.design.widget.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:counterEnabled="true"
@@ -87,7 +105,7 @@
                         android:hint="Description"
                         android:inputType="textMultiLine"
                         android:maxLength="1000" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

@@ -9,7 +9,7 @@
     android:fillViewport="true"
     android:keepScreenOn="true">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
@@ -55,7 +55,7 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/featuredVideosRCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -63,13 +63,20 @@
                     android:layout_marginBottom="10dp"/>
 
 
-                <!-- <LinearLayout
+
+                <!-- Sponsored Videos
+
+                Sponsored Videos-->
+
+
+                <LinearLayout
                      android:id="@+id/sponsoredVideosLinLayout"
                      android:layout_width="match_parent"
                      android:layout_height="wrap_content"
-                     android:background="@color/colorAccent"
+                     android:background="@color/colorWhite"
                      android:orientation="horizontal"
-                     android:padding="10dp">
+                     android:padding="10dp"
+                    android:visibility="gone">
 
                      <TextView
                          android:layout_width="wrap_content"
@@ -95,12 +102,21 @@
                      </LinearLayout>
                  </LinearLayout>
 
-                 <android.support.v7.widget.RecyclerView
+                 <androidx.recyclerview.widget.RecyclerView
                      android:id="@+id/sponsoredVideosRCV"
                      android:layout_width="match_parent"
                      android:layout_height="wrap_content"
-                     android:visibility="visible"
-                     android:layout_marginBottom="10dp"/>-->
+                     android:visibility="gone"
+                     android:layout_marginBottom="10dp"/>
+
+
+
+
+                <!-- Fresh Releases
+
+                Fresh Releases-->
+
+
 
                 <LinearLayout
                     android:id="@+id/freshReleasesLinLayout"
@@ -134,14 +150,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/freshReleasesRCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
                     android:layout_marginBottom="10dp">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <!-- Trending Now-->
                 <LinearLayout
@@ -176,14 +192,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/trendingNowRCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
                     android:layout_marginBottom="10dp">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
                 <!-- Artist to Watch -->
                 <LinearLayout
@@ -218,14 +234,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/artistWatchRCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
                     android:layout_marginBottom="10dp">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
 
                 <LinearLayout
@@ -261,7 +277,7 @@
 
                 </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/watchAgainRCV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -269,7 +285,7 @@
                         android:layout_marginBottom="10dp"
                         app:reverseLayout="true">
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
                 <!-- Popular People -->
                 <LinearLayout
@@ -306,14 +322,14 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/popularUsersRCV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
                     android:layout_marginBottom="100dp">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
             </LinearLayout>
 
@@ -321,7 +337,7 @@
 
 
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 
 

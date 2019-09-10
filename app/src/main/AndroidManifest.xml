@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hitstreamr.hitstreamrbeta">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -9,12 +10,12 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/hitstreamr_appiconploy"
+        android:icon="@drawable/hitstreamr_icon_round"
         android:label="HitStreamr"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FreeCreditsPopUp"></activity>
+        <activity android:name=".FreeCreditsPopUp"/>
         <activity
             android:name=".DeletePlaylist"
             android:screenOrientation="portrait" />
@@ -35,8 +36,9 @@
            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data
                     android:host="hitstreamr.page.link"

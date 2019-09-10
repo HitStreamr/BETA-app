@@ -2,12 +2,13 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -86,18 +87,25 @@ public class FreeCreditsPopUp extends AppCompatActivity implements View.OnClickL
 
 
     private void updateCredits(){
-        FirebaseDatabase.getInstance()
-                .getReference("Credits")
-                .child(userID)
-                .child("creditvalue")
-                .setValue("150")
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Toast.makeText(FreeCreditsPopUp.this, "Enjoy your free credits!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-        finish();
+
+        if ("currentCredit" == String.valueOf(0)){
+            FirebaseDatabase.getInstance()
+                    .getReference("Credits")
+                    .child(userID)
+                    .child("creditvalue")
+                    .setValue("50")
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(FreeCreditsPopUp.this, "Enjoy your free credits!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+            finish();
+
+        } else {
+            finish();
+        }
+
     }
 
 }

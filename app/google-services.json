@@ -15,35 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "160384263988-7s6m7pfh7c5f6cob1uuqlvi4v8iea65r.apps.googleusercontent.com",
+          "client_id": "160384263988-mulvc34p9nknvu8pjmmagr8bqq4ds3k2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.hitstreamr.hitstreamrbeta",
-            "certificate_hash": "fb3977278d97ebcdaeddfccbb07e981a22f7a7ef"
+            "certificate_hash": "8b0d1b64a4af1e52d477503cc7bb551ec87938ec"
           }
         },
         {
-          "client_id": "160384263988-m9casb132sqteajt5j0tb772j6l7rh1b.apps.googleusercontent.com",
+          "client_id": "160384263988-ff2nhdbkti1qalcnt8j4bqig9os44e7h.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.hitstreamr.hitstreamrbeta",
-            "certificate_hash": "b9debb1678b103af91aa6b4d3de58fafb469d61f"
-          }
-        },
-        {
-          "client_id": "160384263988-s3kh7vitoib74fnp9vq3pv58rukv7k67.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hitstreamr.hitstreamrbeta",
-            "certificate_hash": "195900a29b78fdd0c7ac5dd905c3eca30355b727"
-          }
-        },
-        {
-          "client_id": "160384263988-6mn74apkr2dogpr8f7efk41487c6690i.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.hitstreamr.hitstreamrbeta",
-            "certificate_hash": "f77a3e6c8695d418e5935d786740bd71112e182f"
+            "certificate_hash": "9a0303b362a84f6d759e49bbccc512bc9c1eba28"
           }
         },
         {
@@ -55,11 +39,35 @@
           }
         },
         {
-          "client_id": "160384263988-ff2nhdbkti1qalcnt8j4bqig9os44e7h.apps.googleusercontent.com",
+          "client_id": "160384263988-6mn74apkr2dogpr8f7efk41487c6690i.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.hitstreamr.hitstreamrbeta",
-            "certificate_hash": "9a0303b362a84f6d759e49bbccc512bc9c1eba28"
+            "certificate_hash": "f77a3e6c8695d418e5935d786740bd71112e182f"
+          }
+        },
+        {
+          "client_id": "160384263988-s3kh7vitoib74fnp9vq3pv58rukv7k67.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hitstreamr.hitstreamrbeta",
+            "certificate_hash": "195900a29b78fdd0c7ac5dd905c3eca30355b727"
+          }
+        },
+        {
+          "client_id": "160384263988-m9casb132sqteajt5j0tb772j6l7rh1b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hitstreamr.hitstreamrbeta",
+            "certificate_hash": "b9debb1678b103af91aa6b4d3de58fafb469d61f"
+          }
+        },
+        {
+          "client_id": "160384263988-7s6m7pfh7c5f6cob1uuqlvi4v8iea65r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hitstreamr.hitstreamrbeta",
+            "certificate_hash": "fb3977278d97ebcdaeddfccbb07e981a22f7a7ef"
           }
         },
         {
@@ -73,20 +81,13 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
             {
               "client_id": "160384263988-7fr417ka4ngjij4oi2rrdh0q4c5jdppp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }

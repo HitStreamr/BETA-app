@@ -10,9 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -91,6 +92,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
     private Button retryUploadBtn;
     private Button ContributorCancelBtn;
     private ImageButton Help;
+    private TextView preview;
 
     //EditText Inputs
     private EditText EdittextTitle;
@@ -193,6 +195,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         retryUploadBtn = findViewById(R.id.retryVideoUpload);
         ContributorCancelBtn =findViewById(R.id.ContributorCancel);
         Help = (ImageButton) findViewById(R.id.help);
+        preview = findViewById(R.id.tapPreview);
 
         //VideoView
         artistUploadVideo = findViewById(R.id.videoView);
@@ -234,6 +237,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
         retryUploadBtn.setOnClickListener(this);
         ContributorCancelBtn.setOnClickListener(this);
         Help.setOnClickListener(this);
+        preview.setOnClickListener(this);
+
+        previewVid();
+
 
         ContributorValuesLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -409,6 +416,10 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                 });
     }
 
+    private void previewVid(){
+
+    }
+
     /*
      * Select Video and Callback from Video
      */
@@ -435,7 +446,7 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             String path = data.getData().toString();
                             artistUploadVideo.setVideoPath(path);
                             artistUploadVideo.requestFocus();
-                            artistUploadVideo.start();
+                            artistUploadVideo.pause();
                             artistUploadVideo.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                                 @Override
                                 public void onPrepared(MediaPlayer mp) {
@@ -447,6 +458,8 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
                             });
                             // Video has been selected succesfully
                             videoSelected.set(true);
+                            //set visibility on text
+                            preview.setVisibility(View.VISIBLE);
 
 
                         } catch (Exception e) {
@@ -879,6 +892,16 @@ public class VideoUploadActivity extends AppCompatActivity implements View.OnCli
             startActivity(new Intent(helpIntent));
 
         }
+        if (view == preview) {
+            if (!artistUploadVideo.isPlaying()) {
+                artistUploadVideo.start();
+            preview.setText("Pause preview");
+            } else {
+                artistUploadVideo.pause();
+                preview.setText("Resume");
+            }
+        }
+
     }
 
     @Override

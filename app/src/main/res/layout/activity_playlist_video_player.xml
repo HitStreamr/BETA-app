@@ -466,12 +466,12 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/nextInQue_RCV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
                     <View
                         android:id="@+id/Divider"
@@ -490,12 +490,12 @@
                         android:paddingHorizontal="10dp"
                         android:paddingBottom="10dp" />
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/relatedVideos_RCV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
                 </LinearLayout>
 

@@ -1,12 +1,11 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
-import com.firebase.client.Firebase;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;

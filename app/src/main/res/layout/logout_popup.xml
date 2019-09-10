@@ -8,7 +8,7 @@
     android:layout_gravity="center"
     android:elevation="4dp">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         app:cardCornerRadius="8dp">
@@ -59,7 +59,7 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 
 

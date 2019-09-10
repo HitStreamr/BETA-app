@@ -49,12 +49,12 @@
                 app:ael_interpolator="bounce"
                 app:ael_orientation="vertical">
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_history"
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
                     android:scrollbars="horizontal">
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
@@ -87,13 +87,13 @@
                 app:ael_interpolator="bounce"
                 app:ael_orientation="vertical">
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView_watchLater"
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
                     android:scrollbars="horizontal">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
 
             </com.github.aakira.expandablelayout.ExpandableRelativeLayout>
 
@@ -109,7 +109,7 @@
                 android:textAlignment="textStart"
                 android:paddingStart="10dp"/>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
                         android:layout_below="@+id/expandableButton_playlists"
                         android:id="@+id/recyclerView_playlists"
                         android:layout_width="match_parent"
@@ -117,13 +117,13 @@
                         android:scrollbars="vertical"
                         >
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
         </RelativeLayout>
 
     </ScrollView>
 
-    <android.support.design.widget.BottomNavigationView
+    <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -131,6 +131,6 @@
         android:layout_alignParentStart="true"
         android:background="@color/colorWhite"
         app:menu="@menu/bottom_nav_items">
-    </android.support.design.widget.BottomNavigationView>
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </RelativeLayout>
