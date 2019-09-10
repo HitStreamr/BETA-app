@@ -4,4 +4,7 @@
     <item android:id="@+id/editPlaylist"
         android:title="Edit Playlist" />
 
+    <item android:id="@+id/deletePlaylist"
+        android:title="Delete Playlist" />
+
 </menu>

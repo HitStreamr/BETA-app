@@ -13,9 +13,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
-        android:padding="10dp"
-        >
+        android:background="@color/colorWhite"
+        android:padding="10dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -30,12 +30,12 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
                     android:text="Edit Account Information"
                     android:textSize="16dp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_gravity="center_horizontal"/>
+                    android:textStyle="bold" />
 
                 <!--<ImageView
                     android:id="@+id/accountPhoto"
@@ -47,39 +47,39 @@
                     android:id="@+id/accountPhoto"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:src="@mipmap/ic_launcher_round"
-                    android:layout_gravity="center_horizontal"/>
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
 
                 <Button
                     android:id="@+id/accountChangePhoto"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    android:text="Change Photo"
-                    android:textColor="@color/colorPrimary"
-                    android:background="@android:color/transparent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="3dp"/>
+                    android:layout_marginBottom="3dp"
+                    android:background="@android:color/transparent"
+                    android:text="Change Photo"
+                    android:textColor="@color/colorPrimary" />
 
                 <Button
                     android:id="@+id/accountChangeBackground"
                     android:layout_width="wrap_content"
                     android:layout_height="35dp"
-                    android:text="Change Background"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/colorPrimary"
-                    android:background="@android:color/transparent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="5dp"/>
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:background="@android:color/transparent"
+                    android:text="Change Background"
+                    android:textColor="@color/colorPrimary" />
 
 
                 <TextView
                     android:id="@+id/nameTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"
                     android:layout_marginTop="10dp"
-                    android:textSize="10dp"
-                    />
+                    android:text="Name"
+                    android:textSize="10dp" />
+
                 <EditText
                     android:id="@+id/name"
                     android:layout_width="match_parent"
@@ -87,66 +87,68 @@
                     android:ems="10"
                     android:hint="Name"
                     android:inputType="textPersonName"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textCursorDrawable="@android:color/black" />
+
                 <TextView
                     android:id="@+id/UserNametext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Username"
                     android:layout_marginTop="15dp"
-                    android:visibility="visible"
+                    android:text="Username"
                     android:textSize="10dp"
-                    />
+                    android:visibility="visible" />
+
                 <TextView
                     android:id="@+id/Labeltext"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Labelname"
                     android:layout_marginTop="10dp"
-                    android:visibility="gone"/>
+                    android:text="Labelname"
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/accountUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:text="Username"
                     android:inputType="textPersonName"
+                    android:text="Username"
                     android:textColor="@android:color/black"
-                    android:textSize="18dp"/>
+                    android:textSize="18dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Email"
                     android:layout_marginTop="15dp"
-                    android:textSize="10dp"
-                    />
+                    android:text="Email"
+                    android:textSize="10dp" />
+
                 <TextView
                     android:id="@+id/accountEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:text="user@email.com"
-                    android:inputType="textEmailAddress"
                     android:enabled="true"
+                    android:inputType="textEmailAddress"
+                    android:text="user@email.com"
                     android:textColor="@android:color/black"
-                    android:textSize="18dp"/>
+                    android:textSize="18dp" />
 
                 <Button
                     android:id="@+id/ChangePassword"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:text="Change Password"
-                    android:textColor="@color/colorPrimary"
-                    android:background="@android:color/transparent"
                     android:layout_marginTop="10dp"
-                    />
+                    android:background="@android:color/transparent"
+                    android:text="Change Password"
+                    android:textColor="@color/colorPrimary" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bio"
-                    android:layout_marginTop="15dp"/>
+                    android:layout_marginTop="15dp"
+                    android:text="Bio" />
+
                 <EditText
                     android:id="@+id/Bio"
                     android:layout_width="match_parent"
@@ -155,7 +157,7 @@
                     android:hint="Bio Here"
                     android:inputType="textMultiLine"
                     android:maxLength="160"
-                    android:textCursorDrawable="@android:color/black"/>
+                    android:textCursorDrawable="@android:color/black" />
 
             </LinearLayout>
 
@@ -169,31 +171,32 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
                     android:text="Private Information"
                     android:textSize="16dp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="20dp"/>
+                    android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    android:text="Name" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <EditText
                         android:id="@+id/accountFirstName"
                         android:layout_width="160dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
                         android:ems="10"
                         android:hint="First"
                         android:inputType="textPersonName"
-                        android:layout_marginEnd="10dp"
-                        android:textCursorDrawable="@android:color/black"
-                        />
+                        android:textCursorDrawable="@android:color/black" />
+
                     <EditText
                         android:id="@+id/accountLastName"
                         android:layout_width="160dp"
@@ -201,15 +204,15 @@
                         android:ems="10"
                         android:hint="Last"
                         android:inputType="textPersonName"
-                        android:textCursorDrawable="@android:color/black"
-                        />
+                        android:textCursorDrawable="@android:color/black" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    android:text="Phone" />
+
                 <EditText
                     android:id="@+id/accountPhone"
                     android:layout_width="match_parent"
@@ -217,13 +220,14 @@
                     android:ems="10"
                     android:hint="123456789"
                     android:inputType="phone"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textCursorDrawable="@android:color/black" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Address"
-                    android:layout_marginTop="10dp"/>
+                    android:layout_marginTop="10dp"
+                    android:text="Address" />
+
                 <EditText
                     android:id="@+id/accountAddress"
                     android:layout_width="match_parent"
@@ -231,8 +235,8 @@
                     android:ems="10"
                     android:hint="Address line 1"
                     android:inputType="textPersonName"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textCursorDrawable="@android:color/black" />
+
                 <EditText
                     android:id="@+id/accountCity"
                     android:layout_width="match_parent"
@@ -240,12 +244,13 @@
                     android:ems="10"
                     android:hint="City"
                     android:inputType="textPersonName"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textCursorDrawable="@android:color/black" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <Spinner
                         android:id="@+id/accountState"
                         android:layout_width="160dp"
@@ -254,9 +259,10 @@
                         android:background="@drawable/button2"
                         android:ems="10"
                         android:entries="@array/stateAbbrev"
-                        android:paddingBottom="3dp"
                         android:paddingLeft="10dp"
-                        android:paddingTop="3dp" />
+                        android:paddingTop="3dp"
+                        android:paddingBottom="3dp" />
+
                     <EditText
                         android:id="@+id/accountZip"
                         android:layout_width="160dp"
@@ -264,9 +270,9 @@
                         android:ems="10"
                         android:hint="Zip"
                         android:inputType="number"
-                        android:textCursorDrawable="@android:color/black"
-                        />
+                        android:textCursorDrawable="@android:color/black" />
                 </LinearLayout>
+
                 <EditText
                     android:id="@+id/accountCountry"
                     android:layout_width="match_parent"
@@ -274,21 +280,21 @@
                     android:ems="10"
                     android:hint="Country"
                     android:inputType="textPersonName"
-                    android:textCursorDrawable="@android:color/black"
-                    />
+                    android:textCursorDrawable="@android:color/black" />
 
             </LinearLayout>
 
-            <!--<Button-->
-                <!--android:id="@+id/saveAccount"-->
-                <!--android:layout_width="130dp"-->
-                <!--android:layout_height="40dp"-->
-                <!--android:background="@drawable/button1"-->
-                <!--android:text="Save Changes"-->
-                <!--android:textColor="@color/colorAccent"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:layout_marginTop="10dp"-->
-                <!--/>-->
+            <Button
+            android:id="@+id/deleteAccount"
+            android:layout_width="wrap_content"
+            android:paddingHorizontal="5dp"
+            android:layout_height="40dp"
+            android:background="@android:color/transparent"
+            android:text="Delete My Account"
+            android:textColor="@color/colorAccent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            />
 
         </LinearLayout>
 

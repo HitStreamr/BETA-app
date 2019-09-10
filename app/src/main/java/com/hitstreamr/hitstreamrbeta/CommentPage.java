@@ -1,12 +1,12 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -160,7 +160,6 @@ public class CommentPage extends AppCompatActivity {
         databaseReference.child(commentID).setValue(comment_object).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(CommentPage.this,"Comment has been posted.", Toast.LENGTH_LONG).show();
                 mCommentMessage.setText("");
             }
         })
@@ -266,7 +265,6 @@ public class CommentPage extends AppCompatActivity {
         databaseReference.child(commentID).setValue(comment_object).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Toast.makeText(CommentPage.this,"Reply has been posted.", Toast.LENGTH_LONG).show();
                 mCommentMessage.setText("");
                 isReplyingTo = false;
                 replyingToDisplay.setVisibility(View.GONE);

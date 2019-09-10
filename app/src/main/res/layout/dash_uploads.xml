@@ -25,17 +25,17 @@
                android:layout_height="40dp"
                android:text="UPLOAD"
                android:background="@drawable/button1"
-               android:textColor="@color/colorAccent"
+               android:textColor="@color/colorWhite"
                />
 
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/dashboard_upload_RCV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        </android.support.v7.widget.RecyclerView>
+        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 

@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="15dp"
-            android:background="@color/colorAccent">
+            android:background="@color/colorWhite">
 
             <Button
                 android:id="@+id/closeBtn"
@@ -43,26 +43,28 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="15dp"
-            android:background="@color/colorAccent"
+            android:background="@color/colorWhite"
             android:layout_marginTop="15dp"
             >
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/update_over_wifi_button"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/update_over_wifi_descript"/>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/clear_application_cache"
                 android:textSize="18sp"
-                android:layout_marginTop="15dp"/>
+                android:layout_marginTop="15dp"
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,25 +80,26 @@
             android:paddingEnd="15dp"
             android:paddingTop="15dp"
             android:paddingBottom="60dp"
-            android:background="@color/colorAccent"
+            android:background="@color/colorWhite"
             android:layout_marginTop="15dp">
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/analytics_settings_descript"/>
 
-            <android.support.v7.widget.SwitchCompat
+            <androidx.appcompat.widget.SwitchCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/crash_log_settings"
                 android:textSize="18sp"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

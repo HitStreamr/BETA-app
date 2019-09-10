@@ -9,9 +9,10 @@ import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationCompat;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -248,7 +249,7 @@ public class HitStreamrFirebaseMessagingService extends FirebaseMessagingService
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.drawable.hitstreamr_icon)
+                        .setSmallIcon(R.drawable.new_hitstreamr_h_logo_wht_w_)
                         .setContentTitle(message.get("title"))
                         .setContentText(message.get("body"))
                         .setAutoCancel(true)

@@ -1,9 +1,9 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +15,13 @@ import android.widget.TextView;
 import com.bumptech.glide.ListPreloader;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -67,7 +72,7 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
     @Override
     public void onBindViewHolder(@NonNull FeaturedVideoResultsHolder holder, int position) {
         DateFormat df2 = new SimpleDateFormat("MM/dd/yyyy");
-        requestBuilder.load(vids.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(vids.get(position).getUrl()).into(holder.videoThumbnail);
         StorageReference artistProfReference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://hitstreamr-beta.appspot.com/profilePictures/" + vids.get(position).getUserId());
 
         if (artistProfReference == null) {
@@ -77,13 +82,71 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         }
 
         holder.videoTitle.setText(vids.get(position).getTitle());
-        holder.videoUsername.setText(vids.get(position).getUsername());
+        //TODO needs to be a callback (or however follows are done)
+       //set up UI for following
+                holder.findUserName(new FeaturedVideoResultAdapter.onDataReceiveCallback() {
+                    @Override
+                    public void foundName(String name) {
+                        holder.videoUsername.setText(name);
+                    }
+
+                }, vids.get(position).getUserId());
         holder.videoViews.setText(formatt(vids.get(position).getViews()));
         holder.videoTime.setText(vids.get(position).getDuration());
-        holder.videoPublish.setText(df2.format(vids.get(position).getTimestamp().toDate()));
+
+        if (vids.get(position).getTimestamp() != null)
+            holder.videoPublish.setText(df2.format(vids.get(position).getTimestamp().toDate()));
+
         holder.videoThumbnail.setOnClickListener(v -> mListener.onResultClick(vids.get(position)));
         holder.overflowMenu.setOnClickListener(v -> mListener.onOverflowClick(vids.get(position), holder.overflowMenu));
 
+        // Get the number of likes
+        FirebaseDatabase.getInstance().getReference("VideoLikes").child(vids.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoLikes.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the number of re-posts
+        FirebaseDatabase.getInstance().getReference("Repost").child(vids.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(vids.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -127,6 +190,8 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         TextView videoViews;
         TextView videoPublish;
         TextView videoTime;
+        TextView videoLikes;
+        TextView videoReposts;
         Button overflowMenu;
         CircleImageView artistProfPic;
         VideoClickListener mListener;
@@ -135,13 +200,36 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
             super(itemView);
             videoThumbnail = itemView.findViewById(R.id.featuredVideoThumbnail);
             videoTitle = itemView.findViewById(R.id.title);
+            videoTitle.setSelected(true);
             videoUsername = itemView.findViewById(R.id.artistName);
             videoViews = itemView.findViewById(R.id.videoViews);
             videoPublish = itemView.findViewById(R.id.publishDate);
             videoTime = itemView.findViewById(R.id.videoLength);
             overflowMenu = itemView.findViewById(R.id.overflowButton);
             artistProfPic = itemView.findViewById(R.id.artistProfilePicture);
+            videoLikes = itemView.findViewById(R.id.faveAmount);
+            videoReposts = itemView.findViewById(R.id.repostAmount);
             this.mListener = mListener;
+        }
+
+        public void findUserName(FeaturedVideoResultAdapter.onDataReceiveCallback callback, String userID){
+            FirebaseDatabase.getInstance()
+                    .getReference("ArtistAccounts")
+                    .child(userID)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                ArtistUser temp = dataSnapshot.getValue(ArtistUser.class);
+                                callback.foundName(temp.getUsername());
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+            });
         }
     }
 
@@ -170,4 +258,10 @@ public class FeaturedVideoResultAdapter extends RecyclerView.Adapter<FeaturedVid
         boolean hasDecimal = truncated < 100 && (truncated / 10d) != (truncated / 10);
         return hasDecimal ? (truncated / 10d) + suffix : (truncated / 10) + suffix;
     }
+
+    public interface onDataReceiveCallback{
+        void foundName(String name);
+    }
+
+
 }

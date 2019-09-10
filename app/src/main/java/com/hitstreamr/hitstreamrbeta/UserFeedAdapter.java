@@ -1,23 +1,23 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -51,20 +51,20 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
 
     @Override
     public void onBindViewHolder(@NonNull UserFeedHolder holder, int position) {
-        requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(objects1.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        holder.videoUsername.setText(objects1.get(position).getUsername());
+
         userLike = objects2.get(position).getFeedLike();
         UserRepost = objects2.get(position).getFeedRepost();
 
-        if(userLike.equals("Y"))
-        {
+        if (userLike.equals("Y")) {
             FeedLikes.setVisibility(View.VISIBLE);
         }
-        if(UserRepost.equals("Y"))
-        {
+
+        if (UserRepost.equals("Y")) {
             FeedRepost.setVisibility(View.VISIBLE);
         }
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -72,7 +72,28 @@ public class UserFeedAdapter extends RecyclerView.Adapter<UserFeedAdapter.UserFe
             }
         });
 
+        holder.videoThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mListener.onResultClick(objects1.get(position));
+            }
+        });
 
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(objects1.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override

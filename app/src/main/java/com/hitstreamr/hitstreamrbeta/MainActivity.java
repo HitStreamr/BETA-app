@@ -1,39 +1,26 @@
 package com.hitstreamr.hitstreamrbeta;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -45,7 +32,19 @@ import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
@@ -54,33 +53,21 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.getkeepsafe.taptargetview.TapTarget;
+import com.getkeepsafe.taptargetview.TapTargetView;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.audio.AudioRendererEventListener;
-import com.google.android.exoplayer2.decoder.DecoderCounters;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.text.Subtitle;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.video.VideoRendererEventListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -91,8 +78,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreSettings;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.hitstreamr.hitstreamrbeta.BottomNav.ActivityFragment;
@@ -108,19 +93,14 @@ import com.hitstreamr.hitstreamrbeta.DrawerMenuFragments.PaymentPrefFragment;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import hotchemi.android.rate.AppRate;
 
-import static android.support.v4.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
+import static androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,BottomNavigationView.OnNavigationItemSelectedListener, PopupMenu.OnMenuItemClickListener, PlayerServiceCallback{
     private final String HOME = "home";
@@ -134,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private Button logout;
     private DrawerLayout drawer;
-    private LinearLayout contentHolder;
+    private LinearLayout contentHolder, drawerTap;
     private ViewGroup.LayoutParams defaultParams;
     private NavigationView navigationView;
     private BottomNavigationView bottomNavView;
@@ -146,8 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private PlayerView relBGView;
     private ExoPlayer player;
     private TextView BGText;
-    private int playerPos;
-    private int currPos;
+    private boolean playlist;
 
 
     FloatingActionButton fab;
@@ -173,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     String name;
     Uri photoUrl;
 
-    RequestManager  glideRequests;
+    RequestManager glideRequests;
 
     FirebaseUser user;
     public final String TAG = "HomeActivity";
@@ -182,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private RecyclerView recyclerView;
     private com.google.firebase.database.Query myRef; // for Firebase Database
     private com.google.firebase.database.Query myRefforName; // for Firebase Database
-    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder>  firebaseRecyclerAdapter_artist;
+    private FirebaseRecyclerAdapter<ArtistUser, ArtistAccountViewHolder> firebaseRecyclerAdapter_artist;
     private FirebaseRecyclerAdapter<User, BasicAccountViewHolder> firebaseRecyclerAdapter_basic;
 
     private TabLayout mTabLayout;
@@ -192,6 +171,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String creditValue;
     private ServiceConnection mConnection;
     private VideoPlayerService mService;
+    private PlaylistVideoPlayerService mPlaylistService;
     private boolean runCheck;
     private boolean mBound;
     private ArrayList userUploadVideoList;
@@ -207,15 +187,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView closeMini;
     //private Button confirmBtn;
 
+
     /**
      * Set up and initialize layouts and variables
      *
      * @param savedInstanceState state
      */
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        boolean firstStart = prefs.getBoolean("firstStart", true);
+
+       if (firstStart) {
+            tutorialTapTarget();
+        }
+
+
+
 
         main = this;
 
@@ -224,10 +216,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Adding toolbar to the home activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setLogo(R.drawable.new_hitstreamr_h_logo_wht_w_);
+        toolbar.setLogo(R.drawable.hitstreamr_logo_app_header_3);
         toolbar.setTitleTextAppearance(this, R.style.MyTitleTextApperance);
-        getSupportActionBar().setTitle("Beta");
-        getSupportActionBar().setSubtitle("HitStreamr");
+        getSupportActionBar().setTitle("");
+//        getSupportActionBar().setSubtitle("HitStreamr");
 
         // Adding tabs for searching, initially invisible
         mTabLayout = (TabLayout) findViewById(R.id.search_tabs);
@@ -242,13 +234,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         glideRequests = Glide.with(this);
         //prevent from crashing due to setting the settings again
-        if (savedInstanceState == null) {
-            db = FirebaseFirestore.getInstance();
+        db = FirebaseFirestore.getInstance();
+
+        /*if (savedInstanceState == null) {
+
             FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
                     .setTimestampsInSnapshotsEnabled(true)
                     .build();
             db.setFirestoreSettings(settings);
         }
+        */
 
         noRes = findViewById(R.id.emptyView);
         searching = findViewById(R.id.loadingSearch);
@@ -285,6 +280,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Log.e(TAG, "Your profile" + name + photoUrl + user);
 
         drawer = findViewById(R.id.drawer_layout);
+        drawerTap = findViewById(R.id.drawer_tap);
         navigationView = findViewById(R.id.nav_view);
         bottomNavView = findViewById(R.id.bottomNav);
         fab = findViewById(R.id.fab);
@@ -296,19 +292,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         CirImageViewProPic.setVisibility(View.VISIBLE);
 
 
-        if(photoUrl == null){
+        if (photoUrl == null) {
             //CirImageViewProPic.setImageDrawable(R.drawable.artist);
-            Log.e(TAG, "username is::" +name);
+            Log.e(TAG, "username is::" + name);
             Glide.with(getApplicationContext()).load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
-        }
-        else{
+           // Picasso.get().load(R.mipmap.ic_launcher_round).into(CirImageViewProPic);
+        } else {
             Glide.with(getApplicationContext()).load(photoUrl).into(CirImageViewProPic);
         }
-        if(name.equals("") || name.equals(null)){
+        if (name.equals("") || name.equals(null)) {
             String tempname = "Username";
             TextViewUsername.setText(tempname);
-        }
-        else{
+        } else {
             TextViewUsername.setText(name);
         }
        /* else{
@@ -336,12 +331,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         startActivity(new Intent(MainActivity.this, VideoUploadActivity.class));
                     }
                 });
-//                vv.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        startActivity(new Intent(MainActivity.this, VideoPlayer.class));
-//                    }
-//                });
+
             }
         }
 
@@ -370,27 +360,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else {
                             userCredits.setText("0");
                         }
-
-                        //Make sure credits actually has a value
-                        //setting the fragments
-                        if(getIntent().hasExtra("OPTIONAL_FRAG"))
-                        {
-                            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
-                            switch(frag){
-                                case HOME:
-                                    bottomNavView.setSelectedItemId(R.id.home);
-                                    break;
-                                case DISCOVER:
-                                    bottomNavView.setSelectedItemId(R.id.discover);
-                                    break;
-                                case ACTIVITY:
-                                    bottomNavView.setSelectedItemId(R.id.activity);
-                                    break;
-                            }
-                        }else{
-                            //FRAG not set; default to home
-                            bottomNavView.setSelectedItemId(R.id.home);
-                        }
                     }
 
                     @Override
@@ -399,8 +368,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
 
-
-
+        //Make sure credits actually has a value
+        //setting the fragments
+        if (getIntent().hasExtra("OPTIONAL_FRAG")) {
+            String frag = getIntent().getStringExtra("OPTIONAL_FRAG");
+            switch (frag) {
+                case HOME:
+                    bottomNavView.setSelectedItemId(R.id.home);
+                    break;
+                case DISCOVER:
+                    bottomNavView.setSelectedItemId(R.id.discover);
+                    break;
+                case ACTIVITY:
+                    bottomNavView.setSelectedItemId(R.id.activity);
+                    break;
+            }
+        } else {
+            //FRAG not set; default to home
+            bottomNavView.setSelectedItemId(R.id.home);
+        }
 
 
         relBG = findViewById(R.id.BGRel);
@@ -411,12 +397,158 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         returnPlayerView = relBG.findViewById(R.id.return_to_full);
         closeMini = findViewById(R.id.closeMini);
         //Setup Miniplayer
-        if (getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+        if (getIntent().getBooleanExtra("MINI_VISIBLE", false)) {
             relBG.setVisibility(View.VISIBLE);
-            initMiniPlayer();
-            BGText.setText(((Video)getIntent().getParcelableExtra("VIDEO")).getTitle());
+            if(getIntent().getParcelableExtra("PLAYLIST") == null){
+                //Log.e(TAG, "PLAYLIST WAS NULL");
+                initMiniPlayer();
+            }else{
+                playlist = true;
+                initMiniPlaylistPlayer();
+            }
+            BGText.setText(((Video) getIntent().getParcelableExtra("VIDEO")).getTitle());
             binder();
         }
+
+        //Rate this app pop up
+        AppRate.with(this)
+                .setInstallDays(1)
+                .setLaunchTimes(5)
+                .setRemindInterval(2)
+                .monitor();
+
+        AppRate.showRateDialogIfMeetsConditions(this);
+
+    }
+
+    private void tutorialTapTarget() {
+        TapTargetView.showFor(this,
+                TapTarget.forView(findViewById(R.id.home), "This is Home", "Find all the things you love here!")
+                        .tintTarget(false)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap1();
+
+                        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putBoolean("firstStart", false);
+                        editor.apply();
+                    }
+
+                });
+
+    }
+
+    private void nextTap1() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.discover), "Discover More", "Find out what's new and exciting here!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap2();
+                    }
+                });
+    }
+
+    private void nextTap2() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.activity), "Activity Feed", "See who's active. See what's trendy!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap3();
+                    }
+                });
+    }
+
+    private void nextTap3() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.library), "The Library", "Your History, Watch Later, and Custom Playlists are stored here!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap4();
+                    }
+                });
+    }
+
+    private void nextTap4() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.search), "Search", "You can find Videos, Artists and Friends here.")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap5();
+                    }
+                });
+    }
+
+    private void nextTap5() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.profilePicMenu), "Profile", "Quickly Navigate to your profile from here!")
+                        .tintTarget(false)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);      // This call is optional
+                        nextTap6();
+                    }
+                });
+    }
+
+    private void nextTap6() {
+        TapTargetView.showFor(this,                 // `this` is an Activity
+                TapTarget.forView(findViewById(R.id.drawer_tap), "Menu", "Edit account info and settings from here!")
+                        .tintTarget(true)
+                        .cancelable(false)
+                        .descriptionTextColor(R.color.colorWhite)
+                        .outerCircleColor(R.color.colorPrimary),
+                new TapTargetView.Listener() {          // The listener can listen for regular clicks, long clicks or cancels
+                    @Override
+                    public void onTargetClick(TapTargetView view) {
+                        super.onTargetClick(view);
+                        freeCreditsPop();
+                    }
+                });
+    }
+
+    private void freeCreditsPop(){
+        Intent FreeCredits = new Intent(this, FreeCreditsPopUp.class);
+        startActivity(FreeCredits);
+    }
+
+
+
+    public static ContextThemeWrapper getAlertDialogContext(Context context){
+        return new ContextThemeWrapper(context, R.style.AlertDialog);
     }
 
     private void initMiniPlayer(){
@@ -429,7 +561,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 VideoPlayerService.LocalBinder binder = (VideoPlayerService.LocalBinder) service;
                 mService = binder.getService();
                 mService.setCallbacks(MainActivity.this);
-                mBound = true;
                 mService.resetPlayer();
             }
 
@@ -441,13 +572,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
 
-        returnPlayerView.setOnClickListener(new View.OnClickListener() {
+        BGText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
                 Intent fullscreen = new Intent(MainActivity.this, VideoPlayer.class);
                 fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 fullscreen.putExtra("RETURN", true);
-                fullscreen.putExtra("CREDIT", creditValue);
                 startActivity(fullscreen);
             }
         });
@@ -459,22 +592,105 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 releasePlayer();
             }
         });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void initMiniPlaylistPlayer(){
+        mConnection = new ServiceConnection() {
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to LocalService, cast the IBinder and get LocalService instance
+                PlaylistVideoPlayerService.LocalBinder binder = (PlaylistVideoPlayerService.LocalBinder) service;
+                mPlaylistService = binder.getService();
+                mPlaylistService.setCallbacks(MainActivity.this);
+
+                mPlaylistService.resetPlayer();
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+                mPlaylistService = null;
+
+            }
+        };
+        BGText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unbindPlayer();
+                relBG.setVisibility(View.GONE);
+                Intent fullscreen = new Intent(MainActivity.this, PlaylistVideoPlayer.class);
+                fullscreen.putExtra("VIDEO", (Video)getIntent().getParcelableExtra("VIDEO"));
+                fullscreen.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                fullscreen.putExtra("PLAYLIST", (Playlist) getIntent().getParcelableExtra("PLAYLIST"));
+                fullscreen.putExtra("PLAYLISTNAME", ((Playlist) getIntent().getParcelableExtra("PLAYLIST")).getPlaylistname());
+                fullscreen.putExtra("RETURN", true);
+                startActivity(fullscreen);
+            }
+        });
+
+        closeMini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                relBG.setVisibility(View.GONE);
+                releasePlayer();
+            }
+        });
+
+        relBG.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void binder(){
         Log.d(TAG, "Bind Service");
-        bindService(new Intent(MainActivity.this, VideoPlayerService.class),mConnection, 0);
+        Log.d(TAG, "" + playlist);
+        if(playlist){
+            bindService(new Intent(MainActivity.this,PlaylistVideoPlayerService.class),mConnection,0);
+        }else {
+            bindService(new Intent(MainActivity.this, VideoPlayerService.class), mConnection, 0);
+        }
+        mBound = true;
     }
 
+
+
+    @Override
+    public void stopPlayer(){
+        unbindPlayer();
+        relBG.setVisibility(View.GONE);
+    }
     @Override
     public void updateCreditText(String creditValue) {
         userCredits.setText(creditValue);
     }
 
     @Override
+    public void autoPlayNext() {
+        //AutoPlay Next?
+    }
+
+    @Override
     public void setPlayerView() {
-        playerView.setPlayer(VideoPlayerService.player);
-        controls.setPlayer(VideoPlayerService.player);
+        if (playlist){
+            playerView.setPlayer(PlaylistVideoPlayerService.player);
+            controls.setPlayer(PlaylistVideoPlayerService.player);
+        }else{
+            playerView.setPlayer(VideoPlayerService.player);
+            controls.setPlayer(VideoPlayerService.player);
+        }
+
     }
 
     @Override
@@ -539,77 +755,152 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             protected void onBindViewHolder(@NonNull BasicAccountViewHolder holder, int position, @NonNull User model) {
                 holder.setUserName(model.getUsername());
+
+                // Check if user is verified
+                if (model.getVerified().equals("true")) {
+                    holder.verified.setVisibility(View.VISIBLE);
+                } else {
+                    holder.verified.setVisibility(View.GONE);
+                }
+
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                        .child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                                    .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    if (uri != null) {
+                                        Glide.with(getApplicationContext()).load(uri).into(holder.profilePicture);
+                                    }
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // TODO: handle error
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // Followers count
+                // TODO: add thousands/millions k/m feature
+                db = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseDatabase db = FirebaseDatabase.getInstance();
+                            db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int follower = (int) dataSnapshot.getChildrenCount();
+                                    if (follower > 1) {
+                                        holder.count.setText(follower + " Followers");
+                                    } else {
+                                        holder.count.setText(follower + " Follower");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            holder.count.setText("0 Follower");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 //set up UI for following
-//                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
-//                    @Override
-//                    public void onFollowChecked(boolean following) {
-//                        if(following){
-//                            //if following == true
-//                            holder.followButton.setVisibility(View.GONE);
-//                            holder.unfollowButton.setVisibility(View.VISIBLE);
-//                        }else{
-//                            //if following == false
-//                            holder.followButton.setVisibility(View.VISIBLE);
-//                            holder.unfollowButton.setVisibility(View.GONE);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCheckUpdateFailed() {
-//
-//                    }
-//                }, model.getUserID());
-//
-//                holder.followButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
-//                            @Override
-//                            public void onFollowChecked(boolean following) {
-//                                if(following){
-//                                    //if following == true
-//                                    holder.followButton.setVisibility(View.GONE);
-//                                    holder.unfollowButton.setVisibility(View.VISIBLE);
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCheckUpdateFailed() {
-//
-//                            }
-//                        },model.getUserID());
-//                    }
-//                });
-//
-//                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
-//                            @Override
-//                            public void onFollowChecked(boolean following) {
-//                                if(!following){
-//                                    //if following == false
-//                                    holder.followButton.setVisibility(View.VISIBLE);
-//                                    holder.unfollowButton.setVisibility(View.GONE);
-//
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCheckUpdateFailed() {
-//
-//                            }
-//                        },model.getUserID());
-//                    }
-//                });
-//
-//
-//                holder.updateFollowing(new FollowCountUpdateCallback() {
-//                    @Override
-//                    public void onUpdateCount(long count) {
-//                        holder.count.setText(count+" Followers");
-//                    }
-//                }, model.getUserID());
+                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                    @Override
+                    public void onFollowChecked(boolean following) {
+                        if(following){
+                            //if following == true
+                            holder.followButton.setVisibility(View.GONE);
+                            holder.unfollowButton.setVisibility(View.VISIBLE);
+                        }else{
+                            //if following == false
+                            holder.followButton.setVisibility(View.VISIBLE);
+                            holder.unfollowButton.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCheckUpdateFailed() {
+
+                    }
+                }, model.getUserID());
+
+                holder.followButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(following){
+                                    //if following == true
+                                    holder.followButton.setVisibility(View.GONE);
+                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(!following){
+                                    //if following == false
+                                    holder.followButton.setVisibility(View.VISIBLE);
+                                    holder.unfollowButton.setVisibility(View.GONE);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+
+                holder.updateFollowing(new FollowCountUpdateCallback() {
+                    @Override
+                    public void onUpdateCount(long count) {
+                        holder.count.setText(count+" Followers");
+                    }
+                }, model.getUserID());
             }
 
             @NonNull
@@ -656,77 +947,156 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected void onBindViewHolder(@NonNull ArtistAccountViewHolder holder, int position, @NonNull ArtistUser model) {
                 holder.setArtistName(model.getArtistname());
 
-                //holder.setUserName(model.getUsername());
-//                holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
-//                    @Override
-//                    public void onFollowChecked(boolean following) {
-//                        if(following){
-//                            //if following == true
-//                            holder.followButton.setVisibility(View.GONE);
-//                            holder.unfollowButton.setVisibility(View.VISIBLE);
-//                        }else{
-//                            //if following == false
-//                            holder.followButton.setVisibility(View.VISIBLE);
-//                            holder.unfollowButton.setVisibility(View.GONE);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCheckUpdateFailed() {
-//
-//                    }
-//                }, model.getUserID());
-//
-//                holder.followButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
-//                            @Override
-//                            public void onFollowChecked(boolean following) {
-//                                if(following){
-//                                    //if following == true
-//                                    holder.followButton.setVisibility(View.GONE);
-//                                    holder.unfollowButton.setVisibility(View.VISIBLE);
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCheckUpdateFailed() {
-//
-//                            }
-//                        },model.getUserID());
-//                    }
-//                });
-//
-//                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
-//                            @Override
-//                            public void onFollowChecked(boolean following) {
-//                                if(!following){
-//                                    //if following == false
-//                                    holder.followButton.setVisibility(View.VISIBLE);
-//                                    holder.unfollowButton.setVisibility(View.GONE);
-//
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCheckUpdateFailed() {
-//
-//                            }
-//                        },model.getUserID());
-//                    }
-//                });
-//
-//                holder.updateFollowing(new FollowCountUpdateCallback() {
-//                    @Override
-//                    public void onUpdateCount(long count) {
-//                        holder.count.setText(count+" Followers");
-//                    }
-//                },model.getUserID());
+                // Check if artist is verified
+                if (model.getVerified().equals("true")) {
+                    holder.verified.setVisibility(View.VISIBLE);
+                } else {
+                    holder.verified.setVisibility(View.GONE);
+                }
 
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("UsernameUserId")
+                        .child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseStorage.getInstance().getReference("profilePictures").child(userId)
+                                    .getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    if (uri != null) {
+                                        Glide.with(getApplicationContext()).load(uri).into(holder.profilePicture);
+                                    }
+                                }
+                            })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            // TODO: handle error
+                                        }
+                                    });
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                // Followers count
+                // TODO: add thousands/millions k/m feature
+                db = FirebaseDatabase.getInstance().getReference("UsernameUserId").child(model.getUsername());
+                db.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String userId = dataSnapshot.child("tempUserId").getValue().toString();
+                            FirebaseDatabase db = FirebaseDatabase.getInstance();
+                            db.getReference("followers").child(userId).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    int follower = (int) dataSnapshot.getChildrenCount();
+                                    if (follower > 1) {
+                                        holder.count.setText(follower + " Followers");
+                                    } else {
+                                        holder.count.setText(follower + " Follower");
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            holder.count.setText("0 Follower");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+                holder.setUserName(model.getUsername());
+
+                if (!user.getUid().equals(model.getUserID())) {
+                    holder.checkFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                        @Override
+                        public void onFollowChecked(boolean following) {
+                            if (following) {
+                                //if following == true
+                                holder.followButton.setVisibility(View.GONE);
+                                holder.unfollowButton.setVisibility(View.VISIBLE);
+                            } else {
+                                //if following == false
+                                holder.followButton.setVisibility(View.VISIBLE);
+                                holder.unfollowButton.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onCheckUpdateFailed() {
+
+                        }
+                    }, model.getUserID());
+                } else {
+                    holder.followButton.setVisibility(View.GONE);
+                    holder.unfollowButton.setVisibility(View.GONE);
+                }
+
+                holder.followButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveFollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(following){
+                                    //if following == true
+                                    holder.followButton.setVisibility(View.GONE);
+                                    holder.unfollowButton.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.unfollowButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.saveUnfollowing(new VideoPlayer.OnDataReceiveCallback() {
+                            @Override
+                            public void onFollowChecked(boolean following) {
+                                if(!following){
+                                    //if following == false
+                                    holder.followButton.setVisibility(View.VISIBLE);
+                                    holder.unfollowButton.setVisibility(View.GONE);
+
+                                }
+                            }
+
+                            @Override
+                            public void onCheckUpdateFailed() {
+
+                            }
+                        },model.getUserID());
+                    }
+                });
+
+                holder.updateFollowing(new FollowCountUpdateCallback() {
+                    @Override
+                    public void onUpdateCount(long count) {
+                        holder.count.setText(count+" Followers");
+                    }
+                },model.getUserID());
             }
 
             @NonNull
@@ -750,13 +1120,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_main, menu);
         final MenuItem mSearch = menu.findItem(R.id.search);
+
         //Items
         profileItem = findViewById(R.id.profile);
         final SearchView mSearchView = (SearchView) mSearch.getActionView();
         mSearchView.setQueryHint("Search");
 
         // Modify text colors
-        EditText searchEditText = (EditText) mSearchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        EditText searchEditText = (EditText) mSearchView.findViewById(androidx.appcompat.R.id.search_src_text);
         searchEditText.setTextColor(Color.WHITE);
         searchEditText.setHintTextColor(Color.WHITE);
 
@@ -777,6 +1148,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void onClick(View view) {
                 Intent profilePage = new Intent(MainActivity.this, Profile.class);
                 profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(profilePage);
             }
         });
@@ -824,6 +1199,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     search_input = newText;
                     switch (tab_position) {
                         case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                             //searchVideos(newText);
                             //firestoreRecyclerAdapter_video.startListening();
                             searchVideoFirestore(autocompleteQuery(newText));
@@ -832,11 +1208,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             return true;
 
                         case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                             searchArtistAccounts(newText);
                             firebaseRecyclerAdapter_artist.startListening();
                             return true;
 
                         case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
                             searchBasicAccounts(newText);
                             firebaseRecyclerAdapter_basic.startListening();
                             return true;
@@ -844,6 +1222,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
 
                 if (newText.trim().isEmpty()) {
+                    switch (tab_position) {
+                        case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                            return true;
+                        case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                            return true;
+                        case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                            return true;
+                    }
                     stopAdapters();
                     if (suggestionAdapter != null){
                         suggestionAdapter.stopListening();
@@ -856,6 +1245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         mSearch.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @SuppressLint("RestrictedApi")
             @Override
             // Stop adapters from listening so recent searches are removed
             public boolean onMenuItemActionCollapse(MenuItem item) {
@@ -880,9 +1270,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 bottomNavView.setVisibility(View.VISIBLE);
                 // Do something when action item collapses
                 Log.e("HOME", "On Close Initiated");
+
+                // Hides the upload button if current user is NOT an artist
+                getUserType();
+                if (accountType.equals("BasicAccounts")) {
+                    fab.setVisibility(View.GONE);
+                } else {
+                    fab.setVisibility(View.VISIBLE);
+                }
+
                 return true;  // return true to collapse action view
             }
 
+            @SuppressLint("RestrictedApi")
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 MainActivity.this.setItemsVisibility(menu, mSearch, false);
@@ -910,22 +1310,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     stopAdapters();
                     switch (tab_position) {
                         case 0:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
                             searchVideoFirestore(autocompleteQuery(search_input));
                             suggestionAdapter.startListening();
                             break;
 
                         case 1:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
                             searchArtistAccounts(search_input);
                             firebaseRecyclerAdapter_artist.startListening();
                             break;
 
                         case 2:
+                            searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
                             searchBasicAccounts(search_input);
                             firebaseRecyclerAdapter_basic.startListening();
                             break;
                     }
                 } else {
-                    stopAdapters();
+
+                        switch (tab_position) {
+                            case 0:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+                                break;
+                            case 1:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
+                                break;
+                            case 2:
+                                searchEditText.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_IME_MULTI_LINE);
+                                break;
+
+                        }
+                        stopAdapters();
                 }
             }
 
@@ -952,8 +1368,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         String endcode = strFrontCode + Character.toString((char) (strEndCode.charAt(0) + 1));
 
         //Query where the videos are in the correct range and not private
-        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query).whereLessThan("title", query + "\uf8ff")
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]);
+        return db.collection("Videos").whereGreaterThanOrEqualTo("title", query)
+                .whereLessThan("title", query + "\uf8ff")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
     }
 
     /**
@@ -995,7 +1413,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ArrayList<String> terms = processQuery(query);
         Log.e(TAG, terms.toString());
         final Task<QuerySnapshot> exactmatch = db.collection("Videos").whereEqualTo("title", query)
-                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //Stop using the old adapter
         stopAdapters();
@@ -1007,7 +1427,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             allWords = allWords.whereEqualTo("terms." + terms.get(i), true);
         }
 
-        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0]).get();
+        Task<QuerySnapshot> allWordsTask = allWords.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N")
+                .get();
 
         //allResultsRetrieved is only successful, when all are successful
         Task<List<QuerySnapshot>> allResultsRetrieved = Tasks.whenAllSuccess(exactmatch, allWordsTask);
@@ -1109,11 +1531,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.account:
                 Intent acct = new Intent(getApplicationContext(), Account.class);
                 acct.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(acct);
                 break;
             case R.id.profile:
                 Intent prof = new Intent(getApplicationContext(), Profile.class);
                 prof.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                if(getIntent().getBooleanExtra("MINI_VISIBLE",false)){
+                    unbindPlayer();
+                    relBG.setVisibility(View.GONE);
+                }
                 startActivity(prof);
                 break;
             case R.id.fave_result:
@@ -1131,9 +1561,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class BasicAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name, artistName;
-        private TextView count;
         private Button followButton;
         private Button unfollowButton;
+
+        public TextView count;
+        public CircleImageView profilePicture;
+        public ImageView verified;
 
         BasicAccountViewHolder(View itemView) {
             super(itemView);
@@ -1142,7 +1575,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
-            artistName =view.findViewById(R.id.artist_name);
+            artistName = view.findViewById(R.id.artist_name);
+            profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
+
             artistName.setVisibility(View.GONE);
         }
 
@@ -1152,10 +1588,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent basicProfile = new Intent(getApplicationContext(), Profile.class);
                     basicProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
-                    basicProfile.putExtra("artistUsername", userName);
+                    basicProfile.putExtra("basicUsername", userName);
                     basicProfile.putExtra("SearchType", "BasicAccounts");
                     startActivity(basicProfile);
                 }
@@ -1279,9 +1714,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public class ArtistAccountViewHolder extends RecyclerView.ViewHolder {
         private View view;
         private TextView name, artistname;
-        private TextView count;
         private Button followButton;
         private Button unfollowButton;
+
+        public TextView count;
+        public CircleImageView profilePicture;
+        public ImageView verified;
 
         ArtistAccountViewHolder(View itemView) {
             super(itemView);
@@ -1291,6 +1729,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             count = view.findViewById(R.id.count);
             followButton = view.findViewById(R.id.follow_button);
             unfollowButton = view.findViewById(R.id.unfollow_button);
+            profilePicture = view.findViewById(R.id.searchImage);
+            verified = view.findViewById(R.id.verified);
         }
 
         void setArtistName(final String artistName) {
@@ -1304,7 +1744,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Toast.makeText(getApplicationContext(), userName, Toast.LENGTH_SHORT).show();
                     Intent artistProfile = new Intent(getApplicationContext(), Profile.class);
                     artistProfile.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                     artistProfile.putExtra("artistUsername", userName);
@@ -1569,6 +2008,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
             case R.id.help_center:
+//                Intent hcIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.hitstreamr.com/help-desk"));
+//                hcIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+//                startActivity(hcIntent);
                 sideNavSetup();
                 bundle = new Bundle();
                 bundle.putString("TYPE", type);
@@ -1607,7 +2049,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 HomeFragment homeFrag = new HomeFragment();
                 homeFrag.setArguments(bundle);
                 viewFragment(homeFrag,FRAG_HOME);
-                Toast.makeText(MainActivity.this, "Home", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.discover:
                 bottomNavSetUp(false);
@@ -1616,7 +2057,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 DiscoverFragment discFrag = new DiscoverFragment();
                 discFrag.setArguments(bundle);
                 viewFragment(discFrag,FRAG_OTHER);
-                Toast.makeText(MainActivity.this, "Discover", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.activity:
                 bottomNavSetUp(false);
@@ -1625,10 +2065,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ActivityFragment actFrag = new ActivityFragment();
                 actFrag.setArguments(bundle);
                 viewFragment(actFrag,FRAG_OTHER);
-                Toast.makeText(MainActivity.this, "Activity", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.library:
-                Toast.makeText(MainActivity.this, "Library", Toast.LENGTH_SHORT).show();
                 Intent libraryIntent = new Intent(getApplicationContext(), Library.class);
                 libraryIntent.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
                 startActivity(libraryIntent);
@@ -1639,6 +2077,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return false;
     }
 
+
+    @SuppressLint("RestrictedApi")
     private void bottomNavSetUp(boolean fabvisibility){
         getSupportActionBar().show();
         if(fabvisibility){
@@ -1659,6 +2099,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    @SuppressLint("RestrictedApi")
     private void sideNavSetup(){
         MarginLayoutParams params;
         params = (MarginLayoutParams) contentHolder.getLayoutParams();
@@ -1717,12 +2158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (mConnection != null && mBound){
-            unbindService(mConnection);
-            mBound = false;
-            mService.setCallbacks(null);
-            mService = null;
-        }
+        unbindPlayer();
         stopAdapters();
     }
 
@@ -1730,8 +2166,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mConnection != null && mBound){
             unbindService(mConnection);
             mBound = false;
-            mService.stopVideoService();
-            mService = null;
+            if(playlist){
+                mPlaylistService.stopVideoService();
+                mPlaylistService = null;
+            }else{
+                mService.stopVideoService();
+                mService = null;
+            }
+
+        }
+    }
+
+    private void unbindPlayer(){
+        if (mConnection != null && mBound){
+            unbindService(mConnection);
+            mBound = false;
+            if(playlist){
+                mPlaylistService.setCallbacks(null);
+                mPlaylistService = null;
+            }else{
+                mService.setCallbacks(null);
+                mService = null;
+            }
         }
     }
 

@@ -2,8 +2,9 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import android.graphics.Color;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,10 +14,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
+import java.util.Random;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -25,16 +35,35 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     private List<Video> videoList;
     private Context mContext;
     private Intent mIntent;
+    private FirebaseUser current_user;
+    private Video vid;
+    private DeleteActivityListener deleteListener;
+
+    //addd Listener Parameter DeleteActivityListener
 
     /**
-     * Constructor
+     * Main Constructor for related videos used in VideoPlayer.java
+     * @param videoList list of videos to display in the recycler view
+     * @param mContext context for launching intents with
+     * @param mIntent to get relevant information of video from
      */
-    public RelatedVideosAdapter(List<Video> videoList, Context mContext, Intent mIntent) {
+    public RelatedVideosAdapter(List<Video> videoList, Context mContext, Intent mIntent, DeleteActivityListener deleteListener) {
         this.videoList = videoList;
         this.mContext = mContext;
         this.mIntent = mIntent;
+        this.deleteListener = deleteListener;
+        vid = mIntent.getParcelableExtra("VIDEO");
+
+
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
     }
 
+    /**
+     *
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @NonNull
     @Override
     public RelatedVideosHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -55,26 +84,39 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
     @Override
     public void onBindViewHolder(@NonNull RelatedVideosHolder holder, int position) {
         holder.videoTitle.setText(videoList.get(position).getTitle());
-        holder.videoUsername.setText(videoList.get(position).getUsername());
         holder.videoYear.setText(String.valueOf(videoList.get(position).getPubYear()));
         holder.videoDuration.setText(videoList.get(position).getDuration());
 
-        // TODO adjust view/views + use K/M
+        // TODO: adjust view/views + use K/M
         String videoViews = videoList.get(position).getViews() + " views";
         holder.videoViews.setText(videoViews);
 
         // Set the video thumbnail
-        String URI = videoList.get(position).getThumbnailUrl();
+        String URI = videoList.get(position).getUrl();
         Glide.with(holder.videoThumbnail.getContext()).load(URI).into(holder.videoThumbnail);
 
+        // onClick Listeners
         holder.videoCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent videoPlayerPage = new Intent(mContext, VideoPlayer.class);
-                videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
-                videoPlayerPage.putExtra("VIDEO", videoList.get(position));
-                videoPlayerPage.putExtra("CREDIT", mIntent.getStringExtra("CREDIT"));
+                Intent videoPlayerPage;
+                if (mIntent.getParcelableExtra("PLAYLIST") != null){
+                    videoPlayerPage = new Intent(mContext, PlaylistVideoPlayer.class);
+                    videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                    videoPlayerPage.putExtra("VIDEO", videoList.get(position));
+                    videoPlayerPage.putExtra("PLAYLISTNAME", mIntent.getStringExtra("PLAYLISTNAME"));
+                    videoPlayerPage.putExtra("PLAYLIST",(Playlist)mIntent.getParcelableExtra("PLAYLIST"));
+
+                }else {
+                    videoPlayerPage = new Intent(mContext, VideoPlayer.class);
+                    videoPlayerPage.putExtra("TYPE", mIntent.getStringExtra("TYPE"));
+                    videoPlayerPage.putExtra("VIDEO", videoList.get(position));
+                    videoPlayerPage.putExtra("CREDIT", mIntent.getStringExtra("CREDIT"));
+                    videoPlayerPage.putExtra("PLAYLISTNAME", mIntent.getStringExtra("PLAYLISTNAME"));
+                }
+                deleteListener.callFinish();
                 mContext.startActivity(videoPlayerPage);
+
             }
         });
 
@@ -86,19 +128,18 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
                 menuInflater.inflate(R.menu.video_menu_pop_up, popupMenu.getMenu());
                 popupMenu.show();
 
-                // TODO: implement the video popup menu
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
                             case R.id.addToWatchLater_videoMenu:
-                                return true;
+                                addToWatchLater(videoList.get(position));
+                                break;
 
                             case R.id.addToPlaylist_videoMenu:
-                                return true;
+                                addToPlaylist(videoList.get(position));
+                                break;
 
-                            case R.id.repost_videoMenu:
-                                return true;
 
                             case R.id.report_videoMenu:
                                 Intent reportVideo = new Intent(mContext, ReportVideoPopup.class);
@@ -106,19 +147,75 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RelatedVideosAdap
                                 mContext.startActivity(reportVideo);
                                 break;
                         }
-                        return false;
+                        return true;
                     }
                 });
             }
         });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(videoList.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        if(videoList.get(position).getVideoId().equals(vid.getVideoId())){
+            holder.videoCard.setBackgroundColor(Color.parseColor("#e35bec"));
+        }
     }
 
     /**
      * Get the first video on the list.
      * @return video
      */
-    public Video getFirstFromList() {
-        return videoList.get(0);
+    public Video getNextFromList() {
+        if (videoList.size() != 0) {
+            Random random = new Random();
+            int index = random.nextInt(videoList.size());
+            return videoList.get(index);
+        }
+        return null;
+    }
+
+    /**
+     * Add the video to the watch later list.
+     * @param video video
+     */
+    private void addToWatchLater(Video video) {
+        FirebaseDatabase.getInstance()
+                .getReference("WatchLater")
+                .child(current_user.getUid())
+                .child(video.getVideoId())
+                .child("VideoId")
+                .setValue(video.getVideoId())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Add the video to the playlist.
+     * @param video video
+     */
+    private void addToPlaylist(Video video) {
+        Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+        playlistIntent.putExtra("VIDEO", video);
+        playlistIntent.putExtra("TYPE", mIntent.getExtras().getString("TYPE"));
+        mContext.startActivity(playlistIntent);
     }
 
     /**

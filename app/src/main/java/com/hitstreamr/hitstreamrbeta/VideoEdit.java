@@ -1,10 +1,10 @@
 package com.hitstreamr.hitstreamrbeta;
 
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -87,7 +87,7 @@ public class VideoEdit extends AppCompatActivity implements View.OnClickListener
                             Video video_object = documentSnapshot.toObject(Video.class);
 
                             // Set the video thumbnail
-                            String URI = video_object.getThumbnailUrl();
+                            String URI = video_object.getUrl();
                             Glide.with(getApplicationContext()).load(URI).into(videoThumbnail);
 
                             title.setText(video_object.getTitle());
@@ -139,7 +139,7 @@ public class VideoEdit extends AppCompatActivity implements View.OnClickListener
         String subGenre_update = subGenre.getSelectedItem().toString();
         String privacy_update = privacy.getSelectedItem().toString();
 
-        // TODO: validate title, description, genre, sub-genre
+        // Input validations
         if (!validateTitle(title_update) | !validateDescription(description_update) | !validateGenre() |
                 !validateSubGenre()) {
             return;
@@ -153,11 +153,22 @@ public class VideoEdit extends AppCompatActivity implements View.OnClickListener
                         "genre", genre_update,
                         "subGenre", subGenre_update,
                         "privacy", privacy_update
-                );
-        // TODO: add success/failure
-
-        Toast.makeText(getApplicationContext(), "Video updated successfully.", Toast.LENGTH_SHORT).show();
-        onBackPressed();
+                )
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "Video updated successfully.",
+                                Toast.LENGTH_SHORT).show();
+                        onBackPressed();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Failed to update. Please try again.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 
     /**

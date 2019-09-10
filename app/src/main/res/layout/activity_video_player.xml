@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".VideoPlayer"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:keepScreenOn="true">
 
     <LinearLayout
         android:id="@+id/toolbarLayout"
@@ -13,7 +14,8 @@
         android:layout_height="wrap_content">
 
         <include layout="@layout/toolbar"
-            android:id="@+id/toolbar"/>
+            android:id="@+id/toolbar"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -115,7 +117,8 @@
                         android:layout_width="fill_parent"
                         android:layout_height="match_parent"
                         android:gravity="end"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingEnd="10dp">
 
                         <TextView
                             android:id="@+id/unfollowText"
@@ -227,8 +230,9 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/ic_fave"
-                                android:backgroundTint="@color/drkgryAccent" />
+                                android:src="@drawable/ic_fave"
+                                android:background="@android:color/transparent"
+                                 />
 
                             <TextView
                                 android:id="@+id/videoLikes"
@@ -251,8 +255,8 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_gravity="center_vertical"
-                                android:background="@drawable/ic_repost_black_24dp"
-                                android:backgroundTint="@color/drkgryAccent" />
+                                android:src="@drawable/ic_repost_black_24dp"
+                                android:background="@android:color/transparent" />
 
                             <TextView
                                 android:id="@+id/repostCount"
@@ -277,7 +281,7 @@
                                 android:layout_gravity="center_vertical"
                                 android:background="@android:color/transparent"
                                 android:src="@drawable/ic_playlist_add_black_24dp"
-                                android:tint="@color/drkgryAccent" />
+                                 />
 
                         </LinearLayout>
 
@@ -365,7 +369,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -466,12 +471,36 @@
 
                     </LinearLayout>
 
-                    <android.support.v7.widget.RecyclerView
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/nextInQue_RCV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </androidx.recyclerview.widget.RecyclerView>
+
+                    <View
+                        android:id="@+id/Divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/litgryAccent"
+                        android:layout_marginVertical="5dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="RELATED VIDEOS"
+                        android:textStyle="bold"
+                        android:textSize="12dp"
+                        android:textColor="@color/drkgryAccent"
+                        android:paddingHorizontal="10dp"
+                        android:paddingBottom="10dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/relatedVideos_RCV"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                    </android.support.v7.widget.RecyclerView>
+                    </androidx.recyclerview.widget.RecyclerView>
 
                 </LinearLayout>
 

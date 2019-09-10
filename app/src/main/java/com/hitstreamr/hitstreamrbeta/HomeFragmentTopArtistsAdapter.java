@@ -3,23 +3,20 @@ package com.hitstreamr.hitstreamrbeta;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -103,7 +100,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             }
         });
 
-        // Listener for watch button
+        // Listener for view profile button
         holder.watch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,6 +144,13 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
 
             }
         });
+
+        // Check if artist is verified
+        if (artistList.get(position).getVerified().equals("true")) {
+            holder.verified.setVisibility(View.VISIBLE);
+        } else {
+            holder.verified.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -167,6 +171,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
         public LinearLayout cardView;
         public CircleImageView profilePicture;
         public Button watch;
+        public ImageView verified;
 
         public TopArtistsHolder(View itemView) {
             super(itemView);
@@ -176,6 +181,7 @@ public class HomeFragmentTopArtistsAdapter extends RecyclerView.Adapter<HomeFrag
             profilePicture = itemView.findViewById(R.id.topArtistImage);
             watch = itemView.findViewById(R.id.watchArtistButton);
             followerCount = itemView.findViewById(R.id.topArtistFollowerCount);
+            verified = itemView.findViewById(R.id.verified);
         }
     }
 }

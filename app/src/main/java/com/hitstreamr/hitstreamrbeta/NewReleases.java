@@ -2,18 +2,20 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,7 +29,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
 import java.util.ArrayList;
 
@@ -41,9 +42,10 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
     private RecyclerView recyclerView_newRelease;
     private ArrayList<String> userGenreList;
     private ArrayList<Video> UserGenreVideos;
-   private ItemClickListener mListener;
+    private ItemClickListener mListener;
     private String CreditVal;
     public final String TAG = "NewReleasePage";
+    private Video onClickedVideo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +74,6 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
                         }
                         else
                             CreditVal = "0";
-
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -95,19 +94,49 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
             }
 
             @Override
-            public void onOverflowClick(Video title, View v) { showOverflow(v);
+            public void onOverflowClick(Video video, View v) {
+                onClickedVideo = video;
+                showOverflow(v);
             }
         };
     }
 
+    /**
+     * Video menu popup options.
+     * @param item item
+     * @return true
+     */
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.fave_result:
-                break;
-            case R.id.addLibrary_result:
+            case R.id.addToWatchLater_videoMenu:
+                FirebaseDatabase.getInstance()
+                        .getReference("WatchLater")
+                        .child(current_user.getUid())
+                        .child(onClickedVideo.getVideoId())
+                        .child("VideoId")
+                        .setValue(onClickedVideo.getVideoId())
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
                 break;
 
+            case R.id.addToPlaylist_videoMenu:
+                Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                playlistIntent.putExtra("VIDEO", onClickedVideo);
+                playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+                startActivity(playlistIntent);
+                break;
+
+            case R.id.report_videoMenu:
+                Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                reportVideo.putExtra("VideoId", onClickedVideo.getVideoId());
+                startActivity(reportVideo);
+                break;
         }
         return true;
     }
@@ -120,7 +149,7 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
     public void showOverflow(View v) {
         PopupMenu popupMenu = new PopupMenu(this, v);
         popupMenu.setOnMenuItemClickListener(this);
-        popupMenu.inflate(R.menu.video_overflow_menu);
+        popupMenu.inflate(R.menu.video_menu_pop_up);
         popupMenu.show();
     }
 
@@ -149,7 +178,9 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
 
     public void getFreshReleases(){
 
-        Query queryRef = newReleaseRef.orderBy("timestamp", Query.Direction.DESCENDING);
+        Query queryRef = newReleaseRef.whereEqualTo("delete", "N")
+                .whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .orderBy("timestamp", Query.Direction.DESCENDING);
 
         queryRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -157,19 +188,20 @@ public class NewReleases extends AppCompatActivity implements PopupMenu.OnMenuIt
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     if (userGenreList.size() > 0) {
                         for (int itr = 0; itr < userGenreList.size(); itr++) {
-                            if (userGenreList.get(itr).contains( document.get("genre").toString().toLowerCase())) {
+                            String userGenre = userGenreList.get(itr);
+                            userGenre = userGenre.replaceAll("_"," ");
+
+                            if (userGenre.contains(document.get("genre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
-                            } else if (userGenreList.get(itr).contains(document.get("subGenre").toString().toLowerCase())) {
+                                break;
+                            } else if (userGenre.contains(document.get("subGenre").toString().toLowerCase())) {
                                 UserGenreVideos.add(document.toObject(Video.class));
+                                break;
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         UserGenreVideos.add(document.toObject(Video.class));
                     }
-
-
                 }
                 callToAdapter();
             }

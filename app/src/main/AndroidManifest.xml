@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hitstreamr.hitstreamrbeta">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -9,16 +10,39 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/hitstreamr_appiconploy"
+        android:icon="@drawable/hitstreamr_icon_round"
         android:label="HitStreamr"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Authentication.Splash">
+        <activity android:name=".FreeCreditsPopUp"/>
+        <activity
+            android:name=".DeletePlaylist"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".PlaylistVideoPlayer"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:parentActivityName=".Authentication.Splash" />
+        <activity
+            android:name=".InviteFriend"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".EmailVerification"
+            android:screenOrientation="portrait" />
+        <activity  android:name=".Authentication.Splash"
+            android:screenOrientation="portrait"
+           >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data
+                    android:host="hitstreamr.page.link"
+                    android:scheme="https"/>
             </intent-filter>
         </activity>
         <activity
@@ -81,6 +105,9 @@
         <activity
             android:name=".VideoPlayer"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:parentActivityName=".Authentication.Splash"
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".Profile"
@@ -116,7 +143,8 @@
             android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".BillingManager"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
         <activity
             android:name=".TrendingVideos"
             android:screenOrientation="portrait" />
@@ -152,12 +180,54 @@
             android:name=".VideoEdit"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".PlaylistVideosActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".VideoDelete"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.PopUpMenu" />
-        <activity android:name=".EditPlaylist"></activity>
-        activity android:name=".MorePopularPeople" />
-        <activity android:name=".ReportSubmission"></activity>
+        <activity
+            android:name=".EditPlaylist"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ReportSubmission"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MorePopularPeople"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FollowersActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FollowingActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".MoreWatchAgain"
+            android:screenOrientation="portrait" />
+
+        <service
+            android:name=".VideoPlayerService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".VideoUploadService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".PlaylistVideoPlayerService"
+            android:enabled="true"
+            android:exported="false" />
+        <activity
+            android:name=".Payouts"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
+        <activity
+            android:name=".BottomNav.FeaturedVideoRCV"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ContributorHelp"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.PopUpMenu" />
     </application>
 
 </manifest>

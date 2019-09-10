@@ -1,16 +1,18 @@
 package com.hitstreamr.hitstreamrbeta.Dashboard;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import com.google.android.material.tabs.TabLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,8 @@ import android.view.View;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.hitstreamr.hitstreamrbeta.Payouts;
+import com.hitstreamr.hitstreamrbeta.Profile;
 import com.hitstreamr.hitstreamrbeta.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -25,12 +29,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Dashboard extends AppCompatActivity {
 
     /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
+     * The {@link PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
      * loaded fragment in memory. If this becomes too memory intensive, it
      * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -53,12 +57,22 @@ public class Dashboard extends AppCompatActivity {
 
         // Set toolbar profile picture to always be the current user
         FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
         if (current_user.getPhotoUrl() != null) {
-            CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
             circleImageView.setVisibility(View.VISIBLE);
             Uri photoURL = current_user.getPhotoUrl();
             Glide.with(getApplicationContext()).load(photoURL).into(circleImageView);
         }
+
+        // onClick listener for the toolbar's profile image
+        circleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent profilePage = new Intent(getApplicationContext(), Profile.class);
+                profilePage.putExtra("TYPE", getIntent().getStringExtra("TYPE"));
+                startActivity(profilePage);
+            }
+        });
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -104,6 +118,11 @@ public class Dashboard extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    public void openPayouts(View view) {
+        Intent openPayout = new Intent(this, Payouts.class);
+        startActivity(openPayout);
     }
 
     /**

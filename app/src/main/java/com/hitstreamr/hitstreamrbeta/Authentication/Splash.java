@@ -1,13 +1,19 @@
 package com.hitstreamr.hitstreamrbeta.Authentication;
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -15,9 +21,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
-import com.hitstreamr.hitstreamrbeta.LabelDashboard;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
@@ -28,12 +35,45 @@ public class Splash extends AppCompatActivity {
     private DatabaseReference mDatabase;
     // [END declare_auth]
 
+    AnimationDrawable logoAnimation;
+
     final String TAG = "Splash";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        ImageView imageView = (ImageView) findViewById(R.id.logo_wht);
+        imageView.setBackgroundResource(R.drawable.logo_animation_1);
+        logoAnimation = (AnimationDrawable) imageView.getBackground();
+
+
+        FirebaseDynamicLinks.getInstance()
+                .getDynamicLink(getIntent())
+                .addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+                    @Override
+                    public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+                        // Get deep link from result (may be null if no link is found)
+                        Uri deepLink = null;
+                        if (pendingDynamicLinkData != null) {
+                            deepLink = pendingDynamicLinkData.getLink();
+                            Log.d(TAG, "Opened with a deep link: " + deepLink.toString());
+                        }else {
+                            Log.d(TAG, "Deep Link is null");
+                        }
+
+
+
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "getDynamicLink:onFailure", e);
+                    }
+                });
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -153,7 +193,7 @@ public class Splash extends AppCompatActivity {
                 Log.e(TAG, databaseError.toString());
             }
         });
-
+/**
         mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -174,5 +214,12 @@ public class Splash extends AppCompatActivity {
                 Log.e(TAG, databaseError.toString());
             }
         });
+ **/
     }
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        logoAnimation.start();
+    }
+
 }

@@ -12,7 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/colorAccent"
+            android:background="@color/colorWhite"
             android:padding="10dp">
 
 
@@ -28,19 +28,18 @@
                     android:src="@mipmap/ic_launcher_round" />-->
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/searchImage"
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"
-                    android:src="@mipmap/ic_launcher_round"
-                    app:civ_border_color="@color/colorAccent"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
+                    app:civ_border_color="@color/colorWhite"
                     app:civ_border_width="2dp"/>
 
                 <LinearLayout
-                    android:layout_width="200dp"
+                    android:layout_width="205dp"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:layout_marginStart="5dp"
                     android:gravity="center_vertical"
-                    android:paddingEnd="30dp">
+                    >
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -54,13 +53,12 @@
                             android:textStyle="bold"
                             android:textColor="@android:color/black"
                             android:id="@+id/user_name"
-                            android:layout_marginEnd="3dp"/>
+                            />
 
                         <ImageView
                             android:id="@+id/verified"
                             android:layout_width="20dp"
                             android:layout_height="20dp"
-                            android:layout_marginStart="5dp"
                             android:src="@drawable/ic_verified_check_circle"
                             android:tint="@android:color/holo_blue_bright"/>
 
@@ -74,7 +72,8 @@
                         android:text="Artist Name"
                         android:id="@+id/artist_name"
                         android:visibility="visible"
-                        android:textSize="10sp"/>
+                        android:textSize="10sp"
+                        />
 
 
                     <TextView
@@ -82,7 +81,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="0 Followers"
-                        android:textSize="10sp" />
+                        android:textSize="10sp"
+                        />
 
                 </LinearLayout>
 
@@ -90,25 +90,26 @@
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:gravity="center|end">
+                    android:gravity="center|end"
+                    >
 
                     <Button
                         android:id="@+id/follow_button"
-                        android:layout_width="80dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/button1"
+                        android:layout_width="70dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/gradient1round"
                         android:text="Follow"
                         android:textSize="12sp"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorWhite" />
 
                     <Button
                         android:id="@+id/unfollow_button"
-                        android:layout_width="80dp"
-                        android:layout_height="36dp"
-                        android:background="@drawable/button1"
+                        android:layout_width="70dp"
+                        android:layout_height="30dp"
+                        android:background="@android:color/transparent"
                         android:text="Unfollow"
                         android:textSize="12sp"
-                        android:textColor="@color/colorAccent"
+                        android:textColor="@color/colorPrimary"
                         android:visibility="gone"
                         />
 

@@ -3,9 +3,9 @@ package com.hitstreamr.hitstreamrbeta;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -65,6 +65,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private boolean backgroundChanged = false;
 
     private String email;
+    private String verified;
 
     //Account Type
     private String type;
@@ -99,6 +100,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
     private Button ChangePwdBtn;
     private Button ChangePhotoBtn;
     private Button ChangeBackgroundBtn;
+    private Button DeleteMyAccount;
 
     //Object
     ArtistUser artist;
@@ -177,11 +179,13 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         SaveAccountBtn.setOnClickListener(this);
         ChangePhotoBtn = findViewById(R.id.accountChangePhoto);
         ChangeBackgroundBtn = findViewById(R.id.accountChangeBackground);
+        DeleteMyAccount = findViewById(R.id.deleteAccount);
 
         ChangePwdBtn = findViewById(R.id.ChangePassword);
         ChangePwdBtn.setOnClickListener(this);
         ChangePhotoBtn.setOnClickListener(this);
         ChangeBackgroundBtn.setOnClickListener(this);
+        DeleteMyAccount.setOnClickListener(this);
 
         type = getIntent().getStringExtra("TYPE");
         if (type.equals(getString(R.string.type_artist))) {
@@ -254,6 +258,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         String zip = dataSnapshot.child("zip").getValue(String.class);
         String country = dataSnapshot.child("country").getValue(String.class);
         String phone = dataSnapshot.child("phone").getValue(String.class);
+        verified = dataSnapshot.child("verified").getValue(String.class);
 
         String bio = "";
         if (dataSnapshot.child("bio").exists()) {
@@ -261,7 +266,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         }
 
         artist = new ArtistUser(firstname, lastname, artistname, email, username, address, city, state,
-                country, phone, zip, bio/*, null*/);
+                country, phone, zip, bio, userID, verified);
 
         EditTextFirstName.setText(artist.getFirstname());
         EditTextLastName.setText(artist.getLastname());
@@ -295,15 +300,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
 
         email = dataSnapshot.child("email").getValue(String.class);
         String username = dataSnapshot.child("username").getValue(String.class);
-        String userID = dataSnapshot.child("userID").getValue(String.class);
         String fullname = dataSnapshot.child("fullname").getValue(String.class);
-        String bio = "";
+        verified = dataSnapshot.child("verified").getValue(String.class);
 
+        String bio = "";
         if (dataSnapshot.child("bio").exists()) {
             bio = dataSnapshot.child("bio").getValue(String.class);
         }
 
-        oldBasic = new User(username, email, userID, fullname, bio);
+        oldBasic = new User(username, email, userID, fullname, bio, verified);
 
         EditTextEmail.setText(oldBasic.getEmail());
         EditTextUsername.setText(oldBasic.getUsername());
@@ -330,7 +335,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         progressDialog.setMessage("Registering New User...");*/
 
         //make sure the basic user has the write id
-        basicUser = new User(username, email, oldBasic.getUserID(), name, bio);
+        basicUser = new User(username, email, oldBasic.getUserID(), name, bio, verified);
         oldBasic = basicUser;
 
         if(selectedBackgroundPath!= null){
@@ -390,7 +395,6 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         final String phone = EditTextPhone.getText().toString().trim();
         final String bio = EditTextBio.getText().toString().trim();
 
-        // TODO: validate bio
         if (!validateFirstName(firstname) | !validateLastName(lastname) | !validateArtistName(artistname)
                 | !validateEmail(email) | !validateAddressLine(address) | !validateCity(city)
                 | !validateUsername(username) | !validatePhone(phone) | !validateZip(zip)
@@ -400,7 +404,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             return;
         }
         artist_object = new ArtistUser(firstname, lastname, artistname, email, username, address, city,
-                state, country, phone, zip, bio/*, null*/);
+                state, country, phone, zip, bio, userID, verified);
 
         if(selectedBackgroundPath!= null){
             uploadBackgroundImage(selectedBackgroundPath);
@@ -628,9 +632,9 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         if (artistname.isEmpty()) {
             EditTextName.setError("Field can't be empty");
             return false;
-        } else if (artistname.length() <= 26) {
+        } else if (artistname.length() <= 30) {
             if (!(checkAlphaNumericSymbol(artistname))) {
-                EditTextLastName.setError("Name must be less than 26 Characters");
+                EditTextName.setError("Name cannot exceed 30 Characters");
                 return false;
             }
             return true;
@@ -857,7 +861,7 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
      */
     public boolean checkAlphaNumericSymbol(String s) {
 
-        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{}<>,./";
+        String AlphaNumericSymbol = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_-+=[]{}<>,./ ";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -929,6 +933,15 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
         startActivityForResult(Intent.createChooser(intent, "Select your Background picture"), 1234);
     }
 
+    private void deleteAccount(){
+        mAuth.signOut();
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.hitstreamr.com/delete-account"));
+        startActivity(browserIntent);
+        finish();
+    }
+
+
     @Override
     public void onClick(View view) {
         if (view == SaveAccountBtn) {
@@ -943,6 +956,10 @@ public class Account extends AppCompatActivity implements View.OnClickListener {
             choosePhoto();
         } else if(view == ChangeBackgroundBtn){
             chooseBackgroundPhoto();
+        } else if (view == DeleteMyAccount){
+            deleteAccount();
+
+
         }
     }
 

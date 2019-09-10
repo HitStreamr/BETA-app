@@ -35,7 +35,7 @@
             android:id="@+id/invite_a_friend"
             android:icon="@drawable/ic_invite_a_friend"
             android:title="@string/invite_a_friend"
-            android:visible="false"/>
+            android:visible="true"/>
 
 
         <item
@@ -64,12 +64,6 @@
             android:id="@+id/feedback"
             android:title="@string/feedback"
             />
-
-    </group>
-
-    <group>
-
-
 
     </group>
 

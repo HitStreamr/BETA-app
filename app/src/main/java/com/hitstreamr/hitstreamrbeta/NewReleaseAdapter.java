@@ -2,29 +2,27 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
-import com.google.type.Date;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.hitstreamr.hitstreamrbeta.BottomNav.HomeFragment;
 
-import com.google.firebase.Timestamp;
-import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.newUploadHolder> {
     private Context mContext;
@@ -53,16 +51,15 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
     @Override
     public void onBindViewHolder(@NonNull newUploadHolder holder, int position) {
 
-        requestBuilder.load(objects1.get(position).getThumbnailUrl()).into(holder.videoThumbnail);
+        requestBuilder.load(objects1.get(position).getUrl()).into(holder.videoThumbnail);
         holder.videoTitle.setText(objects1.get(position).getTitle());
-        holder.videoUsername.setText(objects1.get(position).getUsername());
-        //holder.videoViews.setText("TODO");
         holder.videoTime.setText(objects1.get(position).getDuration());
 
-        String sdate = objects1.get(position).getTimestamp().toDate().toString();
+        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        holder.videoYear.setText(dateFormat.format(objects1.get(position).getTimestamp().toDate()));
 
-        holder.videoYear.setText(sdate);
         holder.videoViews.setText(String.valueOf(objects1.get(position).getViews()));
+
         holder.mainSection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,6 +73,53 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
             }
         });
 
+        // Get the number of likes
+        FirebaseDatabase.getInstance().getReference("VideoLikes").child(objects1.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoLikes.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the number of re-posts
+        FirebaseDatabase.getInstance().getReference("Repost").child(objects1.get(position).getVideoId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoReposts.setText(String.valueOf(dataSnapshot.getChildrenCount()));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+        // Get the uploader's username
+        FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(objects1.get(position).getUserId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
     }
 
     @Override
@@ -96,6 +140,8 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
         TextView videoViews;
         TextView videoYear;
         TextView videoTime;
+        TextView videoLikes;
+        TextView videoReposts;
         ImageView moreMenu;
         LinearLayout mainSection;
         ImageView overflowMenu;
@@ -114,6 +160,8 @@ public class NewReleaseAdapter extends RecyclerView.Adapter<NewReleaseAdapter.ne
             moreMenu = itemView.findViewById(R.id.moreMenu);
             mainSection = itemView.findViewById(R.id.mainBody);
             overflowMenu = itemView.findViewById(R.id.moreMenu);
+            videoLikes = itemView.findViewById(R.id.faveAmount);
+            videoReposts = itemView.findViewById(R.id.repostAmount);
             this.mListener = mListener;
         }
     }

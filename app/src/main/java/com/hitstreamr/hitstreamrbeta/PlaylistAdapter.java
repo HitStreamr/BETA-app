@@ -2,15 +2,14 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -18,6 +17,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
     private static final String TAG = "PlayListAdapter";
     private ArrayList<String> Playlists;
     private Context mContext;
+    private int selectedPlaylistIndex = -1;
 
     private AddToPlaylist.ItemClickListener mlistner;
 
@@ -42,20 +42,19 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlayLi
     public void onBindViewHolder(@NonNull PlayListHolder holder, int position) {
         holder.singlePlaylist.setText(Playlists.get(position));
 
+        // Check if the selected playlist is the only one that is highlighted
+        if (selectedPlaylistIndex == position) {
+            holder.parentLayout.setBackgroundColor(Color.parseColor("#FF13AE"));
+        } else {
+            holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
+
         holder.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("TAG", "Itemclicked and selcted");
-                Toast.makeText(mContext, Playlists.get(position) + "selected", Toast.LENGTH_SHORT).show();
-
-                for(int i = 0; i<Playlists.size(); i++){
-                    holder.parentLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-                }
-                holder.parentLayout.setBackgroundColor(Color.parseColor("#0000FF"));
-
-
+                selectedPlaylistIndex = position;
+                notifyDataSetChanged();
                 mlistner.onResultClick(Playlists.get(position));
-
             }
         });
     }

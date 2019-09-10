@@ -3,14 +3,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:scrolling_image_view="http://schemas.android.com/apk/res-auto"
     tools:context=".Authentication.Welcome"
-    >
+    android:background="@color/colorWhite">
 
-    <ImageView
+    <!--<ImageView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:background="@drawable/background_splash"/>-->
+
+
+        <com.q42.android.scrollingimageview.ScrollingImageView
+            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            scrolling_image_view:speed="1.5dp"
+            scrolling_image_view:src="@drawable/scroll_backg"
+
+            />
+
+    <RelativeLayout
+        android:id="@+id/animLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:background="@drawable/background_splash"/>
+        android:background="@drawable/gradient_list"/>
+
+
 
 
     <LinearLayout
@@ -138,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:text="and"
                 android:layout_marginEnd="5dp"
-                android:textColor="@color/colorAccent"/>
+                android:textColor="@color/colorWhite"/>
 
             <TextView
                 android:id="@+id/privacyPolicy"
@@ -158,8 +176,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorAccent"
-        android:visibility="invisible"/>
--->
+        android:visibility="invisible"/>-->
+
 
 
 

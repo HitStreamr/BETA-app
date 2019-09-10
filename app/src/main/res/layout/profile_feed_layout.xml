@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/colorAccent"
+    android:background="@color/colorWhite"
     android:orientation="vertical">
     <LinearLayout
         android:id="@+id/videoCard"
@@ -13,7 +13,7 @@
         android:baselineAligned="false"
         android:padding="10dp">
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:cardCornerRadius="8dp">
@@ -26,7 +26,7 @@
                 android:background="@drawable/round_outline"
                 android:outlineProvider="background" />
 
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
 
         <LinearLayout

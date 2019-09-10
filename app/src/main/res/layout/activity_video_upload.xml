@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".VideoUploadActivity">
+
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbar" />
@@ -28,14 +28,69 @@
 
         <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_weight=".9">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <android.support.design.widget.TextInputLayout
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/black"
+                    >
+
+                    <VideoView
+                        android:id="@+id/videoView"
+                        android:layout_width="match_parent"
+                        android:layout_height="234dp"
+                        android:layout_centerInParent="true"
+                        />
+
+                    <TextView
+                        android:id="@+id/tapPreview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:padding="20dp"
+                        android:text="Tap here to preview"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:visibility="invisible"/>
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/selectVideo"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Browse your Video" />
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="100">
+
+                    <EditText
+                        android:id="@+id/Title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:ems="10"
+                        android:hint="Title"
+                        android:singleLine="true"
+                        android:maxLength="100"
+                        />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:counterEnabled="true"
@@ -50,83 +105,13 @@
                         android:hint="Description"
                         android:inputType="textMultiLine"
                         android:maxLength="1000" />
-                </android.support.design.widget.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="1">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:weightSum="1"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:id="@+id/imageView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_weight="0.85"
-                            app:srcCompat="@color/cardview_dark_background" />
-
-                        <Button
-                            android:id="@+id/selectThumbnail"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.15"
-                            android:text="Browse your Image" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5"
-                        android:weightSum="1"
-                        android:orientation="vertical">
-
-                        <VideoView
-                            android:id="@+id/videoView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="right"
-                            android:layout_weight="0.85" />
-
-                        <Button
-                            android:id="@+id/selectVideo"
-                            style="@style/Widget.AppCompat.Button.Borderless"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.15"
-                            android:hint="Browse your Video" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:counterEnabled="true"
-                    app:counterMaxLength="100">
-
-                    <EditText
-                        android:id="@+id/Title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="15dp"
-                        android:ems="10"
-                        android:hint="Title"
-                        android:inputType="textMultiLine"
-                        android:maxLength="100" />
-                </android.support.design.widget.TextInputLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:gravity="center_horizontal">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -177,7 +162,7 @@
                     android:layout_marginTop="15dp"
                     android:background="@drawable/button1"
                     android:text="+ Contributor(s)"
-                    android:textColor="@color/colorAccent" />
+                    android:textColor="@color/colorWhite" />
 
                 <LinearLayout
                     android:id="@+id/add_contributor_layout"
@@ -192,12 +177,34 @@
                             android:layout_height="match_parent"
                             android:hint="Contributor username/ email"
                             android:inputType="textPersonName" />-->
-                    <AutoCompleteTextView
-                        android:id="@+id/ContributorName"
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Contributor username"
-                        android:inputType="textPersonName" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingEnd="20dp">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/ContributorName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Contributor username"
+                            android:inputType="textPersonName"
+                            android:layout_weight=".9"/>
+
+                        <ImageButton
+                            android:id="@+id/help"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/ic_help_outline_black_24dp"
+                            android:tint="@color/litgryAccent"
+                            android:background="@android:color/transparent"
+                            android:layout_weight=".1"/>
+
+
+                    </LinearLayout>
+
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -251,7 +258,7 @@
                         android:layout_marginTop="0dp"
                         android:background="@drawable/button1"
                         android:text="+ ADD"
-                        android:textColor="@color/colorAccent" />
+                        android:textColor="@color/colorWhite" />
 
 
                 </LinearLayout>
@@ -261,25 +268,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:text="Privacy" />
 
-                <Spinner
-                    android:id="@+id/Privacy"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:entries="@array/Privacy" />
-
-                <Button
-                    android:id="@+id/uploadVideo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Finish and Upload" />
             </LinearLayout>
         </ScrollView>
+
+        <LinearLayout
+            android:id="@+id/finishAndUploadLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight=".1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="Privacy" />
+
+            <Spinner
+                android:id="@+id/Privacy"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@array/Privacy" />
+
+            <Button
+                android:id="@+id/uploadVideo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Finish and Upload" />
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -317,8 +334,10 @@
             android:id="@+id/uploadProgress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
+            android:paddingHorizontal="10dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginBottom="10dp"
+            android:progressTint="@color/colorPrimary"/>
 
         <LinearLayout
             android:layout_width="match_parent"

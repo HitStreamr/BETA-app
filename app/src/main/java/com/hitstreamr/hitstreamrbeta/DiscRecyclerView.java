@@ -2,8 +2,8 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -55,8 +54,6 @@ public class DiscRecyclerView extends RecyclerView.Adapter<DiscRecyclerView.View
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: clicked on: " + mImageText.get(position));
-
-                Toast.makeText(mContext, mImageText.get(position), Toast.LENGTH_SHORT).show();
 
                 Intent discoverResult = new Intent(mContext, DiscoverResultPage.class);
                 discoverResult.putExtra("TYPE", mIntent.getStringExtra("TYPE"));

@@ -6,10 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +15,11 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -38,6 +40,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.EmailVerification;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.User;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -54,7 +57,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
     private Button signup, uploadPhotoBtn;
     private Button backbtn;
     private EditText mEmailField, mPasswordField, mUsername, mFullName;
-    private TextView signintext;
+    private TextView signintext, passwordHint;
     private RadioButton radiobtn;
     private ImageView mProfilePhoto;
 
@@ -88,11 +91,12 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
         // Views
         mFullName = findViewById(R.id.fullName);
+        mFullName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mUsername = findViewById(R.id.Username);
         mEmailField = findViewById(R.id.Email);
         mPasswordField = findViewById(R.id.Password);
         signintext = findViewById(R.id.textviewsignin);
-
+        passwordHint = findViewById(R.id.PasswordHint);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -117,7 +121,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
 
-        takenNames  = FirebaseDatabase.getInstance().getReference("TakenUserNames");
+        takenNames = FirebaseDatabase.getInstance().getReference("TakenUserNames");
 
     }
 
@@ -133,8 +137,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                     "(?=.*[0-9])" +         //at least 1 digit
                     "(?=.*[a-z])" +         //at least 1 lower case letter
                     "(?=.*[A-Z])" +         //at least 1 upper case letter
-                    //"(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+                    "(?=.*[!@#$%^&*_+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
@@ -161,7 +164,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
      */
     public boolean checkUsername(String s) {
 
-        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
+        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
@@ -206,7 +209,12 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         }
     }
 
-    private void validateUserNameFirebase(User user, String password){
+    /**
+     * Check if the username has already been taken. If it hasn't, proceed with the registration.
+     * @param user user
+     * @param password password
+     */
+    private void validateUserNameFirebase(User user, String password) {
         final boolean[] isTaken = {false};
         takenNames.addValueEventListener(new ValueEventListener() {
             @Override
@@ -218,12 +226,12 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 }
                 else if (!dataSnapshot.hasChild(user.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     basicUser = user;
 
                     //If validations are ok we will first show progressbar
                     progressDialog.setMessage("Loading...");
-                    progressDialog.show();
+                    //progressDialog.show();
 
                     registerAuthentication(basicUser.getEmail(), password);
 
@@ -240,9 +248,11 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
 
     private boolean validatePassword(String password) {
         if (password.isEmpty()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPasswordField.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPasswordField.setError("Password too weak");
             return false;
         } else {
@@ -265,6 +275,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         if (selectedImagePath != null) {
             return true;
         }
+        Toast.makeText(this, "Please select your profile picture", Toast.LENGTH_SHORT).show();
         uploadPhotoBtn.setText(R.string.image_not_selection);
         return false;
     }
@@ -276,16 +287,19 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
         String password = mPasswordField.getText().toString().trim();
 
         // TODO: validateFullName
-        if (!validateEmail(email) | !validatePassword(password) | !validateUsername(username)
-                | !validateToc() | !validateBrowsePhoto())  {
+        if (!validateEmail(email) || !validatePassword(password) || !validateUsername(username)
+                || !validateToc() || !validateBrowsePhoto())  {
             return;
         }
 
-        validateUserNameFirebase(new User(username, email, null, fullName, null), password);
+        validateUserNameFirebase(new User(username, email, "", fullName, "", "false"), password);
 
     }
 
-    private void registerFirebase2(){
+    /**
+     * Store the validated username to the database of taken usernames.
+     */
+    private void registerFirebase2() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseDatabase.getInstance().getReference("UsernameUserId")
                 .child(basicUser.getUsername())
@@ -293,6 +307,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
+                        // Proceed to registering/storing the user to the database
                         registerFirebase();
                     }
                 });
@@ -329,8 +344,12 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 });
     }
 
+    /**
+     * Register and store the new basic user to the database, send a verification email to confirm
+     * their email.
+     */
     private void registerFirebase() {
-        //TODO make sure that newID is not being made when not needed
+        // TODO: make sure that newID is not being made when not needed
         FirebaseDatabase.getInstance().getReference("BasicAccounts")
                 .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                 .setValue(basicUser)
@@ -340,19 +359,36 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                 if (task.isSuccessful()) {
                     Toast.makeText(BasicSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
                     takenNames.child(basicUser.getUsername()).setValue(true);
+
+                    // Send an email verification
+                    final FirebaseUser current_user = mAuth.getCurrentUser();
+                    if (current_user != null) {
+                        current_user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+
+                            }
+                        });
+                    }
+
                     finish();
-                    //TODO: Do something with genres
-                    Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
-                    genreIntent.putExtra("TYPE", getString(R.string.type_basic));
-                    startActivity(genreIntent);
+
+                    // Go to verification page, user cannot proceed further until their email is verified
+                    Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                    verificationPage.putExtra("TYPE", getString(R.string.type_basic));
+                    startActivity(verificationPage);
                 } else {
-                    Toast.makeText(BasicSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BasicSignUp.this, "Could not register. Please try again", Toast.LENGTH_LONG).show();
                 }
             }
         });
-
     }
 
+    /**
+     * Register the new user's email and password to the Firebase's Authentication.
+     * @param email email
+     * @param password password
+     */
     private void registerAuthentication(String email, String password) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         //Checks if the user has successfully completed the Firebase Authentication
@@ -429,7 +465,7 @@ public class BasicSignUp extends AppCompatActivity implements View.OnClickListen
                             Toast.makeText(BasicSignUp.this, "Image Upload failed", Toast.LENGTH_SHORT).show();
                         }
                     });
-        }else if (fileUri == null){
+        } else if (fileUri == null) {
             Toast.makeText(BasicSignUp.this, "No image selected.", Toast.LENGTH_SHORT).show();
         }
 

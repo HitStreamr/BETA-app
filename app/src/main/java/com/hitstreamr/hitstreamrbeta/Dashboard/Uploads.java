@@ -1,12 +1,11 @@
 package com.hitstreamr.hitstreamrbeta.Dashboard;
 
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -30,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.hitstreamr.hitstreamrbeta.AddToPlaylist;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.Video;
 import com.hitstreamr.hitstreamrbeta.VideoDelete;
@@ -106,7 +106,6 @@ public class Uploads extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull DashboardUploadsHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
@@ -115,7 +114,7 @@ public class Uploads extends Fragment {
                 holder.videoViews.setText(videoViews);
 
                 // Set the video thumbnail
-                String URI = model.getThumbnailUrl();
+                String URI = model.getUrl();
                 Glide.with(holder.videoThumbnail.getContext()).load(URI).into(holder.videoThumbnail);
 
                 holder.videoCard.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +141,6 @@ public class Uploads extends Fragment {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
                                 switch (menuItem.getItemId()) {
-                                    // TODO: finish implementing the video popup menu
                                     case R.id.editVideo:
                                         Intent editVideo = new Intent(getApplicationContext(), VideoEdit.class);
                                         editVideo.putExtra("VIDEO", model);
@@ -151,17 +149,38 @@ public class Uploads extends Fragment {
 
                                     case R.id.deleteVideo:
                                         Intent deleteVideo = new Intent(getApplicationContext(), VideoDelete.class);
+                                        deleteVideo.putExtra("VideoId", model.getVideoId());
                                         startActivity(deleteVideo);
                                         break;
 
-                                   // case R.id.addToPlaylist_dashboardUploads:
-                                   //     break;
+                                    case R.id.addToPlaylist_dashboardUploads:
+                                        Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+                                        playlistIntent.putExtra("VIDEO", model);
+                                        playlistIntent.putExtra("TYPE", getActivity().getIntent().getExtras().getString("TYPE"));
+                                        startActivity(playlistIntent);
+                                        break;
                                 }
                                 return false;
                             }
                         });
                     }
                 });
+
+                // Get the uploader's username
+                FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(current_user.getUid())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
             }
 
             @NonNull

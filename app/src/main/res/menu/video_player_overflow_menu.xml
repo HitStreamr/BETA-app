@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/fave_result"
-        android:title="Favorite" />
+    <item android:id="@+id/addWatchLater"
+        android:title="Watch Later" />
 
-    <item android:id="@+id/addLibrary_result"
-        android:title="Add To Library" />
+    <item android:id="@+id/reportVideo"
+        android:title="Report Video" />
+
 </menu>

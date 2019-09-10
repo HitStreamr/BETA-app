@@ -3,14 +3,22 @@ package com.hitstreamr.hitstreamrbeta;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,6 +44,7 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
     private int idx;
     private RadioGroup radioGroup;
     private String selectedtext;
+    private TextView copyrightClaim;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +56,27 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
         //Buttons
         reportBtn = findViewById(R.id.reportBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
+
+        //TextView
+        copyrightClaim = findViewById(R.id.copyrightclaim);
+
+        String text = "If you are the copyright owner of this video and believe it has been uploaded without your permission, please follow these directions to submit a copyright infrengment notice.";
+
+        SpannableString ss = new SpannableString(text);
+
+        ClickableSpan cp1 = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View widget) {
+                Intent BrowserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.hitstreamr.com/copyright-claim"));
+                startActivity(BrowserIntent);
+            }
+        };
+
+        ss.setSpan(cp1, 117, 133, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        copyrightClaim.setText(ss);
+        copyrightClaim.setMovementMethod(LinkMovementMethod.getInstance());
+
+
 
         //Listeners
         reportBtn.setOnClickListener(this);
@@ -99,22 +129,26 @@ public class ReportVideoPopup extends AppCompatActivity implements View.OnClickL
 
         Log.e(TAG, "report video is clicked" + idx +" and video id is :::::" +videoId + "and text is :::" + selectedtext);
 
-        Toast.makeText(this, "video is reported", Toast.LENGTH_SHORT).show();
-        FirebaseDatabase.getInstance()
-                .getReference("Report")
-                .child(videoId)
-                .child(currentFirebaseUser.getUid())
-                .child("reason")
-                .setValue(selectedtext)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.e(TAG, "Video is reported");
-                        finish();
-                        startActivity(new Intent(getApplicationContext(), ReportSubmission.class));
-                    }
-                });
-
+        // Check if the user has selected ONE reason for reporting a video
+        if (radioGroup.getCheckedRadioButtonId() == -1) {
+            Toast.makeText(this, "Please choose ONE reason for reporting.", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "video has been reported", Toast.LENGTH_SHORT).show();
+            FirebaseDatabase.getInstance()
+                    .getReference("Report")
+                    .child(videoId)
+                    .child(currentFirebaseUser.getUid())
+                    .child("reason")
+                    .setValue(selectedtext)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.e(TAG, "Video is reported");
+                            finish();
+                            //startActivity(new Intent(getApplicationContext(), ReportSubmission.class));
+                        }
+                    });
+        }
     }
 
     @Override

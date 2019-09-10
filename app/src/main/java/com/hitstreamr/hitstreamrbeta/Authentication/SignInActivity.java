@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
@@ -36,7 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.hitstreamr.hitstreamrbeta.LabelDashboard;
+import com.hitstreamr.hitstreamrbeta.EmailVerification;
 import com.hitstreamr.hitstreamrbeta.MainActivity;
 import com.hitstreamr.hitstreamrbeta.R;
 
@@ -66,7 +66,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
     CountDownTimer timer;
     final int TIMEOUT_PASSWORD = 900000;
     volatile Boolean locked_out;
-
+    String lastEmailEntered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         //Buttons
         backbutton = (ImageButton) findViewById(R.id.backBtn);
         signinbtn = (Button)findViewById(R.id.signin_button);
-
 
         //Views
         ETemail = (EditText) findViewById(R.id.Email);
@@ -96,6 +95,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         //get shared preferences
         sharedPref = getPreferences(Context.MODE_PRIVATE);
         checkTimer();
+        lastEmailEntered = null;
 
         //user not logged in, because splash would have redirected
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -182,7 +182,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         if (requestCode == RESET_PASSWORD) {
             if (resultCode == RESULT_OK) {
                 loginAttempts = 0;
-                Toast.makeText(SignInActivity.this, "Password Rest Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignInActivity.this, "Password Reset Email Sent. Please check your email to reset password.", Toast.LENGTH_SHORT).show();
             }else{
                 Toast.makeText(SignInActivity.this, "Email failed to send. Please try again.", Toast.LENGTH_SHORT).show();
             }
@@ -227,7 +227,10 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser !=null){
+        // Make sure the user is signed in (not null) and their email is verified.
+        // If email is not yet verified, user will have to go through the normal sign in process by
+        // clicking the sign in button.
+        if (currentUser != null && currentUser.isEmailVerified()) {
             updateUI();
         }
 
@@ -267,6 +270,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
         progressDialog.setMessage("Welcome");
         progressDialog.show();
 
+
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -277,17 +281,22 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                             //we will start the home activity here
                             Toast.makeText(SignInActivity.this, "Login Successfully",Toast.LENGTH_SHORT).show();
                         }else{
-
+                            if (lastEmailEntered == null || email.equals(lastEmailEntered)) {
                                 loginAttempts++;
-                                int temp = MAX_LOGIN - loginAttempts;
-                                if (temp <= 0){
-                                    //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
-                                    Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
-                                    startTimer(TIMEOUT_PASSWORD);
-                                }else{
-                                    Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
-                                    Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
-                                }
+                                lastEmailEntered = email;
+                            }else{
+                                loginAttempts = 1;
+                                lastEmailEntered = email;
+                            }
+                            int temp = MAX_LOGIN - loginAttempts;
+                            if (temp <= 0){
+                                //Log.e(TAG,"Start Timer: " + TIMEOUT_PASSWORD/1000);
+                                Toast.makeText(SignInActivity.this, "Too many failed login attempts. Please wait " + TIMEOUT_PASSWORD/1000 + " minute(s) to retry.",Toast.LENGTH_SHORT).show();
+                                startTimer(TIMEOUT_PASSWORD);
+                            }else{
+                                Toast.makeText(SignInActivity.this, "Incorrect email or password. Please try again",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(SignInActivity.this, "You have " + temp + " attempt(s) left.",Toast.LENGTH_SHORT).show();
+                            }
 
                             }
                         }
@@ -304,10 +313,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    //user exists in basic user table, do something
-                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    homeIntent.putExtra("TYPE", getString(R.string.type_basic));
-                    startActivity(homeIntent);
+                    // User exists in basic user table, do something
+                    // Check if their email is verified, to prevent them to access the app if not
+                    if (!mAuth.getCurrentUser().isEmailVerified()) {
+                        // Go to verification page, user cannot proceed further until their email is verified
+                        Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                        verificationPage.putExtra("TYPE", getString(R.string.type_basic));
+                        startActivity(verificationPage);
+                    } else {
+                        // User is signed in, authorized, and verified.
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        homeIntent.putExtra("TYPE", getString(R.string.type_basic));
+                        startActivity(homeIntent);
+                    }
+
                     // Sign in success, update UI with the signed-in user's information
                     finish();
                 }
@@ -324,10 +343,20 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.getValue() != null) {
-                    //user exists in basic user table, do something
-                    Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    homeIntent.putExtra("TYPE", getString(R.string.type_artist));
-                    startActivity(homeIntent);
+                    // User exists in basic user table, do something
+                    // Check if their email is verified, to prevent them to access the app if not
+                    if (!mAuth.getCurrentUser().isEmailVerified()) {
+                        // Go to verification page, user cannot proceed further until their email is verified
+                        Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                        verificationPage.putExtra("TYPE", getString(R.string.type_artist));
+                        startActivity(verificationPage);
+                    } else {
+                        // User is signed in, authorized, and verified.
+                        Intent homeIntent = new Intent(getApplicationContext(), MainActivity.class);
+                        homeIntent.putExtra("TYPE", getString(R.string.type_artist));
+                        startActivity(homeIntent);
+                    }
+
                     // Sign in success, update UI with the signed-in user's information
                     finish();
                 }
@@ -338,7 +367,7 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, databaseError.toString());
             }
         });
-
+/**
         mDatabase.child(getString(R.string.child_label) + "/" + mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -358,7 +387,14 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
                 Log.e(TAG, databaseError.toString());
             }
         });
+ **/
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        finish();
+        startActivity(new Intent(getApplicationContext(), Welcome.class));
     }
 
     @Override
@@ -369,10 +405,6 @@ public class SignInActivity extends AppCompatActivity implements View.OnClickLis
             }else{
                 Toast.makeText(getApplicationContext(),"Please wait to attempt to login again.",Toast.LENGTH_LONG).show();
             }
-        }
-
-        if (view == backbutton){
-            //will open previous activity
         }
 
         if (view == register){

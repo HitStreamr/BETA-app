@@ -2,15 +2,13 @@ package com.hitstreamr.hitstreamrbeta;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,19 +18,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.common.base.Strings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,7 +35,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 
@@ -53,6 +46,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class DiscoverResultPage extends AppCompatActivity {
 
     private FirestoreRecyclerAdapter<Video, DiscoverResultHolder> firestoreRecyclerAdapter_videos;
+    private FirebaseUser current_user;
     private String accountType, creditValue;
 
     @Override
@@ -69,7 +63,7 @@ public class DiscoverResultPage extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         getUserType();
-        FirebaseUser current_user = FirebaseAuth.getInstance().getCurrentUser();
+        current_user = FirebaseAuth.getInstance().getCurrentUser();
 
         // Profile Picture
         CircleImageView circleImageView = toolbar.getRootView().findViewById(R.id.profilePictureToolbar);
@@ -110,15 +104,11 @@ public class DiscoverResultPage extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         String currentCredit = dataSnapshot.getValue(String.class);
-                        if(!Strings.isNullOrEmpty(currentCredit)){
+                        if (!Strings.isNullOrEmpty(currentCredit)) {
 
                             creditValue = currentCredit;
-                        }
-                        else
+                        } else
                             creditValue = "0";
-
-                        // Log.e(TAG, "Profile credit val inside change" + CreditVal);
-
                     }
 
                     @Override
@@ -153,38 +143,26 @@ public class DiscoverResultPage extends AppCompatActivity {
             category = "R&B/Soul";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Indie/rock")) {
-            category = "Indie/Rock";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Soul/funk")) {
-            category = "Soul/Funk";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
         } else if (category.equals("Dance/electronic")) {
             category = "Dance/Electronic";
             getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+            query = query.whereEqualTo("genre", "EDM");
         } else if (category.equals("K-pop")) {
             category = "K-Pop";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Reggae/afro")) {
-            category = "Reggae/Afro";
             getSupportActionBar().setTitle(category);
             query = query.whereEqualTo("genre", category);
         } else if (category.equals("Gospel/inspirational")) {
             category = "Gospel/Inspirational";
             getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
-        } else if (category.equals("Jazz/blues")) {
-            category = "Jazz/Blues";
-            getSupportActionBar().setTitle(category);
-            query = query.whereEqualTo("genre", category);
+            query = query.whereEqualTo("genre", "Gospel");
         } else {
             // For all other genres
             query = query.whereEqualTo("genre", category);
         }
+
+        // Filter the query for soft-deleted and private videos
+        query = query.whereEqualTo("privacy", getResources().getStringArray(R.array.Privacy)[0])
+                .whereEqualTo("delete", "N");
 
         FirestoreRecyclerOptions<Video> firestoreRecyclerOptions = new FirestoreRecyclerOptions.Builder<Video>()
                 .setQuery(query, Video.class)
@@ -194,7 +172,6 @@ public class DiscoverResultPage extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull DiscoverResultHolder holder, int position, @NonNull Video model) {
                 holder.videoTitle.setText(model.getTitle());
-                holder.videoUsername.setText(model.getUsername());
                 holder.videoYear.setText(String.valueOf(model.getPubYear()));
                 holder.videoDuration.setText(model.getDuration());
 
@@ -203,7 +180,7 @@ public class DiscoverResultPage extends AppCompatActivity {
                 holder.videoViews.setText(videoViews);
 
                 // Set the video thumbnail
-                String URI = model.getThumbnailUrl();
+                String URI = model.getUrl();
                 Glide.with(holder.videoThumbnail.getContext()).load(URI).into(holder.videoThumbnail);
 
                 holder.videoCard.setOnClickListener(new View.OnClickListener() {
@@ -225,28 +202,45 @@ public class DiscoverResultPage extends AppCompatActivity {
                         menuInflater.inflate(R.menu.video_menu_pop_up, popupMenu.getMenu());
                         popupMenu.show();
 
-                        // TODO: implement the video popup menu
                         popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem menuItem) {
                                 switch (menuItem.getItemId()) {
                                     case R.id.addToWatchLater_videoMenu:
-                                        return true;
+                                        addToWatchLater(model);
+                                        break;
 
                                     case R.id.addToPlaylist_videoMenu:
-                                        return true;
-
-                                    case R.id.repost_videoMenu:
-                                        return true;
+                                        addToPlaylist(model);
+                                        break;
 
                                     case R.id.report_videoMenu:
-                                        return true;
+                                        Intent reportVideo = new Intent(getApplicationContext(), ReportVideoPopup.class);
+                                        reportVideo.putExtra("VideoId", model.getVideoId());
+                                        startActivity(reportVideo);
+                                        break;
                                 }
-                                return false;
+                                return true;
                             }
                         });
                     }
                 });
+
+                // Get the uploader's username
+                FirebaseDatabase.getInstance().getReference("ArtistAccounts").child(model.getUserId())
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    holder.videoUsername.setText(dataSnapshot.child("username").getValue(String.class));
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
             }
 
             @NonNull
@@ -279,53 +273,29 @@ public class DiscoverResultPage extends AppCompatActivity {
                 }
 
                 // Query to Firebase
-                List<ArtistUser> artistList = new ArrayList<>(artistFireStoreList.size());
-                DiscoverArtistsResultAdapter artistAdapter = new DiscoverArtistsResultAdapter(artistList,
-                        getApplicationContext(), getIntent());
+                List<ArtistUser> artistList = new ArrayList<>();
+                DiscoverArtistsResultAdapter discoverArtistsResultAdapter =
+                        new DiscoverArtistsResultAdapter(artistList,getApplicationContext(), getIntent());
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("ArtistAccounts");
-                databaseReference.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        String artistID = dataSnapshot.getKey();
-
-                        // Initialize as many as it will hold
-                        while (artistList.size() < artistFireStoreList.size()) {
-                            artistList.add(dataSnapshot.getValue(ArtistUser.class));
+                for (String artistID : artistFireStoreList) {
+                    databaseReference.child(artistID).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                ArtistUser artist_user = dataSnapshot.getValue(ArtistUser.class);
+                                artistList.add(artist_user);
+                                discoverArtistsResultAdapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(discoverArtistsResultAdapter);
+                            }
                         }
 
-                        // Replace the indexes with appropriate values
-                        // The indexes will match, and thus sorted
-                        if (artistFireStoreList.contains(artistID)) {
-                            int index = artistFireStoreList.indexOf(artistID);
-                            ArtistUser artistUser = dataSnapshot.getValue(ArtistUser.class);
-                            artistList.remove(index);
-                            artistList.add(index, artistUser);
-                            artistAdapter.notifyDataSetChanged();
-                            recyclerView.setAdapter(artistAdapter);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                    });
+                }
             }
         });
     }
@@ -345,9 +315,9 @@ public class DiscoverResultPage extends AppCompatActivity {
      */
     public class DiscoverResultHolder extends RecyclerView.ViewHolder {
 
-        public TextView videoTitle, videoUsername, videoYear, videoDuration, videoViews;
-        public ImageView videoThumbnail, videoMenu;
-        public LinearLayout videoCard;
+        TextView videoTitle, videoUsername, videoYear, videoDuration, videoViews;
+        ImageView videoThumbnail, videoMenu;
+        LinearLayout videoCard;
 
         public DiscoverResultHolder(View view) {
             super(view);
@@ -404,5 +374,36 @@ public class DiscoverResultPage extends AppCompatActivity {
                 accountType = "LabelAccounts";
             }
         }
+    }
+
+    /**
+     * Add the video to the watch later list.
+     * @param video video
+     */
+    private void addToWatchLater(Video video) {
+        FirebaseDatabase.getInstance()
+                .getReference("WatchLater")
+                .child(current_user.getUid())
+                .child(video.getVideoId())
+                .child("VideoId")
+                .setValue(video.getVideoId())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(getApplicationContext(), "Video has been added to Watch Later",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    /**
+     * Add the video to the playlist.
+     * @param video video
+     */
+    private void addToPlaylist(Video video) {
+        Intent playlistIntent = new Intent(getApplicationContext(), AddToPlaylist.class);
+        playlistIntent.putExtra("VIDEO", video);
+        playlistIntent.putExtra("TYPE", getIntent().getExtras().getString("TYPE"));
+        startActivity(playlistIntent);
     }
 }

@@ -6,10 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,7 +14,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +39,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.hitstreamr.hitstreamrbeta.EmailVerification;
 import com.hitstreamr.hitstreamrbeta.R;
 import com.hitstreamr.hitstreamrbeta.UserTypes.ArtistUser;
 import com.hitstreamr.hitstreamrbeta.UserTypes.UsernameUserIdPair;
@@ -55,6 +59,8 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
     private EditText mFirstName, mLastName, mArtistName, mEmail, mPassword, mUsername, mAddress, mCity, mZipcode, mPhone;
     private Spinner mState, mCountry;
     // Add address line 1 and 2?
+
+    private TextView passwordHint;
 
     // Buttons
     private Button signup, profilePictureBtn;
@@ -88,8 +94,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                     "(?=.*[0-9])" +         //at least 1 digit
                     "(?=.*[a-z])" +         //at least 1 lower case letter
                     "(?=.*[A-Z])" +         //at least 1 upper case letter
-                    //"(?=.*[a-zA-Z])" +      //any letter
-                    "(?=.*[!@#$%^&*-_+=])" +    //at least 1 special character
+                    "(?=.*[!@#$%^&*_+=])" +    //at least 1 special character
                     "(?=\\S+$)" +           //no white spaces
                     ".{8,}" +               //at least 8 characters
                     "$");
@@ -119,17 +124,23 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
         // Views
         mFirstName = findViewById(R.id.artistFirstName);
+        mFirstName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mLastName = findViewById(R.id.artistLastName);
+        mLastName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mArtistName = findViewById(R.id.artistName);
+        mArtistName.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mEmail = findViewById(R.id.artistEmail);
         mPassword = findViewById(R.id.artistPassword);
         mUsername = findViewById(R.id.artistUsername);
         mAddress = findViewById(R.id.artistAddressLine1);
+        mAddress.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mCity = findViewById(R.id.artistCity);
+        mCity.setInputType(android.text.InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_WORDS);
         mState = findViewById(R.id.artistState);
         mZipcode = findViewById(R.id.artistZip);
         mCountry = findViewById(R.id.artistCountry);
         mPhone = findViewById(R.id.artistPhone);
+        passwordHint = findViewById(R.id.PasswordHint);
 
         // Buttons
         signup = findViewById(R.id.signup_button);
@@ -206,7 +217,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
 
         validateUserNameFirebase(new ArtistUser(firstname, lastname, artistname, email, username, address,
-                city, state, country, phone, zip, null/*, null, "false"*/), password);
+                city, state, country, phone, zip, "", "", "false"), password);
     }
 
     private void registerAuthentication(String email, String password) {
@@ -221,6 +232,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 uploadFromUri(selectedImagePath);
                             } else {
+                                progressDialog.dismiss();
                                 Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
                             }
                         }
@@ -256,6 +268,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    /**
+     * Register and store the new artist user to the database, send a verification email to confirm
+     * their email.
+     */
     private void registerFirebase() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -271,14 +287,27 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                             if (task.isSuccessful()) {
                                 takenNames.child(artist_object.getUsername()).setValue(true);
                                 Toast.makeText(ArtistSignUp.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
                                 finish();
-                                //start next activity
-                                Intent genreIntent = new Intent(getApplicationContext(), PickGenre.class);
-                                genreIntent.putExtra("TYPE", getString(R.string.type_artist));
-                                startActivity(genreIntent);
+
+                                // Send an email verification
+                                final FirebaseUser current_user = mAuth.getCurrentUser();
+                                if (current_user != null) {
+                                    current_user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+
+                                        }
+                                    });
+                                }
+
+                                // Go to verification page, user cannot proceed further until their email is verified
+                                Intent verificationPage = new Intent(getApplicationContext(), EmailVerification.class);
+                                verificationPage.putExtra("TYPE", getString(R.string.type_artist));
+                                startActivity(verificationPage);
                             } else {
-                                //Display a failure message
-                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again", Toast.LENGTH_SHORT).show();
+                                // Display a failure message
+                                Toast.makeText(ArtistSignUp.this, "Could not register. Please try again.", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -389,7 +418,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "State is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG, "4");
         return true;
     }
 
@@ -398,7 +426,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Country is not selected", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Log.e(TAG, "5");
         return true;
     }
 
@@ -416,7 +443,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mEmail.setError("Email is not valid!");
             return false;
         } else {
-            Log.e(TAG, "6");
             mEmail.setError(null);
             return true;
         }
@@ -436,7 +462,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mPhone.setError("Phone Number must be in the form XXX-XXX-XXXX");
             return false;
         } else {
-            Log.e(TAG, "7");
             mPhone.setError(null);
             return true;
         }
@@ -453,7 +478,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mCity.setError("Field can't be empty");
             return false;
         } else {
-            Log.e(TAG, "8");
             mCity.setError(null);
             return true;
         }
@@ -473,7 +497,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mZipcode.setError("Zip is invalid");
             return false;
         } else {
-            Log.e(TAG, "9");
             mZipcode.setError(null);
             return true;
         }
@@ -487,13 +510,14 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
      */
     private boolean validatePassword(String password) {
         if (password.isEmpty()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPassword.setError("Field can't be empty");
             return false;
         } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            passwordHint.setVisibility(View.VISIBLE);
             mPassword.setError("Password too weak");
             return false;
         } else {
-            Log.e(TAG, "10");
             mPassword.setError(null);
             return true;
         }
@@ -510,10 +534,10 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             mUsername.setError("Field can't be empty");
             return false;
         } else if (!checkUsername(artist)) {
-            mAddress.setError("Username cannot contain special characters.");
+            mUsername.setError("Username cannot contain special characters.");
             return false;
         } else if (artist.length() <= 6) {
-            mAddress.setError("Username is too short.");
+            mUsername.setError("Username is too short.");
             return false;
         } else {
             mUsername.setError(null);
@@ -532,7 +556,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
                 }
                 else if (!dataSnapshot.hasChild(artist.getUsername()))
                 {
-                    mUsername.setError("null");
+                    mUsername.setError(null);
                     artist_object = artist;
 
                     //If validations are ok we will first show progressbar
@@ -583,7 +607,6 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this, "Please agree to the Terms and Conditions", Toast.LENGTH_SHORT).show();
             return false;
         } else {
-            Log.e(TAG, "13");
             termsCond.setError(null);
             return true;
         }
@@ -675,7 +698,7 @@ public class ArtistSignUp extends AppCompatActivity implements View.OnClickListe
 
     public boolean checkUsername(String s) {
 
-        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_ ";
+        String AlphaUsername = "abcdefghijklmnopqrstuvwxyz0123456789_";
         boolean[] value_for_each_comparison = new boolean[s.length()];
 
         for (int i = 0; i < s.length(); i++) {
