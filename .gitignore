@@ -9,6 +9,7 @@
 /build
 /captures
 .externalNativeBuild
+Leader-branch
 .idea/vcs.xml
 /.idea/caches
 .firebaserc
@@ -17,3 +18,8 @@ firebase.json
 *.ser
 appengine/
 .idea/caches/build_file_checksums.ser
+
+.firebaserc
+/functions
+firebase.json
+master
